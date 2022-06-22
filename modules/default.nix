@@ -3,6 +3,7 @@
 {
   imports = [
     ./files.nix
+    ./shortcuts.nix
     ./windows.nix
     ./workspace.nix
   ];

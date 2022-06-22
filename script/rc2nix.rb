@@ -131,6 +131,9 @@ module Rc2Nix
       puts("{")
       puts("  programs.plasma = {")
       puts("    enable = true;")
+      puts("    shortcuts = {")
+      pp_shortcuts(settings["kglobalshortcutsrc"], 6)
+      puts("    };")
       puts("    files = {")
       pp_settings(settings, 6)
       puts("    };")
@@ -143,6 +146,8 @@ module Rc2Nix
       settings.keys.sort.each do |file|
         settings[file].keys.sort.each do |group|
           settings[file][group].keys.sort.each do |key|
+            next if file == "kglobalshortcutsrc" && key != "_k_friendly_name"
+
             print(" " * indent)
             print("\"#{file}\".")
             print("\"#{group}\".")
@@ -150,6 +155,35 @@ module Rc2Nix
             print(nix_val(settings[file][group][key]))
             print(";\n")
           end
+        end
+      end
+    end
+
+    ############################################################################
+    def pp_shortcuts(groups, indent)
+      groups&.keys.sort.each do |group|
+        groups[group].keys.sort.each do |action|
+          next if action == "_k_friendly_name"
+
+          print(" " * indent)
+          print("\"#{group}\".")
+          print("\"#{action}\" = ")
+
+          keys = groups[group][action].
+            split(/(?<!\\),/).first.
+            gsub(/\\?\\,/, ',').
+            gsub(/\\t/, "\t").
+            split(/\t/)
+
+          if keys.size > 1
+            print("[" + keys.map {|k| nix_val(k)}.join(" ") + "]")
+          elsif keys.first == "none"
+            print("[ ]")
+          else
+            print(nix_val(keys.first))
+          end
+
+          print(";\n")
         end
       end
     end
