@@ -19,8 +19,7 @@
     useGlobalPkgs = true;
 
     users.fake = { ... }: {
-      imports = [ module ];
-      config = homeConfig;
+      imports = [ module homeConfig ];
     };
   };
 }

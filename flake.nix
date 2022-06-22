@@ -42,6 +42,20 @@
         {
           default = self.packages.${system}.rc2nix;
 
+          demo = (inputs.nixpkgs.lib.nixosSystem {
+            inherit system;
+            modules = [
+              (import test/demo.nix {
+                pkgs = nixpkgsFor.x86_64-linux;
+                home-manager = inputs.home-manager;
+                module = self.homeManagerModules.plasma;
+                extraPackages = with self.packages.${system}; [
+                  rc2nix
+                ];
+              })
+            ];
+          }).config.system.build.vm;
+
           rc2nix = pkgs.writeShellApplication {
             name = "rc2nix";
             runtimeInputs = with pkgs; [ ruby ];
@@ -52,6 +66,11 @@
       apps = forAllSystems (system:
         {
           default = self.apps.${system}.rc2nix;
+
+          demo = {
+            type = "app";
+            program = "${self.packages.${system}.demo}/bin/run-plasma-demo-vm";
+          };
 
           rc2nix = {
             type = "app";
