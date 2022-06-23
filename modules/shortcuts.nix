@@ -39,7 +39,7 @@ in
     '';
   };
 
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf (cfg.enable && builtins.attrNames cfg.shortcuts != 0) {
     programs.plasma.files."kglobalshortcutsrc" =
       shortcutsToSettings cfg.shortcuts;
   };
