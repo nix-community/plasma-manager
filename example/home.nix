@@ -3,10 +3,15 @@
   programs.plasma = {
     enable = true;
 
-    # A high-level setting:
+    # Some high-level settings:
     workspace.clickItemTo = "select";
 
-    # A mid-level setting:
+    hotkeys.commands."Launch Konsole" = {
+      key = "Meta+Alt+K";
+      command = "konsole";
+    };
+
+    # Some mid-level settings:
     shortcuts = {
       ksmserver = {
         "Lock Session" = [ "Screensaver" "Meta+Ctrl+Alt+L" ];
