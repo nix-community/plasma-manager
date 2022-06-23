@@ -13,10 +13,15 @@
 # contained in the LICENSE file.
 #
 ################################################################################
-require('optparse')
+require("optparse")
+require("pathname")
 
 ################################################################################
 module Rc2Nix
+
+  ##############################################################################
+  # The root directory where configuration files are stored.
+  XDG_CONFIG_HOME = ENV["XDG_CONFIG_HOME"] || "~/.config"
 
   ##############################################################################
   # Files that we'll scan by default.
@@ -49,7 +54,7 @@ module Rc2Nix
     "klipperrc",
     "plasma-localerc",
     "kxkbrc",
-  ].map {|f| File.expand_path(f, ENV["XDG_CONFIG_HOME"] || "~/.config")}.freeze
+  ].map {|f| File.expand_path(f, XDG_CONFIG_HOME)}.freeze
 
   ##############################################################################
   class RcFile
@@ -123,9 +128,13 @@ module Rc2Nix
       settings = {}
 
       @files.each do |file|
+        next unless File.exist?(file)
+
         rc = RcFile.new(file)
         rc.parse
-        settings[File.basename(file)] = rc.settings
+
+        path = Pathname.new(file).relative_path_from(XDG_CONFIG_HOME)
+        settings[File.path(path)] = rc.settings
       end
 
       puts("{")
@@ -161,7 +170,9 @@ module Rc2Nix
 
     ############################################################################
     def pp_shortcuts(groups, indent)
-      groups&.keys.sort.each do |group|
+      return if groups.nil?
+
+      groups.keys.sort.each do |group|
         groups[group].keys.sort.each do |action|
           next if action == "_k_friendly_name"
 
