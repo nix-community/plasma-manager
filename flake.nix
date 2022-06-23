@@ -10,23 +10,15 @@
 
   outputs = inputs@{ self, ... }:
     let
-      # List of systems we run NixOS tests for:
+      # Systems that can run tests:
       supportedSystems = [
-        "aarch64-darwin"
         "aarch64-linux"
         "i686-linux"
-        "x86_64-darwin"
         "x86_64-linux"
       ];
 
       # Function to generate a set based on supported systems:
       forAllSystems = inputs.nixpkgs.lib.genAttrs supportedSystems;
-
-      # Like `forAllSystems` except just those support NixOS tests:
-      forQemuSystems = inputs.nixpkgs.lib.genAttrs [
-        "x86_64-linux"
-        "aarch64-linux"
-      ];
 
       # Attribute set of nixpkgs for each system:
       nixpkgsFor = forAllSystems (system:
@@ -63,30 +55,39 @@
           };
         });
 
-      apps = forAllSystems (system:
-        {
-          default = self.apps.${system}.rc2nix;
+      apps = forAllSystems (system: {
+        default = self.apps.${system}.rc2nix;
 
-          demo = {
-            type = "app";
-            program = "${self.packages.${system}.demo}/bin/run-plasma-demo-vm";
-          };
-
-          rc2nix = {
-            type = "app";
-            program = "${self.packages.${system}.rc2nix}/bin/rc2nix";
-          };
-        });
-
-      checks = forQemuSystems (system:
-        let test = path: import path {
-          pkgs = nixpkgsFor.${system};
-          home-manager = inputs.home-manager;
-          module = self.homeManagerModules.plasma;
+        demo = {
+          type = "app";
+          program = "${self.packages.${system}.demo}/bin/run-plasma-demo-vm";
         };
+
+        rc2nix = {
+          type = "app";
+          program = "${self.packages.${system}.rc2nix}/bin/rc2nix";
+        };
+      });
+
+      checks = forAllSystems (system:
+        let
+          test = path: import path {
+            pkgs = nixpkgsFor.${system};
+            home-manager = inputs.home-manager;
+            module = self.homeManagerModules.plasma;
+          };
         in
         {
           default = test ./test/basic.nix;
         });
+
+      devShells = forAllSystems (system: {
+        default = nixpkgsFor.${system}.mkShell {
+          buildInputs = with nixpkgsFor.${system}; [
+            ruby
+            ruby.devdoc
+          ];
+        };
+      });
     };
 }
