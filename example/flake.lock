@@ -1,0 +1,73 @@
+{
+  "nodes": {
+    "home-manager": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1655880690,
+        "narHash": "sha256-pO+EqUefNFolIWV1DHXPfI8NuUtD4fd7JFKoaCjVXOs=",
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "rev": "a839432a5c3d2a762d68168093349097e6affb07",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "ref": "release-22.05",
+        "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1656007306,
+        "narHash": "sha256-MsC44YZ6wuBwn5Bu8T+RVoQWlp2l5BR6hhmNoAAHIEw=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "ccf8bdf72624521358be6bb7d9b524c4cbcf7aff",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-22.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "plasma-manager": {
+      "inputs": {
+        "home-manager": [
+          "home-manager"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1656109003,
+        "narHash": "sha256-UUhp5bBKEL370r5EphALfOrAiBO3w48U1B+97/HPlWY=",
+        "owner": "pjones",
+        "repo": "plasma-manager",
+        "rev": "1492919230b9484f5b91abdf4759bdbbdd7b6aaa",
+        "type": "github"
+      },
+      "original": {
+        "owner": "pjones",
+        "repo": "plasma-manager",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "home-manager": "home-manager",
+        "nixpkgs": "nixpkgs",
+        "plasma-manager": "plasma-manager"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
