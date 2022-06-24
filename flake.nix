@@ -25,7 +25,7 @@
         import inputs.nixpkgs { inherit system; });
     in
     {
-      homeManagerModules.plasma = { ... }: {
+      homeManagerModules.plasma-manager = { ... }: {
         imports = [ ./modules ];
       };
 
