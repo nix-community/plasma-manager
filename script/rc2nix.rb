@@ -21,7 +21,7 @@ module Rc2Nix
 
   ##############################################################################
   # The root directory where configuration files are stored.
-  XDG_CONFIG_HOME = ENV["XDG_CONFIG_HOME"] || "~/.config"
+  XDG_CONFIG_HOME = File.expand_path(ENV["XDG_CONFIG_HOME"] || "~/.config")
 
   ##############################################################################
   # Files that we'll scan by default.
