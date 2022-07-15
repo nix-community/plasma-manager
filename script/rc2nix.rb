@@ -34,20 +34,17 @@ module Rc2Nix
     "kmixrc",
     "kwalletrc",
     "kgammarc",
-    "ktimezonedrc",
     "krunnerrc",
     "klaunchrc",
     "plasmanotifyrc",
     "systemsettingsrc",
     "kscreenlockerrc",
     "kwinrulesrc",
-    "plasmashellrc",
     "khotkeysrc",
     "ksmserverrc",
     "kded5rc",
     "plasmarc",
     "kwinrc",
-    "startkderc",
     "kdeglobals",
     "baloofilerc",
     "dolphinrc",
@@ -58,6 +55,37 @@ module Rc2Nix
 
   ##############################################################################
   class RcFile
+
+    ############################################################################
+    # Any group that matches a listed regular expression is blocked
+    # from being passed through to the settings attribute.
+    #
+    # This is necessary because KDE currently stores application state
+    # in configuration files.
+    GROUP_BLOCK_LIST = [
+      /^(ConfigDialog|FileDialogSize)$/,
+      /^\$Version$/,
+      /^ColorEffects:/,
+      /^Colors:/,
+      /^DoNotDisturb$/,
+      /^LegacySession:/,
+      /^MainWindow$/,
+      /^PlasmaViews/,
+      /^ScreenConnectors$/,
+      /^Session:/,
+    ]
+
+    ############################################################################
+    # Similar to the GROUP_BLOCK_LIST but for setting keys.
+    KEY_BLOCK_LIST = [
+      /^activate widget \d+$/, # Depends on state :(
+      /^ColorScheme(Hash)?$/,
+      /^LookAndFeelPackage$/,
+      /^Theme$/,
+      /^Version$/,
+      /State$/,
+      /Timestamp$/,
+    ]
 
     ############################################################################
     attr_reader(:file_name, :settings)
@@ -79,12 +107,17 @@ module Rc2Nix
           when /^\s*(\[[^\]]+\]){1,}\s*$/
             @last_group = parse_group(line.strip)
           when /^\s*([^=]+)=?(.*)\s*$/
+            key = $1.strip
+            val = $2.strip
+
             if @last_group.nil?
               raise("#{@file_name}: setting outside of group: #{line}")
             end
 
-            key = $1.strip
-            val = $2.strip
+            # Reasons to skip this group or key:
+            next if GROUP_BLOCK_LIST.any? {|re| @last_group.match(re)}
+            next if KEY_BLOCK_LIST.any? {|re| key.match(re)}
+            next if File.basename(@file_name) == "plasmanotifyrc" && key == "Seen"
 
             @settings[@last_group] ||= {}
             @settings[@last_group][key] = val
