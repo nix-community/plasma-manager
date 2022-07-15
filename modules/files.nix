@@ -16,12 +16,9 @@ let
     options = {
       configGroupNesting = lib.mkOption {
         type = lib.types.nonEmptyListOf lib.types.str;
+        default = (lib.splitString "." name);
         description = "Group name, and sub-group names.";
       };
-    };
-
-    config = {
-      configGroupNesting = lib.mkDefault (lib.splitString "." name);
     };
   };
 

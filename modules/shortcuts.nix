@@ -5,7 +5,7 @@ let
   cfg = config.programs.plasma;
 
   # Convert one shortcut into a settings attribute set.
-  shortcutToNameValuePair = action: skey:
+  shortcutToNameValuePair = _action: skey:
     let
       # Keys are expected to be a list:
       keys =
@@ -16,18 +16,21 @@ let
       # Don't allow un-escaped commas:
       escape = lib.escape [ "," ];
     in
-    {
-      name = action;
-      value = lib.concatStringsSep "," [
-        (lib.concatStringsSep "\t" (map escape keys))
-        "" # List of default keys, not needed.
-        "" # Display string, not needed.
-      ];
-    };
+    lib.concatStringsSep "," [
+      (lib.concatStringsSep "\t" (map escape keys))
+      "" # List of default keys, not needed.
+      "" # Display string, not needed.
+    ];
 
   shortcutsToSettings = groups:
-    lib.mapAttrs (_group: lib.mapAttrs' shortcutToNameValuePair) groups;
-
+    lib.mapAttrs
+      (group: attrs:
+        (lib.mapAttrs shortcutToNameValuePair attrs) // {
+          # Some shortcut groups have a dot in their name so we
+          # explicitly set the group nesting to only one level deep:
+          configGroupNesting = [ group ];
+        })
+      groups;
 in
 {
   options.programs.plasma.shortcuts = lib.mkOption {
