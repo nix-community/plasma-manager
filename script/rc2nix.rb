@@ -80,11 +80,20 @@ module Rc2Nix
     KEY_BLOCK_LIST = [
       /^activate widget \d+$/, # Depends on state :(
       /^ColorScheme(Hash)?$/,
+      /^History Items/,
       /^LookAndFeelPackage$/,
-      /^Theme$/,
+      /^Recent (Files|URLs)/,
+      /^Theme$/i,
       /^Version$/,
       /State$/,
       /Timestamp$/,
+    ]
+
+    ############################################################################
+    # List of functions that get called with a group name and a key
+    # name.  If the function returns +true+ then block that key.
+    BLOCK_LIST_LAMBDA = [
+      ->(group, key) { group == "org.kde.kdecoration2" && key == "library" }
     ]
 
     ############################################################################
@@ -117,6 +126,7 @@ module Rc2Nix
             # Reasons to skip this group or key:
             next if GROUP_BLOCK_LIST.any? {|re| @last_group.match(re)}
             next if KEY_BLOCK_LIST.any? {|re| key.match(re)}
+            next if BLOCK_LIST_LAMBDA.any? {|fn| fn.call(@last_group, key)}
             next if File.basename(@file_name) == "plasmanotifyrc" && key == "Seen"
 
             @settings[@last_group] ||= {}
