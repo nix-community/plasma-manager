@@ -214,12 +214,14 @@ module Rc2Nix
           print("\"#{action}\" = ")
 
           keys = groups[group][action].
-            split(/(?<!\\),/).first.
+            split(/(?<!\\),/).first.to_s.
             gsub(/\\?\\,/, ',').
             gsub(/\\t/, "\t").
             split(/\t/)
 
-          if keys.size > 1
+          if keys.empty?
+            print("[ ]")
+          elsif keys.size > 1
             print("[" + keys.map {|k| nix_val(k)}.join(" ") + "]")
           elsif keys.first == "none"
             print("[ ]")
@@ -235,6 +237,8 @@ module Rc2Nix
     ############################################################################
     def nix_val(str)
       case str
+      when NilClass
+        "null"
       when /^true|false$/i
         str.downcase
       when /^[0-9]+(\.[0-9]+)?$/
