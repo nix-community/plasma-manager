@@ -53,6 +53,18 @@
             runtimeInputs = with pkgs; [ ruby ];
             text = ''ruby ${script/rc2nix.rb} "$@"'';
           };
+
+          kconf_update = pkgs.writeShellApplication {
+            name = "kconf_update";
+            text =
+              let kconfig =
+                pkgs.lib.getLib
+                  pkgs.libsForQt5.kdeFrameworks.kconfig;
+              in
+              ''
+                ${kconfig}/libexec/kf5/kconf_update "$@"
+              '';
+          };
         });
 
       apps = forAllSystems (system: {
@@ -84,6 +96,7 @@
       devShells = forAllSystems (system: {
         default = nixpkgsFor.${system}.mkShell {
           buildInputs = with nixpkgsFor.${system}; [
+            self.packages.${system}.kconf_update
             ruby
             ruby.devdoc
           ];
