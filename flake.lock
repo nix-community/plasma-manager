@@ -21,6 +21,23 @@
         "type": "github"
       }
     },
+    "kconfig": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1659981185,
+        "narHash": "sha256-/WJwEOwD+CluiXtwV8EVPWtGc2DfcKRANSojjCh2n2U=",
+        "owner": "pjones",
+        "repo": "kconfig",
+        "rev": "0bb8111fb6053fe030bda46a6771096c32753015",
+        "type": "github"
+      },
+      "original": {
+        "owner": "pjones",
+        "ref": "pjones/force",
+        "repo": "kconfig",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1655643053,
@@ -37,10 +54,28 @@
         "type": "github"
       }
     },
+    "nixpkgs_unstable": {
+      "locked": {
+        "lastModified": 1660227034,
+        "narHash": "sha256-bXMlG/YU0IjAod6M625XT1YbUG+/3L9ypk9llYpKeuM=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "964d60ff2e6bc76c0618962da52859603784fa78",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "home-manager": "home-manager",
-        "nixpkgs": "nixpkgs"
+        "kconfig": "kconfig",
+        "nixpkgs": "nixpkgs",
+        "nixpkgs_unstable": "nixpkgs_unstable"
       }
     }
   },

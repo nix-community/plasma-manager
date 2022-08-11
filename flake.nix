@@ -3,9 +3,13 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
+    nixpkgs_unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
     home-manager.url = "github:nix-community/home-manager/release-22.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    kconfig.url = "github:pjones/kconfig/pjones/force";
+    kconfig.flake = false;
   };
 
   outputs = inputs@{ self, ... }:
@@ -30,7 +34,10 @@
       };
 
       packages = forAllSystems (system:
-        let pkgs = nixpkgsFor.${system}; in
+        let
+          pkgs = nixpkgsFor.${system};
+          unstable = import inputs.nixpkgs_unstable { inherit system; };
+        in
         {
           default = self.packages.${system}.rc2nix;
 
@@ -54,16 +61,15 @@
             text = ''ruby ${script/rc2nix.rb} "$@"'';
           };
 
+          kconfig = unstable.libsForQt5.kdeFrameworks.kconfig.overrideAttrs (_orig: {
+            src = inputs.kconfig;
+          });
+
           kconf_update = pkgs.writeShellApplication {
             name = "kconf_update";
             text =
-              let kconfig =
-                pkgs.lib.getLib
-                  pkgs.libsForQt5.kdeFrameworks.kconfig;
-              in
-              ''
-                ${kconfig}/libexec/kf5/kconf_update "$@"
-              '';
+              let kconfig = pkgs.lib.getLib self.packages.${system}.kconfig;
+              in ''${kconfig}/libexec/kf5/kconf_update "$@"'';
           };
         });
 
