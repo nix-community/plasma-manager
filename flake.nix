@@ -40,7 +40,7 @@
               (import test/demo.nix {
                 pkgs = nixpkgsFor.x86_64-linux;
                 home-manager = inputs.home-manager;
-                module = self.homeManagerModules.plasma;
+                module = self.homeManagerModules.plasma-manager;
                 extraPackages = with self.packages.${system}; [
                   rc2nix
                 ];
@@ -74,7 +74,7 @@
           test = path: import path {
             pkgs = nixpkgsFor.${system};
             home-manager = inputs.home-manager;
-            module = self.homeManagerModules.plasma;
+            module = self.homeManagerModules.plasma-manager;
           };
         in
         {
