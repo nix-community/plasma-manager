@@ -51,6 +51,9 @@ module Rc2Nix
     "klipperrc",
     "plasma-localerc",
     "kxkbrc",
+    "ffmpegthumbsrc",
+    "kservicemenurc",
+    "kiorc",
   ].map {|f| File.expand_path(f, XDG_CONFIG_HOME)}.freeze
 
   ##############################################################################
