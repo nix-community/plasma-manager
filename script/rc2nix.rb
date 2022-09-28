@@ -66,7 +66,7 @@ module Rc2Nix
     # This is necessary because KDE currently stores application state
     # in configuration files.
     GROUP_BLOCK_LIST = [
-      /^(ConfigDialog|FileDialogSize)$/,
+      /^(ConfigDialog|FileDialogSize|ViewPropertiesDialog|KPropertiesDialog)$/,
       /^\$Version$/,
       /^ColorEffects:/,
       /^Colors:/,
