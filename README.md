@@ -44,7 +44,7 @@ Configuration is broken down into three layers:
      ```nix
      {
        programs.plasma = {
-         files."baloofilerc"."Basic Settings"."Indexing-Enabled" = false;
+         configFile."baloofilerc"."Basic Settings"."Indexing-Enabled" = false;
        };
      }
      ```

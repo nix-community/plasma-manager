@@ -27,6 +27,6 @@
     };
 
     # A low-level setting:
-    files."baloofilerc"."Basic Settings"."Indexing-Enabled" = false;
+    configFile."baloofilerc"."Basic Settings"."Indexing-Enabled" = false;
   };
 }

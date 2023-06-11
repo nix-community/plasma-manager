@@ -16,7 +16,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    programs.plasma.files.kdeglobals = {
+    programs.plasma.configFile.kdeglobals = {
       KDE.SingleClick = lib.mkDefault (cfg.workspace.clickItemTo == "open");
     };
   };

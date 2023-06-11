@@ -105,6 +105,6 @@ in
   config = lib.mkIf
     (cfg.enable && builtins.length (builtins.attrNames cfg.hotkeys.commands) != 0)
     {
-      programs.plasma.files.khotkeysrc = hotkeys;
+      programs.plasma.configFile.khotkeysrc = hotkeys;
     };
 }

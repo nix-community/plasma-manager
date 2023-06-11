@@ -34,7 +34,7 @@ let
     lib.concatStringsSep "\n" (lib.mapAttrsToList
       (key: value: ''
         ${pkgs.libsForQt5.kconfig}/bin/kwriteconfig5 \
-          --file ''${XDG_CONFIG_HOME:-$HOME/.config}/${lib.escapeShellArg file} \
+          --file ${lib.escapeShellArg file} \
           ${lib.concatMapStringsSep " " (g: "--group " + lib.escapeShellArg g) groups} \
           --key ${lib.escapeShellArg key} \
           ${toKdeValue value}
