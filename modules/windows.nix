@@ -17,7 +17,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    programs.plasma.files = {
+    programs.plasma.configFile = {
       kdeglobals = {
         General.AllowKDEAppsToRememberWindowPositions =
           lib.mkDefault cfg.windows.allowWindowsToRememberPositions;

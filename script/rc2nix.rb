@@ -189,7 +189,7 @@ module Rc2Nix
       puts("    shortcuts = {")
       pp_shortcuts(settings["kglobalshortcutsrc"], 6)
       puts("    };")
-      puts("    files = {")
+      puts("    configFile = {")
       pp_settings(settings, 6)
       puts("    };")
       puts("  };")
