@@ -3,6 +3,12 @@
 let
   cfg = config.programs.plasma;
 
+  group = rec {
+    name = "plasma-manager-commands";
+    desktop = "${name}.desktop";
+    description = "Plasma (Home) Manager Commands";
+  };
+
   commandType = { name, ... }: {
     options = {
       name = lib.mkOption {
@@ -19,7 +25,14 @@ let
 
       key = lib.mkOption {
         type = lib.types.str;
-        description = "The key that triggers the action.";
+        description = "The key combination that triggers the action.";
+        default = "";
+      };
+
+      keys = lib.mkOption {
+        type = with lib.types; listOf str;
+        description = "The key combinations that trigger the action.";
+        default = [ ];
       };
 
       command = lib.mkOption {
@@ -28,70 +41,6 @@ let
       };
     };
   };
-
-  # Create a hotkey attribute set from the given command.  The idx
-  # parameter is the index within the hotkey list for this command.
-  commandToHotkey = cmd: idx: {
-    inherit (cmd) name comment;
-
-    triggers = [{
-      Key = cmd.key;
-      Type = "SHORTCUT";
-      Uuid = "{" + builtins.hashString "sha256" (builtins.toString idx + cmd.name) + "}";
-    }];
-
-    actions = [{
-      CommandURL = cmd.command;
-      Type = "COMMAND_URL";
-    }];
-
-    conditions = [ ];
-  };
-
-  # Convert a hotkey to an attribute set that can be used with
-  # programs.plasma.files:
-  hotkeyToSettings = hotkey: idx:
-    let
-      prefix = "Data_${toString idx}";
-
-      toSection = name: items:
-        builtins.listToAttrs
-          (lib.imap0
-            (jdx: item: {
-              name = "${prefix}${name}${toString jdx}";
-              value = item;
-            })
-            items);
-    in
-    {
-      ${prefix} = {
-        Comment = hotkey.comment;
-        Enabled = true;
-        Name = hotkey.name;
-        Type = "SIMPLE_ACTION_DATA";
-      };
-
-      "${prefix}Conditions".ConditionsCount =
-        builtins.length (hotkey.conditions);
-
-      "${prefix}Actions".ActionsCount =
-        builtins.length (hotkey.actions);
-
-      "${prefix}Triggers".TriggersCount =
-        builtins.length (hotkey.triggers);
-    }
-    // toSection "Conditions" hotkey.conditions
-    // toSection "Actions" hotkey.actions
-    // toSection "Triggers" hotkey.triggers;
-
-  # Turn all options in this module into an attribute sets for
-  # programs.plasma.files.
-  hotkeys =
-    let items =
-      (map commandToHotkey (builtins.attrValues cfg.hotkeys.commands));
-    in
-    lib.foldr (a: b: a // b) { Data.DataCount = builtins.length items; }
-      (lib.imap1 (idx: hotkey: hotkeyToSettings (hotkey idx) idx) items);
 in
 {
   options.programs.plasma.hotkeys = {
@@ -105,6 +54,31 @@ in
   config = lib.mkIf
     (cfg.enable && builtins.length (builtins.attrNames cfg.hotkeys.commands) != 0)
     {
-      programs.plasma.configFile.khotkeysrc = hotkeys;
+      xdg.desktopEntries."${group.name}" = {
+        name = group.description;
+        noDisplay = true;
+        type = "Application";
+        actions = lib.mapAttrs
+          (_: command: {
+            name = command.name;
+            exec = command.command;
+          })
+          cfg.hotkeys.commands;
+      };
+
+      programs.plasma.configFile."kglobalshortcutsrc"."${group.desktop}" = {
+        configGroupNesting = [ group.desktop ];
+        _k_friendly_name = group.description;
+      } // lib.attrsets.mapAttrs
+        (_: command:
+          let
+            keys = command.keys ++ lib.optionals (command.key != "") [ command.key ];
+          in
+          lib.concatStringsSep "," [
+            (lib.concatStringsSep "\t" (map (lib.escape [ "," ]) keys))
+            "" # List of default keys, not needed.
+            command.comment
+          ])
+        cfg.hotkeys.commands;
     };
 }
