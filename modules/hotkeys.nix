@@ -1,12 +1,12 @@
 # Global hotkeys (user-defined keyboard shortcuts):
-{ config, lib, ... }:
+{ pkgs, config, lib, ... }:
 let
   cfg = config.programs.plasma;
 
   group = rec {
     name = "plasma-manager-commands";
     desktop = "${name}.desktop";
-    description = "Plasma (Home) Manager Commands";
+    description = "Home (Plasma) Manager";
   };
 
   commandType = { name, ... }: {
@@ -39,6 +39,28 @@ let
         type = lib.types.str;
         description = "The command to execute.";
       };
+
+      logs.enabled = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Connect command's stdin and stdout to systemd journal with systemd-cat.";
+      };
+
+      logs.identifier = lib.mkOption {
+        type = lib.types.str;
+        default = lib.trivial.pipe name [
+          lib.strings.toLower
+          (builtins.replaceStrings [" "] ["-"])
+          (n: "${group.name}-${n}")
+        ];
+        description = "Identifier passed down to systemd-cat.";
+      };
+
+      logs.extraArgs = lib.mkOption {
+        type = lib.types.str;
+        default = "";
+        description = "Additional arguments provided to systemd-cat.";
+      };
     };
   };
 in
@@ -61,7 +83,10 @@ in
         actions = lib.mapAttrs
           (_: command: {
             name = command.name;
-            exec = command.command;
+            exec =
+              if command.logs.enabled then
+                "${pkgs.systemd}/bin/systemd-cat --identifier=${command.logs.identifier} ${command.logs.extraArgs} ${command.command}"
+              else command.command;
           })
           cfg.hotkeys.commands;
       };
