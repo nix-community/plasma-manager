@@ -11,6 +11,16 @@ Configuration is broken down into three layers:
      {
        programs.plasma = {
          workspace.clickItemTo = "select";
+
+         spectacle.shortcuts = {
+           captureActiveWindow = "Meta+Print";
+           captureCurrentMonitor = "Print";
+           captureEntireDesktop = "Shift+Print";
+           captureRectangularRegion = "Meta+Shift+S";
+           captureWindowUnderCursor = "Meta+Ctrl+Print";
+           launch = "Meta+S";
+           launchWithoutCapturing = "Meta+Alt+S";
+         };
        };
      }
      ```

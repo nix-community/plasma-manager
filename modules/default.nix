@@ -5,6 +5,7 @@
     ./files.nix
     ./hotkeys.nix
     ./shortcuts.nix
+    ./spectacle.nix
     ./windows.nix
     ./workspace.nix
   ];
