@@ -15,6 +15,16 @@ Configuration is broken down into three layers:
            tooltipDelay = 5;
            theme = "breeze-dark";
          }
+         
+         spectacle.shortcuts = {
+           captureActiveWindow = "Meta+Print";
+           captureCurrentMonitor = "Print";
+           captureEntireDesktop = "Shift+Print";
+           captureRectangularRegion = "Meta+Shift+S";
+           captureWindowUnderCursor = "Meta+Ctrl+Print";
+           launch = "Meta+S";
+           launchWithoutCapturing = "Meta+Alt+S";
+         };
        };
      }
      ```
