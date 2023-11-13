@@ -6,7 +6,8 @@
     # Some high-level settings:
     workspace.clickItemTo = "select";
 
-    hotkeys.commands."Launch Konsole" = {
+    hotkeys.commands."launch-konsole" = {
+      name = "Launch Konsole";
       key = "Meta+Alt+K";
       command = "konsole";
     };
