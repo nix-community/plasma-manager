@@ -1,6 +1,6 @@
 # Manage KDE Plasma with Home Manager
 
-This project aims to provide [Home Manger][home-manager] modules which allow you
+This project aims to provide [Home Manager][home-manager] modules which allow you
 to configure KDE Plasma using Nix.
 
 Configuration is broken down into three layers:
@@ -10,8 +10,12 @@ Configuration is broken down into three layers:
      ```nix
      {
        programs.plasma = {
-         workspace.clickItemTo = "select";
-
+         workspace = {
+           clickItemTo = "select";
+           tooltipDelay = 5;
+           theme = "breeze-dark";
+         }
+         
          spectacle.shortcuts = {
            captureActiveWindow = "Meta+Print";
            captureCurrentMonitor = "Print";
