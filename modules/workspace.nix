@@ -24,7 +24,7 @@ in
     };
 
     theme = lib.mkOption {
-      type = lib.types.str;
+      type = lib.types.nullOr lib.types.str;
       default = null;
       example = "breeze-dark";
       description = ''
