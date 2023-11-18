@@ -28,7 +28,16 @@ in
       default = null;
       example = "breeze-dark";
       description = ''
-        The Plasma theme.
+        The Plasma theme. Run plasma-apply-desktoptheme --list-themes for valid options.
+      '';
+    };
+
+    colorscheme = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      example = "BreezeDark";
+      description = ''
+        The Plasma colorscheme. Run plasma-apply-colorscheme --list-schemes for valid options.
       '';
     };
   };
@@ -47,6 +56,11 @@ in
     (lib.mkIf (cfg.enable && cfg.workspace.theme != null) {
       programs.plasma.configFile.plasmarc = {
         Theme.name = cfg.workspace.theme;
+      };
+    })
+    (lib.mkIf (cfg.enable && cfg.workspace.colorscheme != null) {
+      programs.plasma.configFile.kdeglobals = {
+        General.ColorScheme = cfg.workspace.colorscheme;
       };
     })
   ];
