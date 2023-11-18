@@ -14,6 +14,7 @@ Configuration is broken down into three layers:
            clickItemTo = "select";
            tooltipDelay = 5;
            theme = "breeze-dark";
+           colorscheme = "BreezeDark";
          }
          
          spectacle.shortcuts = {
