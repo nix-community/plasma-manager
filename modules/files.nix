@@ -25,7 +25,13 @@ let
     options = {
       configGroupNesting = lib.mkOption {
         type = lib.types.nonEmptyListOf lib.types.str;
-        default = (lib.splitString "." name);
+        # We allow escaping periods using \\.
+        default = (map 
+                    (e: builtins.replaceStrings ["\\u002E"] ["."] e) 
+                    (lib.splitString "." 
+                      (builtins.replaceStrings ["\\."] ["\\u002E"] name)
+                    )
+                  );
         description = "Group name, and sub-group names.";
       };
     };
