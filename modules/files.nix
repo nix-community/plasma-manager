@@ -25,6 +25,7 @@ let
     options = {
       configGroupNesting = lib.mkOption {
         type = lib.types.nonEmptyListOf lib.types.str;
+        # We allow escaping periods using \\.
         default = (map 
                     (e: builtins.replaceStrings ["\\u002E"] ["."] e) 
                     (lib.splitString "." 
