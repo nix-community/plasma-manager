@@ -15,7 +15,12 @@ Configuration is broken down into three layers:
            tooltipDelay = 5;
            theme = "breeze-dark";
            colorscheme = "BreezeDark";
-         }
+         };
+
+         kwin.titlebarButtons = {
+					left = [ "S" "F" ];
+          right = [ "H" "I" "A" "X" ];
+				};
          
          spectacle.shortcuts = {
            captureActiveWindow = "Meta+Print";
