@@ -8,8 +8,8 @@ let
   # Helper function to prepend the appropriate path prefix (e.g. XDG_CONFIG_HOME) to file
   prependPath = prefix: attrset:
     lib.attrsets.mapAttrs'
-    (path: config: { name = "${prefix}/${path}"; value = config; })
-    attrset;
+      (path: config: { name = "${prefix}/${path}"; value = config; })
+      attrset;
   plasmaCfg = config.programs.plasma;
   cfg =
     (prependPath config.home.homeDirectory plasmaCfg.file) //
@@ -26,12 +26,12 @@ let
       configGroupNesting = lib.mkOption {
         type = lib.types.nonEmptyListOf lib.types.str;
         # We allow escaping periods using \\.
-        default = (map 
-                    (e: builtins.replaceStrings ["\\u002E"] ["."] e) 
-                    (lib.splitString "." 
-                      (builtins.replaceStrings ["\\."] ["\\u002E"] name)
-                    )
-                  );
+        default = (map
+          (e: builtins.replaceStrings [ "\\u002E" ] [ "." ] e)
+          (lib.splitString "."
+            (builtins.replaceStrings [ "\\." ] [ "\\u002E" ] name)
+          )
+        );
         description = "Group name, and sub-group names.";
       };
     };
@@ -54,6 +54,23 @@ let
           (set: kWriteConfig file set.configGroupNesting (settingsToConfig set))
           (builtins.attrValues settings))
         cfg));
+
+  ##############################################################################
+  # Generate a script that will remove all the current config files.
+  filesToReset = [
+    "kded5rc"
+    "kdeglobals"
+    "kglobalshortcutsrc"
+    "khotkeysrc"
+    "krunnerrc"
+    "kwinrc"
+    "plasmarc"
+    "plasmashellrc"
+  ];
+  resetScript = pkgs.writeScript "reset-plasma-config"
+    (builtins.concatStringsSep
+      "\n"
+      (map (e: "if [ -f ${config.xdg.configHome}/${e} ]; then rm ${config.xdg.configHome}/${e}; fi") filesToReset));
 in
 {
   options.programs.plasma = {
@@ -84,15 +101,27 @@ in
         represent configuration groups and settings inside those groups.
       '';
     };
+    declarative = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Wether to. If enabled only the explicitly set attributes will be applied,
+        while everything else will lean back on the default. This should give more
+        declarative.
+      '';
+    };
   };
 
   imports = [
     (lib.mkRenamedOptionModule [ "programs" "plasma" "files" ] [ "programs" "plasma" "configFile" ])
   ];
 
-  config = lib.mkIf (builtins.length (builtins.attrNames cfg) > 0) {
-    home.activation.configure-plasma = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      $DRY_RUN_CMD ${script}
-    '';
+  config = {
+    home.activation.configure-plasma = lib.mkIf (builtins.length (builtins.attrNames cfg) > 0)
+      (lib.hm.dag.entryAfter [ "writeBoundary" ]
+        ''
+          $DRY_RUN_CMD ${if config.programs.plasma.declarative then resetScript else ""}
+          $DRY_RUN_CMD ${script}
+        '');
   };
 }
