@@ -101,13 +101,13 @@ in
         represent configuration groups and settings inside those groups.
       '';
     };
-    declarative = lib.mkOption {
+    overrideConfig = lib.mkOption {
       type = lib.types.bool;
       default = false;
       description = ''
-        Wether to. If enabled only the explicitly set attributes will be applied,
-        while everything else will lean back on the default. This should give more
-        declarative.
+        Wether to discard changes made outside plasma-manager. If enabled all
+        settings not specified explicitly in plasma-manager will be set to the
+        default on next login.
       '';
     };
   };
@@ -120,7 +120,7 @@ in
     home.activation.configure-plasma = lib.mkIf (builtins.length (builtins.attrNames cfg) > 0)
       (lib.hm.dag.entryAfter [ "writeBoundary" ]
         ''
-          $DRY_RUN_CMD ${if config.programs.plasma.declarative then resetScript else ""}
+          $DRY_RUN_CMD ${if config.programs.plasma.overrideConfig then resetScript else ""}
           $DRY_RUN_CMD ${script}
         '');
   };
