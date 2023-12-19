@@ -27,6 +27,10 @@
     };
 
     # A low-level setting:
-    configFile."baloofilerc"."Basic Settings"."Indexing-Enabled" = false;
+    configFile = {
+      "baloofilerc"."Basic Settings"."Indexing-Enabled" = false;
+      # If a group name has dots you need to escape them
+      "kwinrc"."org\\.kde\\.kdecoration2"."ButtonsOnLeft" = "SF";
+    };
   };
 }
