@@ -18,9 +18,9 @@ Configuration is broken down into three layers:
          };
 
          kwin.titlebarButtons = {
-					left = [ "S" "F" ];
+          left = [ "S" "F" ];
           right = [ "H" "I" "A" "X" ];
-				};
+        };
          
          spectacle.shortcuts = {
            captureActiveWindow = "Meta+Print";
