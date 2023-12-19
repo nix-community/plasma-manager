@@ -8,6 +8,7 @@
     ./spectacle.nix
     ./windows.nix
     ./workspace.nix
+    ./kwin.nix
   ];
 
   options.programs.plasma.enable = lib.mkEnableOption ''
