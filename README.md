@@ -18,8 +18,8 @@ Configuration is broken down into three layers:
          };
 
          kwin.titlebarButtons = {
-          left = [ "S" "F" ];
-          right = [ "H" "I" "A" "X" ];
+          left = [ "on-all-desktops" "keep-above-windows" ];
+          right = [ "help" "minimize" "maximize" "close" ]
         };
          
          spectacle.shortcuts = {
