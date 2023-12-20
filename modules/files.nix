@@ -116,12 +116,11 @@ in
     (lib.mkRenamedOptionModule [ "programs" "plasma" "files" ] [ "programs" "plasma" "configFile" ])
   ];
 
-  config = {
-    home.activation.configure-plasma = lib.mkIf (builtins.length (builtins.attrNames cfg) > 0)
-      (lib.hm.dag.entryAfter [ "writeBoundary" ]
-        ''
-          $DRY_RUN_CMD ${if config.programs.plasma.overrideConfig then resetScript else ""}
-          $DRY_RUN_CMD ${script}
-        '');
+  config = lib.mkIf (plasmaCfg.enable && (builtins.length (builtins.attrNames cfg) > 0)) {
+    home.activation.configure-plasma = (lib.hm.dag.entryAfter [ "writeBoundary" ]
+      ''
+        $DRY_RUN_CMD ${if config.programs.plasma.overrideConfig then resetScript else ""}
+        $DRY_RUN_CMD ${script}
+      '');
   };
 }
