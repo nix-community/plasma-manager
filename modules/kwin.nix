@@ -53,7 +53,7 @@ in
     titlebarButtons.right = mkOption {
       type = with types; nullOr (listOf (enum validTitlebarButtons.longNames));
       default = null;
-      example = [ "H" "I" "A" "X" ];
+      example = [ "help" "minimize" "maximize" "close" ];
       description = ''
         Title bar buttons to be placed on the right.
       '';
@@ -61,7 +61,7 @@ in
     titlebarButtons.left = mkOption {
       type = with types; nullOr (listOf (enum validTitlebarButtons.longNames));
       default = null;
-      example = [ "S" "F" ];
+      example = [ "on-all-desktops" "keep-above-windows" ];
       description = ''
         Title bar buttons to be placed on the left.
       '';
