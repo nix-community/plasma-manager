@@ -2,8 +2,8 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (import ../lib/kwriteconfig.nix { inherit lib pkgs; })
-    kWriteConfig;
+  inherit (import ../lib/writeconfig.nix { inherit lib pkgs; })
+    writeConfig;
 
   # Helper function to prepend the appropriate path prefix (e.g. XDG_CONFIG_HOME) to file
   prependPath = prefix: attrset:
@@ -45,15 +45,9 @@ let
       settings;
 
   ##############################################################################
-  # Generate a script that will use kwriteconfig to update all
+  # Generate a script that will use write_config.py to update all
   # settings.
-  script = pkgs.writeScript "plasma-config"
-    (lib.concatStrings
-      (lib.mapAttrsToList
-        (file: settings: lib.concatMapStringsSep "\n"
-          (set: kWriteConfig file set.configGroupNesting (settingsToConfig set))
-          (builtins.attrValues settings))
-        cfg));
+  script = pkgs.writeScript "plasma-config" (writeConfig cfg);
 
   ##############################################################################
   # Generate a script that will remove all the current config files.
