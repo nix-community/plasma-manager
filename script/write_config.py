@@ -71,12 +71,16 @@ class KConfParser:
 
     @staticmethod
     def get_key_value(line: str) -> tuple[str, str]:
-        key, value = line.split("=", 1)
-        return key.strip(), value.strip()
+        line_splitted = line.split("=", 1)
+        key = line_splitted[0].strip()
+        value = line_splitted[1].strip() if len(line_splitted) > 1 else None
+        return key, value
 
     @staticmethod
     def key_value_to_line(key: str, value: str) -> str:
-        return f"{key}={value}"
+        """For keys with values (not None) we give key=value, if not just give
+        the key as the line (this is useful in khotkeysrc)."""
+        return f"{key}={value}" if not value is None else key
 
 
 def write_config_single(filepath: str, items: Dict):
