@@ -1,5 +1,5 @@
 # General workspace behavior settings:
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   cfg = config.programs.plasma;
@@ -32,12 +32,49 @@ in
       '';
     };
 
-    colorscheme = lib.mkOption {
+    colorScheme = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
       default = null;
       example = "BreezeDark";
       description = ''
         The Plasma colorscheme. Run plasma-apply-colorscheme --list-schemes for valid options.
+      '';
+    };
+
+    cursorTheme = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      example = "Breeze_Snow";
+      description = ''
+        The Plasma cursortheme. Run plasma-apply-cursortheme --list-themes for valid options.
+      '';
+    };
+
+    lookAndFeel = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      example = "org.kde.breezedark.desktop";
+      description = ''
+        The Plasma look and feel theme. Run plasma-apply-lookandfeel --list for valid options.
+      '';
+    };
+
+    iconTheme = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      example = "Papirus";
+      description = ''
+        The Plasma icon theme.
+      '';
+    };
+
+
+    wallpaper = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      example = "${pkgs.libsForQt5.plasma-workspace-wallpapers}/share/wallpapers/Kay/contents/images/1080x1920.png";
+      description = ''
+        The Plasma wallpaper. Can be either be the path to an image file or a kpackage.
       '';
     };
   };
@@ -53,15 +90,51 @@ in
         PlasmaToolTips.Delay = cfg.workspace.tooltipDelay;
       };
     })
-    (lib.mkIf (cfg.enable && cfg.workspace.theme != null) {
-      programs.plasma.configFile.plasmarc = {
-        Theme.name = cfg.workspace.theme;
-      };
-    })
-    (lib.mkIf (cfg.enable && cfg.workspace.colorscheme != null) {
-      programs.plasma.configFile.kdeglobals = {
-        General.ColorScheme = cfg.workspace.colorscheme;
-      };
-    })
+    (lib.mkIf
+      (cfg.enable &&
+        (cfg.workspace.theme != null ||
+          cfg.workspace.colorScheme != null ||
+          cfg.workspace.cursorTheme != null ||
+          cfg.workspace.lookAndFeel != null ||
+          cfg.workspace.iconTheme != null ||
+          cfg.workspace.wallpaper != null))
+      {
+        # We create a script which applies the different theme settings using
+        # kde tools. We then run this using an autostart script, where this is
+        # run only on the first login, granted all the commands succeed (until
+        # we change the settings again).
+        xdg.dataFile."plasma-manager/apply_themes.sh" = {
+          text = ''
+            #!/bin/sh
+            last_update=$(stat -c %Y ${config.xdg.dataHome}/plasma-manager/apply_themes.sh)
+            last_update_file=${config.xdg.dataHome}/plasma-manager/last_update
+            stored_last_update=0
+            if [ -f "$last_update_file" ]; then
+                stored_last_update=$(cat "$last_update_file")
+            fi
+
+            if [ $last_update -gt $stored_last_update ]; then
+                success=1
+                ${if cfg.workspace.lookAndFeel != null then "plasma-apply-lookandfeel -a ${cfg.workspace.lookAndFeel} || success=0" else ""}
+                ${if cfg.workspace.theme != null then "plasma-apply-desktoptheme ${cfg.workspace.theme} || success=0" else ""}
+                ${if cfg.workspace.cursorTheme != null then "plasma-apply-cursortheme ${cfg.workspace.cursorTheme} || success=0" else ""}
+                ${if cfg.workspace.colorScheme != null then "plasma-apply-colorscheme ${cfg.workspace.colorScheme} || success=0" else ""}
+                ${if cfg.workspace.iconTheme != null then "${pkgs.libsForQt5.plasma-workspace}/libexec/plasma-changeicons ${cfg.workspace.iconTheme} || success=0" else ""}
+                ${if cfg.workspace.wallpaper != null then "plasma-apply-wallpaperimage ${cfg.workspace.wallpaper} || success=0" else ""}
+                [ $success = 1 ] && echo "$last_update" > "$last_update_file"
+            fi
+          '';
+          executable = true;
+        };
+        # Here comes the autostart-script for kde, which just runs the script
+        # above on startup.
+        xdg.configFile."autostart/plasma-manager-apply-themes.desktop".text = ''
+          [Desktop Entry]
+          Type=Application
+          Name=Plasma Manager theme application
+          Exec=${config.xdg.dataHome}/plasma-manager/apply_themes.sh
+          X-KDE-autostart-condition=ksmserver
+        '';
+      })
   ];
 }

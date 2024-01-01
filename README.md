@@ -14,7 +14,8 @@ Configuration is broken down into three layers:
            clickItemTo = "select";
            tooltipDelay = 5;
            theme = "breeze-dark";
-           colorscheme = "BreezeDark";
+           colorScheme = "BreezeDark";
+           wallpaper = "${pkgs.libsForQt5.plasma-workspace-wallpapers}/share/wallpapers/Kay/contents/images/1080x1920.png";
          };
 
          kwin.titlebarButtons = {
