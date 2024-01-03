@@ -1,5 +1,6 @@
 import configparser
 import json
+import os
 import re
 import sys
 from typing import Dict
@@ -48,6 +49,12 @@ class KConfParser:
 
     def save(self):
         """Save to the filepath specified on instantiation."""
+        # If the directory we want to save to doesn't exist we will allow this,
+        # and just create the directory before.
+        dir = os.path.dirname(self.filepath)
+        if not os.path.exists(dir):
+            os.mkdir(dir)
+
         with open(self.filepath, "w") as f:
             # We skip a newline before the first category
             skip_newline = True
