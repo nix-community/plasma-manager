@@ -53,7 +53,7 @@ class KConfParser:
         # and just create the directory before.
         dir = os.path.dirname(self.filepath)
         if not os.path.exists(dir):
-            os.mkdir(dir)
+            os.makedirs(dir, exist_ok=True)
 
         with open(self.filepath, "w") as f:
             # We skip a newline before the first category
