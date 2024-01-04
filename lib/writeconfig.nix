@@ -13,8 +13,14 @@ let
   #
   # Type: AttrSet -> string
   writeConfig = a:
+  let
+    jsonStr = builtins.toJSON a;
+    # Writing to file handles special characters better than passing it in as
+    # an argument to the script.
+    jsonFile = pkgs.writeText "data.json" jsonStr;
+  in 
     ''
-      ${writeConfigScript}/bin/write_config '${builtins.toJSON a}'
+      ${writeConfigScript}/bin/write_config ${jsonFile}
     '';
 in
 {
