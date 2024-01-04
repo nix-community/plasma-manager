@@ -32,10 +32,16 @@ class KConfParser:
         except FileNotFoundError:
             pass
 
-    def set_value(self, group, key, value):
+    def set_value(self, group, key, value, escape_value=False):
         """Adds an entry to the config. Creates necessary groups if needed."""
         if not group in self.data:
             self.data[group] = {}
+
+        # Escapes symbols like \t, \n and so on if escape_value is True. This
+        # should be true when reading from the nix json, but not when reading
+        # from file (as reading from file already is escaped).
+        if escape_value:
+            value = value.encode("unicode_escape").decode()
         self.data[group][key] = value
 
     def remove_value(self, group, key):
@@ -53,7 +59,7 @@ class KConfParser:
         # and just create the directory before.
         dir = os.path.dirname(self.filepath)
         if not os.path.exists(dir):
-            os.makedirs(dir, exist_ok=True)
+            os.makedirs(dir)
 
         with open(self.filepath, "w") as f:
             # We skip a newline before the first category
@@ -110,7 +116,9 @@ def write_config_single(filepath: str, items: Dict):
             # Convert value to string.
             value = str(value) if not isinstance(value, bool) else str(value).lower()
 
-            config.set_value(group, key, value)
+            # Again values from the nix json are not escaped, so we need to
+            # escape them here (in case it includes \t \n and so on).
+            config.set_value(group, key, value, escape_value=True)
 
     config.save()
 
@@ -124,7 +132,11 @@ def main():
     if len(sys.argv) != 2:
         raise ValueError(f"Must receive exactly one argument, got: {len(sys.argv) - 1}")
 
-    d = json.loads(sys.argv[1])
+    json_path = sys.argv[1]
+    with open(json_path, "r") as f:
+        json_str = f.read()
+
+    d = json.loads(json_str)
     write_configs(d)
 
 
