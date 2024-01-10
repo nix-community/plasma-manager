@@ -64,6 +64,13 @@ let
           "org.kde.plasma.marignsseperator"
           "org.kde.plasma.digitalclock"
         ];
+        description = ''
+          The widgets to use in the panel. To get the names, it may be useful
+          to look in the share/plasma/plasmoids folder of the nix-package the
+          widget/plasmoid is from. Some packages which include some
+          widgets/plasmoids are for example plasma-desktop and
+          plasma-workspace.
+        '';
       };
       extraSettings = lib.mkOption {
         type = lib.types.nullOr lib.types.str;
