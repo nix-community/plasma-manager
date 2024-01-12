@@ -51,20 +51,43 @@ let
 
   ##############################################################################
   # Generate a script that will remove all the current config files.
-  filesToReset = [
+  defaultResetFiles = [
+    "baloofilerc"
+    "dolphinrc"
+    "ffmpegthumbsrc"
+    "kactivitymanagerdrc"
+    "kcminputrc"
     "kded5rc"
     "kdeglobals"
+    "kgammarc"
     "kglobalshortcutsrc"
     "khotkeysrc"
+    "kiorc"
+    "klaunchrc"
+    "klipperrc"
+    "kmixrc"
     "krunnerrc"
+    "kscreenlockerrc"
+    "kservicemenurc"
+    "ksmserverrc"
+    "ksplashrc"
+    "kwalletrc"
+    "kwin_rules_dialogrc"
     "kwinrc"
+    "kwinrulesrc"
+    "kxkbrc"
+    "plasma-localerc"
+    "plasmanotifyrc"
     "plasmarc"
     "plasmashellrc"
+    "systemsettingsrc"
   ];
-  resetScript = pkgs.writeScript "reset-plasma-config"
+  # Here cfg should be sent in with programs.plasma when called.
+  createResetScript = cfg: pkgs.writeScript "reset-plasma-config"
     (builtins.concatStringsSep
       "\n"
-      (map (e: "if [ -f ${config.xdg.configHome}/${e} ]; then rm ${config.xdg.configHome}/${e}; fi") filesToReset));
+      (map (e: "if [ -f ${config.xdg.configHome}/${e} ]; then rm ${config.xdg.configHome}/${e}; fi")
+        (lib.lists.subtractLists cfg.overrideConfigExclude cfg.overrideConfigFiles)));
 in
 {
   options.programs.plasma = {
@@ -101,7 +124,23 @@ in
       description = ''
         Wether to discard changes made outside plasma-manager. If enabled all
         settings not specified explicitly in plasma-manager will be set to the
-        default on next login.
+        default on next login. This will automatically delete a lot of
+        kde-plasma config-files on each generation so be careful with this
+        option.
+      '';
+    };
+    overrideConfigFiles = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = defaultResetFiles;
+      description = ''
+        Config-files which should be deleted on each generation.
+      '';
+    };
+    overrideConfigExclude = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      description = ''
+        Config-files which explicitly should not be deleted on each generation.
       '';
     };
   };
@@ -113,7 +152,7 @@ in
   config = lib.mkIf (plasmaCfg.enable && (builtins.length (builtins.attrNames cfg) > 0)) {
     home.activation.configure-plasma = (lib.hm.dag.entryAfter [ "writeBoundary" ]
       ''
-        $DRY_RUN_CMD ${if config.programs.plasma.overrideConfig then resetScript else ""}
+        $DRY_RUN_CMD ${if config.programs.plasma.overrideConfig then (createResetScript config.programs.plasma) else ""}
         $DRY_RUN_CMD ${script}
       '');
   };
