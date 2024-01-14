@@ -75,7 +75,10 @@ let
       iconTasksLaunchers = lib.mkOption {
         type = lib.types.listOf lib.types.str;
         default = [ ];
-        example = "org.kde.dolphin.desktop";
+        example = [
+          "org.kde.dolphin.desktop"
+          "firefox.desktop"
+        ];
         description = ''
           The desktop-files to pin to the icontasks task-manager. For this to
           have any effect, org.kde.plasma.icontasks must be included in the
