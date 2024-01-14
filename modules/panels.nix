@@ -72,6 +72,16 @@ let
           plasma-workspace.
         '';
       };
+      iconTasksLaunchers = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        example = "org.kde.dolphin.desktop";
+        description = ''
+          The desktop-files to pin to the icontasks task-manager. For this to
+          have any effect, org.kde.plasma.icontasks must be included in the
+          widgets option.
+        '';
+      };
       extraSettings = lib.mkOption {
         type = lib.types.nullOr lib.types.str;
         default = null;
@@ -82,12 +92,32 @@ let
       };
     };
   };
-  panelAddWidgetStr = widget: "panel.addWidget(\"${widget}\")";
+
+  # The value of the config for the org.kde.plasma.icontasks plasmoid must be a
+  # list on the form applications:{{name of application 1}}.desktop,
+  # applications:{{name of application 2}}.desktop,..., hence we just transform
+  # it this way here.
+  iconTasksLaunchersStr = iconTasksLaunchers: "[${lib.concatStringsSep "," (map (p: "\"applications:${p}\"") iconTasksLaunchers)}]";
+
+  # Creates lines for changing the config of a widget in a layout.js. Here
+  # panel is the panel of the widget we are configuring for, widget is the full
+  # name of the widget, configGroup is the value of currentConfigGroup for the
+  # widget, while configKey and value are the key and value we want to set.
+  panelModifyConfig = panel: widget: configGroup: configKey: value:
+    if builtins.elem widget panel.widgets then ''
+      var w = panelWidgets["${widget}"]
+      w.currentConfigGroup = ${configGroup}
+      w.writeConfig("${configKey}", ${value})
+    '' else "";
+
+  # Functions to aid us creating a single panel in the layout.js
+  panelAddWidgetStr = widget: "panelWidgets[\"${widget}\"] = panel.addWidget(\"${widget}\")";
   panelAddWidgetsStr = panel: lib.concatStringsSep "\n" (map panelAddWidgetStr panel.widgets);
   panelToLayout = panel: ''
 
     var panel = new Panel;
     panel.height = ${builtins.toString panel.height}
+    var panelWidgets = {}
     ${if panel.alignment != null then "panel.alignment = \"${panel.alignment}\"" else ""}
     ${if panel.hiding != null then "panel.hiding = \"${panel.hiding}\"" else ""}
     ${if panel.location != null then "panel.location = \"${panel.location}\"" else ""}
@@ -95,8 +125,16 @@ let
     ${if panel.minLength != null then "panel.minimumLength = ${builtins.toString panel.minLength}" else ""}
     ${if panel.offset != null then "panel.offset = ${builtins.toString panel.offset}" else ""}
     ${panelAddWidgetsStr panel}
+    ${if builtins.length panel.iconTasksLaunchers > 0 then
+      (panelModifyConfig
+        panel "org.kde.plasma.icontasks" "[\"General\"]"
+        "launchers" (iconTasksLaunchersStr panel.iconTasksLaunchers))
+      else ""}
     ${if panel.extraSettings != null then panel.extraSettings else ""}
   '';
+
+  # Generates the text for the full layout.js, combining the configuration for
+  # all the single panels into one.
   panelsToLayoutJS = panels: lib.concatStringsSep "\n" (map panelToLayout panels);
 in
 {
