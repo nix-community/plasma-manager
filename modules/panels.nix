@@ -103,17 +103,6 @@ let
     };
   };
 
-  # Creates lines for changing the config of a widget in a layout.js. Here
-  # panel is the panel of the widget we are configuring for, widget is the full
-  # name of the widget, configGroup is the value of currentConfigGroup for the
-  # widget, while configKey and value are the key and value we want to set.
-  panelModifyConfig = panel: widget: configGroup: configKey: value:
-    if builtins.elem widget panel.widgets then ''
-      var w = panelWidgets["${widget}"]
-      w.currentConfigGroup = ${configGroup}
-      w.writeConfig("${configKey}", ${value})
-    '' else "";
-
   #
   # Functions to generate layout.js configurations from the widgetType
   #
