@@ -53,7 +53,7 @@ let
           "org.kde.plasma.kickoff"
           "org.kde.plasma.pager"
           "org.kde.plasma.icontasks"
-          "org.kde.plasma.marignsseperator"
+          "org.kde.plasma.marginsseperator"
           "org.kde.plasma.systemtray"
           "org.kde.plasma.digitalclock"
           "org.kde.plasma.showdesktop"
@@ -61,7 +61,7 @@ let
         example = [
           "org.kde.plasma.kickoff"
           "org.kde.plasma.icontasks"
-          "org.kde.plasma.marignsseperator"
+          "org.kde.plasma.marginsseperator"
           "org.kde.plasma.digitalclock"
         ];
         description = ''

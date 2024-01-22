@@ -26,7 +26,7 @@
         widgets = [
           "org.kde.plasma.kickoff"
           "org.kde.plasma.icontasks"
-          "org.kde.plasma.marignsseperator"
+          "org.kde.plasma.marginsseperator"
           "org.kde.plasma.systemtray"
           "org.kde.plasma.digitalclock"
         ];
