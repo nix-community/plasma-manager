@@ -4,6 +4,26 @@ with lib;
 
 let
   cfg = config.programs.plasma;
+
+  # Widget types
+  widgetType = lib.types.submodule {
+    options = {
+      name = lib.mkOption {
+        type = lib.types.str;
+        example = "org.kde.plasma.kickoff";
+        description = "The name of the widget to add.";
+      };
+      config = lib.mkOption {
+        type = with lib.types; nullOr (attrsOf (attrsOf (either str (listOf str))));
+        default = null;
+        example = {
+          General.icon = "nix-snowflake-white";
+        };
+        description = "Extra configuration-options for the widget.";
+      };
+    };
+  };
+
   panelType = lib.types.submodule {
     options = {
       height = lib.mkOption {
@@ -48,7 +68,7 @@ let
         description = "The hiding mode of the panel.";
       };
       widgets = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
+        type = with lib.types; listOf (either str widgetType);
         default = [
           "org.kde.plasma.kickoff"
           "org.kde.plasma.pager"
@@ -72,19 +92,6 @@ let
           plasma-workspace.
         '';
       };
-      iconTasksLaunchers = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        default = [ ];
-        example = [
-          "org.kde.dolphin.desktop"
-          "firefox.desktop"
-        ];
-        description = ''
-          The desktop-files to pin to the icontasks task-manager. For this to
-          have any effect, org.kde.plasma.icontasks must be included in the
-          widgets option.
-        '';
-      };
       extraSettings = lib.mkOption {
         type = lib.types.nullOr lib.types.str;
         default = null;
@@ -96,25 +103,41 @@ let
     };
   };
 
-  # The value of the config for the org.kde.plasma.icontasks plasmoid must be a
-  # list on the form applications:{{name of application 1}}.desktop,
-  # applications:{{name of application 2}}.desktop,..., hence we just transform
-  # it this way here.
-  iconTasksLaunchersStr = iconTasksLaunchers: "[${lib.concatStringsSep "," (map (p: "\"applications:${p}\"") iconTasksLaunchers)}]";
-
-  # Creates lines for changing the config of a widget in a layout.js. Here
-  # panel is the panel of the widget we are configuring for, widget is the full
-  # name of the widget, configGroup is the value of currentConfigGroup for the
-  # widget, while configKey and value are the key and value we want to set.
-  panelModifyConfig = panel: widget: configGroup: configKey: value:
-    if builtins.elem widget panel.widgets then ''
+  #
+  # Functions to generate layout.js configurations from the widgetType
+  #
+  # Configgroups must be javascript lists.
+  widgetConfigGroupFormat = group: ''[${lib.concatStringsSep ", " (map (s: "\"${s}\"") (lib.splitString "." group))}]'';
+  # If the specified value is a string then add in extra quotes. If we have a
+  # list, convert this to a javascript list.
+  widgetConfigValueFormat = value: if (builtins.isString value) then "\"${value}\"" else ''[${(lib.concatStringsSep ", " (map (s: "\"${s}\"") value))}]'';
+  # Generate writeConfig calls to include for a widget with additional
+  # configurations.
+  genWidgetConfigStr = widget: group: key: value:
+    ''
       var w = panelWidgets["${widget}"]
-      w.currentConfigGroup = ${configGroup}
-      w.writeConfig("${configKey}", ${value})
-    '' else "";
+      w.currentConfigGroup = ${widgetConfigGroupFormat group}
+      w.writeConfig("${key}", ${widgetConfigValueFormat value})
+    '';
+  # Generate the text for all of the configuration for a widget with additional
+  # configurations.
+  widgetConfigsToStr = widget: config:
+    lib.concatStringsSep "\n"
+      (lib.concatLists
+        (lib.mapAttrsToList
+          (group: groupAttrs:
+            (lib.mapAttrsToList (key: value: (genWidgetConfigStr widget group key value)) groupAttrs))
+          config));
 
+  #
   # Functions to aid us creating a single panel in the layout.js
-  panelAddWidgetStr = widget: "panelWidgets[\"${widget}\"] = panel.addWidget(\"${widget}\")";
+  #
+  panelWidgetCreationStr = widget: ''panelWidgets["${widget}"] = panel.addWidget("${widget}")'';
+  panelAddWidgetStr = widget: if (builtins.isString widget) then (panelWidgetCreationStr widget) else
+  ''
+    ${panelWidgetCreationStr widget.name}
+    ${if widget.config == null then "" else (widgetConfigsToStr widget.name widget.config)}
+  '';
   panelAddWidgetsStr = panel: lib.concatStringsSep "\n" (map panelAddWidgetStr panel.widgets);
   panelToLayout = panel: ''
 
@@ -128,11 +151,6 @@ let
     ${if panel.minLength != null then "panel.minimumLength = ${builtins.toString panel.minLength}" else ""}
     ${if panel.offset != null then "panel.offset = ${builtins.toString panel.offset}" else ""}
     ${panelAddWidgetsStr panel}
-    ${if builtins.length panel.iconTasksLaunchers > 0 then
-      (panelModifyConfig
-        panel "org.kde.plasma.icontasks" "[\"General\"]"
-        "launchers" (iconTasksLaunchersStr panel.iconTasksLaunchers))
-      else ""}
     ${if panel.extraSettings != null then panel.extraSettings else ""}
   '';
 
@@ -167,9 +185,10 @@ in
         stored_last_update=$(cat "$last_update_file")
       fi
 
-      [ $last_update -gt $stored_last_update ] && \
-      qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$(cat $layout_file)" && \
-      echo "$last_update" > "$last_update_file"
+      [ $last_update -ne $stored_last_update ] && \
+        qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$(cat $layout_file)" && \
+        echo "$last_update" > "$last_update_file"
     '';
   };
 }
+
