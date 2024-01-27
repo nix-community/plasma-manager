@@ -38,13 +38,6 @@ let
   };
 
   ##############################################################################
-  # Remove reserved options from a settings attribute set.
-  settingsToConfig = settings:
-    lib.filterAttrs
-      (k: v: !(builtins.elem k [ "configGroupNesting" ]))
-      settings;
-
-  ##############################################################################
   # Generate a script that will use write_config.py to update all
   # settings.
   script = pkgs.writeScript "plasma-config" (writeConfig cfg);
