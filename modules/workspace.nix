@@ -102,25 +102,28 @@ in
         # kde tools. We then run this using an autostart script, where this is
         # run only on the first login, granted all the commands succeed (until
         # we change the settings again).
-        programs.plasma.startup.autoStartScript."apply_themes" = ''
-          last_update=$(stat -c %Y ${config.xdg.dataHome}/plasma-manager/${cfg.startup.scriptsDir}/apply_themes.sh)
-          last_update_file=${config.xdg.dataHome}/plasma-manager/last_update
-          stored_last_update=0
-          if [ -f "$last_update_file" ]; then
-              stored_last_update=$(cat "$last_update_file")
-          fi
+        programs.plasma.startup.autoStartScript."apply_themes" = {
+          text = ''
+            last_update=$(stat -c %Y "$0")
+            last_update_file=${config.xdg.dataHome}/plasma-manager/last_update
+            stored_last_update=0
+            if [ -f "$last_update_file" ]; then
+                stored_last_update=$(cat "$last_update_file")
+            fi
 
-          if [ $last_update -gt $stored_last_update ]; then
-              success=1
-              ${if cfg.workspace.lookAndFeel != null then "plasma-apply-lookandfeel -a ${cfg.workspace.lookAndFeel} || success=0" else ""}
-              ${if cfg.workspace.theme != null then "plasma-apply-desktoptheme ${cfg.workspace.theme} || success=0" else ""}
-              ${if cfg.workspace.cursorTheme != null then "plasma-apply-cursortheme ${cfg.workspace.cursorTheme} || success=0" else ""}
-              ${if cfg.workspace.colorScheme != null then "plasma-apply-colorscheme ${cfg.workspace.colorScheme} || success=0" else ""}
-              ${if cfg.workspace.iconTheme != null then "${pkgs.libsForQt5.plasma-workspace}/libexec/plasma-changeicons ${cfg.workspace.iconTheme} || success=0" else ""}
-              ${if cfg.workspace.wallpaper != null then "plasma-apply-wallpaperimage ${cfg.workspace.wallpaper} || success=0" else ""}
-              [ $success = 1 ] && echo "$last_update" > "$last_update_file"
-          fi
-        '';
+            if [ $last_update -gt $stored_last_update ]; then
+                success=1
+                ${if cfg.workspace.lookAndFeel != null then "plasma-apply-lookandfeel -a ${cfg.workspace.lookAndFeel} || success=0" else ""}
+                ${if cfg.workspace.theme != null then "plasma-apply-desktoptheme ${cfg.workspace.theme} || success=0" else ""}
+                ${if cfg.workspace.cursorTheme != null then "plasma-apply-cursortheme ${cfg.workspace.cursorTheme} || success=0" else ""}
+                ${if cfg.workspace.colorScheme != null then "plasma-apply-colorscheme ${cfg.workspace.colorScheme} || success=0" else ""}
+                ${if cfg.workspace.iconTheme != null then "${pkgs.libsForQt5.plasma-workspace}/libexec/plasma-changeicons ${cfg.workspace.iconTheme} || success=0" else ""}
+                ${if cfg.workspace.wallpaper != null then "plasma-apply-wallpaperimage ${cfg.workspace.wallpaper} || success=0" else ""}
+                [ $success = 1 ] && echo "$last_update" > "$last_update_file"
+            fi
+          '';
+          priority = 1;
+        };
       })
   ];
 }

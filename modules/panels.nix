@@ -176,19 +176,25 @@ in
       // Adds the panels
       ${panelsToLayoutJS config.programs.plasma.panels}
     '';
-    programs.plasma.startup.autoStartScript."apply_layout" = ''
-      layout_file="${config.xdg.dataHome}/plasma-manager/${config.programs.plasma.startup.dataDir}/layout.js"
-      last_update=$(stat -c %Y $layout_file)
-      last_update_file=${config.xdg.dataHome}/plasma-manager/last_update_layouts
-      stored_last_update=0
-      if [ -f "$last_update_file" ]; then
-        stored_last_update=$(cat "$last_update_file")
-      fi
 
-      [ $last_update -ne $stored_last_update ] && \
-        qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$(cat $layout_file)" && \
-        echo "$last_update" > "$last_update_file"
-    '';
+    programs.plasma.startup.autoStartScript."apply_layout" = {
+      text = ''
+        layout_file="${config.xdg.dataHome}/plasma-manager/${cfg.startup.dataDir}/layout.js"
+        last_update=$(stat -c %Y $layout_file)
+        last_update_file=${config.xdg.dataHome}/plasma-manager/last_update_layouts
+        stored_last_update=0
+        if [ -f "$last_update_file" ]; then
+          stored_last_update=$(cat "$last_update_file")
+        fi
+
+        [ "$last_update" -ne "$stored_last_update" ] && \
+          qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$(cat $layout_file)" && \
+          echo "$last_update" > "$last_update_file"
+      '';
+      # Setting up the panels should happen after setting the theme as the theme
+      # may overwrite some settings (like the kickoff-icon)
+      priority = 2;
+    };
   };
 }
 
