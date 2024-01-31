@@ -13,7 +13,7 @@ let
       };
       priority = lib.mkOption {
         type = lib.types.int;
-        description = "Tells when the script should be executed in relation to rest of the startup-scripts. Lower priority means earlier execution.";
+        description = "The priority for the execution of the script. Lower priority means earlier execution.";
         default = 0;
       };
     };
