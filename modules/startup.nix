@@ -4,11 +4,25 @@
 let
   cfg = config.programs.plasma;
   topScriptName = "run_all.sh";
+
+  startupScriptType = lib.types.submodule {
+    options = {
+      text = lib.mkOption {
+        type = lib.types.str;
+        description = "The content of the startup-script.";
+      };
+      priority = lib.mkOption {
+        type = lib.types.int;
+        description = "The priority for the execution of the script. Lower priority means earlier execution.";
+        default = 0;
+      };
+    };
+  };
 in
 {
   options.programs.plasma.startup = {
     autoStartScript = lib.mkOption {
-      type = lib.types.attrsOf lib.types.str;
+      type = lib.types.attrsOf startupScriptType;
       default = { };
       description = "Commands/scripts to be run at startup.";
     };
@@ -36,11 +50,11 @@ in
         # Autostart scripts
         (lib.mkMerge
           (lib.mapAttrsToList
-            (name: content: {
-              "plasma-manager/${cfg.startup.scriptsDir}/${name}.sh" = {
+            (name: script: {
+              "plasma-manager/${cfg.startup.scriptsDir}/${builtins.toString script.priority}_${name}.sh" = {
                 text = ''
                   #!/bin/sh
-                  ${content}
+                  ${script.text}
                 '';
                 executable = true;
               };
