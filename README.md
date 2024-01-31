@@ -72,7 +72,9 @@ Configuration is broken down into three layers:
 
      The other two layers ultimately generate Nix configuration for
      this low-level layer.  Configuration at this level is essentially
-     in the final state before being sent to the `kwriteconfig5` tool.
+     in the final state before being sent to our custom
+     configuration-writing script (which is very similar to
+     `kwriteconfig5`).
 
 An example is available in the `example` directory.
 
