@@ -75,12 +75,23 @@ let
     "plasmashellrc"
     "systemsettingsrc"
   ];
+
+  # Creates command to remove file iff the file is present
+  removeFileIfExistsCmd = f: "if [ -f ${f} ]; then rm ${f}; fi";
   # Here cfg should be sent in with programs.plasma when called.
   createResetScript = cfg: pkgs.writeScript "reset-plasma-config"
     (builtins.concatStringsSep
       "\n"
-      (map (e: "if [ -f ${config.xdg.configHome}/${e} ]; then rm ${config.xdg.configHome}/${e}; fi")
-        (lib.lists.subtractLists cfg.overrideConfigExclude cfg.overrideConfigFiles)));
+      ((map removeFileIfExistsCmd
+        # The files in overrideConfigFiles are in XDG_CONFIG_HOME, so we need to
+        # add this to the names to get the full path
+        (map (f: "${config.xdg.configHome}/${f}") (lib.lists.subtractLists cfg.overrideConfigExclude cfg.overrideConfigFiles)))
+      # Some of the startup-scripts may keep track of when they were last ran
+      # in order to only run once for each generation. These files start with
+      # last_run and is located in $XDG_DATA_HOME/plasma-manager. When we
+      # reset all the other config-files these startup-scripts should be
+      # re-ran, so we delete these files to ensure they are.
+      ++ [ "for file in ${config.xdg.dataHome}/plasma-manager/last_run*; do ${removeFileIfExistsCmd "$file"}; done" ]));
 in
 {
   options.programs.plasma = {
@@ -145,7 +156,7 @@ in
   config = lib.mkIf (plasmaCfg.enable && (builtins.length (builtins.attrNames cfg) > 0)) {
     home.activation.configure-plasma = (lib.hm.dag.entryAfter [ "writeBoundary" ]
       ''
-        $DRY_RUN_CMD ${if config.programs.plasma.overrideConfig then (createResetScript config.programs.plasma) else ""}
+        $DRY_RUN_CMD ${if plasmaCfg.overrideConfig then (createResetScript plasmaCfg) else ""}
         $DRY_RUN_CMD ${script}
       '');
   };

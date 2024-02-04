@@ -105,7 +105,7 @@ in
         programs.plasma.startup.autoStartScript."apply_themes" = {
           text = ''
             last_update=$(stat -c %Y "$0")
-            last_update_file=${config.xdg.dataHome}/plasma-manager/last_update
+            last_update_file=${config.xdg.dataHome}/plasma-manager/last_run_themes
             stored_last_update=0
             if [ -f "$last_update_file" ]; then
                 stored_last_update=$(cat "$last_update_file")
