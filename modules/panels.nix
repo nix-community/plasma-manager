@@ -181,7 +181,7 @@ in
       text = ''
         layout_file="${config.xdg.dataHome}/plasma-manager/${cfg.startup.dataDir}/layout.js"
         last_update=$(stat -c %Y $layout_file)
-        last_update_file=${config.xdg.dataHome}/plasma-manager/last_update_layouts
+        last_update_file=${config.xdg.dataHome}/plasma-manager/last_run_layouts
         stored_last_update=0
         if [ -f "$last_update_file" ]; then
           stored_last_update=$(cat "$last_update_file")
