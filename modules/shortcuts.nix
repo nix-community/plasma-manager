@@ -10,14 +10,15 @@ let
       # Keys are expected to be a list:
       keys =
         if builtins.isList skey
-        then (if builtins.length skey == 0 then [ "none" ] else skey)
+        then
+          (if ((builtins.length skey) == 0) then [ "none" ] else skey)
         else [ skey ];
 
       # Don't allow un-escaped commas:
       escape = lib.escape [ "," ];
     in
     lib.concatStringsSep "," [
-      (lib.concatStringsSep "\t" (map escape keys))
+      (if ((builtins.length keys) == 1) then (escape (builtins.head keys)) else "\t" + (lib.concatStringsSep "\t" (map escape keys)))
       "" # List of default keys, not needed.
       "" # Display string, not needed.
     ];
@@ -42,7 +43,7 @@ in
     '';
   };
 
-  config = lib.mkIf (cfg.enable && builtins.attrNames cfg.shortcuts != 0) {
+  config = lib.mkIf cfg.enable {
     programs.plasma.configFile."kglobalshortcutsrc" =
       shortcutsToSettings cfg.shortcuts;
   };
