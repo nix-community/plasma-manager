@@ -85,7 +85,7 @@ in
         }
       ];
 
-      xdg.configFile."autostart/plasma-manager-apply-themes.desktop".text = ''
+      xdg.configFile."autostart/plasma-manager-autostart.desktop".text = ''
         [Desktop Entry]
         Type=Application
         Name=Plasma Manager theme application

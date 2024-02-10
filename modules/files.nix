@@ -91,7 +91,7 @@ let
       # last_run and is located in $XDG_DATA_HOME/plasma-manager. When we
       # reset all the other config-files these startup-scripts should be
       # re-ran, so we delete these files to ensure they are.
-      ++ [ "for file in ${config.xdg.dataHome}/plasma-manager/last_run*; do ${removeFileIfExistsCmd "$file"}; done" ]));
+      ++ [ "for file in ${config.xdg.dataHome}/plasma-manager/last_run_*; do ${removeFileIfExistsCmd "$file"}; done" ]));
 in
 {
   options.programs.plasma = {
@@ -153,7 +153,7 @@ in
     (lib.mkRenamedOptionModule [ "programs" "plasma" "files" ] [ "programs" "plasma" "configFile" ])
   ];
 
-  config = lib.mkIf (plasmaCfg.enable && (builtins.length (builtins.attrNames cfg) > 0)) {
+  config = lib.mkIf plasmaCfg.enable {
     home.activation.configure-plasma = (lib.hm.dag.entryAfter [ "writeBoundary" ]
       ''
         $DRY_RUN_CMD ${if plasmaCfg.overrideConfig then (createResetScript plasmaCfg) else ""}
