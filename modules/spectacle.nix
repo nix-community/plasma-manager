@@ -69,7 +69,7 @@ in
     };
   };
 
-  config = lib.mkIf (cfg.enable) {
+  config = lib.mkIf cfg.enable {
     programs.plasma.shortcuts."org.kde.spectacle.desktop" = lib.mkMerge [
       (
         lib.mkIf (cfg.spectacle.shortcuts.captureActiveWindow != null) {

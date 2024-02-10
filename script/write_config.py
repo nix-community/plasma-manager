@@ -16,7 +16,7 @@ class KConfParser:
         """Read the config from the path specified on instantiation. If the
         path doesn't exist, do nothing"""
         try:
-            with open(self.filepath, "r") as f:
+            with open(self.filepath, "r", encoding="utf-8") as f:
                 current_group = 0
                 for l in f:
                     # Checks if the current line indicates a group.
@@ -39,9 +39,15 @@ class KConfParser:
 
         # Escapes symbols like \t, \n and so on if escape_value is True. This
         # should be true when reading from the nix json, but not when reading
-        # from file (as reading from file already is escaped).
+        # from file (as reading from a file that is already escaped).
         if escape_value:
-            value = value.encode("unicode_escape").decode()
+            to_escape = ["\t", "\n"]
+            # value = value.encode("unicode_escape").decode()
+            for escape_char in to_escape:
+                value = value.replace(
+                    escape_char, escape_char.encode("unicode_escape").decode()
+                )
+
         self.data[group][key] = value
 
     def remove_value(self, group, key):
@@ -61,7 +67,7 @@ class KConfParser:
         if not os.path.exists(dir):
             os.makedirs(dir)
 
-        with open(self.filepath, "w") as f:
+        with open(self.filepath, "w", encoding="utf-8") as f:
             # We skip a newline before the first category
             skip_newline = True
 
@@ -83,7 +89,7 @@ class KConfParser:
                     f.write(f"{self.key_value_to_line(key, value)}\n")
 
     @staticmethod
-    def get_key_value(line: str) -> tuple[str, str]:
+    def get_key_value(line: str) -> tuple[str, str | None]:
         line_splitted = line.split("=", 1)
         key = line_splitted[0].strip()
         value = line_splitted[1].strip() if len(line_splitted) > 1 else None

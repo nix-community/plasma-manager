@@ -33,17 +33,21 @@ let
 
   # Gets a list with long names and turns it into short names
   getShortNames = wantedButtons:
-    lists.forEach (
-      lists.flatten (
-        lists.forEach wantedButtons (currentButton:
-          lists.remove null (
-            lists.imap0 ( index: value:
-              if value == currentButton then "${toString index}" else null
-            ) validTitlebarButtons.longNames
+    lists.forEach
+      (
+        lists.flatten (
+          lists.forEach wantedButtons (currentButton:
+            lists.remove null (
+              lists.imap0
+                (index: value:
+                  if value == currentButton then "${toString index}" else null
+                )
+                validTitlebarButtons.longNames
+            )
           )
         )
       )
-    ) getShortNameFromIndex;
+      getShortNameFromIndex;
 
   # Gets the index and returns the short name in that position
   getShortNameFromIndex = position: builtins.elemAt validTitlebarButtons.shortNames (strings.toInt position);
@@ -68,7 +72,7 @@ in
     };
   };
 
-  config = mkIf (cfg.enable) {
+  config = mkIf cfg.enable {
     # Titlebar buttons
     programs.plasma.configFile."kwinrc"."org\\.kde\\.kdecoration2" = mkMerge [
       (
