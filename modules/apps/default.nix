@@ -1,0 +1,7 @@
+{ lib, ... }:
+
+{
+  imports = [
+    ./konsole.nix
+  ];
+}
