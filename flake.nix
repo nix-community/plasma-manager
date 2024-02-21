@@ -70,15 +70,11 @@
       });
 
       checks = forAllSystems (system:
-        let
-          test = path: import path {
-            pkgs = nixpkgsFor.${system};
-            home-manager = inputs.home-manager;
-            module = self.homeManagerModules.plasma-manager;
-          };
-        in
         {
-          default = test ./test/basic.nix;
+          default = nixpkgsFor.${system}.callPackage ./test/basic.nix {
+            home-manager-module = inputs.home-manager.nixosModules.home-manager;
+            plasma-module = self.homeManagerModules.plasma-manager;
+          };
         });
 
       devShells = forAllSystems (system: {
