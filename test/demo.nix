@@ -1,25 +1,13 @@
-{ pkgs
-, home-manager
-, module
-, extraPackages
+{ home-manager-module
+, plasma-module
 }:
 
-let
-  homeConfig = {
-    imports = [ ../example/home.nix ];
-  };
-
-  user = import ./user.nix {
-    inherit module home-manager homeConfig;
-  };
-
-in
 { modulesPath, ... }:
 {
   imports = [
     (modulesPath + "/profiles/qemu-guest.nix")
     (modulesPath + "/virtualisation/qemu-vm.nix")
-    user
+    home-manager-module
   ];
 
   config = {
@@ -40,13 +28,11 @@ in
       ];
     };
 
-    virtualisation = {
-      forwardPorts = [{
-        from = "host";
-        host.port = 2222;
-        guest.port = 22;
-      }];
-    };
+    virtualisation.forwardPorts = [{
+      from = "host";
+      host.port = 2222;
+      guest.port = 22;
+    }];
 
     services.xserver = {
       enable = true;
@@ -57,6 +43,18 @@ in
       displayManager.autoLogin.user = "fake";
     };
 
-    environment.systemPackages = extraPackages;
+    system.stateVersion = "22.05";
+
+    users.users.fake = {
+      createHome = true;
+      isNormalUser = true;
+      password = "password";
+      group = "users";
+    };
+
+    home-manager.users.fake = {
+      home.stateVersion = "22.05";
+       imports = [ plasma-module ];
+    };
   };
 }
