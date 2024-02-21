@@ -3,7 +3,7 @@ import json
 import os
 import re
 import sys
-from typing import Dict
+from typing import Dict, Optional
 
 
 class KConfParser:
@@ -89,7 +89,7 @@ class KConfParser:
                     f.write(f"{self.key_value_to_line(key, value)}\n")
 
     @staticmethod
-    def get_key_value(line: str) -> tuple[str, str | None]:
+    def get_key_value(line: str) -> tuple[str, Optional[str]]:
         line_splitted = line.split("=", 1)
         key = line_splitted[0].strip()
         value = line_splitted[1].strip() if len(line_splitted) > 1 else None
