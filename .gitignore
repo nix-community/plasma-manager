@@ -1,1 +1,3 @@
-/example/result
+result-*
+result
+.direnv
