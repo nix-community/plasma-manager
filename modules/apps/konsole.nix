@@ -80,7 +80,6 @@ in
       )
     ];
 
-    # Konsole is fine with using symlinked profiles so I'll use the home-manager way
     programs.plasma.dataFile = mkIf (cfg.profiles != {}) (
       mkMerge ([
         (
