@@ -20,6 +20,7 @@
 
     users.fake = { ... }: {
       imports = [ module homeConfig ];
+      home.stateVersion = "23.11";
     };
   };
 }

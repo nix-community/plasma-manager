@@ -1,12 +1,10 @@
-{ pkgs, home-manager, module }:
-
+{ testers, home-manager-module, plasma-module, writeShellScriptBin, libsForQt5 }:
 let
-  script = pkgs.writeShellScriptBin "plasma-basic-test" ''
-    set -e
-    set -u
+  script = writeShellScriptBin "plasma-basic-test" ''
+    set -eu
 
     export XDG_CONFIG_HOME=''${XDG_CONFIG_HOME:-$HOME/.config}
-    export PATH=${pkgs.libsForQt5.kconfig}/bin:$PATH
+    export PATH=${libsForQt5.kconfig}/bin:$PATH
 
     kread_global() {
       kreadconfig5 --file $XDG_CONFIG_HOME/kdeglobals --group $1 --key $2
@@ -24,25 +22,27 @@ let
     assert_eq KDE SingleClick false
     assert_eq General AllowKDEAppsToRememberWindowPositions true
   '';
-
-  homeConfig = {
-    home.packages = [ script ];
-
-    programs.plasma = {
-      enable = true;
-      workspace.clickItemTo = "select";
-    };
-  };
-
-  user = import ./user.nix {
-    inherit module home-manager homeConfig;
-  };
 in
-pkgs.nixosTest {
+testers.nixosTest {
   name = "plasma-basic";
 
-  nodes.machine = { ... }: {
-    imports = [ user ];
+  nodes.machine = {
+    environment.systemPackages = [ script ];
+    imports = [ home-manager-module ];
+
+    users.users.fake = {
+      createHome = true;
+      isNormalUser = true;
+    };
+
+    home-manager.users.fake = {
+      home.stateVersion = "23.11";
+      imports = [ plasma-module ];
+      programs.plasma = {
+        enable = true;
+        workspace.clickItemTo = "select";
+      };
+    };
   };
 
   testScript = ''
