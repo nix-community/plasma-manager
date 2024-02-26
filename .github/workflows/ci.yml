@@ -1,0 +1,17 @@
+name: "Check"
+on:
+  pull_request:
+# cancel previous runs when pushing new changes
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: cachix/install-nix-action@v22
+      with:
+        extra_nix_config: "system-features = kvm nixos-test"
+    - run: nix flake check -L --keep-going
+    - run: nix flake check -L --keep-going ./example
