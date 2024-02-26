@@ -4,6 +4,17 @@ with lib;
 
 let
   cfg = config.programs.konsole;
+  profilesSubmodule = {
+    options = {
+      name = mkOption {
+        type = types.str;
+        default = null;
+        description = ''
+          Name of the profile that will be shown in Konsole
+        '';
+      };
+    };
+  };
 in
 
 {
@@ -21,6 +32,14 @@ in
         To see what options you have, just take a look at ~/.local/share/konsole/
       '';
     };
+
+    profiles = mkOption {
+      type = with types; nullOr (attrsOf (submodule profilesSubmodule));
+      default = {};
+      description = ''
+        Plasma profiles to generate
+      '';
+    };
   };
 
   config = mkIf (config.programs.plasma.enable && cfg.enable) {
@@ -31,5 +50,28 @@ in
         }
       )
     ];
+
+    # Konsole is fine with using symlinked profiles so I'll use the home-manager way
+    programs.plasma.dataFile = mkIf (cfg.profiles != {}) (
+      mkMerge ([
+        (
+          mkMerge (
+            mapAttrsToList (
+              name: profile: {
+                "konsole/${name}.profile" = {
+                  "General" = {
+                    "Name" = profile.name;
+                    # Konsole generated profiles seem to allways have this
+                    "Parent" = "FALLBACK/";
+                  };
+                  # this is for testing only
+                  "Appearance"."ColorScheme" = "Solarized";
+                };
+              }
+            ) cfg.profiles
+          )
+        )
+      ])
+    );
   };
 }
