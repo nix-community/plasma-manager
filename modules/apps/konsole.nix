@@ -7,10 +7,10 @@ let
   profilesSubmodule = {
     options = {
       name = mkOption {
-        type = types.str;
+        type = with types; nullOr str;
         default = null;
         description = ''
-          Name of the profile that will be shown in Konsole
+          Name of the profile. Defaults to the attribute name
         '';
       };
       colorScheme = mkOption {
@@ -66,10 +66,15 @@ in
         (
           mkMerge (
             mapAttrsToList (
-              name: profile: {
+              attrName: profile:
+              let
+                # Use the name from the name option if it's set
+                name = if builtins.isString profile.name then profile.name else attrName;
+              in
+              {
                 "konsole/${name}.profile" = {
                   "General" = {
-                    "Name" = profile.name;
+                    "Name" = name;
                     # Konsole generated profiles seem to allways have this
                     "Parent" = "FALLBACK/";
                   };
