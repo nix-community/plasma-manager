@@ -13,6 +13,15 @@ let
           Name of the profile that will be shown in Konsole
         '';
       };
+      colorScheme = mkOption {
+        type = with types; nullOr str;
+        default = null;
+        example = "Catppuccin-Mocha";
+        description = ''
+          Color scheme the profile will use. You can check the files you can
+          use in ~/.local/share/konsole or /run/current-system/share/konsole
+        '';
+      };
     };
   };
 in
@@ -64,8 +73,9 @@ in
                     # Konsole generated profiles seem to allways have this
                     "Parent" = "FALLBACK/";
                   };
-                  # this is for testing only
-                  "Appearance"."ColorScheme" = "Solarized";
+                  "Appearance" = {
+                    "ColorScheme" = profile.colorScheme;
+                  };
                 };
               }
             ) cfg.profiles
