@@ -38,13 +38,10 @@
             inherit system;
             modules = [
               (import test/demo.nix {
-                pkgs = nixpkgsFor.x86_64-linux;
-                home-manager = inputs.home-manager;
-                module = self.homeManagerModules.plasma-manager;
-                extraPackages = with self.packages.${system}; [
-                  rc2nix
-                ];
+                home-manager-module = inputs.home-manager.nixosModules.home-manager;
+                plasma-module = self.homeManagerModules.plasma-manager;
               })
+              (_: {environment.systemPackages = [ self.packages.${system}.rc2nix]; })
             ];
           }).config.system.build.vm;
 
