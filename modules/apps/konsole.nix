@@ -25,7 +25,14 @@ let
       font = {
         name = mkOption {
           type = with types; nullOr str;
-          default = null;
+          /*
+          TODO: Set default to null after adding an assertion
+          Konsole needs to have a font set to be able to change font size
+          Since I couldn't get that to work I'll just set a default font
+          Not ideal since IMO we should only write things that are set explicitly
+          by the user but ehh it is what it is
+          */
+          default = "Hack";
           example = "Hack";
           description = ''
             Name of the font the profile should use
@@ -99,6 +106,8 @@ in
                   };
                   "Appearance" = {
                     "ColorScheme" = profile.colorScheme;
+                    # If the font size is not set we leave a comma a the end after the name
+                    # We should fix this probs but konsole doesn't seem to care ¯\_(ツ)_/¯
                     "Font" = with profile.font; "${name},${builtins.toString size}";
                   };
                 };
