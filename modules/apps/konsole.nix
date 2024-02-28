@@ -22,6 +22,14 @@ let
           use in ~/.local/share/konsole or /run/current-system/share/konsole
         '';
       };
+      command = mkOption {
+        type = with types; nullOr str;
+        default = null;
+        example = "''${pkgs.zsh}/bin/zsh";
+        description = ''
+          The command to run on new sessions
+        '';
+      };
       font = {
         name = mkOption {
           type = with types; nullOr str;
@@ -100,6 +108,7 @@ in
               {
                 "konsole/${profileName}.profile" = {
                   "General" = {
+                    "Command" = profile.command;
                     "Name" = profileName;
                     # Konsole generated profiles seem to allways have this
                     "Parent" = "FALLBACK/";
