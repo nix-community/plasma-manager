@@ -177,19 +177,29 @@ in
       ${panelsToLayoutJS config.programs.plasma.panels}
     '';
 
+    # Very similar to applying themes, we keep track of the last time the panel
+    # was generated successfully, and run this only once per generation (granted
+    # everything succeeds and we are not using overrideConfig).
     programs.plasma.startup.autoStartScript."apply_layout" = {
       text = ''
         layout_file="${config.xdg.dataHome}/plasma-manager/${cfg.startup.dataDir}/layout.js"
-        last_update=$(stat -c %Y $layout_file)
+        last_update="$(sha256sum $layout_file)"
         last_update_file=${config.xdg.dataHome}/plasma-manager/last_run_layouts
-        stored_last_update=0
         if [ -f "$last_update_file" ]; then
           stored_last_update=$(cat "$last_update_file")
         fi
 
-        [ "$last_update" -ne "$stored_last_update" ] && \
-          qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$(cat $layout_file)" && \
-          echo "$last_update" > "$last_update_file"
+        if ! [ "$last_update" = "$stored_last_update" ]; then
+          # We delete plasma-org.kde.plasma.desktop-appletsrc to hinder it
+          # growing indefinitely. See:
+          # https://github.com/pjones/plasma-manager/issues/76
+          [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ] && rm ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
+
+          # And finally apply the layout.js
+          success=1
+          qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$(cat $layout_file)" || success=0
+          [ $success -eq 1 ] && echo "$last_update" > "$last_update_file"
+        fi
       '';
       # Setting up the panels should happen after setting the theme as the theme
       # may overwrite some settings (like the kickoff-icon)
