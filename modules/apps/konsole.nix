@@ -59,6 +59,26 @@ let
       };
     };
   };
+
+  # A module for storing settings.
+  settingType = { name, ... }: {
+    freeformType = with lib.types;
+      attrsOf (nullOr (oneOf [ bool float int str ]));
+
+    options = {
+      configGroupNesting = lib.mkOption {
+        type = lib.types.nonEmptyListOf lib.types.str;
+        # We allow escaping periods using \\.
+        default = (map
+          (e: builtins.replaceStrings [ "\\u002E" ] [ "." ] e)
+          (lib.splitString "."
+            (builtins.replaceStrings [ "\\." ] [ "\\u002E" ] name)
+          )
+        );
+        description = "Group name, and sub-group names.";
+      };
+    };
+  };
 in
 
 {
@@ -84,6 +104,14 @@ in
         Plasma profiles to generate
       '';
     };
+
+    extraConfig = mkOption {
+      type = with types; nullOr (attrsOf (submodule settingType));
+      default = null;
+      description = ''
+        Extra config to add to konsolerc
+      '';
+    };
   };
 
   config = mkIf (config.programs.plasma.enable && cfg.enable) {
@@ -92,6 +120,9 @@ in
         mkIf (cfg.defaultProfile != null ) {
           "Desktop entry"."DefaultProfile" = cfg.defaultProfile;
         }
+      )
+      (
+        mkIf (cfg.extraConfig != null) cfg.extraConfig
       )
     ];
 
