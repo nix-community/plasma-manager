@@ -86,11 +86,13 @@ let
         # The files in overrideConfigFiles are in XDG_CONFIG_HOME, so we need to
         # add this to the names to get the full path
         (map (f: "${config.xdg.configHome}/${f}") (lib.lists.subtractLists cfg.overrideConfigExclude cfg.overrideConfigFiles)))
-      # Some of the startup-scripts may keep track of when they were last ran
-      # in order to only run once for each generation. These files start with
-      # last_run and is located in $XDG_DATA_HOME/plasma-manager. When we
-      # reset all the other config-files these startup-scripts should be
-      # re-ran, so we delete these files to ensure they are.
+      # Some of the startup-scripts may keep track of when they were last run,
+      # in order to only run the scripts once for each home-manager generation.
+      # However when we use overrideConfig we need to run these scripts after
+      # every activation (i.e. after applying a new home-manager generation or
+      # after a fresh boot) as the scripts typically write some config-files
+      # which will need to be written once again after the old configs are
+      # deleted on each activation.
       ++ [ "for file in ${config.xdg.dataHome}/plasma-manager/last_run_*; do ${removeFileIfExistsCmd "$file"}; done" ]));
 in
 {
