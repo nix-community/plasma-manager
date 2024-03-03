@@ -5,6 +5,7 @@ with lib;
 let
   cfg = config.programs.konsole;
   profilesSubmodule = {
+    # TODO: don't set null as the defaults, toINI doesn't like it
     options = {
       name = mkOption {
         type = with types; nullOr str;
@@ -126,7 +127,7 @@ in
       )
     ];
 
-    programs.plasma.dataFile = mkIf (cfg.profiles != {}) (
+    xdg.dataFile = mkIf (cfg.profiles != {}) (
       mkMerge ([
         (
           mkMerge (
@@ -134,21 +135,22 @@ in
               attrName: profile:
               let
                 # Use the name from the name option if it's set
-                profileName = if builtins.isString profile.name then profile.name else attrName;
+                profileName = if builtins.isString profile.name then profile.name  else attrName;
+                fontString = mkIf (profile.font.name != null) "${profile.font.name},${builtins.toString profile.font.size}";
               in
               {
-                "konsole/${profileName}.profile" = {
+                "konsole/${profileName}.profile".text = lib.generators.toINI {} {
                   "General" = {
-                    "Command" = profile.command;
+                    "Command" = (mkIf (profile.command != null) profile.command).content;
                     "Name" = profileName;
                     # Konsole generated profiles seem to allways have this
                     "Parent" = "FALLBACK/";
                   };
                   "Appearance" = {
-                    "ColorScheme" = profile.colorScheme;
+                    "ColorScheme" = (mkIf (profile.colorScheme != null) profile.colorScheme).content;
                     # If the font size is not set we leave a comma a the end after the name
                     # We should fix this probs but konsole doesn't seem to care ¯\_(ツ)_/¯
-                    "Font" = with profile.font; "${name},${builtins.toString size}";
+                    "Font" = fontString.content;
                   };
                 };
               }
