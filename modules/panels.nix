@@ -67,6 +67,7 @@ let
         example = "autohide";
         description = "The hiding mode of the panel.";
       };
+      floating = lib.mkEnableOption "Enable or disable floating style (plasma 6 only).";
       widgets = lib.mkOption {
         type = with lib.types; listOf (either str widgetType);
         default = [
@@ -143,6 +144,7 @@ let
 
     var panel = new Panel;
     panel.height = ${builtins.toString panel.height}
+    panel.floating = ${lib.boolToString panel.floating}
     var panelWidgets = {}
     ${if panel.alignment != null then "panel.alignment = \"${panel.alignment}\"" else ""}
     ${if panel.hiding != null then "panel.hiding = \"${panel.hiding}\"" else ""}
