@@ -67,7 +67,7 @@ let
         example = "autohide";
         description = "The hiding mode of the panel.";
       };
-      floating = lib.mkEnableOption "enable or disable floating style";
+      floating = lib.mkEnableOption "Enable or disable floating style (plasma 6 only).";
       widgets = lib.mkOption {
         type = with lib.types; listOf (either str widgetType);
         default = [
