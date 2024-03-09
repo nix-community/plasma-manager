@@ -62,10 +62,24 @@ let
         description = "The alignment of the panel.";
       };
       hiding = lib.mkOption {
-        type = lib.types.nullOr (lib.types.enum [ "none" "autohide" "windowscover" "windowsbelow" "dodgewindows" ]);
+        type = lib.types.nullOr (lib.types.enum [
+          "none"
+          "autohide"
+          # Plasma 5 only
+          "windowscover"
+          "windowsbelow"
+          # Plasma 6 only
+          "dodgewindows"
+          "normalpanel"
+          "windowsgobelow"
+        ]);
         default = null;
         example = "autohide";
-        description = "The hiding mode of the panel.";
+        description = ''
+          The hiding mode of the panel. Here windowscover and windowsbelow are
+          plasma 5 only, while dodgewindows, windowsgobelow and normalpanel are
+          plasma 6 only.
+        '';
       };
       floating = lib.mkEnableOption "Enable or disable floating style (plasma 6 only).";
       widgets = lib.mkOption {
@@ -133,6 +147,11 @@ let
   #
   # Functions to aid us creating a single panel in the layout.js
   #
+  plasma6OnlyCmd = cmd: ''
+    if (applicationVersion.split(".")[0] == 6) {
+      ${cmd}
+    }
+  '';
   panelWidgetCreationStr = widget: ''panelWidgets["${widget}"] = panel.addWidget("${widget}")'';
   panelAddWidgetStr = widget: if (builtins.isString widget) then (panelWidgetCreationStr widget) else
   ''
@@ -149,6 +168,7 @@ let
     ${if panel.alignment != null then "panel.alignment = \"${panel.alignment}\"" else ""}
     ${if panel.hiding != null then "panel.hiding = \"${panel.hiding}\"" else ""}
     ${if panel.location != null then "panel.location = \"${panel.location}\"" else ""}
+    ${if panel.maxLength != null || panel.minLength != null then (plasma6OnlyCmd "panel.lengthMode = \"custom\"") else ""}
     ${if panel.maxLength != null then "panel.maximumLength = ${builtins.toString panel.maxLength}" else ""}
     ${if panel.minLength != null then "panel.minimumLength = ${builtins.toString panel.minLength}" else ""}
     ${if panel.offset != null then "panel.offset = ${builtins.toString panel.offset}" else ""}
