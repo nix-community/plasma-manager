@@ -62,7 +62,7 @@ let
         description = "The alignment of the panel.";
       };
       hiding = lib.mkOption {
-        type = lib.types.nullOr (lib.types.enum [ "none" "autohide" "windowscover" "windowsbelow" ]);
+        type = lib.types.nullOr (lib.types.enum [ "none" "autohide" "windowscover" "windowsbelow" "dodgewindows" ]);
         default = null;
         example = "autohide";
         description = "The hiding mode of the panel.";
