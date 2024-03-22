@@ -1,9 +1,8 @@
-{ config, lib, ... }:
-
-
+{ config, lib, pkgs, ... }:
 
 let
   cfg = config.programs.kate;
+
   # compute kate's magic TabHandlingMode
   # 0 is not tab & not undoByShiftTab
   # 1 is tab & undoByShiftTab
@@ -20,6 +19,9 @@ in
     enable = lib.mkEnableOption ''
       Enable configuration management for kate.
     '';
+
+  # ==================================
+  #     INDENTATION
     editor = {
       tabWidth = lib.mkOption {
         description = "The width of a single tab (''\t) sign (in number of spaces).";
@@ -82,6 +84,10 @@ in
       assertion = cfg.editor.indent.undoByShiftTab || (!cfg.editor.indent.tabFromEverywhere);
       message = "Kate does not support both 'undoByShiftTab' to be disabled and 'tabFromEverywhere' to be enabled at the same time.";
     }
+    {
+      assertion = (! cfg.enable) || (builtins.elem pkgs.libsForQt5.kate config.home.packages);
+      message = "Kate cannot be managed with plasma-manager if it is not installed. Either install kate or disable `config.programs.kate.enabled";
+    }
   ];
 
   config.programs.plasma.configFile."katerc" = lib.mkIf cfg.enable {
@@ -96,6 +102,51 @@ in
 
     "KTextEditor Renderer" = {
       "Show Indentation Lines" = cfg.editor.indent.showLines;
+
+
+      # COLORTHEME (cannot define this below)
+      # Do pick the theme if the user chose one,
+      # Do not touch the theme settings otherwise
+      "Auto Color Theme Selection" = lib.mkIf (cfg.editor.theme.name != "") false;
+      "Color Theme" = lib.mkIf (cfg.editor.theme.name != "") cfg.editor.theme.name;
     };
+  };
+
+
+  # ==================================
+  #     COLORTHEME
+
+  options.programs.kate.editor.theme = {
+    src = lib.mkOption {
+      description = "The path of a theme file for the KDE editor (not the window color scheme). Obtain a custom one by using the GUI settings in kate. If you want to use a system-wide editor color scheme set this path to null. If you set the metadata.name entry in the file to a value that matches the name of a system-wide color scheme undesired behaviour may occur. The activation will fail if a theme with the filename `<name of your theme>.theme` already exists.";
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+    };
+
+    name = lib.mkOption {
+      description = "The name of the theme in use. May be a system theme. If a theme file was submitted this setting will be set automatically.";
+      type = lib.types.str;
+      default = "";
+    };
+  };
+
+  config.programs.kate.editor.theme = {
+    name = lib.mkIf (null != cfg.editor.theme.src) (lib.mkForce (builtins.fromJSON (builtins.readFile cfg.editor.theme.src))."metadata"."name");
+    # kate's naming scheme is ${themename}.theme
+    # which is why we use the same naming scheme here
+  };
+
+  # This won't override existing files since the home-manager activation fails in that case
+  config.xdg.dataFile."${cfg.editor.theme.name}.theme" = lib.mkIf (null != cfg.editor.theme.src)
+  {
+    source = cfg.editor.theme.src;
+    target = "org.kde.syntax-highlighting/themes/${cfg.editor.theme.name}.theme";
+  };
+
+  config = {
+    home.activation.checkKateTheme = lib.mkIf (cfg.enable && config.programs.kate.editor.theme.src != null) (lib.hm.dag.entryBefore [ "writeBoundary" ]
+    ''
+      $DRY_RUN_CMD ${./check-theme-name-free.sh} ${cfg.editor.theme.name} ${pkgs.jq}/bin/jq
+    '');
   };
 }
