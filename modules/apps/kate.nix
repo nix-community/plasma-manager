@@ -1,11 +1,16 @@
 { config, lib, ... }:
 
+
+
 let
   # compute kate's magic TabHandlingMode
-  boolToInt = b: if b then 1 else 0;
-  t = boolToInt config.programs.kate.editor.indent.tabFromEverywhere;
-  s = boolToInt config.programs.kate.editor.indent.undoByShiftTab;
-  tabHandlingMode = t + 2 * s - 1;
+  # 0 is not tab & not undoByShiftTab
+  # 1 is tab & undoByShiftTab
+  # 2 is not tab & undoByShiftTab
+  tabHandlingMode =
+    if (! config.programs.kate.editor.indent.undoByShiftTab) && (! config.programs.kate.editor.indent.tabFromEverywhere) then 0 else (
+    if (config.programs.kate.editor.indent.undoByShiftTab && config.programs.kate.editor.indent.tabFromEverywhere) then 1 else
+    2);
 in
 {
   options.programs.kate.editor = {
@@ -66,8 +71,8 @@ in
 
   config.assertions = [
     {
-      assertion = tabHandlingMode >= -1;
-      message = "Kate does not support both 'undoByShiftTab' and 'tabFromEverywhere' to be disabled at the same time.";
+      assertion = config.programs.kate.editor.indent.undoByShiftTab || (!config.programs.kate.editor.indent.tabFromEverywhere);
+      message = "Kate does not support both 'undoByShiftTab' to be disabled and 'tabFromEverywhere' to be enabled at the same time.";
     }
   ];
 
