@@ -67,8 +67,7 @@ in
   config.assertions = [
     {
       assertion = tabHandlingMode >= -1;
-      message = "Either 'undeByShiftTab' or 'tabFromEverywhere' needs to be enabled!";
-      # kate does not seem to support disabling both.
+      message = "Kate does not support both 'undoByShiftTab' and 'tabFromEverywhere' to be disabled at the same time.";
     }
   ];
 
