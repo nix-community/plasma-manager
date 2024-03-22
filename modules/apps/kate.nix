@@ -10,7 +10,7 @@ in
 {
   options.programs.kate.editor = {
     tabWidth = lib.mkOption {
-      description = "The width of a single tab (\\t) sign (in number of spaces).";
+      description = "The width of a single tab (''\t) sign (in number of spaces).";
       default = 4;
       type = lib.types.int;
     };
