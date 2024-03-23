@@ -16,31 +16,38 @@ let
     (prependPath config.xdg.configHome plasmaCfg.configFile) //
     (prependPath config.xdg.dataHome plasmaCfg.dataFile);
 
-  ##############################################################################
-  # A module for storing settings.
-  settingType = { name, ... }: {
-    freeformType = with lib.types;
-      attrsOf (nullOr (oneOf [ bool float int str ]));
+  # Flatten nested sections
+  flatten = config: builtins.listToAttrs (lib.flatten (lib.mapAttrsToList
+    (n: v:
+      let
+        keySet = lib.filterAttrs (n: v: !builtins.isAttrs v) v;
+        sectionSet = flatten (lib.filterAttrs (n: v: builtins.isAttrs v) v);
+      in
+      lib.optionals (keySet != { }) [{
+        name = n;
+        value = keySet;
+      }] ++ lib.mapAttrsToList
+        (group: v: {
+          name = "${n}][${group}";
+          value = v;
+        })
+        sectionSet)
+    config));
 
-    options = {
-      configGroupNesting = lib.mkOption {
-        type = lib.types.nonEmptyListOf lib.types.str;
-        # We allow escaping periods using \\.
-        default = (map
-          (e: builtins.replaceStrings [ "\\u002E" ] [ "." ] e)
-          (lib.splitString "."
-            (builtins.replaceStrings [ "\\." ] [ "\\u002E" ] name)
-          )
-        );
-        description = "Group name, and sub-group names.";
-      };
-    };
-  };
+  flatCfg = builtins.mapAttrs (file: flatten) cfg;
+
+  ##############################################################################
+  # A type for storing settings.
+  settingsFileType = with lib.types; let
+    valueType = attrsOf (nullOr (oneOf [ bool float int str valueType ])) //
+      { description = "Plasma settings"; };
+  in
+  attrsOf (attrsOf (valueType));
 
   ##############################################################################
   # Generate a script that will use write_config.py to update all
   # settings.
-  script = pkgs.writeScript "plasma-config" (writeConfig cfg);
+  script = pkgs.writeScript "plasma-config" (writeConfig flatCfg);
 
   ##############################################################################
   # Generate a script that will remove all the current config files.
@@ -98,7 +105,7 @@ in
 {
   options.programs.plasma = {
     file = lib.mkOption {
-      type = with lib.types; attrsOf (attrsOf (submodule settingType));
+      type = settingsFileType;
       default = { };
       description = ''
         An attribute set where the keys are file names (relative to
@@ -107,7 +114,7 @@ in
       '';
     };
     configFile = lib.mkOption {
-      type = with lib.types; attrsOf (attrsOf (submodule settingType));
+      type = settingsFileType;
       default = { };
       description = ''
         An attribute set where the keys are file names (relative to
@@ -116,7 +123,7 @@ in
       '';
     };
     dataFile = lib.mkOption {
-      type = with lib.types; attrsOf (attrsOf (submodule settingType));
+      type = settingsFileType;
       default = { };
       description = ''
         An attribute set where the keys are file names (relative to
