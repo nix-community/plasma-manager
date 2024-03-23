@@ -25,12 +25,7 @@ let
 
   shortcutsToSettings = groups:
     lib.mapAttrs
-      (group: attrs:
-        (lib.mapAttrs shortcutToNameValuePair attrs) // {
-          # Some shortcut groups have a dot in their name so we
-          # explicitly set the group nesting to only one level deep:
-          configGroupNesting = [ group ];
-        })
+      (group: attrs: (lib.mapAttrs shortcutToNameValuePair attrs))
       groups;
 in
 {
