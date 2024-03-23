@@ -7,10 +7,11 @@ let
   # 0 is not tab & not undoByShiftTab
   # 1 is tab & undoByShiftTab
   # 2 is not tab & undoByShiftTab
-  tabHandlingMode =
-    if (! config.programs.kate.editor.indent.undoByShiftTab) && (! config.programs.kate.editor.indent.tabFromEverywhere) then 0 else (
-    if (config.programs.kate.editor.indent.undoByShiftTab && config.programs.kate.editor.indent.tabFromEverywhere) then 1 else
-    2);
+  tabHandlingMode = indentSettings:
+    if (!indentSettings.undoByShiftTab && !indentSettings.tabFromEverywhere) then 0 else (
+      if (indentSettings.undoByShiftTab && indentSettings.tabFromEverywhere) then 1 else
+      2
+    );
 in
 {
   options.programs.kate.editor = {
@@ -80,7 +81,7 @@ in
     "KTextEditor Document" = {
       "Auto Detect Indent" = config.programs.kate.editor.indent.autodetect;
       "Indentation Width" = config.programs.kate.editor.indent.width;
-      "Tab Handling" = tabHandlingMode;
+      "Tab Handling" = (tabHandlingMode config.programs.kate.editor.indent);
       "Tab Width" = config.programs.kate.editor.tabWidth;
       "Keep Extra Spaces" = config.programs.kate.editor.indent.keepExtraSpaces;
       "ReplaceTabsDyn" = config.programs.kate.editor.indent.replaceWithSpaces;
