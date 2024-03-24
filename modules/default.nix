@@ -11,6 +11,7 @@
     ./kwin.nix
     ./startup.nix
     ./panels.nix
+    ./apps
   ];
 
   options.programs.plasma.enable = lib.mkEnableOption ''
