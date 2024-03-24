@@ -20,8 +20,13 @@ in
       Enable configuration management for kate.
     '';
 
-  # ==================================
-  #     INDENTATION
+    package = lib.mkPackageOption pkgs "kate" {
+      default = [ "kate" ];
+      example = "pkgs.libsForQt5.kate";
+    };
+
+    # ==================================
+    #     INDENTATION
     editor = {
       tabWidth = lib.mkOption {
         description = "The width of a single tab (''\t) sign (in number of spaces).";
@@ -84,10 +89,6 @@ in
       assertion = cfg.editor.indent.undoByShiftTab || (!cfg.editor.indent.tabFromEverywhere);
       message = "Kate does not support both 'undoByShiftTab' to be disabled and 'tabFromEverywhere' to be enabled at the same time.";
     }
-    {
-      assertion = (! cfg.enable) || (builtins.elem pkgs.libsForQt5.kate config.home.packages);
-      message = "Kate cannot be managed with plasma-manager if it is not installed. Either install kate or disable `config.programs.kate.enabled";
-    }
   ];
 
   config.programs.plasma.configFile."katerc" = lib.mkIf cfg.enable {
@@ -131,22 +132,27 @@ in
   };
 
   config.programs.kate.editor.theme = {
-    name = lib.mkIf (null != cfg.editor.theme.src) (lib.mkForce (builtins.fromJSON (builtins.readFile cfg.editor.theme.src))."metadata"."name");
+    name = lib.mkIf (cfg.enable && null != cfg.editor.theme.src) (lib.mkForce (builtins.fromJSON (builtins.readFile cfg.editor.theme.src))."metadata"."name");
     # kate's naming scheme is ${themename}.theme
     # which is why we use the same naming scheme here
   };
 
   # This won't override existing files since the home-manager activation fails in that case
-  config.xdg.dataFile."${cfg.editor.theme.name}.theme" = lib.mkIf (null != cfg.editor.theme.src)
+  config.xdg.dataFile."${cfg.editor.theme.name}.theme" = lib.mkIf (cfg.enable && null != cfg.editor.theme.src)
   {
     source = cfg.editor.theme.src;
     target = "org.kde.syntax-highlighting/themes/${cfg.editor.theme.name}.theme";
   };
 
   config = {
-    home.activation.checkKateTheme = lib.mkIf (cfg.enable && config.programs.kate.editor.theme.src != null) (lib.hm.dag.entryBefore [ "writeBoundary" ]
+    home.packages = lib.mkIf (cfg.enable && cfg.package != null) [ cfg.package ];
+
+    # In case of using a custom theme, check that there is no name collision
+    home.activation.checkKateTheme = lib.mkIf (cfg.enable && cfg.editor.theme.src != null) (lib.hm.dag.entryBefore [ "writeBoundary" ]
     ''
-      $DRY_RUN_CMD ${./check-theme-name-free.sh} ${cfg.editor.theme.name} ${pkgs.jq}/bin/jq
+      ${./check-theme-name-free.sh} ${cfg.editor.theme.name} ${pkgs.jq}/bin/jq
     '');
+
+    # In case of using a system theme, there should be a check that there exists such a theme
   };
 }
