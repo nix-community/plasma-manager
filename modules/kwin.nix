@@ -77,12 +77,12 @@ in
     programs.plasma.configFile."kwinrc"."org.kde.kdecoration2" = mkMerge [
       (
         mkIf (cfg.kwin.titlebarButtons.left != null) {
-          "ButtonsOnLeft" = strings.concatStrings (getShortNames cfg.kwin.titlebarButtons.left);
+          "ButtonsOnLeft".value = strings.concatStrings (getShortNames cfg.kwin.titlebarButtons.left);
         }
       )
       (
         mkIf (cfg.kwin.titlebarButtons.right != null) {
-          "ButtonsOnRight" = strings.concatStrings (getShortNames cfg.kwin.titlebarButtons.right);
+          "ButtonsOnRight".value = strings.concatStrings (getShortNames cfg.kwin.titlebarButtons.right);
         }
       )
     ];

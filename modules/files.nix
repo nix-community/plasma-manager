@@ -16,38 +16,40 @@ let
     (prependPath config.xdg.configHome plasmaCfg.configFile) //
     (prependPath config.xdg.dataHome plasmaCfg.dataFile);
 
-  # Flatten nested sections
-  flatten = config: builtins.listToAttrs (lib.flatten (lib.mapAttrsToList
-    (n: v:
-      let
-        keySet = lib.filterAttrs (n: v: !builtins.isAttrs v) v;
-        sectionSet = flatten (lib.filterAttrs (n: v: builtins.isAttrs v) v);
-      in
-      lib.optionals (keySet != { }) [{
-        name = n;
-        value = keySet;
-      }] ++ lib.mapAttrsToList
-        (group: v: {
-          name = "${n}][${group}";
-          value = v;
-        })
-        sectionSet)
-    config));
-
-  flatCfg = builtins.mapAttrs (file: flatten) cfg;
+  ##############################################################################
+  # Modify the settings to respect the different options in settingType.
+  isFinalValue = value: (builtins.hasAttr "value" value) && (!builtins.isAttrs value.value);
+  settingsModify =
+    (name: value: (if (!isFinalValue value) then
+      (lib.attrsets.nameValuePair name (lib.attrsets.mapAttrs' settingsModify value)) else
+    # If the value if set to be immutable, we need to add [$i] at the end of the
+    # key.
+      (lib.attrsets.nameValuePair "${name}${if value.immutable then ''[$i]'' else ''''}" value.value)));
 
   ##############################################################################
-  # A type for storing settings.
-  settingsFileType = with lib.types; let
-    valueType = attrsOf (nullOr (oneOf [ bool float int str valueType ])) //
-      { description = "Plasma settings"; };
-  in
-  attrsOf (attrsOf (valueType));
+  # Types for storing settings.
+  settingsValueType = (with lib.types;
+    nullOr (oneOf [ bool float int str ]));
+  settingType = (with lib.types; submodule {
+    options = {
+      value = lib.mkOption {
+        type = settingsValueType;
+        default = null;
+        description = "The value for some key.";
+      };
+      immutable = lib.mkOption {
+        type = bool;
+        default = false;
+        description = "Whether to make the key immutable.";
+      };
+    };
+  });
+  settingsFileType = with lib.types; attrsOf (attrsOf (attrsOf settingType));
 
   ##############################################################################
   # Generate a script that will use write_config.py to update all
   # settings.
-  script = pkgs.writeScript "plasma-config" (writeConfig flatCfg);
+  script = pkgs.writeScript "plasma-config" (writeConfig (lib.attrsets.mapAttrs' settingsModify cfg));
 
   ##############################################################################
   # Generate a script that will remove all the current config files.
@@ -166,7 +168,8 @@ in
     home.activation.configure-plasma = (lib.hm.dag.entryAfter [ "writeBoundary" ]
       ''
         $DRY_RUN_CMD ${if plasmaCfg.overrideConfig then (createResetScript plasmaCfg) else ""}
-        $DRY_RUN_CMD ${script}
+        $DRY_RUN_CMD ${script} 
       '');
   };
 }
+

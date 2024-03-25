@@ -143,9 +143,9 @@ module Rc2Nix
 
     ############################################################################
     def parse_group(line)
-      line.gsub(/\s*\[([^\]]+)\]\s*/) do |match|
-        $1 + "\".\""
-      end.sub(/\"."$/, '')
+      line.gsub("/", "\\\\\\/").gsub(/\s*\[([^\]]+)\]\s*/) do |match|
+        $1 + "/"
+      end.sub(/\/$/, '')
     end
   end
 
@@ -206,7 +206,7 @@ module Rc2Nix
             print(" " * indent)
             print("\"#{file}\".")
             print("\"#{group}\".")
-            print("\"#{key}\" = ")
+            print("\"#{key}\".value = ")
             print(nix_val(settings[file][group][key]))
             print(";\n")
           end
