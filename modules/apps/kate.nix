@@ -23,6 +23,7 @@ in
     package = lib.mkPackageOption pkgs "kate" {
       default = [ "kate" ];
       example = "pkgs.libsForQt5.kate";
+      extraDescription = "Which kate package to install. Use `pkgs.libsForQt5.kate` in Plasma5 and `pkgs.kdePackages.kate` in Plasma6. Use `null` if home-manager should not install kate (use this if you want to manage the settings of this user of a system-wide kate installation).";
     };
 
     # ==================================
