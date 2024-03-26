@@ -74,7 +74,7 @@ in
 
   config = mkIf cfg.enable {
     # Titlebar buttons
-    programs.plasma.configFile."kwinrc"."org\\.kde\\.kdecoration2" = mkMerge [
+    programs.plasma.configFile."kwinrc"."org.kde.kdecoration2" = mkMerge [
       (
         mkIf (cfg.kwin.titlebarButtons.left != null) {
           "ButtonsOnLeft" = strings.concatStrings (getShortNames cfg.kwin.titlebarButtons.left);

@@ -105,13 +105,8 @@ class KConfParser:
 def write_config_single(filepath: str, items: Dict):
     config = KConfParser(filepath)
 
-    for entry in items.values():
-        group = f"{']['.join(entry['configGroupNesting'])}"
-
+    for group, entry in items.items():
         for key, value in entry.items():
-            if key == "configGroupNesting":
-                continue
-
             # If the nix expression is null, resulting in the value None here,
             # we remove the key/option (and the group/section if it is empty
             # after removal).
