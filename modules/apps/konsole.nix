@@ -114,7 +114,7 @@ in
     };
   };
 
-  config = mkIf (config.programs.plasma.enable && cfg.enable) {
+  config = mkIf (cfg.enable) {
     programs.plasma.configFile."konsolerc" = mkMerge [
       (
         mkIf (cfg.defaultProfile != null ) {
