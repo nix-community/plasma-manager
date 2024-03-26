@@ -23,7 +23,12 @@ in
     package = lib.mkPackageOption pkgs "kate" {
       default = [ "kate" ];
       example = "pkgs.libsForQt5.kate";
-      extraDescription = "Which kate package to install. Use `pkgs.libsForQt5.kate` in Plasma5 and `pkgs.kdePackages.kate` in Plasma6. Use `null` if home-manager should not install kate (use this if you want to manage the settings of this user of a system-wide kate installation).";
+      extraDescription = ''
+        Which kate package to install. Use `pkgs.libsForQt5.kate` in Plasma5 and
+        `pkgs.kdePackages.kate` in Plasma6. Use `null` if home-manager should not install kate
+        (use this if you want to manage the settings of this user of a system-wide kate
+        installation).
+      '';
     };
 
     # ==================================
@@ -48,7 +53,9 @@ in
       };
 
       indent.autodetect = lib.mkOption {
-        description = "Whether kate should try to detect indentation for each given file and not impose default indentation settings.";
+        description = ''
+          Whether kate should try to detect indentation for each given file and not impose default indentation settings.
+        '';
         default = true;
         type = lib.types.bool;
       };
@@ -120,13 +127,22 @@ in
 
   options.programs.kate.editor.theme = {
     src = lib.mkOption {
-      description = "The path of a theme file for the KDE editor (not the window color scheme). Obtain a custom one by using the GUI settings in kate. If you want to use a system-wide editor color scheme set this path to null. If you set the metadata.name entry in the file to a value that matches the name of a system-wide color scheme undesired behaviour may occur. The activation will fail if a theme with the filename `<name of your theme>.theme` already exists.";
-      type = lib.types.nullOr lib.types.path;
+      description = ''
+        The path of a theme file for the KDE editor (not the window color scheme).
+        Obtain a custom one by using the GUI settings in kate. If you want to use a system-wide
+        editor color scheme set this path to null. If you set the metadata.name entry in the file
+        to a value that matches the name of a system-wide color scheme undesired behaviour may
+        occur. The activation will fail if a theme with the filename `<name of your theme>.theme`
+        already exists.'';
+        type = lib.types.nullOr lib.types.path;
       default = null;
     };
 
     name = lib.mkOption {
-      description = "The name of the theme in use. May be a system theme. If a theme file was submitted this setting will be set automatically.";
+      description = ''
+        The name of the theme in use. May be a system theme.
+        If a theme file was submitted this setting will be set automatically.
+      '';
       type = lib.types.str;
       default = "";
     };
