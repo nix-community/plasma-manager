@@ -80,6 +80,7 @@ let
     "dolphinrc"
     "ffmpegthumbsrc"
     "kactivitymanagerdrc"
+    "katerc"
     "kcminputrc"
     "kded5rc"
     "kdeglobals"
