@@ -10,7 +10,7 @@ let
         type = with types; nullOr str;
         default = null;
         description = ''
-          Name of the profile. Defaults to the attribute name
+          Name of the profile. Defaults to the attribute name.
         '';
       };
       colorScheme = mkOption {
@@ -27,7 +27,7 @@ let
         default = "/run/current-system/sw/bin/bash";
         example = "''${pkgs.zsh}/bin/zsh";
         description = ''
-          The command to run on new sessions
+          The command to run on new sessions.
         '';
       };
       font = {
@@ -43,7 +43,7 @@ let
           default = "Hack";
           example = "Hack";
           description = ''
-            Name of the font the profile should use
+            Name of the font the profile should use.
           '';
         };
         size = mkOption {
@@ -53,7 +53,7 @@ let
           example = 12;
           description = ''
             Size of the font.
-            Needs a font to be set due to konsole limitations
+            Needs a font to be set due to konsole limitations.
           '';
         };
       };
@@ -84,7 +84,7 @@ in
 {
   options.programs.konsole = {
     enable = mkEnableOption ''
-      Enable configuration management for Konsole
+      Enable configuration management for Konsole.
     '';
     
     defaultProfile = mkOption {
@@ -92,7 +92,7 @@ in
       default = null;
       example = "Catppuccin";
       description = ''
-        The name of the konsole profile file to use by default
+        The name of the konsole profile file to use by default.
         To see what options you have, just take a look at ~/.local/share/konsole/
       '';
     };
@@ -101,7 +101,7 @@ in
       type = with types; nullOr (attrsOf (submodule profilesSubmodule));
       default = {};
       description = ''
-        Plasma profiles to generate
+        Plasma profiles to generate.
       '';
     };
 
@@ -109,7 +109,7 @@ in
       type = with types; nullOr (attrsOf (submodule settingType));
       default = null;
       description = ''
-        Extra config to add to konsolerc
+        Extra config to add to konsolerc.
       '';
     };
   };
