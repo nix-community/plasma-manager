@@ -1,7 +1,4 @@
 { config, lib, ... }:
-
-with lib;
-
 let
   cfg = config.programs.plasma;
 
@@ -107,6 +104,11 @@ let
           plasma-workspace.
         '';
       };
+      screen = lib.mkOption {
+        type = lib.types.int;
+        default = 0;
+        description = "The screen the panel should appear on";
+      };
       extraSettings = lib.mkOption {
         type = lib.types.nullOr lib.types.str;
         default = null;
@@ -117,6 +119,10 @@ let
       };
     };
   };
+
+  # Checks if any panels have non-default screens. If any of them do we need
+  # some hacky tricks to place them on their screens.
+  anyNonDefaultScreens = panels: (builtins.any (panel: panel.screen != 0) panels);
 
   #
   # Functions to generate layout.js configurations from the widgetType
@@ -172,6 +178,7 @@ let
     ${if panel.maxLength != null then "panel.maximumLength = ${builtins.toString panel.maxLength}" else ""}
     ${if panel.minLength != null then "panel.minimumLength = ${builtins.toString panel.minLength}" else ""}
     ${if panel.offset != null then "panel.offset = ${builtins.toString panel.offset}" else ""}
+    ${if panel.screen == 0 then "" else "panel.writeConfig(\"lastScreen[$i]\", ${builtins.toString panel.screen})"}
     ${panelAddWidgetsStr panel}
     ${if panel.extraSettings != null then panel.extraSettings else ""}
   '';
@@ -186,7 +193,7 @@ in
     default = [ ];
   };
 
-  config = mkIf (cfg.enable && (lib.length cfg.panels) > 0) {
+  config = lib.mkIf (cfg.enable && (lib.length cfg.panels) > 0) {
     programs.plasma.startup.dataFile."layout.js" = ''
       // Removes all existing panels
       var allPanels = panels();
@@ -220,6 +227,9 @@ in
           # And finally apply the layout.js
           success=1
           qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$(cat $layout_file)" || success=0
+          ${if (anyNonDefaultScreens cfg.panels) then "sed -i 's/^lastScreen\\\\x5b\\$i\\\\x5d=/lastScreen[$i]=/' ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc" else ""}
+          ${if (anyNonDefaultScreens cfg.panels) then "# We sleep a second in order to prevent some bugs (like the incorrect height being set)\nsleep 1; nohup plasmashell --replace &" else ""}
+
           [ $success -eq 1 ] && echo "$last_update" > "$last_update_file"
         fi
       '';
