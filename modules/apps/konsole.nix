@@ -5,7 +5,6 @@ with lib;
 let
   cfg = config.programs.konsole;
   profilesSubmodule = {
-    # TODO: don't set null as the defaults, toINI doesn't like it
     options = {
       name = mkOption {
         type = with types; nullOr str;
@@ -16,7 +15,7 @@ let
       };
       colorScheme = mkOption {
         type = with types; nullOr str;
-        default = null;
+        default = "Breeze";
         example = "Catppuccin-Mocha";
         description = ''
           Color scheme the profile will use. You can check the files you can
@@ -25,7 +24,7 @@ let
       };
       command = mkOption {
         type = with types; nullOr str;
-        default = null;
+        default = "/run/current-system/sw/bin/bash";
         example = "''${pkgs.zsh}/bin/zsh";
         description = ''
           The command to run on new sessions
@@ -50,7 +49,7 @@ let
         size = mkOption {
           # The konsole ui gives you a limited range
           type = with types; nullOr (ints.between 4 128);
-          default = null;
+          default = 10;
           example = 12;
           description = ''
             Size of the font.
