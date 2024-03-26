@@ -18,13 +18,24 @@ let
 
   ##############################################################################
   # Modify the settings to respect the different options in settingType.
+  # Checks if "value" represents the final value.
   isFinalValue = value: (builtins.hasAttr "value" value) && (!builtins.isAttrs value.value);
+  # Calculates the "marking" we should add to the keys, which for example may be
+  # [$i] if we want immutability, or [$e] if we want to expand variables. See
+  # https://api.kde.org/frameworks/kconfig/html/options.html for some options.
+  calculateKeyMarking = value:
+    if !(value.immutable || value.shellExpand) then "" else
+    (
+      if (value.immutable && value.shellExpand) then "[$ei]" else
+      (
+        # Here we know that exactly one of immutable or shellExpand is enabled.
+        if value.immutable then "[$i]" else "[$e]"
+      )
+    );
   settingsModify =
     (name: value: (if (!isFinalValue value) then
       (lib.attrsets.nameValuePair name (lib.attrsets.mapAttrs' settingsModify value)) else
-    # If the value if set to be immutable, we need to add [$i] at the end of the
-    # key.
-      (lib.attrsets.nameValuePair "${name}${if value.immutable then ''[$i]'' else ''''}" value.value)));
+      (lib.attrsets.nameValuePair "${name}${calculateKeyMarking value}" value.value)));
 
   ##############################################################################
   # Types for storing settings.
@@ -40,7 +51,18 @@ let
       immutable = lib.mkOption {
         type = bool;
         default = false;
-        description = "Whether to make the key immutable.";
+        description = ''
+          Whether to make the key immutable. This corresponds to adding [$i] to
+          the end of the key.
+        '';
+      };
+      shellExpand = lib.mkOption {
+        type = bool;
+        default = false;
+        description = ''
+          Whether to mark the key for shell expansion. This corresponds to
+          adding [$e] to the end of the key.
+        '';
       };
     };
   });
