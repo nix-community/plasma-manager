@@ -1,6 +1,6 @@
 # Manage KDE Plasma with Home Manager
 
-This project aims to provide [Home Manger][home-manager] modules which allow you
+This project aims to provide [Home Manager][home-manager] modules which allow you
 to configure KDE Plasma using Nix.
 
 Configuration is broken down into three layers:
@@ -10,8 +10,19 @@ Configuration is broken down into three layers:
      ```nix
      {
        programs.plasma = {
-         workspace.clickItemTo = "select";
+         workspace = {
+           clickItemTo = "select";
+           tooltipDelay = 5;
+           theme = "breeze-dark";
+           colorScheme = "BreezeDark";
+           wallpaper = "${pkgs.libsForQt5.plasma-workspace-wallpapers}/share/wallpapers/Kay/contents/images/1080x1920.png";
+         };
 
+         kwin.titlebarButtons = {
+          left = [ "on-all-desktops" "keep-above-windows" ];
+          right = [ "help" "minimize" "maximize" "close" ]
+        };
+         
          spectacle.shortcuts = {
            captureActiveWindow = "Meta+Print";
            captureCurrentMonitor = "Print";
@@ -54,16 +65,18 @@ Configuration is broken down into three layers:
      ```nix
      {
        programs.plasma = {
-         configFile."baloofilerc"."Basic Settings"."Indexing-Enabled" = false;
+         configFile."baloofilerc"."Basic Settings"."Indexing-Enabled".value = false;
        };
      }
      ```
 
      The other two layers ultimately generate Nix configuration for
      this low-level layer.  Configuration at this level is essentially
-     in the final state before being sent to the `kwriteconfig5` tool.
+     in the final state before being sent to our custom
+     configuration-writing script (which is very similar to
+     `kwriteconfig5`).
 
-An example is available in the `example` directory.
+For some examples see the [example](./example/) directory.
 
 ## Capturing Your Current Configuration
 

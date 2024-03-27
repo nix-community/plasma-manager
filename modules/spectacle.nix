@@ -67,9 +67,36 @@ in
         The shortcut for launching Spectacle without capturing.
       '';
     };
+
+    recordRegion = lib.mkOption {
+      type = with lib.types; nullOr (oneOf [ (listOf str) str ]);
+      default = null;
+      example = "Meta+Shift+R";
+      description = ''
+        The shortcut for recording a region on the screen.
+      '';
+    };
+
+    recordScreen = lib.mkOption {
+      type = with lib.types; nullOr (oneOf [ (listOf str) str ]);
+      default = null;
+      example = "Meta+Alt+R";
+      description = ''
+        The shortcut for selecting a screen to record.
+      '';
+    };
+
+    recordWindow = lib.mkOption {
+      type = with lib.types; nullOr (oneOf [ (listOf str) str ]);
+      default = null;
+      example = "Meta+Ctrl+R";
+      description = ''
+        The shortcut for selecting a window to record.
+      '';
+    };
   };
 
-  config = lib.mkIf (cfg.enable) {
+  config = lib.mkIf cfg.enable {
     programs.plasma.shortcuts."org.kde.spectacle.desktop" = lib.mkMerge [
       (
         lib.mkIf (cfg.spectacle.shortcuts.captureActiveWindow != null) {
@@ -104,6 +131,21 @@ in
       (
         lib.mkIf (cfg.spectacle.shortcuts.launchWithoutCapturing != null) {
           OpenWithoutScreenshot = cfg.spectacle.shortcuts.launchWithoutCapturing;
+        }
+      )
+      (
+        lib.mkIf (cfg.spectacle.shortcuts.recordRegion != null) {
+          RecordRegion = cfg.spectacle.shortcuts.recordRegion;
+        }
+      )
+      (
+        lib.mkIf (cfg.spectacle.shortcuts.recordScreen != null) {
+          RecordScreen = cfg.spectacle.shortcuts.recordScreen;
+        }
+      )
+      (
+        lib.mkIf (cfg.spectacle.shortcuts.recordWindow != null) {
+          RecordWindow = cfg.spectacle.shortcuts.recordWindow;
         }
       )
     ];
