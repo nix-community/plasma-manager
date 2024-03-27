@@ -13,6 +13,19 @@ let
       if (indentSettings.undoByShiftTab && indentSettings.tabFromEverywhere) then 1 else
       2
     );
+
+    checkThemeNameScript = pkgs.writeShellApplication {
+      name = "checkThemeName";
+      runtimeInputs = with pkgs; [ jq ];
+      text = builtins.readFile ./check-theme-name-free.sh;
+    };
+
+    checkThemeName = name:
+    ''
+      ${checkThemeNameScript}/bin/checkThemeName ${name}
+    '';
+
+    script = pkgs.writeScript "kate-check" (checkThemeName cfg.editor.theme.name);
 in
 {
   options.programs.kate = {
@@ -167,9 +180,13 @@ in
     # In case of using a custom theme, check that there is no name collision
     home.activation.checkKateTheme = lib.mkIf (cfg.enable && cfg.editor.theme.src != null) (lib.hm.dag.entryBefore [ "writeBoundary" ]
     ''
-      ${./check-theme-name-free.sh} ${cfg.editor.theme.name} ${pkgs.jq}/bin/jq
+      $DRY_RUN_CMD ${script}
     '');
+#       ${./check-theme-name-free.sh} ${cfg.editor.theme.name} ${pkgs.jq}/bin/jq
 
     # In case of using a system theme, there should be a check that there exists such a theme
+    # but I could not figure out where to find them
+    # That's why there is no check for now
+    # See also [the original PR](https://github.com/pjones/plasma-manager/pull/95#issue-2206192839)
   };
 }
