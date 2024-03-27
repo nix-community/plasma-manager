@@ -2,8 +2,8 @@
 { config, lib, pkgs, ... }:
 
 let
-  inherit (import ../lib/writeconfig.nix { inherit lib pkgs; })
-    writeConfig;
+  inherit (import ../lib/writeconfig.nix { inherit lib pkgs; }) writeConfig;
+  inherit (import ../lib/types.nix { inherit lib; }) advancedSettingsType;
 
   # Helper function to prepend the appropriate path prefix (e.g. XDG_CONFIG_HOME) to file
   prependPath = prefix: attrset:
@@ -17,7 +17,7 @@ let
     (prependPath config.xdg.dataHome plasmaCfg.dataFile);
 
   ##############################################################################
-  # Modify the settings to respect the different options in settingType.
+  # Modify the settings to respect the different options in advancedSettingsType.
   # Checks if "value" represents the final value.
   isFinalValue = value: (builtins.hasAttr "value" value) && (!builtins.isAttrs value.value);
   # Calculates the "marking" we should add to the keys, which for example may be
@@ -32,46 +32,18 @@ let
         if value.immutable then "[$i]" else "[$e]"
       )
     );
-  settingsModify =
+  fileSettingsModify =
     (name: value: (if (!isFinalValue value) then
-      (lib.attrsets.nameValuePair name (lib.attrsets.mapAttrs' settingsModify value)) else
+      (lib.attrsets.nameValuePair name (lib.attrsets.mapAttrs' fileSettingsModify value)) else
       (lib.attrsets.nameValuePair "${name}${calculateKeyMarking value}" value.value)));
 
-  ##############################################################################
-  # Types for storing settings.
-  settingsValueType = (with lib.types;
-    nullOr (oneOf [ bool float int str ]));
-  settingType = (with lib.types; submodule {
-    options = {
-      value = lib.mkOption {
-        type = settingsValueType;
-        default = null;
-        description = "The value for some key.";
-      };
-      immutable = lib.mkOption {
-        type = bool;
-        default = false;
-        description = ''
-          Whether to make the key immutable. This corresponds to adding [$i] to
-          the end of the key.
-        '';
-      };
-      shellExpand = lib.mkOption {
-        type = bool;
-        default = false;
-        description = ''
-          Whether to mark the key for shell expansion. This corresponds to
-          adding [$e] to the end of the key.
-        '';
-      };
-    };
-  });
-  settingsFileType = with lib.types; attrsOf (attrsOf (attrsOf settingType));
+
+  fileSettingsType = with lib.types; attrsOf (attrsOf (attrsOf advancedSettingsType));
 
   ##############################################################################
   # Generate a script that will use write_config.py to update all
   # settings.
-  script = pkgs.writeScript "plasma-config" (writeConfig (lib.attrsets.mapAttrs' settingsModify cfg));
+  script = pkgs.writeScript "plasma-config" (writeConfig (lib.attrsets.mapAttrs' fileSettingsModify cfg));
 
   ##############################################################################
   # Generate a script that will remove all the current config files.
@@ -130,7 +102,7 @@ in
 {
   options.programs.plasma = {
     file = lib.mkOption {
-      type = settingsFileType;
+      type = fileSettingsType;
       default = { };
       description = ''
         An attribute set where the keys are file names (relative to
@@ -139,7 +111,7 @@ in
       '';
     };
     configFile = lib.mkOption {
-      type = settingsFileType;
+      type = fileSettingsType;
       default = { };
       description = ''
         An attribute set where the keys are file names (relative to
@@ -148,7 +120,7 @@ in
       '';
     };
     dataFile = lib.mkOption {
-      type = settingsFileType;
+      type = fileSettingsType;
       default = { };
       description = ''
         An attribute set where the keys are file names (relative to

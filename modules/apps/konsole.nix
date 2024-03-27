@@ -1,38 +1,37 @@
-{ config, lib, ... }:
-
-with lib;
-
+{ config, lib, pkgs, ... }:
 let
+  inherit (import ../../lib/types.nix { inherit lib; }) basicSettingsType;
+
   cfg = config.programs.konsole;
   profilesSubmodule = {
     options = {
-      name = mkOption {
-        type = with types; nullOr str;
+      name = lib.mkOption {
+        type = with lib.types; nullOr str;
         default = null;
         description = ''
           Name of the profile. Defaults to the attribute name.
         '';
       };
-      colorScheme = mkOption {
-        type = with types; nullOr str;
-        default = "Breeze";
+      colorScheme = lib.mkOption {
+        type = with lib.types; nullOr str;
+        default = null;
         example = "Catppuccin-Mocha";
         description = ''
           Color scheme the profile will use. You can check the files you can
           use in ~/.local/share/konsole or /run/current-system/share/konsole
         '';
       };
-      command = mkOption {
-        type = with types; nullOr str;
-        default = "/run/current-system/sw/bin/bash";
+      command = lib.mkOption {
+        type = with lib.types; nullOr str;
+        default = null;
         example = "''${pkgs.zsh}/bin/zsh";
         description = ''
           The command to run on new sessions.
         '';
       };
       font = {
-        name = mkOption {
-          type = with types; nullOr str;
+        name = lib.mkOption {
+          type = lib.types.str;
           /*
           TODO: Set default to null after adding an assertion
           Konsole needs to have a font set to be able to change font size
@@ -46,9 +45,9 @@ let
             Name of the font the profile should use.
           '';
         };
-        size = mkOption {
+        size = lib.mkOption {
           # The konsole ui gives you a limited range
-          type = with types; nullOr (ints.between 4 128);
+          type = (lib.types.ints.between 4 128);
           default = 10;
           example = 12;
           description = ''
@@ -59,36 +58,16 @@ let
       };
     };
   };
-
-  # A module for storing settings.
-  settingType = { name, ... }: {
-    freeformType = with lib.types;
-      attrsOf (nullOr (oneOf [ bool float int str ]));
-
-    options = {
-      configGroupNesting = lib.mkOption {
-        type = lib.types.nonEmptyListOf lib.types.str;
-        # We allow escaping periods using \\.
-        default = (map
-          (e: builtins.replaceStrings [ "\\u002E" ] [ "." ] e)
-          (lib.splitString "."
-            (builtins.replaceStrings [ "\\." ] [ "\\u002E" ] name)
-          )
-        );
-        description = "Group name, and sub-group names.";
-      };
-    };
-  };
 in
 
 {
   options.programs.konsole = {
-    enable = mkEnableOption ''
+    enable = lib.mkEnableOption ''
       Enable configuration management for Konsole.
     '';
-    
-    defaultProfile = mkOption {
-      type = with types; nullOr str;
+
+    defaultProfile = lib.mkOption {
+      type = with lib.types; nullOr str;
       default = null;
       example = "Catppuccin";
       description = ''
@@ -97,16 +76,16 @@ in
       '';
     };
 
-    profiles = mkOption {
-      type = with types; nullOr (attrsOf (submodule profilesSubmodule));
-      default = {};
+    profiles = lib.mkOption {
+      type = with lib.types; nullOr (attrsOf (submodule profilesSubmodule));
+      default = { };
       description = ''
         Plasma profiles to generate.
       '';
     };
 
-    extraConfig = mkOption {
-      type = with types; nullOr (attrsOf (submodule settingType));
+    extraConfig = lib.mkOption {
+      type = with lib.types; nullOr (attrsOf (attrsOf (basicSettingsType)));
       default = null;
       description = ''
         Extra config to add to konsolerc.
@@ -114,49 +93,59 @@ in
     };
   };
 
-  config = mkIf (cfg.enable) {
-    programs.plasma.configFile."konsolerc" = mkMerge [
+  config = lib.mkIf (cfg.enable) {
+    programs.plasma.configFile."konsolerc" = lib.mkMerge [
       (
-        mkIf (cfg.defaultProfile != null ) {
-          "Desktop Entry"."DefaultProfile" = cfg.defaultProfile;
+        lib.mkIf (cfg.defaultProfile != null) {
+          "Desktop Entry"."DefaultProfile".value = cfg.defaultProfile;
         }
       )
       (
-        mkIf (cfg.extraConfig != null) cfg.extraConfig
+        lib.mkIf (cfg.extraConfig != null) (lib.mapAttrs
+          (groupName: groupAttrs:
+            (lib.mapAttrs (keyName: keyAttrs: { value = keyAttrs; }) groupAttrs))
+          cfg.extraConfig)
       )
     ];
 
-    xdg.dataFile = mkIf (cfg.profiles != {}) (
-      mkMerge ([
-        (
-          mkMerge (
-            mapAttrsToList (
-              attrName: profile:
-              let
-                # Use the name from the name option if it's set
-                profileName = if builtins.isString profile.name then profile.name  else attrName;
-                fontString = mkIf (profile.font.name != null) "${profile.font.name},${builtins.toString profile.font.size}";
-              in
-              {
-                "konsole/${profileName}.profile".text = lib.generators.toINI {} {
-                  "General" = {
-                    "Command" = (mkIf (profile.command != null) profile.command).content;
-                    "Name" = profileName;
-                    # Konsole generated profiles seem to allways have this
-                    "Parent" = "FALLBACK/";
-                  };
-                  "Appearance" = {
-                    "ColorScheme" = (mkIf (profile.colorScheme != null) profile.colorScheme).content;
-                    # If the font size is not set we leave a comma a the end after the name
-                    # We should fix this probs but konsole doesn't seem to care ¯\_(ツ)_/¯
-                    "Font" = fontString.content;
-                  };
-                };
-              }
-            ) cfg.profiles
+    xdg.dataFile = lib.mkIf (cfg.profiles != { })
+      (
+        lib.mkMerge ([
+          (
+            lib.mkMerge (
+              lib.mapAttrsToList
+                (
+                  attrName: profile:
+                    let
+                      # Use the name from the name option if it's set
+                      profileName = if builtins.isString profile.name then profile.name else attrName;
+                      fontString = lib.mkIf (profile.font.name != null) "${profile.font.name},${builtins.toString profile.font.size}";
+                    in
+                    {
+                      "konsole/${profileName}.profile".text = lib.generators.toINI { } {
+                        "General" = (
+                          {
+                            "Name" = profileName;
+                            # Konsole generated profiles seem to always have this
+                            "Parent" = "FALLBACK/";
+                          } //
+                          (lib.optionalAttrs (profile.command != null) { "Command" = profile.command; })
+                        );
+                        "Appearance" = (
+                          {
+                            # If the font size is not set we leave a comma a the end after the name
+                            # We should fix this probs but konsole doesn't seem to care ¯\_(ツ)_/¯
+                            "Font" = fontString.content;
+                          } //
+                          (lib.optionalAttrs (profile.colorScheme != null) { "ColorScheme" = profile.colorScheme; })
+                        );
+                      };
+                    }
+                )
+                cfg.profiles
+            )
           )
-        )
-      ])
-    );
+        ])
+      );
   };
 }
