@@ -64,8 +64,13 @@
     # Some low-level settings:
     #
     configFile = {
-      "baloofilerc"."Basic Settings"."Indexing-Enabled" = false;
-      "kwinrc"."org.kde.kdecoration2"."ButtonsOnLeft" = "SF";
+      "baloofilerc"."Basic Settings"."Indexing-Enabled".value = false;
+      "kwinrc"."org.kde.kdecoration2"."ButtonsOnLeft".value = "SF";
+      "kwinrc"."Desktops"."Number" = {
+        value = 8;
+        # Forces kde to not change this value (even through the settings app).
+        immutable = true;
+      };
     };
   };
 }

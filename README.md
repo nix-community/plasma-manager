@@ -65,7 +65,7 @@ Configuration is broken down into three layers:
      ```nix
      {
        programs.plasma = {
-         configFile."baloofilerc"."Basic Settings"."Indexing-Enabled" = false;
+         configFile."baloofilerc"."Basic Settings"."Indexing-Enabled".value = false;
        };
      }
      ```
@@ -76,7 +76,7 @@ Configuration is broken down into three layers:
      configuration-writing script (which is very similar to
      `kwriteconfig5`).
 
-An example is available in the `example` directory.
+For some examples see the [example](./example/) directory.
 
 ## Capturing Your Current Configuration
 

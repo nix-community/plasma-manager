@@ -106,6 +106,11 @@ def write_config_single(filepath: str, items: Dict):
     config = KConfParser(filepath)
 
     for group, entry in items.items():
+        # The nix expressions will have / to separate groups. We replace this by
+        # ][ which is needed for the kde config files. If the / is escaped, it
+        # will simply be replaced by a normal /.
+        group = re.sub(r"(?<!\\)/", "][", group)
+        group = group.replace("\\/", "/")
         for key, value in entry.items():
             # If the nix expression is null, resulting in the value None here,
             # we remove the key/option (and the group/section if it is empty

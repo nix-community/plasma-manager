@@ -81,12 +81,12 @@ in
   config = lib.mkMerge [
     (lib.mkIf cfg.enable {
       programs.plasma.configFile.kdeglobals = {
-        KDE.SingleClick = lib.mkDefault (cfg.workspace.clickItemTo == "open");
+        KDE.SingleClick.value = lib.mkDefault (cfg.workspace.clickItemTo == "open");
       };
     })
     (lib.mkIf (cfg.enable && cfg.workspace.tooltipDelay > 0) {
       programs.plasma.configFile.plasmarc = {
-        PlasmaToolTips.Delay = cfg.workspace.tooltipDelay;
+        PlasmaToolTips.Delay.value = cfg.workspace.tooltipDelay;
       };
     })
     (lib.mkIf
