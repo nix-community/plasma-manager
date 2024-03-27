@@ -2,6 +2,7 @@
 
 {
   imports = [
-	./kate.nix
+    ./konsole.nix
+    ./kate.nix
   ];
 }
