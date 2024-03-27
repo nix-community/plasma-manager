@@ -32,7 +32,6 @@ let
         if value.immutable then "[$i]" else "[$e]"
       )
     );
-
   fileSettingsModify =
     (name: value: (if (!isFinalValue value) then
       (lib.attrsets.nameValuePair name (lib.attrsets.mapAttrs' fileSettingsModify value)) else
