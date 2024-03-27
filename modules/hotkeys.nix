@@ -6,7 +6,7 @@ let
   group = rec {
     name = "plasma-manager-commands";
     desktop = "${name}.desktop";
-    description = "Home (Plasma) Manager";
+    description = "Plasma Manager";
   };
 
   commandType = { name, ... }: {
@@ -50,7 +50,7 @@ let
         type = lib.types.str;
         default = lib.trivial.pipe name [
           lib.strings.toLower
-          (builtins.replaceStrings [" "] ["-"])
+          (builtins.replaceStrings [ " " ] [ "-" ])
           (n: "${group.name}-${n}")
         ];
         description = "Identifier passed down to systemd-cat.";
@@ -92,18 +92,19 @@ in
       };
 
       programs.plasma.configFile."kglobalshortcutsrc"."${group.desktop}" = {
-        configGroupNesting = [ group.desktop ];
-        _k_friendly_name = group.description;
+        _k_friendly_name.value = group.description;
       } // lib.attrsets.mapAttrs
         (_: command:
           let
             keys = command.keys ++ lib.optionals (command.key != "") [ command.key ];
           in
-          lib.concatStringsSep "," [
-            (lib.concatStringsSep "\t" (map (lib.escape [ "," ]) keys))
-            "" # List of default keys, not needed.
-            command.comment
-          ])
+          {
+            value = lib.concatStringsSep "," [
+              (lib.concatStringsSep "\t" (map (lib.escape [ "," ]) keys))
+              "" # List of default keys, not needed.
+              command.comment
+            ];
+          })
         cfg.hotkeys.commands;
     };
 }
