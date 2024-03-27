@@ -14,7 +14,8 @@
       wallpaper = "${pkgs.libsForQt5.plasma-workspace-wallpapers}/share/wallpapers/Patak/contents/images/1080x1920.png";
     };
 
-    hotkeys.commands."Launch Konsole" = {
+    hotkeys.commands."launch-konsole" = {
+      name = "Launch Konsole";
       key = "Meta+Alt+K";
       command = "konsole";
     };
