@@ -7,7 +7,7 @@ let
 
   # Helper function to prepend the appropriate path prefix (e.g. XDG_CONFIG_HOME) to file
   prependPath = prefix: attrset:
-    lib.attrsets.mapAttrs'
+    lib.mapAttrs'
       (path: config: { name = "${prefix}/${path}"; value = config; })
       attrset;
   plasmaCfg = config.programs.plasma;
@@ -34,8 +34,8 @@ let
     );
   fileSettingsModify =
     (name: value: (if (!isFinalValue value) then
-      (lib.attrsets.nameValuePair name (lib.attrsets.mapAttrs' fileSettingsModify value)) else
-      (lib.attrsets.nameValuePair "${name}${calculateKeyMarking value}" value.value)));
+      (lib.nameValuePair name (lib.mapAttrs' fileSettingsModify value)) else
+      (lib.nameValuePair "${name}${calculateKeyMarking value}" value.value)));
 
 
   fileSettingsType = with lib.types; attrsOf (attrsOf (attrsOf advancedSettingsType));
@@ -43,7 +43,7 @@ let
   ##############################################################################
   # Generate a script that will use write_config.py to update all
   # settings.
-  script = pkgs.writeScript "plasma-config" (writeConfig (lib.attrsets.mapAttrs' fileSettingsModify cfg));
+  script = pkgs.writeScript "plasma-config" (writeConfig (lib.mapAttrs' fileSettingsModify cfg));
 
   ##############################################################################
   # Generate a script that will remove all the current config files.
