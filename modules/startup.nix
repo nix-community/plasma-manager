@@ -29,7 +29,7 @@ in
     dataFile = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
       default = { };
-      description = "Datafiles, typically for use from autstart scripts.";
+      description = "Datafiles, typically for use in autostart scripts.";
     };
     scriptsDir = lib.mkOption {
       type = lib.types.str;
@@ -44,7 +44,7 @@ in
   };
 
   config = lib.mkIf
-    (cfg.enable && builtins.length (builtins.attrNames cfg.startup) != 0)
+    (cfg.enable && builtins.length (builtins.attrNames cfg.startup.autoStartScript) != 0)
     {
       xdg.dataFile = lib.mkMerge [
         # Autostart scripts
