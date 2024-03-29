@@ -14,18 +14,18 @@ let
       2
     );
 
-    checkThemeNameScript = pkgs.writeShellApplication {
-      name = "checkThemeName";
-      runtimeInputs = with pkgs; [ jq ];
-      text = builtins.readFile ./check-theme-name-free.sh;
-    };
+  checkThemeNameScript = pkgs.writeShellApplication {
+    name = "checkThemeName";
+    runtimeInputs = with pkgs; [ jq ];
+    text = builtins.readFile ./check-theme-name-free.sh;
+  };
 
-    checkThemeName = name:
+  checkThemeName = name:
     ''
       ${checkThemeNameScript}/bin/checkThemeName ${name}
     '';
 
-    script = pkgs.writeScript "kate-check" (checkThemeName cfg.editor.theme.name);
+  script = pkgs.writeScript "kate-check" (checkThemeName cfg.editor.theme.name);
 in
 {
   options.programs.kate = {
@@ -147,7 +147,7 @@ in
         to a value that matches the name of a system-wide color scheme undesired behaviour may
         occur. The activation will fail if a theme with the filename `<name of your theme>.theme`
         already exists.'';
-        type = lib.types.nullOr lib.types.path;
+      type = lib.types.nullOr lib.types.path;
       default = null;
     };
 
@@ -162,27 +162,27 @@ in
   };
 
   config.programs.kate.editor.theme = {
-    name = lib.mkIf (cfg.enable && null != cfg.editor.theme.src) (lib.mkForce (builtins.fromJSON (builtins.readFile cfg.editor.theme.src))."metadata"."name");
     # kate's naming scheme is ${themename}.theme
     # which is why we use the same naming scheme here
+    name = lib.mkIf (cfg.enable && null != cfg.editor.theme.src) (lib.mkForce (builtins.fromJSON (builtins.readFile cfg.editor.theme.src))."metadata"."name");
   };
 
   # This won't override existing files since the home-manager activation fails in that case
   config.xdg.dataFile."${cfg.editor.theme.name}.theme" = lib.mkIf (cfg.enable && null != cfg.editor.theme.src)
-  {
-    source = cfg.editor.theme.src;
-    target = "org.kde.syntax-highlighting/themes/${cfg.editor.theme.name}.theme";
-  };
+    {
+      source = cfg.editor.theme.src;
+      target = "org.kde.syntax-highlighting/themes/${cfg.editor.theme.name}.theme";
+    };
 
   config = {
     home.packages = lib.mkIf (cfg.enable && cfg.package != null) [ cfg.package ];
 
     # In case of using a custom theme, check that there is no name collision
     home.activation.checkKateTheme = lib.mkIf (cfg.enable && cfg.editor.theme.src != null) (lib.hm.dag.entryBefore [ "writeBoundary" ]
-    ''
-      $DRY_RUN_CMD ${script}
-    '');
-#       ${./check-theme-name-free.sh} ${cfg.editor.theme.name} ${pkgs.jq}/bin/jq
+      # No `$DRY_RUN_CMD`, since even a dryrun should fail if checks fail
+      ''
+        ${script}
+      '');
 
     # In case of using a system theme, there should be a check that there exists such a theme
     # but I could not figure out where to find them

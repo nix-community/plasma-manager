@@ -3,6 +3,6 @@
 {
   imports = [
     ./konsole.nix
-	./kate
+    ./kate
   ];
 }
