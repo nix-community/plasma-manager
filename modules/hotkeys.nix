@@ -93,7 +93,7 @@ in
 
       programs.plasma.configFile."kglobalshortcutsrc"."${group.desktop}" = {
         _k_friendly_name.value = group.description;
-      } // lib.attrsets.mapAttrs
+      } // lib.mapAttrs
         (_: command:
           let
             keys = command.keys ++ lib.optionals (command.key != "") [ command.key ];
