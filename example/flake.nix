@@ -12,34 +12,26 @@
     plasma-manager.inputs.home-manager.follows = "home-manager";
   };
 
-  outputs = inputs:
-    let
-      system = "x86_64-linux";
-      username = "jdoe";
-    in
-    {
-      # Standalone Home Manager Setup:
-      homeConfigurations.${username} =
-        inputs.home-manager.lib.homeManagerConfiguration {
-          # Ensure Plasma Manager is available:
-          extraModules = [
-            inputs.plasma-manager.homeManagerModules.plasma-manager
-          ];
+  outputs = inputs@ { nixpkgs, home-manager, plasma-manager, ... }: {
+    nixosConfigurations = {
+      # Replace jdoeSystem with the name of you configuration
+      jdoeSystem = nixpkgs.lib.nixosSystem {
+        # Replace with the fitting architecture
+        system = "x86_64-linux";
+        modules = [
+          # Here you typically also would have your configuration.nix
 
-          # Specify the path to your home configuration here:
-          configuration = import ./home.nix;
-
-          inherit system username;
-          homeDirectory = "/home/${username}";
-        };
-
-      # A shell where Home Manager can be used:
-      devShells.${system}.default =
-        let pkgs = import inputs.nixpkgs { inherit system; }; in
-        pkgs.mkShell {
-          buildInputs = [
-            inputs.home-manager.packages.${system}.home-manager
-          ];
-        };
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.sharedModules = [ plasma-manager.homeManagerModules.plasma-manager ];
+            # This should point to your home.nix path of course. For an example
+            # of this see ./home.nix in this directory.
+            home-manager.users.jdoe = import ./home.nix;
+          }
+        ];
+      };
     };
+  };
 }
