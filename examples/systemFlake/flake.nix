@@ -32,6 +32,7 @@
           # your own configuration or import your configuration.nix. The demo
           # here is just the bare minimum to get the flake to not fail.
           {
+            system.stateVersion = "23.11";
             users.users."${username}".isNormalUser = true;
             fileSystems."/".device = "/dev/sda";
             boot.loader.grub.devices = [ "/dev/sda" ];
