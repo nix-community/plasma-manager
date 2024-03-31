@@ -1,5 +1,5 @@
 {
-  description = "Plasma Manager Example";
+  description = "Plasma Manager Example with standalone home-manager flake";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
@@ -33,34 +33,13 @@
           inputs.plasma-manager.homeManagerModules.plasma-manager
 
           # Specify the path to your home configuration here:
-          ./home.nix
+          ../home.nix
 
           {
             home = {
               inherit username;
               homeDirectory = "/home/${username}";
             };
-          }
-        ];
-      };
-
-      # Replace `moduleConfig` with the name of you configuration (your `username` or `"username@hostname"`)
-      nixosConfigurations.moduleConfig = nixpkgs.lib.nixosSystem {
-        inherit system;
-
-        modules = [
-          # Here you typically also would have your configuration.nix
-
-          home-manager.nixosModules.home-manager
-
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.sharedModules = [ plasma-manager.homeManagerModules.plasma-manager ];
-
-            # This should point to your home.nix path of course. For an example
-            # of this see ./home.nix in this directory.
-            home-manager.users.jdoe = import ./home.nix;
           }
         ];
       };

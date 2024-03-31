@@ -28,11 +28,23 @@
         location = "bottom";
         widgets = [
           "org.kde.plasma.kickoff"
-          "org.kde.plasma.icontasks"
+          # We can also configure the widgets. For example if you want to pin
+          # konsole and dolphin to the task-launcher the following widget will
+          # have that.
+          {
+            name = "org.kde.plasma.icontasks";
+            config = {
+              General.launchers = [
+                "applications:org.kde.dolphin.desktop"
+                "applications:org.kde.konsole.desktop"
+              ];
+            };
+          }
           "org.kde.plasma.marginsseperator"
           "org.kde.plasma.systemtray"
           "org.kde.plasma.digitalclock"
         ];
+        hiding = "autohide";
       }
       # Global menu at the top
       {

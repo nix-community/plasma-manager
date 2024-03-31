@@ -41,8 +41,9 @@ limitations don't hesitate to open an issue or submit a pr.
 ## Getting started
 We provide some examples to help you get started. These are located in the
 [example](./example/) directory. Here you in particular can find:
-- [An example flake.nix](./example/flake.nix)
-- [An example home.nix](./example/home.nix)
+- [An example home-manager flake.nix](./examples/homeManagerFlake//flake.nix)
+- [An example system flake.nix](./examples/systemFlake/flake.nix)
+- [An example home.nix](./examples/home.nix)
 
 With more to come! These should give you some idea how to get started with
 `plasma-manager`.
