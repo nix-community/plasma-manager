@@ -6,9 +6,9 @@ to configure KDE Plasma using Nix.
 ## Table of contents
 - [What's supported](#whats-supported)
 - [What's not supported](#whats-not-well-supported-at-the-moment)
+- [Getting started](#getting-started)
 - [Enabling declarative configuration](#make-your-configuration-more-declarative-with-overrideconfig)
 - [Capturing existing configuration](#capturing-your-current-configuration-with-rc2nix)
-- [Getting started](#getting-started)
 - [Contributions and maintenance](#contributions-and-maintenance)
 - [Special thanks](#special-thanks)
 
@@ -37,6 +37,15 @@ particular:
 
 There may also be more things we aren't aware of. If you find some other
 limitations don't hesitate to open an issue or submit a pr.
+
+## Getting started
+We provide some examples to help you get started. These are located in the
+[example](./example/) directory. Here you in particular can find:
+- [An example flake.nix](./example/flake.nix)
+- [An example home.nix](./example/home.nix)
+
+With more to come! These should give you some idea how to get started with
+`plasma-manager`.
 
 ## Make your configuration more declarative with overrideConfig
 By default `plasma-manager` will simply write the specified configurations to
@@ -79,15 +88,6 @@ the following shell command:
 ```sh
 nix run github:pjones/plasma-manager
 ```
-
-## Getting started
-We provide some examples to help you get started. These are located in the
-[example](./example/) directory. Here you in particular can find:
-- [An example flake.nix](./example/flake.nix)
-- [An example home.nix](./example/home.nix)
-
-With more to come! These should give you some idea how to get started with
-`plasma-manager`.
 
 ## Contributions and Maintenance
 
