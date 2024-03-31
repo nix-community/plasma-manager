@@ -33,6 +33,8 @@
           # here is just the bare minimum to get the flake to not fail.
           {
             users.users."${username}".isNormalUser = true;
+            fileSystems."/".device = "/dev/sda";
+            boot.loader.grub.devices = [ "/dev/sda" ];
           }
 
           home-manager.nixosModules.home-manager
