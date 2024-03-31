@@ -99,7 +99,7 @@ interest we would love to move this into [nix-community] once it has matured.
 
 This work was inspired by the suggestions on [Home Manger Issue #607][hm607] by
 people such as [bew](https://github.com/bew) and
-#[kurnevsky](https://github.com/kurnevsky).  Thank you.
+[kurnevsky](https://github.com/kurnevsky).  Thank you.
 
 [home-manager]: https://github.com/nix-community/home-manager
 [hm607]: https://github.com/nix-community/home-manager/issues/607
