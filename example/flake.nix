@@ -17,52 +17,52 @@
   };
 
   outputs = inputs@ { nixpkgs, home-manager, plasma-manager, ... }:
-  let
-    # Replace with your username
-    username = "jdoe";
+    let
+      # Replace with your username
+      username = "jdoe";
 
-    # Replace with the fitting architecture
-    system = "x86_64-linux";
-  in
-  {
-    # Replace `standAloneConfig` with the name of your configuration (your `username` or `"username@hostname"`)
-    homeConfigurations.standAloneConfig = home-manager.lib.homeManagerConfiguration {
-      pkgs = import nixpkgs { inherit system; };
+      # Replace with the fitting architecture
+      system = "x86_64-linux";
+    in
+    {
+      # Replace `standAloneConfig` with the name of your configuration (your `username` or `"username@hostname"`)
+      homeConfigurations.standAloneConfig = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs { inherit system; };
 
-      modules = [
-        inputs.plasma-manager.homeManagerModules.plasma-manager
-
-        # Specify the path to your home configuration here:
-        ./home.nix
-
-        {
-          home = {
-            inherit username;
-            homeDirectory = "/home/${username}";
-            stateVersion = "23.11";
-          };
-        }
-      ];
-    };
-
-    # Replace `moduleConfig` with the name of you configuration (your `username` or `"username@hostname"`)
-    nixosConfigurations.moduleConfig = nixpkgs.lib.nixosSystem {
-      inherit system;
         modules = [
-        # Here you typically also would have your configuration.nix
+          inputs.plasma-manager.homeManagerModules.plasma-manager
 
-        home-manager.nixosModules.home-manager
+          # Specify the path to your home configuration here:
+          ./home.nix
 
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.sharedModules = [ plasma-manager.homeManagerModules.plasma-manager ];
+          {
+            home = {
+              inherit username;
+              homeDirectory = "/home/${username}";
+            };
+          }
+        ];
+      };
 
-          # This should point to your home.nix path of course. For an example
-          # of this see ./home.nix in this directory.
-          home-manager.users.jdoe = import ./home.nix;
-        }
-      ];
+      # Replace `moduleConfig` with the name of you configuration (your `username` or `"username@hostname"`)
+      nixosConfigurations.moduleConfig = nixpkgs.lib.nixosSystem {
+        inherit system;
+
+        modules = [
+          # Here you typically also would have your configuration.nix
+
+          home-manager.nixosModules.home-manager
+
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.sharedModules = [ plasma-manager.homeManagerModules.plasma-manager ];
+
+            # This should point to your home.nix path of course. For an example
+            # of this see ./home.nix in this directory.
+            home-manager.users.jdoe = import ./home.nix;
+          }
+        ];
+      };
     };
-  };
 }
