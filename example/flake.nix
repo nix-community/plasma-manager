@@ -25,7 +25,7 @@
     system = "x86_64-linux";
   in
   {
-    # Replace `standAloneConfig` with the name of your configuration (your username or username@hostname)
+    # Replace `standAloneConfig` with the name of your configuration (your `username` or `"username@hostname"`)
     homeConfigurations.standAloneConfig = home-manager.lib.homeManagerConfiguration {
       pkgs = import nixpkgs { inherit system; };
 
@@ -45,7 +45,7 @@
       ];
     };
 
-    # Replace `moduleConfig` with the name of you configuration (your username or username@hostname)
+    # Replace `moduleConfig` with the name of you configuration (your `username` or `"username@hostname"`)
     nixosConfigurations.moduleConfig = nixpkgs.lib.nixosSystem {
       inherit system;
         modules = [
