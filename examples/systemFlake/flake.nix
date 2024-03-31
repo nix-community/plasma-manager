@@ -28,9 +28,12 @@
         inherit system;
 
         modules = [
-          # Include your configuration.nix here as well (uncomment the line
-          # below and point the path to your own configuration.nix)
-          # ./configuration.nix
+          # We include the system-configuration here as well. Replace this with
+          # your own configuration or import your configuration.nix. The demo
+          # here is just the bare minimum to get the flake to not fail.
+          {
+            users.users."${username}".isNormalUser = true;
+          }
 
           home-manager.nixosModules.home-manager
           {
