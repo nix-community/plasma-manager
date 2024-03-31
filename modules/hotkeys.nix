@@ -3,6 +3,8 @@
 let
   cfg = config.programs.plasma;
 
+  commandString = command: (builtins.replaceStrings [ "%" ] [ "%%" ] command);
+
   group = rec {
     name = "plasma-manager-commands";
     desktop = "${name}.desktop";
@@ -85,8 +87,8 @@ in
             name = command.name;
             exec =
               if command.logs.enabled then
-                "${pkgs.systemd}/bin/systemd-cat --identifier=${command.logs.identifier} ${command.logs.extraArgs} ${command.command}"
-              else command.command;
+                "${pkgs.systemd}/bin/systemd-cat --identifier=${command.logs.identifier} ${command.logs.extraArgs} ${commandString command.command}"
+              else (commandString command.command);
           })
           cfg.hotkeys.commands;
       };
