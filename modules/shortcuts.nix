@@ -4,8 +4,16 @@
 let
   cfg = config.programs.plasma;
 
+  # Checks if the shortcut is in the "service" group, in which case we need to
+  # write the values a little differently.
+  isService = group:
+    let
+      startString = "services/";
+    in
+    (builtins.substring 0 (builtins.stringLength startString) group) == startString;
+
   # Convert one shortcut into a settings attribute set.
-  shortcutToConfigValue = _action: skey:
+  shortcutToConfigValue = group: _action: skey:
     let
       # Keys are expected to be a list:
       keys =
@@ -16,18 +24,23 @@ let
 
       # Don't allow un-escaped commas:
       escape = lib.escape [ "," ];
+      keysStr = (if ((builtins.length keys) == 1) then (escape (builtins.head keys)) else "\t" + (lib.concatStringsSep "\t" (map escape keys)));
     in
     {
-      value = lib.concatStringsSep "," [
-        (if ((builtins.length keys) == 1) then (escape (builtins.head keys)) else "\t" + (lib.concatStringsSep "\t" (map escape keys)))
-        "" # List of default keys, not needed.
-        "" # Display string, not needed.
-      ];
+      value =
+        if (isService group) then
+          keysStr
+        else
+          (lib.concatStringsSep "," [
+            keysStr
+            "" # List of default keys, not needed.
+            "" # Display string, not needed.
+          ]);
     };
 
   shortcutsToSettings = groups:
     lib.mapAttrs
-      (group: attrs: (lib.mapAttrs shortcutToConfigValue attrs))
+      (group: attrs: (lib.mapAttrs (shortcutToConfigValue group) attrs))
       groups;
 in
 {
