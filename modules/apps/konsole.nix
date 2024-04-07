@@ -97,7 +97,7 @@ in
     programs.plasma.configFile."konsolerc" = lib.mkMerge [
       (
         lib.mkIf (cfg.defaultProfile != null) {
-          "Desktop Entry"."DefaultProfile".value = cfg.defaultProfile;
+          "Desktop Entry"."DefaultProfile".value = "${cfg.defaultProfile}.profile";
         }
       )
       (
