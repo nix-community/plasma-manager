@@ -95,8 +95,7 @@ in
           cfg.workspace.colorScheme != null ||
           cfg.workspace.cursorTheme != null ||
           cfg.workspace.lookAndFeel != null ||
-          cfg.workspace.iconTheme != null ||
-          cfg.workspace.wallpaper != null))
+          cfg.workspace.iconTheme != null))
       {
         # We create a script which applies the different theme settings using
         # kde tools. We then run this using an autostart script, where this is
@@ -117,12 +116,30 @@ in
                 ${if cfg.workspace.cursorTheme != null then "plasma-apply-cursortheme ${cfg.workspace.cursorTheme} || success=0" else ""}
                 ${if cfg.workspace.colorScheme != null then "plasma-apply-colorscheme ${cfg.workspace.colorScheme} || success=0" else ""}
                 ${if cfg.workspace.iconTheme != null then "${pkgs.libsForQt5.plasma-workspace}/libexec/plasma-changeicons ${cfg.workspace.iconTheme} || success=0" else ""}
-                ${if cfg.workspace.wallpaper != null then "plasma-apply-wallpaperimage ${cfg.workspace.wallpaper} || success=0" else ""}
                 [ $success -eq 1 ] && echo "$last_update" > "$last_update_file"
             fi
           '';
           priority = 1;
         };
       })
+    (lib.mkIf (cfg.enable && cfg.workspace.wallpaper != null) {
+      # We need to set the wallpaper after the panels are created in order for
+      # this not to be reset when specifying the screens for panels. See:
+      # https://github.com/pjones/plasma-manager/issues/116.
+      programs.plasma.startup.autoStartScript."set_wallpaper" = {
+        text = ''
+          last_update=$(sha256sum "$0")
+          last_update_file=${config.xdg.dataHome}/plasma-manager/last_run_wallpaper
+          if [ -f "$last_update_file" ]; then
+              stored_last_update=$(cat "$last_update_file")
+          fi
+
+          if ! [ "$last_update" = "$stored_last_update" ]; then
+              plasma-apply-wallpaperimage ${cfg.workspace.wallpaper} && echo "$last_update" > "$last_update_file"
+          fi
+        '';
+        priority = 3;
+      };
+    })
   ];
 }
