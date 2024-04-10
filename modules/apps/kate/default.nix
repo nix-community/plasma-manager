@@ -44,6 +44,7 @@ let
       name = "markdown";
       settings = {
        command = [ "marksman" "server" ];
+        rootIndicatorFileNames = [ ".git"  ".marksman.toml" ];
         url = "https://github.com/artempyanykh/marksman";
         highlightingModeRegex = "^Markdown$";
       };
@@ -257,7 +258,7 @@ in
     default = {};
     type = lib.types.attrs;
     description = ''
-      Add more lsp server settings here. Check out the format on the [KDE page](https://kate-editor.org/post/2019/2019-08-10-kate-lsp-more-languages-supported/).
+      Add more lsp server settings here. Check out the format on the [KDE page](https://docs.kde.org/stable5/en/kate/kate/kate-application-plugin-lspclient.html).
     '';
   };
 
