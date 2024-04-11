@@ -4,6 +4,7 @@ with lib;
 
 let
   cfg = config.programs.plasma;
+  numlockSettings = [ "on" "off" "unchanged" ];
 in
 {
   # Keyboard options
@@ -16,6 +17,14 @@ in
         Keyboard layouts to use.
       '';
     };
+    numlockOnStartup = mkOption {
+      type = with types; nullOr (enum numlockSettings);
+      default = null;
+      example = "on";
+      description = ''
+        Numpad settings at startup.
+      '';
+    };
   };
 
   config.programs.plasma.configFile."kxkbrc" = mkIf (cfg.enable) (
@@ -26,6 +35,18 @@ in
             Use.value = true;
             LayoutList.value = strings.concatStringsSep "," cfg.input.keyboard.layouts;
           };
+        }
+      )
+    ]
+  );
+  config.programs.plasma.configFile."kcminputrc" = mkIf (cfg.enable) (
+    mkMerge [
+      (
+        # For some reason the numlock settings are here and not on kxkbrc?
+        mkIf (cfg.input.keyboard.numlockOnStartup != null) {
+          # Ideally you would want to get rid of Numlock, setting it to anything
+          # else works too (or at least seems to)
+          Keyboard.NumLock.value = lists.findFirstIndex (x: x == cfg.input.keyboard.numlockOnStartup) null numlockSettings;
         }
       )
     ]
