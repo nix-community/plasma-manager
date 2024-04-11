@@ -41,6 +41,7 @@ limitations don't hesitate to open an issue or submit a pr.
 ## Getting started
 We provide some examples to help you get started. These are located in the
 [examples](./examples/) directory. Here you in particular can find:
+- [An example home-manager configuration](./examples/homeManager/home.nix) [with instructions](./examples/homeManager/README.md)
 - [An example flake.nix for usage with home-manager only](./examples/homeManagerFlake//flake.nix)
 - [An example flake.nix for usage with the system configuration](./examples/systemFlake/flake.nix)
 - [An example home.nix showing some of the capabilities of plasma-manager](./examples/home.nix)
