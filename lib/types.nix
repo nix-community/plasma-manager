@@ -27,6 +27,14 @@ let
           adding [$e] to the end of the key.
         '';
       };
+      persistent = lib.mkOption {
+        type = bool;
+        default = false;
+        description = ''
+          When overrideConfig is enabled and the key is persistent,
+          plasma-manager will leave it unchanged after activation.
+        '';
+      };
     };
   });
 in

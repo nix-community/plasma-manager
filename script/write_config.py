@@ -1,16 +1,17 @@
-import configparser
+import glob
 import json
 import os
 import re
 import sys
-from typing import Dict, Optional
+from typing import Dict, Optional, Set
 
 
-class KConfParser:
-    def __init__(self, filepath):
+class KConfManager:
+    def __init__(self, filepath: str, json_dict: Dict, override_config: bool):
         self.data = {}
         self.filepath = filepath
-        self.read()
+        self.json_dict = json_dict
+        self.override_config = override_config
 
     def read(self):
         """Read the config from the path specified on instantiation. If the
@@ -28,14 +29,78 @@ class KConfParser:
                     # Empty lines we won't bother reading.
                     if l.strip() != "":
                         key, value = self.get_key_value(l)
-                        self.set_value(current_group, key, value)
+                        # We only read the current key if overrideConfig is
+                        # disabled or the value is marked as persistent in the
+                        # plasma-manager config.
+                        try:
+                            is_persistent = (
+                                self.json_dict[current_group][key]["persistent"]
+                                and self.json_dict[current_group][key]["value"] is None
+                            )
+                        except KeyError:
+                            is_persistent = False
+
+                        if not self.override_config or (
+                            self.override_config and is_persistent
+                        ):
+                            self.set_value(
+                                current_group,
+                                key,
+                                {
+                                    "value": value,
+                                    "immutable": False,
+                                    "shellExpand": False,
+                                    "persistent": is_persistent,
+                                },
+                            )
         except FileNotFoundError:
             pass
+
+    def run(self):
+        self.read()
+        for group, entry in self.json_dict.items():
+            # The nix expressions will have / to separate groups. We replace this by
+            # ][ which is needed for the kde config files. If the / is escaped, it
+            # will simply be replaced by a normal /.
+            group = re.sub(r"(?<!\\)/", "][", group)
+            group = group.replace("\\/", "/")
+            for key, value in entry.items():
+                # If the nix expression is null, resulting in the value None here,
+                # we remove the key/option (and the group/section if it is empty
+                # after removal).
+                if value["value"] is None and not value["persistent"]:
+                    self.remove_value(group, key)
+                    continue
+
+                # Again values from the nix json are not escaped, so we need to
+                # escape them here (in case it includes \t \n and so on). We
+                # also don't set persistent values here, because they were
+                # already set in the read-method, and we don't want to overwrite
+                # this.
+                if (
+                    not (value["value"] is None and value["persistent"])
+                    and self.override_config
+                ):
+                    self.set_value(group, key, value, escape_value=True)
 
     def set_value(self, group, key, value, escape_value=False):
         """Adds an entry to the config. Creates necessary groups if needed."""
         if not group in self.data:
             self.data[group] = {}
+
+        # The value of the key
+        key_value = (
+            str(value["value"])
+            if not isinstance(value["value"], bool)
+            else str(value["value"]).lower()
+        )
+        # Whether we have immutability
+        key_immutable = value["immutable"]
+        # Whether we have shell-expansion for the key
+        key_shellexpand = value["shellExpand"]
+
+        # We need to add the app
+        key += self.calculate_marking(key_immutable, key_shellexpand)
 
         # Escapes symbols like \t, \n and so on if escape_value is True. This
         # should be true when reading from the nix json, but not when reading
@@ -44,20 +109,16 @@ class KConfParser:
             to_escape = ["\t", "\n"]
             # value = value.encode("unicode_escape").decode()
             for escape_char in to_escape:
-                value = value.replace(
+                key_value = key_value.replace(
                     escape_char, escape_char.encode("unicode_escape").decode()
                 )
 
-        self.data[group][key] = value
+        self.data[group][key] = key_value
 
     def remove_value(self, group, key):
         """Removes an entry from the config. Does nothing if the entry isn't there."""
         if group in self.data and key in self.data[group]:
             del self.data[group][key]
-            # We remove the group altogether if there are no keys in the group
-            # anymore.
-            if not self.data[group]:
-                del self.data[group]
 
     def save(self):
         """Save to the filepath specified on instantiation."""
@@ -76,6 +137,9 @@ class KConfParser:
                     skip_newline = False
                     for key, value in self.data[0].items():
                         f.write(f"{self.key_value_to_line(key, value)}\n")
+                    continue
+                elif not self.data[group]:
+                    # We skip over groups with no keys, they don't need to be written
                     continue
 
                 if not skip_newline:
@@ -101,49 +165,61 @@ class KConfParser:
         the key as the line (this is useful in khotkeysrc)."""
         return f"{key}={value}" if not value is None else key
 
-
-def write_config_single(filepath: str, items: Dict):
-    config = KConfParser(filepath)
-
-    for group, entry in items.items():
-        # The nix expressions will have / to separate groups. We replace this by
-        # ][ which is needed for the kde config files. If the / is escaped, it
-        # will simply be replaced by a normal /.
-        group = re.sub(r"(?<!\\)/", "][", group)
-        group = group.replace("\\/", "/")
-        for key, value in entry.items():
-            # If the nix expression is null, resulting in the value None here,
-            # we remove the key/option (and the group/section if it is empty
-            # after removal).
-            if value is None:
-                config.remove_value(group, key)
-                continue
-
-            # Convert value to string.
-            value = str(value) if not isinstance(value, bool) else str(value).lower()
-
-            # Again values from the nix json are not escaped, so we need to
-            # escape them here (in case it includes \t \n and so on).
-            config.set_value(group, key, value, escape_value=True)
-
-    config.save()
+    @staticmethod
+    def calculate_marking(immutable, expandvars):
+        """
+        Calculates the "marking" we should add to the keys, which for example may be
+        [$i] if we want immutability, or [$e] if we want to expand variables. See
+        https://api.kde.org/frameworks/kconfig/html/options.html for some options.
+        """
+        if immutable and expandvars:
+            return "[$ei]"
+        elif immutable:
+            return "[$i]"
+        elif expandvars:
+            return "[$e]"
+        else:
+            return ""
 
 
-def write_configs(d: Dict):
+def remove_config_files(d: Dict, reset_files: Set):
+    """
+    Removes files which doesn't have any configuration entries in d and which is
+    in the list of files to be reset by overrideConfig.
+    """
+    for del_path in reset_files - set(d.keys()):
+        for file_to_del in glob.glob(del_path):
+            if os.path.isfile(file_to_del):
+                os.remove(file_to_del)
+
+
+def write_configs(d: Dict, override_config: bool):
     for filepath, c in d.items():
-        write_config_single(filepath, c)
+        config = KConfManager(filepath, c, override_config)
+        config.run()
+        config.save()
 
 
 def main():
-    if len(sys.argv) != 2:
-        raise ValueError(f"Must receive exactly one argument, got: {len(sys.argv) - 1}")
+    if len(sys.argv) != 4:
+        raise ValueError(
+            f"Must receive exactly three arguments, got: {len(sys.argv) - 1}"
+        )
 
     json_path = sys.argv[1]
     with open(json_path, "r") as f:
         json_str = f.read()
 
+    # We send in "true" as the second argument if overrideConfig is enabled in
+    # plasma-manager.
+    override_config = bool(sys.argv[2])
+    # os.system(f"echo '{sys.argv[2]}' > /home/user1/Downloads/test")
+    # The files to be reset when we have overrideConfig enabled.
+    oc_reset_files = set(sys.argv[3].split(" "))
+
     d = json.loads(json_str)
-    write_configs(d)
+    remove_config_files(d, oc_reset_files)
+    write_configs(d, override_config)
 
 
 if __name__ == "__main__":
