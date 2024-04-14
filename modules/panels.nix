@@ -128,7 +128,7 @@ let
   # Functions to generate layout.js configurations from the widgetType
   #
   # Configgroups must be javascript lists.
-  widgetConfigGroupFormat = group: ''[${lib.concatStringsSep ", " (map (s: "\"${s}\"") (lib.splitString "." group))}]'';
+  widgetConfigGroupFormat = group: ''[${lib.concatStringsSep ", " (map (s: "\"${s}\"") (lib.splitString "/" group))}]'';
   # If the specified value is a string then add in extra quotes. If we have a
   # list, convert this to a javascript list.
   widgetConfigValueFormat = value: if (builtins.isString value) then "\"${value}\"" else ''[${(lib.concatStringsSep ", " (map (s: "\"${s}\"") value))}]'';
