@@ -26,54 +26,6 @@ let
     '';
 
   script = pkgs.writeScript "kate-check" (checkThemeName cfg.editor.theme.name);
-
-  supportedLspServers = {
-    # https://github.com/oxalica/nil?tab=readme-ov-file#kate-with-lsp-client-plugin
-    nil = {
-      name = "nix"; # the name in the settings file. no collisions in the end!
-      settings = {
-        command = [ "nil" ];
-        url = "https://github.com/oxalica/nil";
-        highlightingModeRegex = "^Nix$";
-      };
-      package = pkgs.nil;
-    };
-
-    marksman = {
-      #https://www.reddit.com/r/kde/comments/webug0/trying_to_get_marksman_markdown_lsp_to_work_in/
-      name = "markdown";
-      settings = {
-       command = [ "marksman" "server" ];
-        rootIndicatorFileNames = [ ".git"  ".marksman.toml" ];
-        url = "https://github.com/artempyanykh/marksman";
-        highlightingModeRegex = "^Markdown$";
-      };
-      package = pkgs.marksman;
-    };
-  };
-
-  installedLspSettings =
-    cfg.lsp.extraSettings //
-    (
-      # rename the settings to the language name
-      lib.mapAttrs'
-      (name: value: lib.nameValuePair value.name value.settings)
-      (
-        # pick only the lspServers which the user chose
-        lib.filterAttrs
-        (n: v: builtins.elem n cfg.lsp.servers)
-        supportedLspServers
-      )
-    );
-
-  lspPackages =
-    lib.attrVals
-    cfg.lsp.servers
-    (
-      lib.mapAttrs
-      (name: value: value.package)
-      supportedLspServers
-    );
 in
 {
   options.programs.kate = {
@@ -223,11 +175,7 @@ in
     };
 
   config = {
-    home.packages = lib.mkIf cfg.enable
-      (
-        (lib.lists.optional (cfg.package != null) cfg.package)
-        ++ lspPackages
-      );
+    home.packages = lib.mkIf (cfg.enable && cfg.package != null) [ cfg.package ];
 
     # In case of using a custom theme, check that there is no name collision
     home.activation.checkKateTheme = lib.mkIf (cfg.enable && cfg.editor.theme.src != null) (lib.hm.dag.entryBefore [ "writeBoundary" ]
@@ -246,23 +194,15 @@ in
   # ==================================
   #     LSP Servers
 
-  options.programs.kate.lsp.servers = lib.mkOption {
-    default = [];
-    type = lib.types.listOf ( lib.types.enum (builtins.attrNames supportedLspServers) );
-    description = ''
-      List of all preconfigured LSP servers to use.
-    '';
-  };
-
-  options.programs.kate.lsp.extraSettings = lib.mkOption {
+  options.programs.kate.lsp.customServers = lib.mkOption {
     default = {};
     type = lib.types.attrs;
     description = ''
-      Add more lsp server settings here. Check out the format on the [KDE page](https://docs.kde.org/stable5/en/kate/kate/kate-application-plugin-lspclient.html).
+      Add more lsp server settings here. Check out the format on the [KDE page](https://docs.kde.org/stable5/en/kate/kate/kate-application-plugin-lspclient.html). Note that these are only the settings, the packages have to be installed separately.
     '';
   };
 
   config.xdg.configFile."kate/lspclient/settings.json" = {
-    text = builtins.toJSON { servers = installedLspSettings; };
+    text = builtins.toJSON { servers = cfg.lsp.customServers; };
   };
 }
