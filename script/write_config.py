@@ -9,13 +9,45 @@ from typing import Dict, Optional, Set
 class KConfManager:
     def __init__(self, filepath: str, json_dict: Dict, override_config: bool):
         self.data = {}
-        self.filepath = filepath
         self.json_dict = json_dict
+        self.filepath = filepath
         self.override_config = override_config
+        self._json_value_checks()
+
+    def _json_value_checks(self):
+        for group, entry in self.json_dict.items():
+            for key, value in entry.items():
+                # We don't allow persistency when not using overrideConfig
+                if value["persistent"] and not self.override_config:
+                    raise Exception(
+                        f'Plasma-manager: Persistency enabled for key "{key}" in group "{group}" when overrideConfig is disabled. '
+                        "Persistency without using overrideConfig is not supported"
+                    )
+                elif value["persistent"] and value["value"] is not None:
+                    raise Exception(
+                        f"Plasma-manager: Persistency enabled for key \"{key}\" in group \"{group}\" with value {value['value']}. "
+                        "A value cannot be given when persistency is enabled"
+                    )
+
+    def key_is_persistent(self, group, key) -> bool:
+        """
+        Checks if a key in a group in the nix config is persistent.
+        """
+        try:
+            is_persistent = (
+                self.json_dict[group][key]["persistent"]
+                and self.json_dict[group][key]["value"] is None
+            )
+        except KeyError:
+            is_persistent = False
+
+        return is_persistent
 
     def read(self):
-        """Read the config from the path specified on instantiation. If the
-        path doesn't exist, do nothing"""
+        """
+        Read the config from the path specified on instantiation. If the
+        path doesn't exist, do nothing.
+        """
         try:
             with open(self.filepath, "r", encoding="utf-8") as f:
                 current_group = 0
@@ -26,23 +58,15 @@ class KConfManager:
                         self.data[current_group] = {}
                         continue
 
-                    # Empty lines we won't bother reading.
+                    # We won't bother reading empty lines.
                     if l.strip() != "":
                         key, value = self.get_key_value(l)
+
                         # We only read the current key if overrideConfig is
                         # disabled or the value is marked as persistent in the
                         # plasma-manager config.
-                        try:
-                            is_persistent = (
-                                self.json_dict[current_group][key]["persistent"]
-                                and self.json_dict[current_group][key]["value"] is None
-                            )
-                        except KeyError:
-                            is_persistent = False
-
-                        if not self.override_config or (
-                            self.override_config and is_persistent
-                        ):
+                        is_persistent = self.key_is_persistent(current_group, key)
+                        if not self.override_config or is_persistent:
                             self.set_value(
                                 current_group,
                                 key,
@@ -67,20 +91,16 @@ class KConfManager:
             for key, value in entry.items():
                 # If the nix expression is null, resulting in the value None here,
                 # we remove the key/option (and the group/section if it is empty
-                # after removal).
+                # after removal, and persistency is disabled).
                 if value["value"] is None and not value["persistent"]:
                     self.remove_value(group, key)
                     continue
 
                 # Again values from the nix json are not escaped, so we need to
                 # escape them here (in case it includes \t \n and so on). We
-                # also don't set persistent values here, because they were
-                # already set in the read-method, and we don't want to overwrite
-                # this.
-                if (
-                    not (value["value"] is None and value["persistent"])
-                    and self.override_config
-                ):
+                # also don't set the keys if the key is persistent, as we want
+                # to leave that key unchanged from the read() method.
+                if not value["persistent"]:
                     self.set_value(group, key, value, escape_value=True)
 
     def set_value(self, group, key, value, escape_value=False):
@@ -218,7 +238,10 @@ def main():
     oc_reset_files = set(sys.argv[3].split(" "))
 
     d = json.loads(json_str)
-    remove_config_files(d, oc_reset_files)
+    # If overrideConfig is enabled we delete all the kde config files which are
+    # not configured through plasma-manager.
+    if override_config:
+        remove_config_files(d, oc_reset_files)
     write_configs(d, override_config)
 
 
