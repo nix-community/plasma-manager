@@ -189,4 +189,22 @@ in
     # That's why there is no check for now
     # See also [the original PR](https://github.com/pjones/plasma-manager/pull/95#issue-2206192839)
   };
+
+
+  # ==================================
+  #     LSP Servers
+
+  options.programs.kate.lsp.customServers = lib.mkOption {
+    default = {};
+    type = lib.types.attrs;
+    description = ''
+      Add more lsp server settings here. Check out the format on the
+      [KDE page](https://docs.kde.org/stable5/en/kate/kate/kate-application-plugin-lspclient.html).
+      Note that these are only the settings, the packages have to be installed separately.
+    '';
+  };
+
+  config.xdg.configFile."kate/lspclient/settings.json" = {
+    text = builtins.toJSON { servers = cfg.lsp.customServers; };
+  };
 }
