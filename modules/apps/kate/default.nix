@@ -198,7 +198,9 @@ in
     default = {};
     type = lib.types.attrs;
     description = ''
-      Add more lsp server settings here. Check out the format on the [KDE page](https://docs.kde.org/stable5/en/kate/kate/kate-application-plugin-lspclient.html). Note that these are only the settings, the packages have to be installed separately.
+      Add more lsp server settings here. Check out the format on the
+      [KDE page](https://docs.kde.org/stable5/en/kate/kate/kate-application-plugin-lspclient.html).
+      Note that these are only the settings, the packages have to be installed separately.
     '';
   };
 
