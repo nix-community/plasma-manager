@@ -17,17 +17,41 @@ class KConfManager:
     def _json_value_checks(self):
         for group, entry in self.json_dict.items():
             for key, value in entry.items():
-                # We don't allow persistency when not using overrideConfig
-                if value["persistent"] and not self.override_config:
+                if value["immutable"] and value["value"] is None:
+                    # We don't allow immutability for keys with no value given (it doesn't make sense).
                     raise Exception(
-                        f'Plasma-manager: Persistency enabled for key "{key}" in group "{group}" when overrideConfig is disabled. '
-                        "Persistency without using overrideConfig is not supported"
+                        f'Plasma-manager: Immutability enabled for key "{key}" in group "{group}" in configfile "{self.filepath}"'
+                        " with no value set. Keys without values cannot be declared immutable"
                     )
-                elif value["persistent"] and value["value"] is not None:
+                if value["shellExpand"] and value["value"] is None:
+                    # We don't allow immutability for keys with no value given (it doesn't make sense).
                     raise Exception(
-                        f"Plasma-manager: Persistency enabled for key \"{key}\" in group \"{group}\" with value {value['value']}. "
-                        "A value cannot be given when persistency is enabled"
+                        f'Plasma-manager: Shell-expansion enabled for key "{key}" in group "{group}" in configfile "{self.filepath}"'
+                        " with no value set. Keys without values cannot have shell-expansion enabled"
                     )
+                elif value["persistent"]:
+                    base_msg = f'Plasma-manager: Persistency enabled for key "{key}" in group "{group}" in configfile "{self.filepath}"'
+                    # We don't allow persistency when not using overrideConfig,
+                    # the value is set, immutability is enabled, or when
+                    # shell-expansion is enabled.
+                    if not self.override_config:
+                        raise Exception(
+                            f"{base_msg} when overrideConfig is disabled. "
+                            "Persistency without using overrideConfig is not supported"
+                        )
+                    elif value["value"] is not None:
+                        raise Exception(
+                            f"{base_msg} with non-null value \"{value['value']}\". "
+                            "A value cannot be given when persistency is enabled"
+                        )
+                    elif value["immutable"]:
+                        raise Exception(
+                            f"{base_msg} with immutability enabled. Persistency and immutability cannot both be enabled"
+                        )
+                    elif value["shellExpand"]:
+                        raise Exception(
+                            f"{base_msg} with shell-expansion enabled. Persistency and shell-expansion cannot both be enabled"
+                        )
 
     def key_is_persistent(self, group, key) -> bool:
         """
