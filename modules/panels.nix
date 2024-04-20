@@ -194,47 +194,28 @@ in
   };
 
   config = lib.mkIf (cfg.enable && (lib.length cfg.panels) > 0) {
-    programs.plasma.startup.dataFile."layout.js" = ''
-      // Removes all existing panels
-      var allPanels = panels();
-      for (var panelIndex = 0; panelIndex < allPanels.length; panelIndex++) {
-        var p = allPanels[panelIndex];
-        p.remove();
-      }
-
-      // Adds the panels
-      ${panelsToLayoutJS config.programs.plasma.panels}
-    '';
-
-    # Very similar to applying themes, we keep track of the last time the panel
-    # was generated successfully, and run this only once per generation (granted
-    # everything succeeds and we are not using overrideConfig).
-    programs.plasma.startup.autoStartScript."apply_layout" = {
-      text = ''
-        layout_file="${config.xdg.dataHome}/plasma-manager/${cfg.startup.dataDir}/layout.js"
-        last_update="$(sha256sum $layout_file)"
-        last_update_file=${config.xdg.dataHome}/plasma-manager/last_run_layouts
-        if [ -f "$last_update_file" ]; then
-          stored_last_update=$(cat "$last_update_file")
-        fi
-
-        if ! [ "$last_update" = "$stored_last_update" ]; then
-          # We delete plasma-org.kde.plasma.desktop-appletsrc to hinder it
-          # growing indefinitely. See:
-          # https://github.com/pjones/plasma-manager/issues/76
-          [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ] && rm ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
-
-          # And finally apply the layout.js
-          success=1
-          qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$(cat $layout_file)" || success=0
-          ${if (anyNonDefaultScreens cfg.panels) then "sed -i 's/^lastScreen\\\\x5b\\$i\\\\x5d=/lastScreen[$i]=/' ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc" else ""}
-          ${if (anyNonDefaultScreens cfg.panels) then "# We sleep a second in order to prevent some bugs (like the incorrect height being set)\nsleep 1; nohup plasmashell --replace &" else ""}
-
-          [ $success -eq 1 ] && echo "$last_update" > "$last_update_file"
-        fi
+    programs.plasma.startup.desktopScript."apply_panels" = {
+      preCommands = ''
+        # We delete plasma-org.kde.plasma.desktop-appletsrc to hinder it
+        # growing indefinitely. See:
+        # https://github.com/pjones/plasma-manager/issues/76
+        [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ] && rm ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
       '';
-      # Setting up the panels should happen after setting the theme as the theme
-      # may overwrite some settings (like the kickoff-icon)
+      text = ''
+        // Removes all existing panels
+        var allPanels = panels();
+        for (var panelIndex = 0; panelIndex < allPanels.length; panelIndex++) {
+          var p = allPanels[panelIndex];
+          p.remove();
+        }
+
+        // Adds the panels
+        ${panelsToLayoutJS config.programs.plasma.panels}
+      '';
+      postCommands = ''
+        ${if (anyNonDefaultScreens cfg.panels) then "sed -i 's/^lastScreen\\\\x5b\\$i\\\\x5d=/lastScreen[$i]=/' ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc" else ""}
+        ${if (anyNonDefaultScreens cfg.panels) then "# We sleep a second in order to prevent some bugs (like the incorrect height being set)\nsleep 1; nohup plasmashell --replace &" else ""}
+      '';
       priority = 2;
     };
   };
