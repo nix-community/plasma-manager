@@ -21,6 +21,8 @@ let
 
     assert_eq KDE SingleClick false
     assert_eq General AllowKDEAppsToRememberWindowPositions true
+    assert_eq group key1 1
+    assert_eq group key2 2
   '';
 in
 testers.nixosTest {
@@ -41,6 +43,13 @@ testers.nixosTest {
       programs.plasma = {
         enable = true;
         workspace.clickItemTo = "select";
+        configFile.kdeglobals.group = {
+          key1 = 1;
+          key2 = {
+            value = 2;
+            immutable = true;
+          };
+        };
       };
     };
   };

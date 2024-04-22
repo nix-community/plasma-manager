@@ -3,7 +3,7 @@
 
 let
   inherit (import ../lib/writeconfig.nix { inherit lib pkgs config; }) writeConfig;
-  inherit (import ../lib/types.nix { inherit lib; }) advancedSettingsType;
+  inherit (import ../lib/types.nix { inherit lib; }) coercedSettingsType;
 
   # Helper function to prepend the appropriate path prefix (e.g. XDG_CONFIG_HOME) to file
   prependPath = prefix: attrset:
@@ -16,7 +16,7 @@ let
     (prependPath config.xdg.configHome plasmaCfg.configFile) //
     (prependPath config.xdg.dataHome plasmaCfg.dataFile);
 
-  fileSettingsType = with lib.types; attrsOf (attrsOf (attrsOf advancedSettingsType));
+  fileSettingsType = with lib.types; attrsOf (attrsOf (attrsOf coercedSettingsType));
 
   ##############################################################################
   # Generate a script that will use write_config.py to update all
