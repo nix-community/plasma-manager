@@ -34,16 +34,16 @@
       guest.port = 22;
     }];
 
-    services.xserver = {
-      enable = true;
-      displayManager.sddm.enable = true;
-      displayManager.defaultSession = "plasma";
-      desktopManager.plasma5.enable = true;
-      displayManager.autoLogin.enable = true;
-      displayManager.autoLogin.user = "fake";
+    services.xserver.enable = true;
+    services.displayManager = {
+      autoLogin.user = "fake";
+      autoLogin.enable = true;
+      defaultSession = "plasma";
+      sddm.enable = true;
     };
+    services.desktopManager.plasma6.enable = true;
 
-    system.stateVersion = "22.05";
+    system.stateVersion = "23.11";
 
     users.users.fake = {
       createHome = true;
@@ -54,7 +54,7 @@
 
     home-manager.users.fake = {
       home.stateVersion = "22.05";
-       imports = [ plasma-module ];
+      imports = [ plasma-module ];
     };
   };
 }
