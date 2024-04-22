@@ -3,6 +3,20 @@
 
 let
   cfg = config.programs.plasma;
+
+  wallpaperSlideShowType = with lib.types; submodule {
+    options = {
+      path = lib.mkOption {
+        type = path;
+        description = "The path where the wallpapers are located.";
+      };
+      interval = lib.mkOption {
+        type = int;
+        default = 300;
+        description = "The length between wallpaper switches.";
+      };
+    };
+  };
 in
 {
   options.programs.plasma.workspace = {
@@ -76,26 +90,42 @@ in
         The Plasma wallpaper. Can be either be the path to an image file or a kpackage.
       '';
     };
+
+    wallpaperSlideShow = lib.mkOption {
+      type = lib.types.nullOr wallpaperSlideShowType;
+      default = null;
+      example = "${pkgs.libsForQt5.plasma-workspace-wallpapers}/share/wallpapers/";
+      description = ''
+        Allows you to set wallpaper slideshow. Needs a directory of your wallpapers and an interval length.
+      '';
+    };
   };
 
-  config = lib.mkMerge [
-    (lib.mkIf cfg.enable {
+  config = (lib.mkIf cfg.enable (lib.mkMerge [
+    {
+      assertions = [
+        {
+          assertion = (cfg.workspace.wallpaperSlideShow == null || cfg.workspace.wallpaper == null);
+          message = "Cannot set both wallpaper and wallpaperSlideShow at the same time.";
+        }
+      ];
+    }
+    {
       programs.plasma.configFile.kdeglobals = {
         KDE.SingleClick.value = lib.mkDefault (cfg.workspace.clickItemTo == "open");
       };
-    })
-    (lib.mkIf (cfg.enable && cfg.workspace.tooltipDelay > 0) {
+    }
+    (lib.mkIf (cfg.workspace.tooltipDelay > 0) {
       programs.plasma.configFile.plasmarc = {
         PlasmaToolTips.Delay.value = cfg.workspace.tooltipDelay;
       };
     })
     (lib.mkIf
-      (cfg.enable &&
-        (cfg.workspace.theme != null ||
-          cfg.workspace.colorScheme != null ||
-          cfg.workspace.cursorTheme != null ||
-          cfg.workspace.lookAndFeel != null ||
-          cfg.workspace.iconTheme != null))
+      (cfg.workspace.theme != null ||
+        cfg.workspace.colorScheme != null ||
+        cfg.workspace.cursorTheme != null ||
+        cfg.workspace.lookAndFeel != null ||
+        cfg.workspace.iconTheme != null)
       {
         # We create a script which applies the different theme settings using
         # kde tools. We then run this using an autostart script, where this is
@@ -112,7 +142,7 @@ in
           priority = 1;
         };
       })
-    (lib.mkIf (cfg.enable && cfg.workspace.wallpaper != null) {
+    (lib.mkIf (cfg.workspace.wallpaper != null) {
       # We need to set the wallpaper after the panels are created in order for
       # this not to be reset when specifying the screens for panels. See:
       # https://github.com/pjones/plasma-manager/issues/116.
@@ -123,5 +153,20 @@ in
         priority = 3;
       };
     })
-  ];
+    (lib.mkIf (cfg.workspace.wallpaperSlideShow != null) {
+      programs.plasma.startup.desktopScript."set_wallpaper_slideshow" = {
+        text = ''
+          let allDesktops = desktops();
+          for (var desktopIndex = 0; desktopIndex < allDesktops.length; desktopIndex++) {
+              var desktop = allDesktops[desktopIndex];
+              desktop.wallpaperPlugin = "org.kde.slideshow";
+              desktop.currentConfigGroup = Array("Wallpaper", "org.kde.slideshow", "General");
+              desktop.writeConfig("SlidePaths", "${cfg.workspace.wallpaperSlideShow.path}");
+              desktop.writeConfig("SlideInterval", "${builtins.toString cfg.workspace.wallpaperSlideShow.interval}");
+          }
+        '';
+        priority = 3;
+      };
+    })
+  ]));
 }
