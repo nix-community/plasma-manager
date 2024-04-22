@@ -40,7 +40,7 @@
               ];
             };
           }
-          "org.kde.plasma.marginsseperator"
+          "org.kde.plasma.marginsseparator"
           "org.kde.plasma.systemtray"
           "org.kde.plasma.digitalclock"
         ];
