@@ -18,13 +18,67 @@ let
       };
     };
   };
+  desktopScriptType = lib.types.submodule {
+    options = {
+      text = lib.mkOption {
+        type = lib.types.str;
+        description = "The content of the desktop script.";
+      };
+      priority = lib.mkOption {
+        type = lib.types.int;
+        description = "The priority for the execution of the desktop-script. Lower priority means earlier execution.";
+        default = 0;
+      };
+      preCommands = lib.mkOption {
+        type = lib.types.str;
+        description = "Commands to run before the desktop script lines.";
+        default = "";
+      };
+      postCommands = lib.mkOption {
+        type = lib.types.str;
+        description = "Commands to run after the desktop script lines.";
+        default = "";
+      };
+    };
+  };
+
+  createScriptContent = name: priority: text: {
+    "plasma-manager/${cfg.startup.scriptsDir}/${builtins.toString priority}_${name}.sh" = {
+      text =
+        ''
+          #!/bin/sh
+          last_update="$(sha256sum $0)"
+          last_update_file=${config.xdg.dataHome}/plasma-manager/last_run_${name}
+          if [ -f "$last_update_file" ]; then
+            stored_last_update=$(cat "$last_update_file")
+          fi
+
+          if ! [ "$last_update" = "$stored_last_update" ]; then
+            success=1
+            trap 'success=0' ERR
+            ${text}
+            [ $success -eq 1 ] && echo "$last_update" > "$last_update_file"
+          fi
+        '';
+      executable = true;
+    };
+  };
 in
 {
   options.programs.plasma.startup = {
-    autoStartScript = lib.mkOption {
+    startupScript = lib.mkOption {
       type = lib.types.attrsOf startupScriptType;
       default = { };
       description = "Commands/scripts to be run at startup.";
+    };
+    desktopScript = lib.mkOption {
+      type = lib.types.attrsOf desktopScriptType;
+      default = { };
+      description = ''
+        Plasma desktop scripts to be run exactly once at startup. See
+        https://develop.kde.org/docs/plasma/scripting/ for details on plasma
+        desktop scripts.
+      '';
     };
     dataFile = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
@@ -43,24 +97,26 @@ in
     };
   };
 
-  config = lib.mkIf
-    (cfg.enable && builtins.length (builtins.attrNames cfg.startup.autoStartScript) != 0)
+  config.xdg = lib.mkIf
+    (cfg.enable && builtins.length (builtins.attrNames cfg.startup.startupScript) != 0)
     {
-      xdg.dataFile = lib.mkMerge [
+      dataFile = lib.mkMerge [
         # Autostart scripts
         (lib.mkMerge
           (lib.mapAttrsToList
-            (name: script: {
-              "plasma-manager/${cfg.startup.scriptsDir}/${builtins.toString script.priority}_${name}.sh" = {
-                text = ''
-                  #!/bin/sh
-                  ${script.text}
-                '';
-                executable = true;
-              };
-            })
-            cfg.startup.autoStartScript)
-        )
+            (name: script: createScriptContent name script.priority script.text)
+            cfg.startup.startupScript))
+        # Desktop scripts
+        (lib.mkMerge
+          (lib.mapAttrsToList
+            (name: script: createScriptContent "desktop_script_${name}" script.priority
+              ''
+                ${script.preCommands}
+                qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
+                ${lib.escape [ "'" ] script.text}'
+                ${script.postCommands}
+              '')
+            cfg.startup.desktopScript))
         # Datafiles
         (lib.mkMerge
           (lib.mapAttrsToList
@@ -85,7 +141,7 @@ in
         }
       ];
 
-      xdg.configFile."autostart/plasma-manager-autostart.desktop".text = ''
+      configFile."autostart/plasma-manager-autostart.desktop".text = ''
         [Desktop Entry]
         Type=Application
         Name=Plasma Manager theme application
