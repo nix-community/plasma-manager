@@ -7,8 +7,8 @@ let
   wallpaperSlideShowType = with lib.types; submodule {
     options = {
       path = lib.mkOption {
-        type = path;
-        description = "The path where the wallpapers are located.";
+        type = either path (listOf path);
+        description = "The path(s) where the wallpapers are located.";
       };
       interval = lib.mkOption {
         type = int;
@@ -161,7 +161,9 @@ in
               var desktop = allDesktops[desktopIndex];
               desktop.wallpaperPlugin = "org.kde.slideshow";
               desktop.currentConfigGroup = Array("Wallpaper", "org.kde.slideshow", "General");
-              desktop.writeConfig("SlidePaths", "${cfg.workspace.wallpaperSlideShow.path}");
+              desktop.writeConfig("SlidePaths", ${if (builtins.isPath cfg.workspace.wallpaperSlideShow.path) then
+              "\"" + cfg.workspace.wallpaperSlideShow.path + "\"" else
+              "[" + (builtins.concatStringsSep "," (map (s: "\"" + s + "\"") cfg.workspace.wallpaperSlideShow.path)) + "]"});
               desktop.writeConfig("SlideInterval", "${builtins.toString cfg.workspace.wallpaperSlideShow.interval}");
           }
         '';
