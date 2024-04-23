@@ -33,6 +33,8 @@ let
     assert_eq " leading space" --group group --key " leading space"
     # Set outside plasma-manager, value has leading space, group contains /
     assert_eq " value" --group escaped/nested --group group --key untouched
+    # Escaped key with shell expansion
+    assert_eq "/home/fake" --group group --key 'escaped[$i]'
   '';
 in
 testers.nixosTest {
@@ -61,6 +63,10 @@ testers.nixosTest {
             key2 = {
               value = 2;
               immutable = true;
+            };
+            "escaped[$i]" = {
+              value = "\${HOME}";
+              shellExpand = true;
             };
           };
           "escaped\\/nested/group" = {
