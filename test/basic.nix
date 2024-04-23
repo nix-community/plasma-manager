@@ -7,22 +7,32 @@ let
     export PATH=${libsForQt5.kconfig}/bin:$PATH
 
     kread_global() {
-      kreadconfig5 --file $XDG_CONFIG_HOME/kdeglobals --group $1 --key $2
+      kreadconfig5 --file $XDG_CONFIG_HOME/kdeglobals "$@"
     }
 
     assert_eq() {
-      actual=$(kread_global "$1" "$2")
+      want=$1
+      shift
+      actual=$(kread_global "$@")
 
-      if [ "$actual" != "$3" ]; then
-        echo >&2 "ERROR: $1.$2: expected $3 but got $actual"
+      if [ "$actual" != "$want" ]; then
+        echo >&2 "ERROR: $@: expected $want but got $actual"
         exit 1
       fi
     }
 
-    assert_eq KDE SingleClick false
-    assert_eq General AllowKDEAppsToRememberWindowPositions true
-    assert_eq group key1 1
-    assert_eq group key2 2
+    assert_eq false --group KDE --key SingleClick
+    assert_eq true --group General --key AllowKDEAppsToRememberWindowPositions
+    # Set with shorthand
+    assert_eq 1 --group group --key key1
+    # Set with longhand and immutable
+    assert_eq 2 --group group --key key2
+    # Nested groups, with group containing /
+    assert_eq 3 --group escaped/nested --group group --key key3
+    # Value and key have leading space
+    assert_eq " leading space" --group group --key " leading space"
+    # Set outside plasma-manager, value has leading space, group contains /
+    assert_eq " value" --group escaped/nested --group group --key untouched
   '';
 in
 testers.nixosTest {
@@ -37,20 +47,34 @@ testers.nixosTest {
       isNormalUser = true;
     };
 
-    home-manager.users.fake = {
+    home-manager.users.fake = { lib, ... }: {
       home.stateVersion = "23.11";
       imports = [ plasma-module ];
       programs.plasma = {
         enable = true;
         workspace.clickItemTo = "select";
-        configFile.kdeglobals.group = {
-          key1 = 1;
-          key2 = {
-            value = 2;
-            immutable = true;
+        # Test a variety of weird keys and groups
+        configFile.kdeglobals = {
+          group = {
+            " leading space" = " leading space";
+            key1 = 1;
+            key2 = {
+              value = 2;
+              immutable = true;
+            };
+          };
+          "escaped\\/nested/group" = {
+            key3 = 3;
           };
         };
       };
+      home.activation.preseed = lib.hm.dag.entryBefore [ "configure-plasma" ] ''
+        mkdir -p ~/.config
+        cat <<EOF >> ~/.config/kdeglobals
+        [escaped/nested][group]
+        untouched = \svalue
+        EOF
+      '';
     };
   };
 
