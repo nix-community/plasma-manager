@@ -17,6 +17,15 @@ let
       };
     };
   };
+
+  wallpaperPictureOfTheDayType = with lib.types; submodule {
+    options = {
+      provider = lib.mkOption {
+        type = enum ["apod" "bing" "flickr" "natgeo" "noaa" "wcpotd" "epod" "simonstalenhag" ];
+        description = "The provider for the Picture of the Day plugin.";
+      };
+    };
+  };
 in
 {
   options.programs.plasma.workspace = {
@@ -99,14 +108,26 @@ in
         Allows you to set wallpaper slideshow. Needs a directory of your wallpapers and an interval length.
       '';
     };
+
+    wallpaperPictureOfTheDay = lib.mkOption {
+      type = lib.types.nullOr wallpaperPictureOfTheDayType;
+      default = null;
+      example = "apod";
+      description = ''
+        Allows you to set wallpaper using the picture of the day plugin. Needs the provider and the fill mode.
+      '';
+    };
+
   };
 
   config = (lib.mkIf cfg.enable (lib.mkMerge [
     {
       assertions = [
         {
-          assertion = (cfg.workspace.wallpaperSlideShow == null || cfg.workspace.wallpaper == null);
-          message = "Cannot set both wallpaper and wallpaperSlideShow at the same time.";
+          assertion = ((cfg.workspace.wallpaperSlideShow == null && cfg.workspace.wallpaper == null && cfg.workspace.wallpaperPictureOfTheDay != null)
+          || (cfg.workspace.wallpaperSlideShow == null && cfg.workspace.wallpaper != null && cfg.workspace.wallpaperPictureOfTheDay == null)
+          || (cfg.workspace.wallpaperSlideShow != null && cfg.workspace.wallpaper == null && cfg.workspace.wallpaperPictureOfTheDay == null));
+          message = "Can set only one of wallpaper, wallpaperSlideShow and wallpaperPictureOfTheDay.";
         }
       ];
     }
@@ -166,6 +187,20 @@ in
               "[" + (builtins.concatStringsSep "," (map (s: "\"" + s + "\"") cfg.workspace.wallpaperSlideShow.path)) + "]"});
               desktop.writeConfig("SlideInterval", "${builtins.toString cfg.workspace.wallpaperSlideShow.interval}");
           }
+        '';
+        priority = 3;
+      };
+    })
+    (lib.mkIf (cfg.workspace.wallpaperPictureOfTheDay != null) {
+      programs.plasma.startup.desktopScript."set_wallpaper_potd" = {
+        text = ''
+          let allDesktops = desktops();
+          for (var desktopIndex = 0; desktopIndex < allDesktops.length; desktopIndex++) {
+              var desktop = allDesktops[desktopIndex];
+              desktop.wallpaperPlugin = "org.kde.potd";
+              desktop.currentConfigGroup = Array("Wallpaper", "org.kde.potd", "General");
+              desktop.writeConfig("Provider", "${cfg.workspace.wallpaperPictureOfTheDay.provider}");
+            }
         '';
         priority = 3;
       };
