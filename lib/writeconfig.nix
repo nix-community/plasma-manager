@@ -1,4 +1,4 @@
-{ pkgs, lib }:
+{ pkgs, lib, config }:
 
 let
   writeConfigScript = pkgs.writeShellApplication {
@@ -12,15 +12,21 @@ let
   # attribute-set as json. Here a is the attribute-set.
   #
   # Type: AttrSet -> string
-  writeConfig = a:
-  let
-    jsonStr = builtins.toJSON a;
-    # Writing to file handles special characters better than passing it in as
-    # an argument to the script.
-    jsonFile = pkgs.writeText "data.json" jsonStr;
-  in 
+  writeConfig = json: overrideConfig: ocRemoveList:
+    let
+      jsonStr = builtins.toJSON json;
+      # Writing to file handles special characters better than passing it in as
+      # an argument to the script.
+      jsonFile = pkgs.writeText "data.json" jsonStr;
+      overrideConfigStr = builtins.toString overrideConfig;
+      ocRemoveStr = builtins.toString
+        (if overrideConfig then
+          ocRemoveList ++ [ "${config.xdg.dataHome}/plasma-manager/last_run_*" ]
+        else
+          ocRemoveList);
+    in
     ''
-      ${writeConfigScript}/bin/write_config ${jsonFile}
+      ${writeConfigScript}/bin/write_config ${jsonFile} "${overrideConfigStr}" "${ocRemoveStr}"
     '';
 in
 {
