@@ -47,17 +47,14 @@
         ]
       },
       "locked": {
-        "lastModified": 1711880258,
-        "narHash": "sha256-4lcNTaKYxKXqAD+OrTC68T2W/Cr69VSogS+R5tjdn+M=",
-        "owner": "pjones",
-        "repo": "plasma-manager",
-        "rev": "22b423b9c6f157373d56413835d1d65ea4c5f481",
-        "type": "github"
+        "lastModified": 0,
+        "narHash": "sha256-N6VZ7WQ5T28p5QwbUEN0TpUZcGbKj4hqefvs8tpwq/s=",
+        "path": "/nix/store/826qmn8gdsmq65nydn0sgc8abxqw6brn-source",
+        "type": "path"
       },
       "original": {
-        "owner": "pjones",
-        "repo": "plasma-manager",
-        "type": "github"
+        "path": "/nix/store/826qmn8gdsmq65nydn0sgc8abxqw6brn-source",
+        "type": "path"
       }
     },
     "root": {
