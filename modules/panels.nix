@@ -212,10 +212,11 @@ in
         // Adds the panels
         ${panelsToLayoutJS config.programs.plasma.panels}
       '';
-      postCommands = ''
+      postCommands = lib.mkIf (anyNonDefaultScreens cfg.panels) ''
         if [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ]; then
-          ${if (anyNonDefaultScreens cfg.panels) then "sed -i 's/^lastScreen\\\\x5b\\$i\\\\x5d=/lastScreen[$i]=/' ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc" else ""}
-          ${if (anyNonDefaultScreens cfg.panels) then "# We sleep a second in order to prevent some bugs (like the incorrect height being set)\nsleep 1; nohup plasmashell --replace &" else ""}
+          sed -i 's/^lastScreen\\x5b$i\\x5d=/lastScreen[$i]=/' ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
+          # We sleep a second in order to prevent some bugs (like the incorrect height being set)
+          sleep 1; nohup plasmashell --replace &
         fi
       '';
       priority = 2;
