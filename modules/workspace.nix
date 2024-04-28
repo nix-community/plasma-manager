@@ -24,6 +24,11 @@ let
         type = nullOr (enum ["apod" "bing" "flickr" "natgeo" "noaa" "wcpotd" "epod" "simonstalenhag" ]);
         description = "The provider for the Picture of the Day plugin.";
       };
+      updateOverMeteredConnection = lib.mkOption {
+        type = bool;
+        default = false;
+        description = "Whether to update the wallpaper on a metered connection.";
+      };
     };
   };
 in
@@ -201,6 +206,7 @@ in
               desktop.wallpaperPlugin = "org.kde.potd";
               desktop.currentConfigGroup = Array("Wallpaper", "org.kde.potd", "General");
               desktop.writeConfig("Provider", "${cfg.workspace.wallpaperPictureOfTheDay.provider}");
+              desktop.writeConfig("UpdateOverMeteredConnection", "${if (cfg.workspace.wallpaperPictureOfTheDay.updateOverMeteredConnection) then "1" else "0"}");
             }
         '';
         priority = 3;
