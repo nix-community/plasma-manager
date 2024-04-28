@@ -21,7 +21,7 @@ let
   wallpaperPictureOfTheDayType = with lib.types; submodule {
     options = {
       provider = lib.mkOption {
-        type = enum ["apod" "bing" "flickr" "natgeo" "noaa" "wcpotd" "epod" "simonstalenhag" ];
+        type = nullOr (enum ["apod" "bing" "flickr" "natgeo" "noaa" "wcpotd" "epod" "simonstalenhag" ]);
         description = "The provider for the Picture of the Day plugin.";
       };
     };
