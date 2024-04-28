@@ -17,6 +17,20 @@ let
       };
     };
   };
+
+  wallpaperPictureOfTheDayType = with lib.types; submodule {
+    options = {
+      provider = lib.mkOption {
+        type = nullOr (enum ["apod" "bing" "flickr" "natgeo" "noaa" "wcpotd" "epod" "simonstalenhag" ]);
+        description = "The provider for the Picture of the Day plugin.";
+      };
+      updateOverMeteredConnection = lib.mkOption {
+        type = bool;
+        default = false;
+        description = "Whether to update the wallpaper on a metered connection.";
+      };
+    };
+  };
 in
 {
   options.programs.plasma.workspace = {
@@ -99,14 +113,27 @@ in
         Allows you to set wallpaper slideshow. Needs a directory of your wallpapers and an interval length.
       '';
     };
+
+    wallpaperPictureOfTheDay = lib.mkOption {
+      type = lib.types.nullOr wallpaperPictureOfTheDayType;
+      default = null;
+      example = { provider = "apod"; };
+      description = ''
+        Allows you to set wallpaper using the picture of the day plugin. Needs the provider.
+      '';
+    };
+
   };
 
   config = (lib.mkIf cfg.enable (lib.mkMerge [
     {
       assertions = [
         {
-          assertion = (cfg.workspace.wallpaperSlideShow == null || cfg.workspace.wallpaper == null);
-          message = "Cannot set both wallpaper and wallpaperSlideShow at the same time.";
+          assertion = let 
+            wallpapers = with cfg.workspace; [wallpaperSlideShow wallpaper wallpaperPictureOfTheDay];
+          in
+            lib.count (x: x != null) wallpapers <= 1;
+          message = "Can set only one of wallpaper, wallpaperSlideShow and wallpaperPictureOfTheDay.";
         }
       ];
     }
@@ -166,6 +193,20 @@ in
               "[" + (builtins.concatStringsSep "," (map (s: "\"" + s + "\"") cfg.workspace.wallpaperSlideShow.path)) + "]"});
               desktop.writeConfig("SlideInterval", "${builtins.toString cfg.workspace.wallpaperSlideShow.interval}");
           }
+        '';
+        priority = 3;
+      };
+    })
+    (lib.mkIf (cfg.workspace.wallpaperPictureOfTheDay != null) {
+      programs.plasma.startup.desktopScript."set_wallpaper_potd" = {
+        text = ''
+          let allDesktops = desktops();
+          for (const desktop of allDesktops) {
+              desktop.wallpaperPlugin = "org.kde.potd";
+              desktop.currentConfigGroup = ["Wallpaper", "org.kde.potd", "General"];
+              desktop.writeConfig("Provider", "${cfg.workspace.wallpaperPictureOfTheDay.provider}");
+              desktop.writeConfig("UpdateOverMeteredConnection", "${if (cfg.workspace.wallpaperPictureOfTheDay.updateOverMeteredConnection) then "1" else "0"}");
+            }
         '';
         priority = 3;
       };
