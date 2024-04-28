@@ -21,7 +21,7 @@ let
     };
   };
 
-  panelType = lib.types.submodule {
+  panelType = lib.types.submodule ({config, ...}: {
     options = {
       height = lib.mkOption {
         type = lib.types.int;
@@ -45,6 +45,16 @@ let
         default = null;
         example = 1600;
         description = "The maximum allowed length/width of the panel.";
+      };
+      lengthMode = lib.mkOption {
+        type = lib.types.nullOr (lib.types.enum ["fit" "fill" "custom"]);
+        default = 
+          if config.minLength != null || config.maxLength != null then
+            "custom"
+          else
+            null;
+        example = "fit";
+        description = "(Plasma 6 only) The length mode of the panel. Defaults to `custom` if either `minLength` or `maxLength` is set.";
       };
       location = lib.mkOption {
         type = lib.types.str;
@@ -118,37 +128,47 @@ let
         '';
       };
     };
-  };
+  });
 
+  # list of panels -> bool
   # Checks if any panels have non-default screens. If any of them do we need
   # some hacky tricks to place them on their screens.
-  anyNonDefaultScreens = panels: (builtins.any (panel: panel.screen != 0) panels);
+  anyNonDefaultScreens = builtins.any (panel: panel.screen != 0);
 
-  #
-  # Functions to generate layout.js configurations from the widgetType
-  #
-  # Configgroups must be javascript lists.
-  widgetConfigGroupFormat = group: ''[${lib.concatStringsSep ", " (map (s: "\"${s}\"") (lib.splitString "/" group))}]'';
-  # If the specified value is a string then add in extra quotes. If we have a
-  # list, convert this to a javascript list.
-  widgetConfigValueFormat = value: if (builtins.isString value) then "\"${value}\"" else ''[${(lib.concatStringsSep ", " (map (s: "\"${s}\"") value))}]'';
+  # any value or null -> string -> string 
+  # If value is null, returns the empty string, otherwise returns the provided string
+  stringIfNotNull = v: lib.optionalString (v != null);
+
+  # string -> string
+  # Wrap a string in double quotes.
+  wrapInQuotes = s: ''"${s}"'';
+
+  # list of strings -> string
+  # Converts a list of strings to a single string, that can be parsed as a string list in JavaScript
+  toJSStringList = values: ''[${lib.concatMapStringsSep ", " wrapInQuotes values}]'';
+
   # Generate writeConfig calls to include for a widget with additional
   # configurations.
   genWidgetConfigStr = widget: group: key: value:
     ''
-      var w = panelWidgets["${widget}"]
-      w.currentConfigGroup = ${widgetConfigGroupFormat group}
-      w.writeConfig("${key}", ${widgetConfigValueFormat value})
+      var w = panelWidgets["${widget}"];
+      w.currentConfigGroup = ${toJSStringList (lib.splitString "/" group)};
+      w.writeConfig("${key}", ${
+        if builtins.isString value then 
+          wrapInQuotes value 
+        else
+          toJSStringList value 
+      });
     '';
   # Generate the text for all of the configuration for a widget with additional
   # configurations.
-  widgetConfigsToStr = widget: config:
-    lib.concatStringsSep "\n"
-      (lib.concatLists
-        (lib.mapAttrsToList
-          (group: groupAttrs:
-            (lib.mapAttrsToList (key: value: (genWidgetConfigStr widget group key value)) groupAttrs))
-          config));
+  widgetConfigsToStr = widget: config: lib.pipe config [
+    (lib.mapAttrsToList
+      (group: lib.mapAttrsToList (genWidgetConfigStr widget group))
+    )
+    lib.concatLists
+    (lib.concatStringsSep "\n")
+  ];
 
   #
   # Functions to aid us creating a single panel in the layout.js
@@ -158,34 +178,39 @@ let
       ${cmd}
     }
   '';
-  panelWidgetCreationStr = widget: ''panelWidgets["${widget}"] = panel.addWidget("${widget}")'';
-  panelAddWidgetStr = widget: if (builtins.isString widget) then (panelWidgetCreationStr widget) else
-  ''
-    ${panelWidgetCreationStr widget.name}
-    ${if widget.config == null then "" else (widgetConfigsToStr widget.name widget.config)}
-  '';
-  panelAddWidgetsStr = panel: lib.concatStringsSep "\n" (map panelAddWidgetStr panel.widgets);
-  panelToLayout = panel: ''
 
+  panelAddWidgetStr = widget: let 
+    createWidget = name: ''panelWidgets["${name}"] = panel.addWidget("${name}");'';
+  in 
+    if builtins.isString widget then 
+      createWidget widget
+    else
+      ''
+        ${createWidget widget.name}
+        ${stringIfNotNull widget.config (widgetConfigsToStr widget.name widget.config)}
+      '';
+
+  panelToLayout = panel: let 
+    inherit (lib) boolToString optionalString;
+    inherit (builtins) toString;
+  in ''
     var panel = new Panel;
-    panel.height = ${builtins.toString panel.height}
-    panel.floating = ${lib.boolToString panel.floating}
-    var panelWidgets = {}
-    ${if panel.alignment != null then "panel.alignment = \"${panel.alignment}\"" else ""}
-    ${if panel.hiding != null then "panel.hiding = \"${panel.hiding}\"" else ""}
-    ${if panel.location != null then "panel.location = \"${panel.location}\"" else ""}
-    ${if panel.maxLength != null || panel.minLength != null then (plasma6OnlyCmd "panel.lengthMode = \"custom\"") else ""}
-    ${if panel.maxLength != null then "panel.maximumLength = ${builtins.toString panel.maxLength}" else ""}
-    ${if panel.minLength != null then "panel.minimumLength = ${builtins.toString panel.minLength}" else ""}
-    ${if panel.offset != null then "panel.offset = ${builtins.toString panel.offset}" else ""}
-    ${if panel.screen == 0 then "" else "panel.writeConfig(\"lastScreen[$i]\", ${builtins.toString panel.screen})"}
-    ${panelAddWidgetsStr panel}
-    ${if panel.extraSettings != null then panel.extraSettings else ""}
-  '';
+    panel.height = ${toString panel.height};
+    panel.floating = ${boolToString panel.floating};
+    ${stringIfNotNull panel.alignment ''panel.alignment = "${panel.alignment}";''}
+    ${stringIfNotNull panel.hiding ''panel.hiding = "${panel.hiding}";''}
+    ${stringIfNotNull panel.location ''panel.location = "${panel.location}";''}
+    ${stringIfNotNull panel.lengthMode (plasma6OnlyCmd ''panel.lengthMode = "${panel.lengthMode}";'')}
+    ${stringIfNotNull panel.maxLength "panel.maximumLength = ${toString panel.maxLength};"}
+    ${stringIfNotNull panel.minLength "panel.minimumLength = ${toString panel.minLength};"}
+    ${stringIfNotNull panel.offset "panel.offset = ${toString panel.offset};"}
+    ${optionalString (panel.screen != 0) ''panel.writeConfig("lastScreen[$i]", ${toString panel.screen});''}
 
-  # Generates the text for the full layout.js, combining the configuration for
-  # all the single panels into one.
-  panelsToLayoutJS = panels: lib.concatStringsSep "\n" (map panelToLayout panels);
+    var panelWidgets = {};
+    ${lib.concatMapStringsSep "\n" panelAddWidgetStr panel.widgets}
+
+    ${stringIfNotNull panel.extraSettings panel.extraSettings}
+  '';
 in
 {
   options.programs.plasma.panels = lib.mkOption {
@@ -203,14 +228,10 @@ in
       '';
       text = ''
         // Removes all existing panels
-        var allPanels = panels();
-        for (var panelIndex = 0; panelIndex < allPanels.length; panelIndex++) {
-          var p = allPanels[panelIndex];
-          p.remove();
-        }
+        panels().forEach((panel) => panel.remove());
 
         // Adds the panels
-        ${panelsToLayoutJS config.programs.plasma.panels}
+        ${lib.concatMapStringsSep "\n" panelToLayout config.programs.plasma.panels}
       '';
       postCommands = lib.mkIf (anyNonDefaultScreens cfg.panels) ''
         if [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ]; then
