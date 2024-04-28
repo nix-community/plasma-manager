@@ -196,7 +196,7 @@ in
       programs.plasma.startup.desktopScript."set_wallpaper_potd" = {
         text = ''
           let allDesktops = desktops();
-          for (var desktopIndex = 0; desktopIndex < allDesktops.length; desktopIndex++) {
+          for (const desktop of allDesktops) {
               var desktop = allDesktops[desktopIndex];
               desktop.wallpaperPlugin = "org.kde.potd";
               desktop.currentConfigGroup = Array("Wallpaper", "org.kde.potd", "General");
