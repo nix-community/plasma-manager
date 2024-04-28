@@ -112,7 +112,7 @@ in
     wallpaperPictureOfTheDay = lib.mkOption {
       type = lib.types.nullOr wallpaperPictureOfTheDayType;
       default = null;
-      example = "apod";
+      example = ''{ provider = "apod" }'';
       description = ''
         Allows you to set wallpaper using the picture of the day plugin. Needs the provider.
       '';
