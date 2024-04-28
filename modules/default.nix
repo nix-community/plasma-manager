@@ -11,6 +11,7 @@
     ./kwin.nix
     ./startup.nix
     ./panels.nix
+    ./fonts.nix
     ./apps
   ];
 
