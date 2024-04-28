@@ -114,7 +114,7 @@ in
       default = null;
       example = "apod";
       description = ''
-        Allows you to set wallpaper using the picture of the day plugin. Needs the provider and the fill mode.
+        Allows you to set wallpaper using the picture of the day plugin. Needs the provider.
       '';
     };
 
