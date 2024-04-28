@@ -124,10 +124,10 @@ in
     {
       assertions = [
         {
-          assertion = ((cfg.workspace.wallpaperSlideShow == null && cfg.workspace.wallpaper == null && cfg.workspace.wallpaperPictureOfTheDay != null)
-          || (cfg.workspace.wallpaperSlideShow == null && cfg.workspace.wallpaper != null && cfg.workspace.wallpaperPictureOfTheDay == null)
-          || (cfg.workspace.wallpaperSlideShow != null && cfg.workspace.wallpaper == null && cfg.workspace.wallpaperPictureOfTheDay == null)
-          || (cfg.workspace.wallpaperSlideShow == null && cfg.workspace.wallpaper == null && cfg.workspace.wallpaperPictureOfTheDay == null));
+          assertion = let 
+            wallpapers = with cfg.workspace; [wallpaperSlideShow wallpaper wallpaperPictureOfTheDay];
+          in
+            lib.count (x: x != null) wallpapers <= 1;
           message = "Can set only one of wallpaper, wallpaperSlideShow and wallpaperPictureOfTheDay.";
         }
       ];
