@@ -112,8 +112,11 @@ in
             (name: script: createScriptContent "desktop_script_${name}" script.priority
               ''
                 ${script.preCommands}
-                qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
-                ${lib.escape [ "'" ] script.text}'
+                read -rd ''' script << 'SCRIPT'
+                ${script.text}
+                SCRIPT
+
+                qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$script"
                 ${script.postCommands}
               '')
             cfg.startup.desktopScript))
