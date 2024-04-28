@@ -202,9 +202,8 @@ in
         text = ''
           let allDesktops = desktops();
           for (const desktop of allDesktops) {
-              var desktop = allDesktops[desktopIndex];
               desktop.wallpaperPlugin = "org.kde.potd";
-              desktop.currentConfigGroup = Array("Wallpaper", "org.kde.potd", "General");
+              desktop.currentConfigGroup = ["Wallpaper", "org.kde.potd", "General"];
               desktop.writeConfig("Provider", "${cfg.workspace.wallpaperPictureOfTheDay.provider}");
               desktop.writeConfig("UpdateOverMeteredConnection", "${if (cfg.workspace.wallpaperPictureOfTheDay.updateOverMeteredConnection) then "1" else "0"}");
             }
