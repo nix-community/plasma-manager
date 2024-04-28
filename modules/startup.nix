@@ -108,18 +108,21 @@ in
             cfg.startup.startupScript))
         # Desktop scripts
         (lib.mkMerge
-          (lib.mapAttrsToList
+          ((lib.mapAttrsToList
             (name: script: createScriptContent "desktop_script_${name}" script.priority
               ''
                 ${script.preCommands}
-                read -rd ''' script << 'SCRIPT'
-                ${script.text}
-                SCRIPT
-
-                qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$script"
+                qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$(cat ${config.xdg.dataHome}/plasma-manager/${cfg.startup.dataDir}/desktop_script_${name}.js)"
                 ${script.postCommands}
               '')
-            cfg.startup.desktopScript))
+            cfg.startup.desktopScript) ++
+          (lib.mapAttrsToList
+            (name: content: {
+              "plasma-manager/${cfg.startup.dataDir}/desktop_script_${name}.js" = {
+                text = content.text;
+              };
+            })
+            cfg.startup.desktopScript)))
         # Datafiles
         (lib.mkMerge
           (lib.mapAttrsToList
