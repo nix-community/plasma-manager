@@ -126,7 +126,8 @@ in
         {
           assertion = ((cfg.workspace.wallpaperSlideShow == null && cfg.workspace.wallpaper == null && cfg.workspace.wallpaperPictureOfTheDay != null)
           || (cfg.workspace.wallpaperSlideShow == null && cfg.workspace.wallpaper != null && cfg.workspace.wallpaperPictureOfTheDay == null)
-          || (cfg.workspace.wallpaperSlideShow != null && cfg.workspace.wallpaper == null && cfg.workspace.wallpaperPictureOfTheDay == null));
+          || (cfg.workspace.wallpaperSlideShow != null && cfg.workspace.wallpaper == null && cfg.workspace.wallpaperPictureOfTheDay == null)
+          || (cfg.workspace.wallpaperSlideShow == null && cfg.workspace.wallpaper == null && cfg.workspace.wallpaperPictureOfTheDay == null));
           message = "Can set only one of wallpaper, wallpaperSlideShow and wallpaperPictureOfTheDay.";
         }
       ];
