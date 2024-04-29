@@ -22,6 +22,13 @@
       command = "konsole";
     };
 
+    fonts = {
+      general = {
+        family = "JetBrains Mono";
+        pointSize = 12;
+      };
+    };
+
     panels = [
       # Windows-like panel at the bottom
       {
