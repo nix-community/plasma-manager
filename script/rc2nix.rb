@@ -206,7 +206,7 @@ module Rc2Nix
             print(" " * indent)
             print("\"#{file}\".")
             print("\"#{group}\".")
-            print("\"#{key}\".value = ")
+            print("\"#{key}\" = ")
             print(nix_val(settings[file][group][key]))
             print(";\n")
           end

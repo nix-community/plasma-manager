@@ -139,12 +139,12 @@ in
     }
     {
       programs.plasma.configFile.kdeglobals = {
-        KDE.SingleClick.value = lib.mkDefault (cfg.workspace.clickItemTo == "open");
+        KDE.SingleClick = lib.mkDefault (cfg.workspace.clickItemTo == "open");
       };
     }
     (lib.mkIf (cfg.workspace.tooltipDelay > 0) {
       programs.plasma.configFile.plasmarc = {
-        PlasmaToolTips.Delay.value = cfg.workspace.tooltipDelay;
+        PlasmaToolTips.Delay = cfg.workspace.tooltipDelay;
       };
     })
     (lib.mkIf

@@ -54,7 +54,7 @@ let
 
   virtualDesktopNameAttrs = names:
     builtins.listToAttrs
-      (imap1 (i: v: (nameValuePair "Name_${builtins.toString i}" { value = v; })) names);
+      (imap1 (i: v: (nameValuePair "Name_${builtins.toString i}" v)) names);
 in
 {
   options.programs.plasma.kwin = {
@@ -142,37 +142,37 @@ in
       # Titlebar buttons
       (
         mkIf (cfg.kwin.titlebarButtons.left != null) {
-          "org.kde.kdecoration2".ButtonsOnLeft.value = strings.concatStrings (getShortNames cfg.kwin.titlebarButtons.left);
+          "org.kde.kdecoration2".ButtonsOnLeft = strings.concatStrings (getShortNames cfg.kwin.titlebarButtons.left);
         }
       )
       (
         mkIf (cfg.kwin.titlebarButtons.right != null) {
-          "org.kde.kdecoration2".ButtonsOnRight.value = strings.concatStrings (getShortNames cfg.kwin.titlebarButtons.right);
+          "org.kde.kdecoration2".ButtonsOnRight = strings.concatStrings (getShortNames cfg.kwin.titlebarButtons.right);
         }
       )
 
       # Effects
       (
         mkIf (cfg.kwin.effects.shakeCursor.enable != null) {
-          Plugins.shakecursorEnabled.value = cfg.kwin.effects.shakeCursor.enable;
+          Plugins.shakecursorEnabled = cfg.kwin.effects.shakeCursor.enable;
         }
       )
 
       # Virtual Desktops
       (mkIf (cfg.kwin.virtualDesktops.animation != null) {
-        Plugins.slideEnabled.value = cfg.kwin.virtualDesktops.animation == "slide";
-        Plugins.fadedesktopEnabled.value = cfg.kwin.virtualDesktops.animation == "fade";
+        Plugins.slideEnabled = cfg.kwin.virtualDesktops.animation == "slide";
+        Plugins.fadedesktopEnabled = cfg.kwin.virtualDesktops.animation == "fade";
       })
       (mkIf (cfg.kwin.virtualDesktops.number != null) {
-        Desktops.Number.value = cfg.kwin.virtualDesktops.number;
+        Desktops.Number = cfg.kwin.virtualDesktops.number;
       })
       (mkIf (cfg.kwin.virtualDesktops.rows != null) {
-        Desktops.Rows.value = cfg.kwin.virtualDesktops.rows;
+        Desktops.Rows = cfg.kwin.virtualDesktops.rows;
       })
       (mkIf (cfg.kwin.virtualDesktops.names != null) {
         Desktops = mkMerge [
           {
-            Number.value = builtins.length cfg.kwin.virtualDesktops.names;
+            Number = builtins.length cfg.kwin.virtualDesktops.names;
           }
           (virtualDesktopNameAttrs cfg.kwin.virtualDesktops.names)
         ];
