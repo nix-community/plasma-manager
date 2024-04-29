@@ -1,10 +1,10 @@
-{
-  lib,
-  config,
-  ...
-}: let
+{ lib
+, config
+, ...
+}:
+let
   inherit (lib) mkIf mkOption types;
-  qfont = import ../lib/qfont.nix {inherit lib;};
+  qfont = import ../lib/qfont.nix { inherit lib; };
 
   styleStrategyType = types.submodule {
     options = with qfont.styleStrategy; {
@@ -180,7 +180,7 @@
       };
       styleStrategy = mkOption {
         type = styleStrategyType;
-        default = {};
+        default = { };
         description = ''
           The strategy for matching similar fonts to this font.
 
@@ -200,7 +200,8 @@
 
   inherit (config.programs.plasma) enable;
   cfg = lib.filterAttrs (_: v: v != null) config.programs.plasma.fonts;
-in {
+in
+{
   options.programs.plasma.fonts = {
     general = mkOption {
       type = types.nullOr fontType;
@@ -270,16 +271,18 @@ in {
     };
   };
 
-  config.programs.plasma.configFile.kdeglobals = let
-    mkFont = f: mkIf (enable && builtins.hasAttr f cfg) (qfont.fontToString cfg.${f});
-  in {
-    General = {
-      font.value = mkFont "general";
-      fixed.value = mkFont "fixedWidth";
-      smallestReadableFont.value = mkFont "small";
-      toolBarFont.value = mkFont "toolbar";
-      menuFont.value = mkFont "menu";
+  config.programs.plasma.configFile.kdeglobals =
+    let
+      mkFont = f: mkIf (enable && builtins.hasAttr f cfg) (qfont.fontToString cfg.${f});
+    in
+    {
+      General = {
+        font = mkFont "general";
+        fixed = mkFont "fixedWidth";
+        smallestReadableFont = mkFont "small";
+        toolBarFont = mkFont "toolbar";
+        menuFont = mkFont "menu";
+      };
+      WM.activeFont = mkFont "windowTitle";
     };
-    WM.activeFont.value = mkFont "windowTitle";
-  };
 }
