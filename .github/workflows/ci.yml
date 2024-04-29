@@ -14,5 +14,5 @@ jobs:
       with:
         extra_nix_config: "system-features = kvm nixos-test"
     - run: nix flake check -L --keep-going
-    - run: nix flake check -L --keep-going ./examples/homeManagerFlake
-    - run: nix flake check -L --keep-going ./examples/systemFlake
+    - run: nix flake check -L --keep-going --override-input plasma-manager . ./examples/homeManagerFlake
+    - run: nix flake check -L --keep-going --override-input plasma-manager . ./examples/systemFlake
