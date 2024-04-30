@@ -34,10 +34,20 @@
       {
         location = "bottom";
         widgets = [
-          "org.kde.plasma.kickoff"
-          # We can also configure the widgets. For example if you want to pin
-          # konsole and dolphin to the task-launcher the following widget will
-          # have that.
+          # We can configure the widgets by adding the name and config
+          # attributes. For example to add the the kickoff widget and set the
+          # icon to "nix-snowflake-white" use the below configuration. This will
+          # add the "icon" key to the "General" group for the widget in
+          # ~/.config/plasma-org.kde.plasma.desktop-appletsrc.
+          {
+            name = "org.kde.plasma.kickoff";
+            config = {
+              General.icon = "nix-snowflake-white";
+            };
+          }
+          # Adding configuration to the widgets can also for example be used to
+          # pin apps to the task-manager, which this example illustrates by
+          # pinning dolphin and konsole to the task-manager by default.
           {
             name = "org.kde.plasma.icontasks";
             config = {
@@ -47,6 +57,8 @@
               ];
             };
           }
+          # If no configuration is needed, specifying only the name of the
+          # widget will add them with the default configuration.
           "org.kde.plasma.marginsseparator"
           "org.kde.plasma.systemtray"
           "org.kde.plasma.digitalclock"
@@ -86,12 +98,18 @@
     # Some low-level settings:
     #
     configFile = {
-      "baloofilerc"."Basic Settings"."Indexing-Enabled" = false;
-      "kwinrc"."org.kde.kdecoration2"."ButtonsOnLeft" = "SF";
-      "kwinrc"."Desktops"."Number" = {
+      baloofilerc."Basic Settings"."Indexing-Enabled" = false;
+      kwinrc."org.kde.kdecoration2".ButtonsOnLeft = "SF";
+      kwinrc.Desktops.Number = {
         value = 8;
         # Forces kde to not change this value (even through the settings app).
         immutable = true;
+      };
+      kscreenlockerrc = {
+        Greeter.WallpaperPlugin = "org.kde.potd";
+        # To use nested groups use / as a separator. In the below example,
+        # Provider will be added to [Greeter][Wallpaper][org.kde.potd][General].
+        "Greeter/Wallpaper/org.kde.potd/General".Provider = "bing";
       };
     };
   };
