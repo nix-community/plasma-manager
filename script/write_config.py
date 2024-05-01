@@ -4,7 +4,8 @@ import os
 import re
 import sys
 from dataclasses import dataclass
-from typing import Dict, Optional, Set, Self
+from typing import Dict, Optional, Self, Set
+
 
 # KDE has a bespoke escape format:
 # https://github.com/KDE/kconfig/blob/44f98ff5cb9008436ba5ba385cae03bbd0ab33e6/src/core/kconfigini.cpp#L882
@@ -132,8 +133,9 @@ class ConfigValue:
     def to_line(self, key: str) -> str:
         """For keys with values (not None) we give key=value, if not just give
         the key as the line (this is useful in khotkeysrc)."""
-        key = escape(key)+self.marking
+        key = escape(key) + self.marking
         return f"{key}={self.value}" if self.value is not None else key
+
 
 class KConfManager:
     def __init__(self, filepath: str, json_dict: Dict, override_config: bool):
@@ -145,9 +147,11 @@ class KConfManager:
         # The nix expressions will have / to separate groups, and \/ to escape a /.
         # This parses the groups into tuples of unescaped group names.
         self.json_dict = {
-            tuple(g.replace("\\/", "/") for g in re.findall(r"(/|(?:[^/\\]|\\.)+)", group)[::2]): entry
-            for group, entry
-            in self.json_dict.items()
+            tuple(
+                g.replace("\\/", "/")
+                for g in re.findall(r"(/|(?:[^/\\]|\\.)+)", group)[::2]
+            ): entry
+            for group, entry in self.json_dict.items()
         }
 
     def _json_value_checks(self):
@@ -210,7 +214,7 @@ class KConfManager:
         """
         try:
             with open(self.filepath, "r", encoding="utf-8") as f:
-                current_group = () # default group
+                current_group = ()  # default group
                 for l in f:
                     # Checks if the current line indicates a group.
                     if re.match(r"^\[.*\]\s*$", l):
@@ -290,10 +294,7 @@ class KConfManager:
                     skip_newline = False
 
                 if group:
-                    key = "][".join(
-                        escape(g)
-                        for g in group
-                    )
+                    key = "][".join(escape(g) for g in group)
                     f.write(f"[{key}]\n")
                 for key, value in self.data[group].items():
                     f.write(f"{value.to_line(key)}\n")
