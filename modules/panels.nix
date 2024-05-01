@@ -1,25 +1,11 @@
-{ config, lib, ... }:
-let
+{
+  config,
+  lib,
+  ...
+} @ args: let
   cfg = config.programs.plasma;
 
-  # Widget types
-  widgetType = lib.types.submodule {
-    options = {
-      name = lib.mkOption {
-        type = lib.types.str;
-        example = "org.kde.plasma.kickoff";
-        description = "The name of the widget to add.";
-      };
-      config = lib.mkOption {
-        type = with lib.types; nullOr (attrsOf (attrsOf (either str (listOf str))));
-        default = null;
-        example = {
-          General.icon = "nix-snowflake-white";
-        };
-        description = "Extra configuration-options for the widget.";
-      };
-    };
-  };
+  widgets = import ./widgets args;
 
   panelType = lib.types.submodule ({config, ...}: {
     options = {
@@ -90,7 +76,7 @@ let
       };
       floating = lib.mkEnableOption "Enable or disable floating style (plasma 6 only).";
       widgets = lib.mkOption {
-        type = with lib.types; listOf (either str widgetType);
+        type = with lib.types; listOf (either str widgets.type);
         default = [
           "org.kde.plasma.kickoff"
           "org.kde.plasma.pager"
@@ -179,18 +165,19 @@ let
     }
   '';
 
-  panelAddWidgetStr = widget: let 
+  panelAddWidgetStr = widget: let
+    widget' = widgets.convert widget;
     createWidget = name: ''panelWidgets["${name}"] = panel.addWidget("${name}");'';
-  in 
-    if builtins.isString widget then 
-      createWidget widget
+  in
+    if builtins.isString widget
+    then createWidget widget
     else
       ''
-        ${createWidget widget.name}
-        ${stringIfNotNull widget.config (widgetConfigsToStr widget.name widget.config)}
+        ${createWidget widget'.name}
+        ${stringIfNotNull widget'.config (widgetConfigsToStr widget'.name widget'.config)}
       '';
 
-  panelToLayout = panel: let 
+  panelToLayout = panel: let
     inherit (lib) boolToString optionalString;
     inherit (builtins) toString;
   in ''
