@@ -1,5 +1,6 @@
 {lib, ...} @ args: let
   sources = lib.mergeAttrsList (map (s: import s args) [
+    ./digital-clock.nix
     ./system-monitor.nix
   ]);
 
