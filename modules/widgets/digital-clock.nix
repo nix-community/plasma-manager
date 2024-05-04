@@ -1,4 +1,5 @@
-{lib, ...}: let
+{ lib, ... }:
+let
   inherit (lib) mkEnableOption mkOption types;
 
   fontType = types.submodule {
@@ -30,23 +31,24 @@
 
   enums = {
     date = {
-      format = ["shortDate" "longDate" "isoDate"];
-      position = ["adaptive" "besideTime" "belowTime"];
+      format = [ "shortDate" "longDate" "isoDate" ];
+      position = [ "adaptive" "besideTime" "belowTime" ];
     };
     time = {
-      showSeconds = ["never" "onlyInTooltip" "always"];
-      format = ["12h" "default" "24h"];
+      showSeconds = [ "never" "onlyInTooltip" "always" ];
+      format = [ "12h" "default" "24h" ];
     };
-    timeZone.format = ["code" "city" "offset"];
-    calendar.weekdays = ["sunday" "monday" "tuesday" "wednesday" "thursday" "friday" "saturday"];
+    timeZone.format = [ "code" "city" "offset" ];
+    calendar.weekdays = [ "sunday" "monday" "tuesday" "wednesday" "thursday" "friday" "saturday" ];
   };
-in {
+in
+{
   digitalClock = {
     description = "A digital clock widget.";
 
     opts = {
       date = {
-        enable = mkEnableOption "showing the current date" // {default = true;};
+        enable = mkEnableOption "showing the current date" // { default = true; };
 
         format = mkOption {
           type = types.nullOr (types.either (types.enum enums.date.format) (types.submodule {
@@ -57,7 +59,7 @@ in {
             };
           }));
           default = null;
-          example = {custom = "d.MM.yyyy";};
+          example = { custom = "d.MM.yyyy"; };
           description = ''
             The date format used for this clock.
 
@@ -102,7 +104,7 @@ in {
         selected = mkOption {
           type = types.nullOr (types.listOf types.str);
           default = null;
-          example = ["Europe/Berlin" "Asia/Shanghai"];
+          example = [ "Europe/Berlin" "Asia/Shanghai" ];
           description = ''
             The timezones that are configured for this clock.
 
@@ -174,67 +176,70 @@ in {
       };
     };
 
-    convert = {
-      date,
-      time,
-      timeZone,
-      calendar,
-      font,
-    }: let
-      inherit (builtins) toString;
-      inherit (lib) boolToString;
+    convert =
+      { date
+      , time
+      , timeZone
+      , calendar
+      , font
+      ,
+      }:
+      let
+        inherit (builtins) toString;
+        inherit (lib) boolToString;
 
-      getEnum = es: e:
-        if e == null
-        then null
-        else
-          toString (
-            lib.lists.findFirstIndex
-            (x: x == e)
-            (throw "getEnum: nonexistent key ${e}! This is a bug!")
-            es
-          );
-    in {
-      name = "org.kde.plasma.digitalclock";
-      config.Appearance = lib.filterAttrs (_: v: v != null) (
-        {
-          showDate = boolToString date.enable;
-          dateDisplayFormat = getEnum enums.date.position date.position;
-          dateFormat =
-            if date.format ? custom
-            then "custom"
-            else date.format;
-          customDateFormat =
-            if date.format ? custom
-            then date.format.custom
-            else null;
+        getEnum = es: e:
+          if e == null
+          then null
+          else
+            toString (
+              lib.lists.findFirstIndex
+                (x: x == e)
+                (throw "getEnum: nonexistent key ${e}! This is a bug!")
+                es
+            );
+      in
+      {
+        name = "org.kde.plasma.digitalclock";
+        config.Appearance = lib.filterAttrs (_: v: v != null) (
+          {
+            showDate = boolToString date.enable;
+            dateDisplayFormat = getEnum enums.date.position date.position;
+            dateFormat =
+              if date.format ? custom
+              then "custom"
+              else date.format;
+            customDateFormat =
+              if date.format ? custom
+              then date.format.custom
+              else null;
 
-          showSeconds = getEnum enums.time.showSeconds time.showSeconds;
-          use24hFormat = getEnum enums.time.format time.format;
+            showSeconds = getEnum enums.time.showSeconds time.showSeconds;
+            use24hFormat = getEnum enums.time.format time.format;
 
-          selectedTimeZones = timeZone.selected;
-          lastSelectedTimezone = timeZone.lastSelected;
-          wheelChangesTimezone = boolToString timeZone.changeOnScroll;
-          displayTimezoneFormat = getEnum enums.timeZone.format timeZone.format;
-          showLocalTimezone = boolToString timeZone.alwaysShow;
+            selectedTimeZones = timeZone.selected;
+            lastSelectedTimezone = timeZone.lastSelected;
+            wheelChangesTimezone = boolToString timeZone.changeOnScroll;
+            displayTimezoneFormat = getEnum enums.timeZone.format timeZone.format;
+            showLocalTimezone = boolToString timeZone.alwaysShow;
 
-          firstDayOfWeek =
-            if calendar.firstDayOfWeek != null
-            then getEnum enums.calendar.weekdays calendar.firstDayOfWeek
-            else null;
-          enabledCalendarPlugins = calendar.plugins;
+            firstDayOfWeek =
+              if calendar.firstDayOfWeek != null
+              then getEnum enums.calendar.weekdays calendar.firstDayOfWeek
+              else null;
+            enabledCalendarPlugins = calendar.plugins;
 
-          autoFontAndSize = boolToString (font == null);
-        }
-        // lib.optionalAttrs (font != null) {
-          fontFamily = font.family;
-          boldText = boolToString font.bold;
-          italicText = boolToString font.italic;
-          fontWeight = toString font.weight;
-          fontStyleName = font.styleName;
-          fontSize = toString font.size;
-        }
-      );
-    };
+            autoFontAndSize = boolToString (font == null);
+          }
+          // lib.optionalAttrs (font != null) {
+            fontFamily = font.family;
+            boldText = boolToString font.bold;
+            italicText = boolToString font.italic;
+            fontWeight = toString font.weight;
+            fontStyleName = font.styleName;
+            fontSize = toString font.size;
+          }
+        );
+      };
   };
 }

@@ -1,4 +1,5 @@
-{lib, ...} @ args: let
+{ lib, ... } @ args:
+let
   sources = lib.mergeAttrsList (map (s: import s args) [
     ./digital-clock.nix
     ./system-monitor.nix
@@ -32,16 +33,18 @@
       };
     };
   };
-in {
+in
+{
   type = lib.types.either compositeWidgetType simpleWidgetType;
 
-  convert = composite: let
-    inherit (builtins) length head attrNames hasAttr mapAttrs isAttrs;
-    keys = attrNames composite;
-    type = head keys;
+  convert = composite:
+    let
+      inherit (builtins) length head attrNames hasAttr mapAttrs isAttrs;
+      keys = attrNames composite;
+      type = head keys;
 
-    converters = mapAttrs (_: s: s.convert) sources;
-  in
+      converters = mapAttrs (_: s: s.convert) sources;
+    in
     if isAttrs composite && length keys == 1 && hasAttr type converters
     then converters.${type} composite.${type}
     else composite; # not a known composite type
