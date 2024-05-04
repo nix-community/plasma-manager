@@ -1,27 +1,13 @@
-{ config, lib, ... }:
+{ config
+, lib
+, ...
+} @ args:
 let
   cfg = config.programs.plasma;
 
-  # Widget types
-  widgetType = lib.types.submodule {
-    options = {
-      name = lib.mkOption {
-        type = lib.types.str;
-        example = "org.kde.plasma.kickoff";
-        description = "The name of the widget to add.";
-      };
-      config = lib.mkOption {
-        type = with lib.types; nullOr (attrsOf (attrsOf (either str (listOf str))));
-        default = null;
-        example = {
-          General.icon = "nix-snowflake-white";
-        };
-        description = "Extra configuration-options for the widget.";
-      };
-    };
-  };
+  widgets = import ./widgets args;
 
-  panelType = lib.types.submodule ({config, ...}: {
+  panelType = lib.types.submodule ({ config, ... }: {
     options = {
       height = lib.mkOption {
         type = lib.types.int;
@@ -47,8 +33,8 @@ let
         description = "The maximum allowed length/width of the panel.";
       };
       lengthMode = lib.mkOption {
-        type = lib.types.nullOr (lib.types.enum ["fit" "fill" "custom"]);
-        default = 
+        type = lib.types.nullOr (lib.types.enum [ "fit" "fill" "custom" ]);
+        default =
           if config.minLength != null || config.maxLength != null then
             "custom"
           else
@@ -90,7 +76,7 @@ let
       };
       floating = lib.mkEnableOption "Enable or disable floating style (plasma 6 only).";
       widgets = lib.mkOption {
-        type = with lib.types; listOf (either str widgetType);
+        type = with lib.types; listOf (either str widgets.type);
         default = [
           "org.kde.plasma.kickoff"
           "org.kde.plasma.pager"
@@ -179,38 +165,42 @@ let
     }
   '';
 
-  panelAddWidgetStr = widget: let 
-    createWidget = name: ''panelWidgets["${name}"] = panel.addWidget("${name}");'';
-  in 
-    if builtins.isString widget then 
-      createWidget widget
+  panelAddWidgetStr = widget:
+    let
+      widget' = widgets.convert widget;
+      createWidget = name: ''panelWidgets["${name}"] = panel.addWidget("${name}");'';
+    in
+    if builtins.isString widget
+    then createWidget widget
     else
       ''
-        ${createWidget widget.name}
-        ${stringIfNotNull widget.config (widgetConfigsToStr widget.name widget.config)}
+        ${createWidget widget'.name}
+        ${stringIfNotNull widget'.config (widgetConfigsToStr widget'.name widget'.config)}
       '';
 
-  panelToLayout = panel: let 
-    inherit (lib) boolToString optionalString;
-    inherit (builtins) toString;
-  in ''
-    var panel = new Panel;
-    panel.height = ${toString panel.height};
-    panel.floating = ${boolToString panel.floating};
-    ${stringIfNotNull panel.alignment ''panel.alignment = "${panel.alignment}";''}
-    ${stringIfNotNull panel.hiding ''panel.hiding = "${panel.hiding}";''}
-    ${stringIfNotNull panel.location ''panel.location = "${panel.location}";''}
-    ${stringIfNotNull panel.lengthMode (plasma6OnlyCmd ''panel.lengthMode = "${panel.lengthMode}";'')}
-    ${stringIfNotNull panel.maxLength "panel.maximumLength = ${toString panel.maxLength};"}
-    ${stringIfNotNull panel.minLength "panel.minimumLength = ${toString panel.minLength};"}
-    ${stringIfNotNull panel.offset "panel.offset = ${toString panel.offset};"}
-    ${optionalString (panel.screen != 0) ''panel.writeConfig("lastScreen[$i]", ${toString panel.screen});''}
+  panelToLayout = panel:
+    let
+      inherit (lib) boolToString optionalString;
+      inherit (builtins) toString;
+    in
+    ''
+      var panel = new Panel;
+      panel.height = ${toString panel.height};
+      panel.floating = ${boolToString panel.floating};
+      ${stringIfNotNull panel.alignment ''panel.alignment = "${panel.alignment}";''}
+      ${stringIfNotNull panel.hiding ''panel.hiding = "${panel.hiding}";''}
+      ${stringIfNotNull panel.location ''panel.location = "${panel.location}";''}
+      ${stringIfNotNull panel.lengthMode (plasma6OnlyCmd ''panel.lengthMode = "${panel.lengthMode}";'')}
+      ${stringIfNotNull panel.maxLength "panel.maximumLength = ${toString panel.maxLength};"}
+      ${stringIfNotNull panel.minLength "panel.minimumLength = ${toString panel.minLength};"}
+      ${stringIfNotNull panel.offset "panel.offset = ${toString panel.offset};"}
+      ${optionalString (panel.screen != 0) ''panel.writeConfig("lastScreen[$i]", ${toString panel.screen});''}
 
-    var panelWidgets = {};
-    ${lib.concatMapStringsSep "\n" panelAddWidgetStr panel.widgets}
+      var panelWidgets = {};
+      ${lib.concatMapStringsSep "\n" panelAddWidgetStr panel.widgets}
 
-    ${stringIfNotNull panel.extraSettings panel.extraSettings}
-  '';
+      ${stringIfNotNull panel.extraSettings panel.extraSettings}
+    '';
 in
 {
   options.programs.plasma.panels = lib.mkOption {

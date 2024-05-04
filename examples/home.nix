@@ -61,7 +61,19 @@
           # widget will add them with the default configuration.
           "org.kde.plasma.marginsseparator"
           "org.kde.plasma.systemtray"
-          "org.kde.plasma.digitalclock"
+          # If you need configuration for your widget, instead of specifying the
+          # the keys and values directly using the config attribute as shown
+          # above, plasma-manager also provides some higher-level interfaces for
+          # configuring the widgets. See modules/widgets for supported widgets
+          # and options for these widgets. The widget below shows an example of
+          # usage, where we add a digital clock, setting 12h time and first day
+          # of the week to sunday.
+          {
+            digitalClock = {
+              calendar.firstDayOfWeek = "sunday";
+              time.format = "12h";
+            };
+          }
         ];
         hiding = "autohide";
       }
