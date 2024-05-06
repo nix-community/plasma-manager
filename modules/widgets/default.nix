@@ -5,6 +5,7 @@ let
   };
 
   sources = lib.mergeAttrsList (map (s: import s args') [
+    ./battery.nix
     ./digital-clock.nix
     ./system-monitor.nix
     ./system-tray.nix
