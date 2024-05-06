@@ -1,4 +1,4 @@
-{lib, widgets, ...}: {
+{ lib, widgets, ... }: {
   battery = {
     description = "The battery indicator widget.";
 

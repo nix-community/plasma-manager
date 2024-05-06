@@ -184,10 +184,10 @@ in
     };
 
     convert =
-      { date ? {}
-      , time ? {}
-      , timeZone ? {}
-      , calendar ? {}
+      { date ? { }
+      , time ? { }
+      , timeZone ? { }
+      , calendar ? { }
       , font ? null
       ,
       }:

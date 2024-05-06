@@ -60,7 +60,7 @@ let
       };
     };
   };
-    
+
   isKnownWidget = lib.flip builtins.hasAttr sources;
 
   self = {
@@ -78,7 +78,7 @@ let
 
         converters = mapAttrs (_: s: s.convert) sources;
       in
-      if isAttrs composite && length keys == 1 && isKnownWidget type 
+      if isAttrs composite && length keys == 1 && isKnownWidget type
       then {
         config = null;
         extraConfig = "";
@@ -86,4 +86,4 @@ let
       else composite; # not a known composite type
   };
 in
-  self
+self

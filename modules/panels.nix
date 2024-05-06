@@ -178,7 +178,7 @@ in
         # https://github.com/pjones/plasma-manager/issues/76
         [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ] && rm ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
       '';
-      text = builtins.trace text text; 
+      text = builtins.trace text text;
       postCommands = lib.mkIf (anyNonDefaultScreens cfg.panels) ''
         if [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ]; then
           sed -i 's/^lastScreen\\x5b$i\\x5d=/lastScreen[$i]=/' ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc

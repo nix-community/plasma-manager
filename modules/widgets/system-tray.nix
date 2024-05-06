@@ -1,8 +1,10 @@
-{lib, widgets, ...}: let
+{ lib, widgets, ... }:
+let
   inherit (lib) mkOption types;
 
-  enums.icons.spacing = ["small" "medium" "large"];
-in {
+  enums.icons.spacing = [ "small" "medium" "large" ];
+in
+{
   systemTray = {
     description = "A system tray of other widgets/plasmoids";
 
@@ -81,7 +83,7 @@ in {
         extra = mkOption {
           type = types.nullOr (types.listOf types.str);
           default = null;
-          example = ["org.kde.plasma.battery"];
+          example = [ "org.kde.plasma.battery" ];
           description = ''
             List of extra widgets that are explicitly enabled in the system tray.
 
@@ -92,7 +94,7 @@ in {
         configs = mkOption {
           # TODO: bother with typing this later
           type = types.attrsOf types.anything;
-          default = {};
+          default = { };
           example = {
             # Example of a widget-specific config
             battery.enablePercentage = true;
@@ -114,51 +116,57 @@ in {
       };
     };
 
-    convert = {
-      pin ? null,
-      icons ? {},
-      items ? {},
-    }: let 
-      inherit (widgets.lib) boolToString';
+    convert =
+      { pin ? null
+      , icons ? { }
+      , items ? { }
+      ,
+      }:
+      let
+        inherit (widgets.lib) boolToString';
 
-      settings.General = lib.filterAttrs (_: v: v != null) {
-        pin = boolToString' pin;
-        extraItems = items.extra or null;
-        hiddenItems = items.hidden or null;
-        shownItems = items.shown or null;
-        showAllItems = boolToString' (items.showAll or null);
-        scaleItemsToFit = boolToString' (icons.scaleToFit or null);
-        iconSpacing = if !(icons ? spacing) then 
-          null
-        else if builtins.isInt icons.spacing then 
-          toString icons.spacing
-        else
-          widgets.lib.getEnum enums.icons.spacing icons.spacing;
-      }; 
+        settings.General = lib.filterAttrs (_: v: v != null) {
+          pin = boolToString' pin;
+          extraItems = items.extra or null;
+          hiddenItems = items.hidden or null;
+          shownItems = items.shown or null;
+          showAllItems = boolToString' (items.showAll or null);
+          scaleItemsToFit = boolToString' (icons.scaleToFit or null);
+          iconSpacing =
+            if !(icons ? spacing) then
+              null
+            else if builtins.isInt icons.spacing then
+              toString icons.spacing
+            else
+              widgets.lib.getEnum enums.icons.spacing icons.spacing;
+        };
 
-      configs' = lib.mapAttrsToList (name: config: 
-        if widgets.isKnownWidget name then
-          # Looks a bit funny, does the job just right.
-          widgets.convert { ${name} = config; }
-        else
-          { 
-            inherit name; 
-            config = null; 
-            extraConfig = "";
-          } // config
-      ) items.configs;
-    in {
-      name = "org.kde.plasma.systemtray";
-      extraConfig = ''
-        (widget) => {
-          const tray = desktopById(widget.readConfig("SystrayContainmentId"));
-          if (!tray) return; // if somehow the containment doesn't exist
+        configs' = lib.mapAttrsToList
+          (name: config:
+            if widgets.isKnownWidget name then
+            # Looks a bit funny, does the job just right.
+              widgets.convert { ${name} = config; }
+            else
+              {
+                inherit name;
+                config = null;
+                extraConfig = "";
+              } // config
+          )
+          items.configs;
+      in
+      {
+        name = "org.kde.plasma.systemtray";
+        extraConfig = ''
+          (widget) => {
+            const tray = desktopById(widget.readConfig("SystrayContainmentId"));
+            if (!tray) return; // if somehow the containment doesn't exist
           
-          ${widgets.lib.setWidgetSettings "tray" (builtins.trace items.shown settings)}
+            ${widgets.lib.setWidgetSettings "tray" (builtins.trace items.shown settings)}
           
-          ${widgets.lib.addWidgetStmts "tray" "trayWidgets" configs'}
-        }
-      '';
-    };
+            ${widgets.lib.addWidgetStmts "tray" "trayWidgets" configs'}
+          }
+        '';
+      };
   };
 }

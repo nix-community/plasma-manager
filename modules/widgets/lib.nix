@@ -1,8 +1,9 @@
-{lib, widgets, ...}: let
-  inherit (lib) 
+{ lib, widgets, ... }:
+let
+  inherit (lib)
     optionalString
-    concatMapStringsSep 
-    concatStringsSep 
+    concatMapStringsSep
+    concatStringsSep
     mapAttrsToList
     splitString
     ;
@@ -19,44 +20,47 @@
   # Converts a list of strings to a single string, that can be parsed as a string list in JavaScript
   toJSStringList = values: ''[${concatMapStringsSep ", " wrapInQuotes values}]'';
 
-  setWidgetSettings = var: settings: let
-    perConfig = key: value: ''${var}.writeConfig("${key}", ${
+  setWidgetSettings = var: settings:
+    let
+      perConfig = key: value: ''${var}.writeConfig("${key}", ${
       if builtins.isString value
       then wrapInQuotes value
       else toJSStringList value
     });'';
-    perGroup = group: configs: ''
-      ${var}.currentConfigGroup = ${toJSStringList (splitString "/" group)};
-      ${concatStringsSep "\n" (mapAttrsToList perConfig configs)}
-    '';
-  in 
+      perGroup = group: configs: ''
+        ${var}.currentConfigGroup = ${toJSStringList (splitString "/" group)};
+        ${concatStringsSep "\n" (mapAttrsToList perConfig configs)}
+      '';
+    in
     concatStringsSep "\n" (mapAttrsToList perGroup settings);
 
-  addWidgetStmts = containment: var: ws: let 
-    widgetConfigsToStmts = widget: ''
-      var w = ${var}["${widget.name}"];
-      ${setWidgetSettings "w" widget.config}
-    '';
+  addWidgetStmts = containment: var: ws:
+    let
+      widgetConfigsToStmts = widget: ''
+        var w = ${var}["${widget.name}"];
+        ${setWidgetSettings "w" widget.config}
+      '';
 
-    addStmt = widget:
-      let
-        widget' = widgets.convert widget;
-        createWidget = name: ''${var}["${name}"] = ${containment}.addWidget("${name}");'';
-      in
-      if builtins.isString widget
-      then createWidget widget
-      else
-        ''
-          ${createWidget widget'.name}
-          ${stringIfNotNull widget'.config (widgetConfigsToStmts widget')}
-          ${lib.optionalString (widget'.extraConfig != "") ''
-            (${widget'.extraConfig})(${var}["${widget'.name}"]);
-          ''}
-        '';
-  in ''
-    const ${var} = {};
-    ${lib.concatMapStringsSep "\n" addStmt ws}
-  '';
+      addStmt = widget:
+        let
+          widget' = widgets.convert widget;
+          createWidget = name: ''${var}["${name}"] = ${containment}.addWidget("${name}");'';
+        in
+        if builtins.isString widget
+        then createWidget widget
+        else
+          ''
+            ${createWidget widget'.name}
+            ${stringIfNotNull widget'.config (widgetConfigsToStmts widget')}
+            ${lib.optionalString (widget'.extraConfig != "") ''
+              (${widget'.extraConfig})(${var}["${widget'.name}"]);
+            ''}
+          '';
+    in
+    ''
+      const ${var} = {};
+      ${lib.concatMapStringsSep "\n" addStmt ws}
+    '';
 
   boolToString' = b: if b == null then null else lib.boolToString b;
 
@@ -70,9 +74,10 @@
           (throw "getEnum: nonexistent key ${e}! This is a bug!")
           es
       );
-in {
-  inherit 
-    stringIfNotNull 
+in
+{
+  inherit
+    stringIfNotNull
     setWidgetSettings
     addWidgetStmts
     boolToString'
