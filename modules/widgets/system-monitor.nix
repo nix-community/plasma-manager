@@ -7,6 +7,8 @@ in
     description = "A system monitor widget.";
 
     opts = {
+      # See https://invent.kde.org/plasma/plasma-workspace/-/blob/master/applets/systemmonitor/systemmonitor/package/contents/config/main.xml for the accepted raw options 
+
       title = mkOption {
         type = types.nullOr types.str;
         default = null;
@@ -64,11 +66,11 @@ in
     };
 
     convert =
-      { title
-      , displayStyle
-      , totalSensors
-      , sensors
-      , textOnlySensors
+      { title ? null
+      , displayStyle ? null
+      , totalSensors ? null
+      , sensors ? null
+      , textOnlySensors ? null
       ,
       }:
       let

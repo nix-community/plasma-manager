@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, widgets, ... }:
 let
   inherit (lib) mkEnableOption mkOption types;
 
@@ -47,8 +47,15 @@ in
     description = "A digital clock widget.";
 
     opts = {
+      # See https://invent.kde.org/plasma/plasma-workspace/-/blob/master/applets/digital-clock/package/contents/config/main.xml for the accepted raw options
+
       date = {
-        enable = mkEnableOption "showing the current date" // { default = true; };
+        enable = mkOption {
+          type = types.nullOr types.bool;
+          default = null;
+          example = true;
+          description = "Enable showing the current date.";
+        };
 
         format = mkOption {
           type = types.nullOr (types.either (types.enum enums.date.format) (types.submodule {
@@ -121,8 +128,8 @@ in
           '';
         };
         changeOnScroll = mkOption {
-          type = types.bool;
-          default = false;
+          type = types.nullOr types.bool;
+          default = null;
           description = "Allow changing the displayed timezone by scrolling on the widget with the mouse wheel.";
         };
         format = mkOption {
@@ -177,64 +184,46 @@ in
     };
 
     convert =
-      { date
-      , time
-      , timeZone
-      , calendar
-      , font
+      { date ? {}
+      , time ? {}
+      , timeZone ? {}
+      , calendar ? {}
+      , font ? null
       ,
       }:
       let
         inherit (builtins) toString;
-        inherit (lib) boolToString;
+        inherit (widgets.lib) boolToString' getEnum;
 
-        getEnum = es: e:
-          if e == null
-          then null
-          else
-            toString (
-              lib.lists.findFirstIndex
-                (x: x == e)
-                (throw "getEnum: nonexistent key ${e}! This is a bug!")
-                es
-            );
+        isDateFormatCustom = date ? format && date.format ? custom;
       in
       {
         name = "org.kde.plasma.digitalclock";
         config.Appearance = lib.filterAttrs (_: v: v != null) (
           {
-            showDate = boolToString date.enable;
-            dateDisplayFormat = getEnum enums.date.position date.position;
-            dateFormat =
-              if date.format ? custom
-              then "custom"
-              else date.format;
-            customDateFormat =
-              if date.format ? custom
-              then date.format.custom
-              else null;
+            showDate = boolToString' (date.enable or null);
+            dateDisplayFormat = getEnum enums.date.position (date.position or null);
+            dateFormat = if isDateFormatCustom then "custom" else date.format or null;
+            customDateFormat = if isDateFormatCustom then date.format.custom else null;
 
-            showSeconds = getEnum enums.time.showSeconds time.showSeconds;
-            use24hFormat = getEnum enums.time.format time.format;
+            showSeconds = getEnum enums.time.showSeconds (time.showSeconds or null);
+            use24hFormat = getEnum enums.time.format (time.format or null);
 
-            selectedTimeZones = timeZone.selected;
-            lastSelectedTimezone = timeZone.lastSelected;
-            wheelChangesTimezone = boolToString timeZone.changeOnScroll;
-            displayTimezoneFormat = getEnum enums.timeZone.format timeZone.format;
-            showLocalTimezone = boolToString timeZone.alwaysShow;
+            selectedTimeZones = timeZone.selected or null;
+            lastSelectedTimezone = timeZone.lastSelected or null;
+            wheelChangesTimezone = boolToString' (timeZone.changeOnScroll or null);
+            displayTimezoneFormat = getEnum enums.timeZone.format (timeZone.format or null);
+            showLocalTimezone = boolToString' (timeZone.alwaysShow or null);
 
-            firstDayOfWeek =
-              if calendar.firstDayOfWeek != null
-              then getEnum enums.calendar.weekdays calendar.firstDayOfWeek
-              else null;
-            enabledCalendarPlugins = calendar.plugins;
+            firstDayOfWeek = getEnum enums.calendar.weekdays (calendar.firstDayOfWeek or null);
+            enabledCalendarPlugins = calendar.plugins or null;
 
-            autoFontAndSize = boolToString (font == null);
+            autoFontAndSize = boolToString' (font == null);
           }
           // lib.optionalAttrs (font != null) {
             fontFamily = font.family;
-            boldText = boolToString font.bold;
-            italicText = boolToString font.italic;
+            boldText = boolToString' font.bold;
+            italicText = boolToString' font.italic;
             fontWeight = toString font.weight;
             fontStyleName = font.styleName;
             fontSize = toString font.size;
