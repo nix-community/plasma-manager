@@ -136,7 +136,7 @@ let
     in
     ''
       {
-        const panel = new Panel;
+        const panel = new Panel();
         panel.height = ${toString panel.height};
         panel.floating = ${boolToString panel.floating};
         ${stringIfNotNull panel.alignment ''panel.alignment = "${panel.alignment}";''}
