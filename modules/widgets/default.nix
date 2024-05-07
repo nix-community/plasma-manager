@@ -12,12 +12,12 @@ let
   ]);
 
   compositeWidgetType = lib.pipe sources [
-    (builtins.mapAttrs (_: s:
-      lib.mkOption {
+    (builtins.mapAttrs
+      (_: s: lib.mkOption {
         inherit (s) description;
-        type = lib.types.submodule {
-          options = s.opts;
-        };
+        type = lib.types.submodule (submoduleArgs: {
+          options = if builtins.isFunction s.opts then s.opts submoduleArgs else s.opts;
+        });
       }))
     lib.types.attrTag
   ];
@@ -66,24 +66,27 @@ let
   self = {
     inherit isKnownWidget;
 
-    type = lib.types.either compositeWidgetType simpleWidgetType;
+    type = lib.types.oneOf [ lib.types.str compositeWidgetType simpleWidgetType ];
 
     lib = import ./lib.nix (args // { widgets = self; });
 
-    convert = composite:
+    convert = widget:
       let
-        inherit (builtins) length head attrNames mapAttrs isAttrs;
-        keys = attrNames composite;
+        inherit (builtins) length head attrNames mapAttrs isAttrs isString;
+        keys = attrNames widget;
         type = head keys;
 
+        base = {
+          config = null;
+          extraConfig = "";
+        };
         converters = mapAttrs (_: s: s.convert) sources;
       in
-      if isAttrs composite && length keys == 1 && isKnownWidget type
-      then {
-        config = null;
-        extraConfig = "";
-      } // converters.${type} composite.${type}
-      else composite; # not a known composite type
+      if isString widget then
+        base // { name = widget; }
+      else if isAttrs widget && length keys == 1 && isKnownWidget type then
+        base // converters.${type} widget.${type}
+      else widget; # not a known composite type
   };
 in
 self

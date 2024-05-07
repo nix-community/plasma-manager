@@ -1,6 +1,41 @@
 { lib, ... }:
 let
   inherit (lib) mkOption types;
+
+  # KDE expects a key/value pair like this:
+  # ```ini
+  # highPrioritySensorIds=["cpu/all/usage", "cpu/all/averageTemperature"]
+  # ```
+  #
+  # Which is **different** to what would happen if you pass a list of strings to the JS script:
+  # ```ini
+  # highPrioritySensorIds=cpu/all/usage,cpu/all/averageTemperature
+  # ```
+  #
+  # So, to satisfy the expected format we must quote the ENTIRE string as a valid JS string,
+  # which means constructing a string that looks like this in the source code:
+  # "[\"cpu/all/usage\", \"cpu/all/averageTemperature\"]"
+  toEscapedList = ids:
+    if ids != null
+    then "[${lib.concatMapStringsSep ", " (x: ''\"${x}\"'') ids}]"
+    else null;
+
+  mkListOption = mkOption {
+    type = types.nullOr (types.listOf types.str);
+    default = null;
+    apply = toEscapedList;
+  };
+
+  # {name, color} -> {name, value}
+  # Convert the sensor attrset into a name-value pair expected by listToAttrs
+  toColorKV =
+    { name
+    , color
+    ,
+    }: {
+      inherit name;
+      value = color;
+    };
 in
 {
   systemMonitor = {
@@ -45,19 +80,19 @@ in
         description = ''
           The list of sensors displayed as a part of the graph/chart.
         '';
+        apply = sensors: lib.optionalAttrs (sensors != null) {
+          SensorColors = builtins.listToAttrs (map toColorKV sensors);
+          Sensors.highPrioritySensorIds = toEscapedList (map (s: s.name) sensors);
+        };
       };
 
-      totalSensors = mkOption {
-        type = types.nullOr (types.listOf types.str);
-        default = null;
+      totalSensors = mkListOption // {
         example = [ "cpu/all/usage" ];
         description = ''
           The list of "total sensors" displayed on top of the graph/chart.
         '';
       };
-      textOnlySensors = mkOption {
-        type = types.nullOr (types.listOf types.str);
-        default = null;
+      textOnlySensors = mkListOption // {
         example = [ "cpu/all/averageTemperature" "cpu/all/averageFrequency" ];
         description = ''
           The list of text-only sensors, displayed in the pop-up upon clicking the widget.
@@ -66,63 +101,25 @@ in
     };
 
     convert =
-      { title ? null
-      , displayStyle ? null
-      , totalSensors ? null
-      , sensors ? null
-      , textOnlySensors ? null
-      ,
-      }:
-      let
-        # KDE expects a key/value pair like this:
-        # ```ini
-        # highPrioritySensorIds=["cpu/all/usage", "cpu/all/averageTemperature"]
-        # ```
-        #
-        # Which is **different** to what would happen if you pass a list of strings to the JS script:
-        # ```ini
-        # highPrioritySensorIds=cpu/all/usage,cpu/all/averageTemperature
-        # ```
-        #
-        # So, to satisfy the expected format we must quote the ENTIRE string as a valid JS string,
-        # which means constructing a string that looks like this in the source code:
-        # "[\"cpu/all/usage\", \"cpu/all/averageTemperature\"]"
-        toEscapedList = ids:
-          if ids != null
-          then "[${lib.concatMapStringsSep ", " (x: ''\"${x}\"'') ids}]"
-          else null;
-
-        # {name, color} -> {name, value}
-        # Convert the sensor attrset into a name-value pair expected by listToAttrs
-        toColorKV =
-          { name
-          , color
-          ,
-          }: {
-            inherit name;
-            value = color;
-          };
-      in
-      {
+      { title
+      , displayStyle
+      , totalSensors
+      , sensors
+      , textOnlySensors
+      }: {
         name = "org.kde.plasma.systemmonitor";
-        config = lib.filterAttrsRecursive (_: v: v != null) {
-          Appearance = {
-            inherit title;
-            chartFace = displayStyle;
-          };
-          SensorColors =
-            if sensors != null
-            then builtins.listToAttrs (map toColorKV sensors)
-            else null;
-          Sensors = {
-            highPrioritySensorIds =
-              if sensors != null
-              then toEscapedList (map (s: s.name) sensors)
-              else null;
-            lowPrioritySensorIds = toEscapedList textOnlySensors;
-            totalSensors = toEscapedList totalSensors;
-          };
-        };
+        config = lib.filterAttrsRecursive (_: v: v != null) (lib.recursiveUpdate
+          {
+            Appearance = {
+              inherit title;
+              chartFace = displayStyle;
+            };
+            Sensors = {
+              lowPrioritySensorIds = textOnlySensors;
+              totalSensors = totalSensors;
+            };
+          }
+          sensors);
       };
   };
 }

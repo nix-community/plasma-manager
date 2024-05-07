@@ -1,50 +1,46 @@
 { lib, widgets, ... }:
 let
   inherit (lib) mkOption types;
-
-  enums.icons.spacing = [ "small" "medium" "large" ];
+  inherit (widgets.lib) mkBoolOption;
 in
 {
   systemTray = {
     description = "A system tray of other widgets/plasmoids";
 
-    opts = {
+    opts = ({ options, ... }: {
       # See https://invent.kde.org/plasma/plasma-workspace/-/blob/master/applets/systemtray/package/contents/config/main.xml for the accepted raw options.
 
-      pin = mkOption {
-        type = types.nullOr types.bool;
-        default = null;
-        description = "Whether the popup should remain open when another window is activated.";
-      };
+      pin = mkBoolOption "Whether the popup should remain open when another window is activated.";
 
       icons = {
-        spacing = mkOption {
-          type = types.nullOr (types.either (types.enum enums.icons.spacing) types.ints.positive);
-          default = null;
-          description = ''
-            The spacing between icons.
+        spacing =
+          let
+            enum = [ "small" "medium" "large" ];
+          in
+          mkOption {
+            type = types.nullOr (types.either (types.enum enum) types.ints.positive);
+            default = null;
+            description = ''
+              The spacing between icons.
 
-            Could be an integer unit, or "small" (1 unit), "medium" (2 units) or "large" (6 units).
-          '';
-        };
-        scaleToFit = mkOption {
-          type = types.nullOr types.bool;
-          default = null;
-          description = ''
-            Whether to automatically scale System Tray icons to fix the available thickness of the panel.
+              Could be an integer unit, or "small" (1 unit), "medium" (2 units) or "large" (6 units).
+            '';
+            apply = spacing:
+              if builtins.isInt spacing then
+                toString spacing
+              else
+                widgets.lib.getEnum enum spacing;
+          };
+        scaleToFit = mkBoolOption ''
+          Whether to automatically scale System Tray icons to fix the available thickness of the panel.
 
-            If false, tray icons will be capped at the smallMedium size (22px) and become a two-row/column
-            layout when the panel is thick.
-          '';
-        };
+          If false, tray icons will be capped at the smallMedium size (22px) and become a two-row/column
+          layout when the panel is thick.
+        '';
       };
 
       items = {
-        showAll = mkOption {
-          type = types.nullOr types.bool;
-          default = null;
-          description = "If true, all system tray entries will always be in the main bar, outside the popup.";
-        };
+        showAll = mkBoolOption "If true, all system tray entries will always be in the main bar, outside the popup.";
 
         hidden = mkOption {
           type = types.nullOr (types.listOf types.str);
@@ -92,8 +88,9 @@ in
         };
 
         configs = mkOption {
-          # TODO: bother with typing this later
-          type = types.attrsOf types.anything;
+          # The type here is deliberately NOT modelled exactly correctly,
+          # to allow the apply function to provide better errors with the richer option and type system.
+          type = types.attrsOf (types.attrsOf types.anything);
           default = { };
           example = {
             # Example of a widget-specific config
@@ -112,48 +109,54 @@ in
             otherwise uses raw configs that's not specifically checked to be valid,
             or even idiomatic in Nix!
           '';
+
+          # You might be asking yourself... WTH is this?
+          # Simply put, this thing allows us to apply the same defaults as defined by the options,
+          # Instead of forcing downstream converters to provide defaults to everything *again*.
+          # The way to do this is kind of cursed and honestly it might be easier if `lib.evalOptionValue`
+          # is not recommended for public use. Oh well.
+          apply = lib.mapAttrsToList
+            (name: config:
+              let
+                isKnownWidget = widgets.isKnownWidget name;
+                # Raw widgets aren't wrapped in an extra attrset layer, unlike known ones
+                # We wrap them back up to ensure the path is accurate
+                loc = options.items.configs.loc ++ lib.optional (!isKnownWidget) name;
+              in
+              widgets.convert (
+                lib.mergeDefinitions loc widgets.type [
+                  {
+                    file = builtins.head options.items.configs.files;
+                    # Looks a bit funny, does the job just right.
+                    value =
+                      if isKnownWidget then
+                        { ${name} = config; }
+                      else
+                        config // { inherit name; };
+                  }
+                ]
+              ).mergedValue
+            );
         };
       };
-    };
+    });
 
     convert =
-      { pin ? null
-      , icons ? { }
-      , items ? { }
-      ,
+      { pin
+      , icons
+      , items
       }:
       let
-        inherit (widgets.lib) boolToString';
-
         settings.General = lib.filterAttrs (_: v: v != null) {
-          pin = boolToString' pin;
-          extraItems = items.extra or null;
-          hiddenItems = items.hidden or null;
-          shownItems = items.shown or null;
-          showAllItems = boolToString' (items.showAll or null);
-          scaleItemsToFit = boolToString' (icons.scaleToFit or null);
-          iconSpacing =
-            if !(icons ? spacing) then
-              null
-            else if builtins.isInt icons.spacing then
-              toString icons.spacing
-            else
-              widgets.lib.getEnum enums.icons.spacing icons.spacing;
-        };
+          inherit pin;
+          extraItems = items.extra;
+          hiddenItems = items.hidden;
+          shownItems = items.shown;
+          showAllItems = items.showAll;
 
-        configs' = lib.mapAttrsToList
-          (name: config:
-            if widgets.isKnownWidget name then
-            # Looks a bit funny, does the job just right.
-              widgets.convert { ${name} = config; }
-            else
-              {
-                inherit name;
-                config = null;
-                extraConfig = "";
-              } // config
-          )
-          items.configs;
+          scaleItemsToFit = icons.scaleToFit;
+          iconSpacing = icons.spacing;
+        };
       in
       {
         name = "org.kde.plasma.systemtray";
@@ -162,9 +165,8 @@ in
             const tray = desktopById(widget.readConfig("SystrayContainmentId"));
             if (!tray) return; // if somehow the containment doesn't exist
           
-            ${widgets.lib.setWidgetSettings "tray" (builtins.trace items.shown settings)}
-          
-            ${widgets.lib.addWidgetStmts "tray" "trayWidgets" configs'}
+            ${widgets.lib.setWidgetSettings "tray" settings}
+            ${widgets.lib.addWidgetStmts "tray" "trayWidgets" items.configs}
           }
         '';
       };

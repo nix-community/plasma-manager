@@ -76,7 +76,7 @@ let
       };
       floating = lib.mkEnableOption "Enable or disable floating style (plasma 6 only).";
       widgets = lib.mkOption {
-        type = with lib.types; listOf (either str widgets.type);
+        type = lib.types.listOf widgets.type;
         default = [
           "org.kde.plasma.kickoff"
           "org.kde.plasma.pager"
@@ -99,6 +99,7 @@ let
           widgets/plasmoids are for example plasma-desktop and
           plasma-workspace.
         '';
+        apply = map widgets.convert;
       };
       screen = lib.mkOption {
         type = lib.types.int;
@@ -121,14 +122,12 @@ let
   # some hacky tricks to place them on their screens.
   anyNonDefaultScreens = builtins.any (panel: panel.screen != 0);
 
-
   panelToLayout = panel:
     let
       inherit (widgets.lib) addWidgetStmts stringIfNotNull;
       inherit (lib) boolToString optionalString;
       inherit (builtins) toString;
 
-      # Functions to aid us creating a single panel in the layout.js
       plasma6OnlyCmd = cmd: ''
         if (isPlasma6) {
           ${cmd}
@@ -154,7 +153,7 @@ let
       }
     '';
 
-  text = ''
+  layout = ''
     // Removes all existing panels
     panels().forEach((panel) => panel.remove());
 
@@ -178,7 +177,7 @@ in
         # https://github.com/pjones/plasma-manager/issues/76
         [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ] && rm ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
       '';
-      text = builtins.trace text text;
+      text = layout;
       postCommands = lib.mkIf (anyNonDefaultScreens cfg.panels) ''
         if [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ]; then
           sed -i 's/^lastScreen\\x5b$i\\x5d=/lastScreen[$i]=/' ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
