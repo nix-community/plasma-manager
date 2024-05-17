@@ -116,7 +116,7 @@ interest we would love to move this into [nix-community] once it has matured.
 
 ## Special Thanks
 
-This work was inspired by the suggestions on [Home Manger Issue #607][hm607] by
+This work was inspired by the suggestions on [Home Manager Issue #607][hm607] by
 people such as [bew](https://github.com/bew) and
 [kurnevsky](https://github.com/kurnevsky).  Thank you.
 
