@@ -94,7 +94,7 @@ in
           default = { };
           example = {
             # Example of a widget-specific config
-            battery.enablePercentage = true;
+            battery.showPercentage = true;
 
             # Example of raw config for an untyped widget
             "org.kde.plasma.devicenotifier".config = {
