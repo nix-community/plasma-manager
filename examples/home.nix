@@ -67,7 +67,7 @@
           # and options for these widgets. The widgets below shows two examples
           # of usage, one where we add a digital clock, setting 12h time and
           # first day of the week to sunday and another adding a systray with
-          # all systray-entries shown.
+          # some modifications in which entries to show.
           {
             digitalClock = {
               calendar.firstDayOfWeek = "sunday";
@@ -75,8 +75,17 @@
             };
           }
           {
-            systemTray = {
-              items.showAll = true;
+            systemTray.items = {
+              # We explicitly show bluetooth and battery
+              shown = [
+                "org.kde.plasma.battery"
+                "org.kde.plasma.bluetooth"
+              ];
+              # And explicitly hide networkmanagement and volume
+              hidden = [
+                "org.kde.plasma.networkmanagement"
+                "org.kde.plasma.volume"
+              ];
             };
           }
         ];
