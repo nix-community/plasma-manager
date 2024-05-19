@@ -64,7 +64,7 @@ in
             '';
             apply = f:
               if f == null then
-                {}
+                { }
               else if f ? custom then
                 {
                   dateFormat = "custom";
