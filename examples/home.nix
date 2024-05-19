@@ -60,18 +60,23 @@
           # If no configuration is needed, specifying only the name of the
           # widget will add them with the default configuration.
           "org.kde.plasma.marginsseparator"
-          "org.kde.plasma.systemtray"
           # If you need configuration for your widget, instead of specifying the
           # the keys and values directly using the config attribute as shown
           # above, plasma-manager also provides some higher-level interfaces for
           # configuring the widgets. See modules/widgets for supported widgets
-          # and options for these widgets. The widget below shows an example of
-          # usage, where we add a digital clock, setting 12h time and first day
-          # of the week to sunday.
+          # and options for these widgets. The widgets below shows two examples
+          # of usage, one where we add a digital clock, setting 12h time and
+          # first day of the week to sunday and another adding a systray with
+          # all systray-entries shown.
           {
             digitalClock = {
               calendar.firstDayOfWeek = "sunday";
               time.format = "12h";
+            };
+          }
+          {
+            systemTray = {
+              items.showAll = true;
             };
           }
         ];
