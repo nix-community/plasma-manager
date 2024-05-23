@@ -9,11 +9,11 @@
     # Some high-level settings:
     #
     workspace = {
-      clickItemTo = "open"; # If you liked the click-to-open default from plasma 5
+      clickItemTo = "select"; # If you don't like the click-to-open default
       lookAndFeel = "org.kde.breezedark.desktop";
       cursorTheme = "Bibata-Modern-Ice";
       iconTheme = "Papirus-Dark";
-      wallpaper = "${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/Patak/contents/images/1080x1920.png";
+      wallpaper = "${pkgs.libsForQt5.plasma-workspace-wallpapers}/share/wallpapers/Patak/contents/images/1080x1920.png";
     };
 
     hotkeys.commands."launch-konsole" = {
