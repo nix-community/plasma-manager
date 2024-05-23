@@ -7,7 +7,7 @@ let
     export PATH=${kdePackages.kconfig}/bin:$PATH
 
     kread_global() {
-      kreadconfig5 --file $XDG_CONFIG_HOME/kdeglobals "$@"
+      kreadconfig6 --file $XDG_CONFIG_HOME/kdeglobals "$@"
     }
 
     assert_eq() {
