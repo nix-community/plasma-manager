@@ -195,7 +195,7 @@ in
   #     LSP Servers
 
   options.programs.kate.lsp.customServers = lib.mkOption {
-    default = {};
+    default = { };
     type = lib.types.attrs;
     description = ''
       Add more lsp server settings here. Check out the format on the

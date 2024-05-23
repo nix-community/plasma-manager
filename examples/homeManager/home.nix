@@ -16,7 +16,7 @@
       lookAndFeel = "org.kde.breezedark.desktop";
       cursorTheme = "Bibata-Modern-Ice";
       iconTheme = "Papirus-Dark";
-      wallpaper = "${pkgs.libsForQt5.plasma-workspace-wallpapers}/share/wallpapers/Patak/contents/images/1080x1920.png";
+      wallpaper = "${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/Patak/contents/images/1080x1920.png";
     };
 
     hotkeys.commands."launch-konsole" = {
