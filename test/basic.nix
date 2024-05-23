@@ -1,10 +1,10 @@
-{ testers, home-manager-module, plasma-module, writeShellScriptBin, libsForQt5 }:
+{ testers, home-manager-module, plasma-module, writeShellScriptBin, kdePackages }:
 let
   script = writeShellScriptBin "plasma-basic-test" ''
     set -eu
 
     export XDG_CONFIG_HOME=''${XDG_CONFIG_HOME:-$HOME/.config}
-    export PATH=${libsForQt5.kconfig}/bin:$PATH
+    export PATH=${kdePackages.kconfig}/bin:$PATH
 
     kread_global() {
       kreadconfig5 --file $XDG_CONFIG_HOME/kdeglobals "$@"

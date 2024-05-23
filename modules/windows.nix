@@ -7,8 +7,8 @@ in
 {
   options.programs.plasma.windows = {
     allowWindowsToRememberPositions = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
+      type = with lib.types; nullOr bool;
+      default = null;
       description = ''
         Allow apps to remember the positions of their own windows, if
         they support it.
@@ -16,13 +16,12 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = (lib.mkIf (cfg.enable && cfg.windows.allowWindowsToRememberPositions != null) {
     programs.plasma.configFile = {
       kdeglobals = {
-        General.AllowKDEAppsToRememberWindowPositions =
-          lib.mkDefault cfg.windows.allowWindowsToRememberPositions;
+        General.AllowKDEAppsToRememberWindowPositions = cfg.windows.allowWindowsToRememberPositions;
       };
     };
-  };
+  });
 }
 
