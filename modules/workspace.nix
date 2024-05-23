@@ -99,7 +99,7 @@ in
     wallpaper = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
       default = null;
-      example = "${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/Kay/contents/images/1080x1920.png";
+      example = "${pkgs.libsForQt5.plasma-workspace-wallpapers}/share/wallpapers/Kay/contents/images/1080x1920.png";
       description = ''
         The Plasma wallpaper. Can be either be the path to an image file or a kpackage.
       '';
@@ -108,7 +108,7 @@ in
     wallpaperSlideShow = lib.mkOption {
       type = lib.types.nullOr wallpaperSlideShowType;
       default = null;
-      example = "${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/";
+      example = "${pkgs.libsForQt5.plasma-workspace-wallpapers}/share/wallpapers/";
       description = ''
         Allows you to set wallpaper slideshow. Needs a directory of your wallpapers and an interval length.
       '';
@@ -165,7 +165,7 @@ in
             ${if cfg.workspace.theme != null then "plasma-apply-desktoptheme ${cfg.workspace.theme}" else ""}
             ${if cfg.workspace.cursorTheme != null then "plasma-apply-cursortheme ${cfg.workspace.cursorTheme}" else ""}
             ${if cfg.workspace.colorScheme != null then "plasma-apply-colorscheme ${cfg.workspace.colorScheme}" else ""}
-            ${if cfg.workspace.iconTheme != null then "${pkgs.kdePackages.plasma-workspace}/libexec/plasma-changeicons ${cfg.workspace.iconTheme}" else ""}
+            ${if cfg.workspace.iconTheme != null then "${pkgs.libsForQt5.plasma-workspace}/libexec/plasma-changeicons ${cfg.workspace.iconTheme}" else ""}
           '';
           priority = 1;
         };
