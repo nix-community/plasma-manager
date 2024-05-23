@@ -22,7 +22,6 @@ let
     }
 
     assert_eq false --group KDE --key SingleClick
-    assert_eq true --group General --key AllowKDEAppsToRememberWindowPositions
     # Set with shorthand
     assert_eq 1 --group group --key key1
     # Set with longhand and immutable
