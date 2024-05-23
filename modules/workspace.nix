@@ -21,7 +21,7 @@ let
   wallpaperPictureOfTheDayType = with lib.types; submodule {
     options = {
       provider = lib.mkOption {
-        type = nullOr (enum ["apod" "bing" "flickr" "natgeo" "noaa" "wcpotd" "epod" "simonstalenhag" ]);
+        type = nullOr (enum [ "apod" "bing" "flickr" "natgeo" "noaa" "wcpotd" "epod" "simonstalenhag" ]);
         description = "The provider for the Picture of the Day plugin.";
       };
       updateOverMeteredConnection = lib.mkOption {
@@ -35,16 +35,16 @@ in
 {
   options.programs.plasma.workspace = {
     clickItemTo = lib.mkOption {
-      type = lib.types.enum [ "open" "select" ];
-      default = "open";
+      type = with lib.types; nullOr (enum [ "open" "select" ]);
+      default = null;
       description = ''
         Clicking files or folders should open or select them.
       '';
     };
 
     tooltipDelay = lib.mkOption {
-      type = lib.types.int;
-      default = -1;
+      type = with lib.types; nullOr ints.positive;
+      default = null;
       example = 5;
       description = ''
         The delay in milliseconds before an element's tooltip is shown when hovered over.
@@ -99,7 +99,7 @@ in
     wallpaper = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
       default = null;
-      example = "${pkgs.libsForQt5.plasma-workspace-wallpapers}/share/wallpapers/Kay/contents/images/1080x1920.png";
+      example = "${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/Kay/contents/images/1080x1920.png";
       description = ''
         The Plasma wallpaper. Can be either be the path to an image file or a kpackage.
       '';
@@ -108,7 +108,7 @@ in
     wallpaperSlideShow = lib.mkOption {
       type = lib.types.nullOr wallpaperSlideShowType;
       default = null;
-      example = "${pkgs.libsForQt5.plasma-workspace-wallpapers}/share/wallpapers/";
+      example = "${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/";
       description = ''
         Allows you to set wallpaper slideshow. Needs a directory of your wallpapers and an interval length.
       '';
@@ -129,20 +129,21 @@ in
     {
       assertions = [
         {
-          assertion = let 
-            wallpapers = with cfg.workspace; [wallpaperSlideShow wallpaper wallpaperPictureOfTheDay];
-          in
+          assertion =
+            let
+              wallpapers = with cfg.workspace; [ wallpaperSlideShow wallpaper wallpaperPictureOfTheDay ];
+            in
             lib.count (x: x != null) wallpapers <= 1;
           message = "Can set only one of wallpaper, wallpaperSlideShow and wallpaperPictureOfTheDay.";
         }
       ];
     }
     {
-      programs.plasma.configFile.kdeglobals = {
-        KDE.SingleClick = lib.mkDefault (cfg.workspace.clickItemTo == "open");
-      };
+      programs.plasma.configFile.kdeglobals = (lib.mkIf (cfg.workspace.clickItemTo != null) {
+        KDE.SingleClick = (cfg.workspace.clickItemTo == "open");
+      });
     }
-    (lib.mkIf (cfg.workspace.tooltipDelay > 0) {
+    (lib.mkIf (cfg.workspace.tooltipDelay != null) {
       programs.plasma.configFile.plasmarc = {
         PlasmaToolTips.Delay = cfg.workspace.tooltipDelay;
       };
@@ -164,7 +165,7 @@ in
             ${if cfg.workspace.theme != null then "plasma-apply-desktoptheme ${cfg.workspace.theme}" else ""}
             ${if cfg.workspace.cursorTheme != null then "plasma-apply-cursortheme ${cfg.workspace.cursorTheme}" else ""}
             ${if cfg.workspace.colorScheme != null then "plasma-apply-colorscheme ${cfg.workspace.colorScheme}" else ""}
-            ${if cfg.workspace.iconTheme != null then "${pkgs.libsForQt5.plasma-workspace}/libexec/plasma-changeicons ${cfg.workspace.iconTheme}" else ""}
+            ${if cfg.workspace.iconTheme != null then "${pkgs.kdePackages.plasma-workspace}/libexec/plasma-changeicons ${cfg.workspace.iconTheme}" else ""}
           '';
           priority = 1;
         };
