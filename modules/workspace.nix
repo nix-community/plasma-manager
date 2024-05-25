@@ -169,6 +169,14 @@ in
           '';
           priority = 1;
         };
+        # We add persistence to some keys in order to not reset the themes on
+        # each generation when we use overrideConfig.
+        programs.plasma.configFile.kcminputrc.Mouse.cursorTheme.persistent = lib.mkDefault (cfg.workspace.cursorTheme != null);
+        programs.plasma.configFile.kdeglobals.General.ColorScheme.persistent = lib.mkDefault (cfg.workspace.colorScheme != null);
+        programs.plasma.configFile.kdeglobals.General.ColorSchemeHash.persistent = lib.mkDefault (cfg.workspace.colorScheme != null);
+        programs.plasma.configFile.kdeglobals.Icons.Theme.persistent = lib.mkDefault (cfg.workspace.iconTheme != null);
+        programs.plasma.configFile.kdeglobals.KDE.LookAndFeelPackage.persistent = lib.mkDefault (cfg.workspace.lookAndFeel != null);
+        programs.plasma.configFile.plasmarc.Theme.name.persistent = lib.mkDefault (cfg.workspace.theme != null);
       })
     (lib.mkIf (cfg.workspace.wallpaper != null) {
       # We need to set the wallpaper after the panels are created in order for
