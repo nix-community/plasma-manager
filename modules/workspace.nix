@@ -173,7 +173,6 @@ in
         # each generation when we use overrideConfig.
         programs.plasma.configFile.kcminputrc.Mouse.cursorTheme.persistent = lib.mkDefault (cfg.workspace.cursorTheme != null);
         programs.plasma.configFile.kdeglobals.General.ColorScheme.persistent = lib.mkDefault (cfg.workspace.colorScheme != null);
-        programs.plasma.configFile.kdeglobals.General.ColorSchemeHash.persistent = lib.mkDefault (cfg.workspace.colorScheme != null);
         programs.plasma.configFile.kdeglobals.Icons.Theme.persistent = lib.mkDefault (cfg.workspace.iconTheme != null);
         programs.plasma.configFile.kdeglobals.KDE.LookAndFeelPackage.persistent = lib.mkDefault (cfg.workspace.lookAndFeel != null);
         programs.plasma.configFile.plasmarc.Theme.name.persistent = lib.mkDefault (cfg.workspace.theme != null);
