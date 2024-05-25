@@ -56,6 +56,14 @@ let
           '';
         };
       };
+      extraConfig = lib.mkOption {
+        type = with lib.types; attrsOf (attrsOf basicSettingsType);
+        default = { };
+        example = { };
+        description = ''
+          Extra keys to manually add to the profile.
+        '';
+      };
     };
   };
 in
@@ -122,24 +130,28 @@ in
                       fontString = lib.mkIf (profile.font.name != null) "${profile.font.name},${builtins.toString profile.font.size}";
                     in
                     {
-                      "konsole/${profileName}.profile".text = lib.generators.toINI { } {
-                        "General" = (
+                      "konsole/${profileName}.profile".text = lib.generators.toINI { }
+                        (lib.recursiveUpdate
                           {
-                            "Name" = profileName;
-                            # Konsole generated profiles seem to always have this
-                            "Parent" = "FALLBACK/";
-                          } //
-                          (lib.optionalAttrs (profile.command != null) { "Command" = profile.command; })
+                            "General" = (
+                              {
+                                "Name" = profileName;
+                                # Konsole generated profiles seem to always have this
+                                "Parent" = "FALLBACK/";
+                              } //
+                              (lib.optionalAttrs (profile.command != null) { "Command" = profile.command; })
+                            );
+                            "Appearance" = (
+                              {
+                                # If the font size is not set we leave a comma a the end after the name
+                                # We should fix this probs but konsole doesn't seem to care ¯\_(ツ)_/¯
+                                "Font" = fontString.content;
+                              } //
+                              (lib.optionalAttrs (profile.colorScheme != null) { "ColorScheme" = profile.colorScheme; })
+                            );
+                          }
+                          profile.extraConfig
                         );
-                        "Appearance" = (
-                          {
-                            # If the font size is not set we leave a comma a the end after the name
-                            # We should fix this probs but konsole doesn't seem to care ¯\_(ツ)_/¯
-                            "Font" = fontString.content;
-                          } //
-                          (lib.optionalAttrs (profile.colorScheme != null) { "ColorScheme" = profile.colorScheme; })
-                        );
-                      };
                     }
                 )
                 cfg.profiles
