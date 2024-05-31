@@ -42,12 +42,12 @@ let
     };
   };
 
-  createScriptContent = name: priority: text: {
+  createScriptContent = name: sha256sumFile: priority: text: {
     "plasma-manager/${cfg.startup.scriptsDir}/${builtins.toString priority}_${name}.sh" = {
       text =
         ''
           #!/bin/sh
-          last_update="$(sha256sum $0)"
+          last_update="$(sha256sum ${sha256sumFile})"
           last_update_file=${config.xdg.dataHome}/plasma-manager/last_run_${name}
           if [ -f "$last_update_file" ]; then
             stored_last_update=$(cat "$last_update_file")
@@ -104,17 +104,19 @@ in
         # Autostart scripts
         (lib.mkMerge
           (lib.mapAttrsToList
-            (name: script: createScriptContent name script.priority script.text)
+            (name: script: createScriptContent name "$0" script.priority script.text)
             cfg.startup.startupScript))
         # Desktop scripts
         (lib.mkMerge
           ((lib.mapAttrsToList
-            (name: script: createScriptContent "desktop_script_${name}" script.priority
-              ''
-                ${script.preCommands}
-                qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$(cat ${config.xdg.dataHome}/plasma-manager/${cfg.startup.dataDir}/desktop_script_${name}.js)"
-                ${script.postCommands}
-              '')
+            (name: script:
+              let layoutScriptPath = "${config.xdg.dataHome}/plasma-manager/${cfg.startup.dataDir}/desktop_script_${name}.js";
+              in createScriptContent "desktop_script_${name}" layoutScriptPath script.priority
+                ''
+                  ${script.preCommands}
+                  qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$(cat ${layoutScriptPath})"
+                  ${script.postCommands}
+                '')
             cfg.startup.desktopScript) ++
           (lib.mapAttrsToList
             (name: content: {
