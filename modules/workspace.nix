@@ -171,13 +171,22 @@ in
         };
         # We add persistence to some keys in order to not reset the themes on
         # each generation when we use overrideConfig.
-        programs.plasma.configFile = lib.mkIf (cfg.overrideConfig) {
-          kcminputrc.Mouse.cursorTheme.persistent = lib.mkDefault (cfg.workspace.cursorTheme != null);
-          kdeglobals.General.ColorScheme.persistent = lib.mkDefault (cfg.workspace.colorScheme != null);
-          kdeglobals.Icons.Theme.persistent = lib.mkDefault (cfg.workspace.iconTheme != null);
-          kdeglobals.KDE.LookAndFeelPackage.persistent = lib.mkDefault (cfg.workspace.lookAndFeel != null);
-          plasmarc.Theme.name.persistent = lib.mkDefault (cfg.workspace.theme != null);
-        };
+        programs.plasma.configFile = lib.mkIf (cfg.overrideConfig) (
+          let
+            colorSchemeIgnore = if (cfg.workspace.colorScheme != null) then (import ../lib/colorscheme.nix { inherit lib; }) else { };
+          in
+          (lib.mkMerge
+            [
+              {
+                kcminputrc.Mouse.cursorTheme.persistent = lib.mkDefault (cfg.workspace.cursorTheme != null);
+                kdeglobals.General.ColorScheme.persistent = lib.mkDefault (cfg.workspace.colorScheme != null);
+                kdeglobals.Icons.Theme.persistent = lib.mkDefault (cfg.workspace.iconTheme != null);
+                kdeglobals.KDE.LookAndFeelPackage.persistent = lib.mkDefault (cfg.workspace.lookAndFeel != null);
+                plasmarc.Theme.name.persistent = lib.mkDefault (cfg.workspace.theme != null);
+              }
+              colorSchemeIgnore
+            ])
+        );
       })
     (lib.mkIf (cfg.workspace.wallpaper != null) {
       # We need to set the wallpaper after the panels are created in order for
