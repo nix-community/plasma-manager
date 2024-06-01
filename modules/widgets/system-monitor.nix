@@ -31,10 +31,20 @@ let
   toColorKV =
     { name
     , color
+    , label
     ,
     }: {
       inherit name;
       value = color;
+    };
+  toLabelKV =
+    { name
+    , color
+    , label
+    ,
+    }: {
+      inherit name;
+      value = label;
     };
 in
 {
@@ -68,6 +78,11 @@ in
               example = "255,255,255";
               description = "The color of the sensor, as a string containing 8-bit integral RGB values separated by commas";
             };
+            label = mkOption {
+              type = types.str;
+              example = "CPU %";
+              description = "The label of the sensor.";
+            };
           };
         }));
         default = null;
@@ -75,6 +90,7 @@ in
           {
             name = "gpu/gpu1/usage";
             color = "180,190,254";
+            label = "GPU %";
           }
         ];
         description = ''
@@ -82,6 +98,7 @@ in
         '';
         apply = sensors: lib.optionalAttrs (sensors != null) {
           SensorColors = builtins.listToAttrs (map toColorKV sensors);
+          SensorLabels = builtins.listToAttrs (map toLabelKV sensors);
           Sensors.highPrioritySensorIds = toEscapedList (map (s: s.name) sensors);
         };
       };
