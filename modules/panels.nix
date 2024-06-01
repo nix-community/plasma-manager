@@ -1,10 +1,7 @@
-{ config
-, lib
+{ lib
 , ...
 } @ args:
 let
-  cfg = config.programs.plasma;
-
   widgets = import ./widgets args;
 
   panelType = lib.types.submodule ({ config, ... }: {
@@ -116,52 +113,6 @@ let
       };
     };
   });
-
-  # list of panels -> bool
-  # Checks if any panels have non-default screens. If any of them do we need
-  # some hacky tricks to place them on their screens.
-  anyNonDefaultScreens = builtins.any (panel: panel.screen != 0);
-
-  panelToLayout = panel:
-    let
-      inherit (widgets.lib) addWidgetStmts stringIfNotNull;
-      inherit (lib) boolToString optionalString;
-      inherit (builtins) toString;
-
-      plasma6OnlyCmd = cmd: ''
-        if (isPlasma6) {
-          ${cmd}
-        }
-      '';
-    in
-    ''
-      {
-        const panel = new Panel();
-        panel.height = ${toString panel.height};
-        panel.floating = ${boolToString panel.floating};
-        ${stringIfNotNull panel.alignment ''panel.alignment = "${panel.alignment}";''}
-        ${stringIfNotNull panel.hiding ''panel.hiding = "${panel.hiding}";''}
-        ${stringIfNotNull panel.location ''panel.location = "${panel.location}";''}
-        ${stringIfNotNull panel.lengthMode (plasma6OnlyCmd ''panel.lengthMode = "${panel.lengthMode}";'')}
-        ${stringIfNotNull panel.maxLength "panel.maximumLength = ${toString panel.maxLength};"}
-        ${stringIfNotNull panel.minLength "panel.minimumLength = ${toString panel.minLength};"}
-        ${stringIfNotNull panel.offset "panel.offset = ${toString panel.offset};"}
-        ${optionalString (panel.screen != 0) ''panel.writeConfig("lastScreen[$i]", ${toString panel.screen});''}
-
-        ${addWidgetStmts "panel" "panelWidgets" panel.widgets}
-        ${stringIfNotNull panel.extraSettings panel.extraSettings}
-      }
-    '';
-
-  layout = ''
-    // Removes all existing panels
-    panels().forEach((panel) => panel.remove());
-
-    const isPlasma6 = applicationVersion.split(".")[0] == 6;
-
-    // Adds the panels
-    ${lib.concatMapStringsSep "\n" panelToLayout config.programs.plasma.panels}
-  '';
 in
 {
   options.programs.plasma.panels = lib.mkOption {
@@ -169,24 +120,7 @@ in
     default = [ ];
   };
 
-  config = lib.mkIf (cfg.enable && (lib.length cfg.panels) > 0) {
-    programs.plasma.startup.desktopScript."apply_panels" = {
-      preCommands = ''
-        # We delete plasma-org.kde.plasma.desktop-appletsrc to hinder it
-        # growing indefinitely. See:
-        # https://github.com/pjones/plasma-manager/issues/76
-        [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ] && rm ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
-      '';
-      text = layout;
-      postCommands = lib.mkIf (anyNonDefaultScreens cfg.panels) ''
-        if [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ]; then
-          sed -i 's/^lastScreen\\x5b$i\\x5d=/lastScreen[$i]=/' ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
-          # We sleep a second in order to prevent some bugs (like the incorrect height being set)
-          sleep 1; nohup plasmashell --replace &
-        fi
-      '';
-      priority = 2;
-    };
-  };
+  # The config-part of this module is located in workspace due to the need for
+  # having wallpaper and panels in the same script.
 }
 
