@@ -4,7 +4,7 @@ let
     widgets = self;
   };
 
-  sources = lib.mergeAttrsList (map (s: import s args') [
+  sources = lib.attrsets.mergeAttrsList (map (s: import s args') [
     ./battery.nix
     ./digital-clock.nix
     ./system-monitor.nix
