@@ -2,6 +2,12 @@
 let
   inherit (import ../../lib/types.nix { inherit lib; }) basicSettingsType;
 
+  # used as shown in the example in the library docs:
+  # https://ryantm.github.io/nixpkgs/functions/library/attrsets/#function-library-lib.attrsets.mapAttrs-prime
+  createSchemes = name: value: lib.attrsets.nameValuePair
+    ( "konsole/${name}.colorscheme" )
+    ( { source = value; } );
+
   cfg = config.programs.konsole;
   profilesSubmodule = {
     options = {
@@ -18,7 +24,9 @@ let
         example = "Catppuccin-Mocha";
         description = ''
           Color scheme the profile will use. You can check the files you can
-          use in ~/.local/share/konsole or /run/current-system/share/konsole
+          use in ~/.local/share/konsole or /run/current-system/share/konsole.
+          You might also add a custom color scheme using
+          `programs.konsole.customColorSchemes`.
         '';
       };
       command = lib.mkOption {
@@ -92,6 +100,15 @@ in
       '';
     };
 
+    customColorSchemes = lib.mkOption {
+      type = with lib.types; attrsOf path;
+      default = {};
+      description = ''
+        Custom color schemes to be added to the installation. The key is their name.
+        Choose them in any profile with `profiles.<profile>.colorScheme = <name>`;
+      '';
+    };
+
     extraConfig = lib.mkOption {
       type = with lib.types; nullOr (attrsOf (attrsOf (basicSettingsType)));
       default = null;
@@ -158,6 +175,8 @@ in
             )
           )
         ])
-      );
+      )
+      //
+      lib.mapAttrs' createSchemes cfg.customColorSchemes;
   };
 }
