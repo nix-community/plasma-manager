@@ -4,9 +4,10 @@ let
 
   # used as shown in the example in the library docs:
   # https://ryantm.github.io/nixpkgs/functions/library/attrsets/#function-library-lib.attrsets.mapAttrs-prime
-  createSchemes = name: value: lib.attrsets.nameValuePair
-    ( "konsole/${name}.colorscheme" )
-    ( { source = value; } );
+  createColorSchemes = lib.attrsets.mapAttrs' (name: value: lib.attrsets.nameValuePair
+    ("konsole/${name}.colorscheme")
+    ( { enable = true; source = value; })
+  );
 
   cfg = config.programs.konsole;
   profilesSubmodule = {
@@ -133,9 +134,10 @@ in
       )
     ];
 
-    xdg.dataFile = lib.mkIf (cfg.profiles != { })
-      (
-        lib.mkMerge ([
+    xdg.dataFile = lib.mkMerge [
+      (lib.mkIf (cfg.profiles != { })
+        (
+          lib.mkMerge ([
           (
             lib.mkMerge (
               lib.mapAttrsToList
@@ -174,9 +176,10 @@ in
                 cfg.profiles
             )
           )
-        ])
+          ])
+        )
       )
-      //
-      lib.mapAttrs' createSchemes cfg.customColorSchemes;
+      (createColorSchemes cfg.customColorSchemes)
+    ];
   };
 }
