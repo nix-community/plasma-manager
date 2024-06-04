@@ -110,6 +110,16 @@ in
       '';
     };
 
+    ui.colorScheme = lib.mkOption {
+      type = with lib.types; nullOr str;
+      default = null;
+      example = "Krita dark orange";
+      description = ''
+        The colour scheme of the UI. Leave this setting at `null` in order to
+        not override the systems default scheme for for this application.
+      '';
+    };
+
     extraConfig = lib.mkOption {
       type = with lib.types; nullOr (attrsOf (attrsOf (basicSettingsType)));
       default = null;
@@ -132,6 +142,9 @@ in
             (lib.mapAttrs (keyName: keyAttrs: { value = keyAttrs; }) groupAttrs))
           cfg.extraConfig)
       )
+      {
+        "UiSettings"."ColorScheme".value = cfg.ui.colorScheme;
+      }
     ];
 
     xdg.dataFile = lib.mkMerge [

@@ -112,32 +112,8 @@ in
     }
   ];
 
-  config.programs.plasma.configFile."katerc" = lib.mkIf cfg.enable {
-    "KTextEditor Document" = {
-      "Auto Detect Indent" = cfg.editor.indent.autodetect;
-      "Indentation Width" = cfg.editor.indent.width;
-      "Tab Handling" = (tabHandlingMode cfg.editor.indent);
-      "Tab Width" = cfg.editor.tabWidth;
-      "Keep Extra Spaces" = cfg.editor.indent.keepExtraSpaces;
-      "ReplaceTabsDyn" = cfg.editor.indent.replaceWithSpaces;
-    };
-
-    "KTextEditor Renderer" = {
-      "Show Indentation Lines" = cfg.editor.indent.showLines;
-
-
-      # COLORTHEME (cannot define this below)
-      # Do pick the theme if the user chose one,
-      # Do not touch the theme settings otherwise
-      "Auto Color Theme Selection" = lib.mkIf (cfg.editor.theme.name != "") false;
-      "Color Theme" = lib.mkIf (cfg.editor.theme.name != "") cfg.editor.theme.name;
-    };
-  };
-
-
   # ==================================
   #     COLORTHEME
-
   options.programs.kate.editor.theme = {
     src = lib.mkOption {
       description = ''
@@ -193,7 +169,6 @@ in
 
   # ==================================
   #     LSP Servers
-
   options.programs.kate.lsp.customServers = lib.mkOption {
     default = { };
     type = lib.types.attrs;
@@ -206,5 +181,42 @@ in
 
   config.xdg.configFile."kate/lspclient/settings.json" = {
     text = builtins.toJSON { servers = cfg.lsp.customServers; };
+  };
+
+  # ==================================
+  #     UI
+  options.programs.kate.ui.colorScheme = lib.mkOption {
+    type = lib.types.nullOr lib.types.str;
+    default = null;
+
+    example = "Krita dark orange";
+    description = ''
+      The colour scheme of the UI. Leave this setting at `null` in order to
+      not override the systems default scheme for for this application.
+    '';
+  };
+
+  # ==================================
+  #     WRITING THE KATERC
+  config.programs.plasma.configFile."katerc" = lib.mkIf cfg.enable {
+    "KTextEditor Document" = {
+      "Auto Detect Indent" = cfg.editor.indent.autodetect;
+      "Indentation Width" = cfg.editor.indent.width;
+      "Tab Handling" = (tabHandlingMode cfg.editor.indent);
+      "Tab Width" = cfg.editor.tabWidth;
+      "Keep Extra Spaces" = cfg.editor.indent.keepExtraSpaces;
+      "ReplaceTabsDyn" = cfg.editor.indent.replaceWithSpaces;
+    };
+
+    "KTextEditor Renderer" = {
+      "Show Indentation Lines" = cfg.editor.indent.showLines;
+
+      # Do pick the theme if the user chose one,
+      # Do not touch the theme settings otherwise
+      "Auto Color Theme Selection" = lib.mkIf (cfg.editor.theme.name != "") false;
+      "Color Theme" = lib.mkIf (cfg.editor.theme.name != "") cfg.editor.theme.name;
+    };
+
+    "UiSettings"."ColorScheme".value = lib.mkIf (cfg.ui.colorScheme != null) cfg.ui.colorScheme;
   };
 }
