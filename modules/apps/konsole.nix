@@ -143,7 +143,7 @@ in
           cfg.extraConfig)
       )
       {
-        "UiSettings"."ColorScheme".value = cfg.ui.colorScheme;
+        "UiSettings"."ColorScheme".value = lib.mkIf (cfg.ui.colorScheme != null) cfg.ui.colorScheme;
       }
     ];
 
