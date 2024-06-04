@@ -188,47 +188,75 @@ in
             ])
         );
       })
-    (lib.mkIf (cfg.workspace.wallpaper != null) {
-      # We need to set the wallpaper after the panels are created in order for
-      # this not to be reset when specifying the screens for panels. See:
-      # https://github.com/pjones/plasma-manager/issues/116.
-      programs.plasma.startup.startupScript."set_wallpaper" = {
-        text = ''
-          plasma-apply-wallpaperimage ${cfg.workspace.wallpaper}
-        '';
-        priority = 3;
-      };
-    })
-    (lib.mkIf (cfg.workspace.wallpaperSlideShow != null) {
-      programs.plasma.startup.desktopScript."set_wallpaper_slideshow" = {
-        text = ''
-          let allDesktops = desktops();
-          for (var desktopIndex = 0; desktopIndex < allDesktops.length; desktopIndex++) {
-              var desktop = allDesktops[desktopIndex];
-              desktop.wallpaperPlugin = "org.kde.slideshow";
-              desktop.currentConfigGroup = Array("Wallpaper", "org.kde.slideshow", "General");
-              desktop.writeConfig("SlidePaths", ${if (builtins.isPath cfg.workspace.wallpaperSlideShow.path) then
-              "\"" + cfg.workspace.wallpaperSlideShow.path + "\"" else
-              "[" + (builtins.concatStringsSep "," (map (s: "\"" + s + "\"") cfg.workspace.wallpaperSlideShow.path)) + "]"});
-              desktop.writeConfig("SlideInterval", "${builtins.toString cfg.workspace.wallpaperSlideShow.interval}");
+    # Wallpaper and panels are in the same script since the resetting of the
+    # panels in the panels-script also has a tendency to reset the wallpaper, so
+    # these should run at the same time.
+    (lib.mkIf
+      ((cfg.workspace.wallpaper != null) ||
+        (cfg.workspace.wallpaperSlideShow != null) ||
+        (cfg.workspace.wallpaperPictureOfTheDay != null) ||
+        ((builtins.length cfg.panels) > 0))
+      {
+        programs.plasma.startup.desktopScript."panels_and_wallpaper" = (
+          let
+            anyPanels = ((builtins.length cfg.panels) > 0);
+            anyNonDefaultScreens = ((builtins.any (panel: panel.screen != 0)) cfg.panels);
+            panelPreCMD = (if anyPanels then ''
+              # We delete plasma-org.kde.plasma.desktop-appletsrc to hinder it
+              # growing indefinitely. See:
+              # https://github.com/pjones/plasma-manager/issues/76
+              [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ] && rm ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
+            '' else "");
+            panelLayoutStr = (if anyPanels then (import ../lib/panel.nix { inherit lib; inherit config; }) else "");
+            panelPostCMD = (if anyNonDefaultScreens then ''
+              if [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ]; then
+                sed -i 's/^lastScreen\\x5b$i\\x5d=/lastScreen[$i]=/' ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
+                # We sleep a second in order to prevent some bugs (like the incorrect height being set)
+                sleep 1; nohup plasmashell --replace &
+              fi
+            '' else "");
+            # This meaningless comment inserts the URL into the desktop-script
+            # which means that when the wallpaper is updated, the sha256 hash
+            # changes and the script will be re-run.
+            wallpaperDesktopScript = (if (cfg.workspace.wallpaper != null) then ''
+              // Wallpaper to set later: ${cfg.workspace.wallpaper}
+            '' else "");
+            wallpaperPostCMD = (if (cfg.workspace.wallpaper != null) then ''
+              plasma-apply-wallpaperimage ${cfg.workspace.wallpaper}
+            '' else "");
+            wallpaperSlideShow = (if (cfg.workspace.wallpaperSlideShow != null) then ''
+              // Wallpaper slideshow
+              let allDesktops = desktops();
+              for (var desktopIndex = 0; desktopIndex < allDesktops.length; desktopIndex++) {
+                  var desktop = allDesktops[desktopIndex];
+                  desktop.wallpaperPlugin = "org.kde.slideshow";
+                  desktop.currentConfigGroup = Array("Wallpaper", "org.kde.slideshow", "General");
+                  desktop.writeConfig("SlidePaths", ${if (builtins.isPath cfg.workspace.wallpaperSlideShow.path) then
+                    "\"" + cfg.workspace.wallpaperSlideShow.path + "\"" else
+                    "[" + (builtins.concatStringsSep "," (map (s: "\"" + s + "\"") cfg.workspace.wallpaperSlideShow.path)) + "]"});
+                  desktop.writeConfig("SlideInterval", "${builtins.toString cfg.workspace.wallpaperSlideShow.interval}");
+              }
+            '' else "");
+            wallpaperPOTD = (if (cfg.workspace.wallpaperPictureOfTheDay != null) then ''
+              // Wallpaper POTD
+              let allDesktops = desktops();
+              for (const desktop of allDesktops) {
+                  desktop.wallpaperPlugin = "org.kde.potd";
+                  desktop.currentConfigGroup = ["Wallpaper", "org.kde.potd", "General"];
+                  desktop.writeConfig("Provider", "${cfg.workspace.wallpaperPictureOfTheDay.provider}");
+                  desktop.writeConfig("UpdateOverMeteredConnection", "${if (cfg.workspace.wallpaperPictureOfTheDay.updateOverMeteredConnection) then "1" else "0"}");
+                }
+            '' else ""
+            );
+          in
+          {
+            preCommands = panelPreCMD;
+            text = panelLayoutStr + wallpaperDesktopScript + wallpaperSlideShow + wallpaperPOTD;
+            postCommands = panelPostCMD + wallpaperPostCMD;
+            priority = 2;
           }
-        '';
-        priority = 3;
-      };
-    })
-    (lib.mkIf (cfg.workspace.wallpaperPictureOfTheDay != null) {
-      programs.plasma.startup.desktopScript."set_wallpaper_potd" = {
-        text = ''
-          let allDesktops = desktops();
-          for (const desktop of allDesktops) {
-              desktop.wallpaperPlugin = "org.kde.potd";
-              desktop.currentConfigGroup = ["Wallpaper", "org.kde.potd", "General"];
-              desktop.writeConfig("Provider", "${cfg.workspace.wallpaperPictureOfTheDay.provider}");
-              desktop.writeConfig("UpdateOverMeteredConnection", "${if (cfg.workspace.wallpaperPictureOfTheDay.updateOverMeteredConnection) then "1" else "0"}");
-            }
-        '';
-        priority = 3;
-      };
-    })
+        );
+      }
+    )
   ]));
 }
