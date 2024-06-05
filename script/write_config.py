@@ -171,15 +171,10 @@ class KConfManager:
                     )
                 elif value["persistent"]:
                     base_msg = f'Plasma-manager: Persistency enabled for key "{key}" in group "{group}" in configfile "{self.filepath}"'
-                    # We don't allow persistency when not using overrideConfig,
-                    # the value is set, immutability is enabled, or when
-                    # shell-expansion is enabled.
-                    if not self.override_config:
-                        raise Exception(
-                            f"{base_msg} when overrideConfig is disabled (or using overrideConfigExclude). "
-                            "Persistency without using overrideConfig is not supported"
-                        )
-                    elif value["value"] is not None:
+                    # We don't allow persistency when the value is set,
+                    # immutability is enabled, or when shell-expansion is
+                    # enabled.
+                    if value["value"] is not None:
                         raise Exception(
                             f"{base_msg} with non-null value \"{value['value']}\". "
                             "A value cannot be given when persistency is enabled"
