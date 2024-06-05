@@ -171,15 +171,10 @@ class KConfManager:
                     )
                 elif value["persistent"]:
                     base_msg = f'Plasma-manager: Persistency enabled for key "{key}" in group "{group}" in configfile "{self.filepath}"'
-                    # We don't allow persistency when not using overrideConfig,
-                    # the value is set, immutability is enabled, or when
-                    # shell-expansion is enabled.
-                    if not self.override_config:
-                        raise Exception(
-                            f"{base_msg} when overrideConfig is disabled. "
-                            "Persistency without using overrideConfig is not supported"
-                        )
-                    elif value["value"] is not None:
+                    # We don't allow persistency when the value is set,
+                    # immutability is enabled, or when shell-expansion is
+                    # enabled.
+                    if value["value"] is not None:
                         raise Exception(
                             f"{base_msg} with non-null value \"{value['value']}\". "
                             "A value cannot be given when persistency is enabled"
@@ -311,9 +306,9 @@ def remove_config_files(d: Dict, reset_files: Set):
                 os.remove(file_to_del)
 
 
-def write_configs(d: Dict, override_config: bool):
+def write_configs(d: Dict, reset_files: Set):
     for filepath, c in d.items():
-        config = KConfManager(filepath, c, override_config)
+        config = KConfManager(filepath, c, filepath in reset_files)
         config.run()
         config.save()
 
@@ -331,7 +326,6 @@ def main():
     # We send in "true" as the second argument if overrideConfig is enabled in
     # plasma-manager.
     override_config = bool(sys.argv[2])
-    # os.system(f"echo '{sys.argv[2]}' > /home/user1/Downloads/test")
     # The files to be reset when we have overrideConfig enabled.
     oc_reset_files = set(sys.argv[3].split(" "))
 
@@ -340,7 +334,7 @@ def main():
     # not configured through plasma-manager.
     if override_config:
         remove_config_files(d, oc_reset_files)
-    write_configs(d, override_config)
+    write_configs(d, oc_reset_files if override_config else {})
 
 
 if __name__ == "__main__":
