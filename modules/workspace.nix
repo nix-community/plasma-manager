@@ -143,23 +143,23 @@ in
         KDE.SingleClick = (cfg.workspace.clickItemTo == "open");
       });
     }
-    (lib.mkIf (cfg.workspace.tooltipDelay != null) {
-      programs.plasma.configFile.plasmarc = {
+    {
+      programs.plasma.configFile.plasmarc = (lib.mkIf (cfg.workspace.tooltipDelay != null) {
         PlasmaToolTips.Delay = cfg.workspace.tooltipDelay;
-      };
-    })
-    (lib.mkIf
-      (cfg.workspace.theme != null ||
-        cfg.workspace.colorScheme != null ||
-        cfg.workspace.cursorTheme != null ||
-        cfg.workspace.lookAndFeel != null ||
-        cfg.workspace.iconTheme != null)
-      {
-        # We create a script which applies the different theme settings using
-        # kde tools. We then run this using an autostart script, where this is
-        # run only on the first login (unless overrideConfig is enabled),
-        # granted all the commands succeed (until we change the settings again).
-        programs.plasma.startup.startupScript."apply_themes" = {
+      });
+    }
+    {
+      # We create a script which applies the different theme settings using
+      # kde tools. We then run this using an autostart script, where this is
+      # run only on the first login (unless overrideConfig is enabled),
+      # granted all the commands succeed (until we change the settings again).
+      programs.plasma.startup.startupScript."apply_themes" = (lib.mkIf
+        (cfg.workspace.theme != null ||
+          cfg.workspace.colorScheme != null ||
+          cfg.workspace.cursorTheme != null ||
+          cfg.workspace.lookAndFeel != null ||
+          cfg.workspace.iconTheme != null)
+        {
           text = ''
             ${if cfg.workspace.lookAndFeel != null then "plasma-apply-lookandfeel -a ${cfg.workspace.lookAndFeel}" else ""}
             ${if cfg.workspace.theme != null then "plasma-apply-desktoptheme ${cfg.workspace.theme}" else ""}
@@ -168,36 +168,36 @@ in
             ${if cfg.workspace.iconTheme != null then "${pkgs.kdePackages.plasma-workspace}/libexec/plasma-changeicons ${cfg.workspace.iconTheme}" else ""}
           '';
           priority = 1;
-        };
-        # We add persistence to some keys in order to not reset the themes on
-        # each generation when we use overrideConfig.
-        programs.plasma.configFile = lib.mkIf (cfg.overrideConfig) (
-          let
-            colorSchemeIgnore = if (cfg.workspace.colorScheme != null) then (import ../lib/colorscheme.nix { inherit lib; }) else { };
-          in
-          (lib.mkMerge
-            [
-              {
-                kcminputrc.Mouse.cursorTheme.persistent = lib.mkDefault (cfg.workspace.cursorTheme != null);
-                kdeglobals.General.ColorScheme.persistent = lib.mkDefault (cfg.workspace.colorScheme != null);
-                kdeglobals.Icons.Theme.persistent = lib.mkDefault (cfg.workspace.iconTheme != null);
-                kdeglobals.KDE.LookAndFeelPackage.persistent = lib.mkDefault (cfg.workspace.lookAndFeel != null);
-                plasmarc.Theme.name.persistent = lib.mkDefault (cfg.workspace.theme != null);
-              }
-              colorSchemeIgnore
-            ])
-        );
-      })
+        });
+      # We add persistence to some keys in order to not reset the themes on
+      # each generation when we use overrideConfig.
+      programs.plasma.configFile = (lib.mkIf (cfg.overrideConfig) (
+        let
+          colorSchemeIgnore = if (cfg.workspace.colorScheme != null) then (import ../lib/colorscheme.nix { inherit lib; }) else { };
+        in
+        (lib.mkMerge
+          [
+            {
+              kcminputrc.Mouse.cursorTheme.persistent = lib.mkDefault (cfg.workspace.cursorTheme != null);
+              kdeglobals.General.ColorScheme.persistent = lib.mkDefault (cfg.workspace.colorScheme != null);
+              kdeglobals.Icons.Theme.persistent = lib.mkDefault (cfg.workspace.iconTheme != null);
+              kdeglobals.KDE.LookAndFeelPackage.persistent = lib.mkDefault (cfg.workspace.lookAndFeel != null);
+              plasmarc.Theme.name.persistent = lib.mkDefault (cfg.workspace.theme != null);
+            }
+            colorSchemeIgnore
+          ])
+      ));
+    }
     # Wallpaper and panels are in the same script since the resetting of the
     # panels in the panels-script also has a tendency to reset the wallpaper, so
     # these should run at the same time.
-    (lib.mkIf
-      ((cfg.workspace.wallpaper != null) ||
-        (cfg.workspace.wallpaperSlideShow != null) ||
-        (cfg.workspace.wallpaperPictureOfTheDay != null) ||
-        ((builtins.length cfg.panels) > 0))
-      {
-        programs.plasma.startup.desktopScript."panels_and_wallpaper" = (
+    {
+      programs.plasma.startup.desktopScript."panels_and_wallpaper" = (lib.mkIf
+        ((cfg.workspace.wallpaper != null) ||
+          (cfg.workspace.wallpaperSlideShow != null) ||
+          (cfg.workspace.wallpaperPictureOfTheDay != null) ||
+          ((builtins.length cfg.panels) > 0))
+        (
           let
             anyPanels = ((builtins.length cfg.panels) > 0);
             anyNonDefaultScreens = ((builtins.any (panel: panel.screen != 0)) cfg.panels);
@@ -255,8 +255,7 @@ in
             postCommands = panelPostCMD + wallpaperPostCMD;
             priority = 2;
           }
-        );
-      }
-    )
+        ));
+    }
   ]));
 }
