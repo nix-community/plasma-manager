@@ -98,7 +98,9 @@ in
   };
 
   config.xdg = lib.mkIf
-    (cfg.enable && builtins.length (builtins.attrNames cfg.startup.startupScript) != 0)
+    (cfg.enable &&
+      (builtins.length (builtins.attrNames cfg.startup.startupScript) != 0 ||
+        (builtins.length (builtins.attrNames cfg.startup.desktopScript)) != 0))
     {
       dataFile = lib.mkMerge [
         # Autostart scripts
