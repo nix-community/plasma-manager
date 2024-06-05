@@ -6,7 +6,7 @@ let
   # https://ryantm.github.io/nixpkgs/functions/library/attrsets/#function-library-lib.attrsets.mapAttrs-prime
   createColorSchemes = lib.attrsets.mapAttrs' (name: value: lib.attrsets.nameValuePair
     ("konsole/${name}.colorscheme")
-    ( { enable = true; source = value; })
+    ({ enable = true; source = value; })
   );
 
   cfg = config.programs.konsole;
@@ -103,10 +103,20 @@ in
 
     customColorSchemes = lib.mkOption {
       type = with lib.types; attrsOf path;
-      default = {};
+      default = { };
       description = ''
         Custom color schemes to be added to the installation. The key is their name.
         Choose them in any profile with `profiles.<profile>.colorScheme = <name>`;
+      '';
+    };
+
+    ui.colorScheme = lib.mkOption {
+      type = with lib.types; nullOr str;
+      default = null;
+      example = "Krita dark orange";
+      description = ''
+        The colour scheme of the UI. Leave this setting at `null` in order to
+        not override the systems default scheme for for this application.
       '';
     };
 
@@ -132,50 +142,58 @@ in
             (lib.mapAttrs (keyName: keyAttrs: { value = keyAttrs; }) groupAttrs))
           cfg.extraConfig)
       )
+      {
+        "UiSettings"."ColorScheme" = lib.mkIf (cfg.ui.colorScheme != null) {
+          value = cfg.ui.colorScheme;
+          # The key needs to be immutable to work properly when using overrideConfig.
+          # See discussion at: https://github.com/pjones/plasma-manager/pull/186
+          immutable = lib.mkIf config.programs.plasma.overrideConfig (lib.mkDefault true);
+        };
+      }
     ];
 
     xdg.dataFile = lib.mkMerge [
       (lib.mkIf (cfg.profiles != { })
         (
           lib.mkMerge ([
-          (
-            lib.mkMerge (
-              lib.mapAttrsToList
-                (
-                  attrName: profile:
-                    let
-                      # Use the name from the name option if it's set
-                      profileName = if builtins.isString profile.name then profile.name else attrName;
-                      fontString = lib.mkIf (profile.font.name != null) "${profile.font.name},${builtins.toString profile.font.size}";
-                    in
-                    {
-                      "konsole/${profileName}.profile".text = lib.generators.toINI { }
-                        (lib.recursiveUpdate
-                          {
-                            "General" = (
-                              {
-                                "Name" = profileName;
-                                # Konsole generated profiles seem to always have this
-                                "Parent" = "FALLBACK/";
-                              } //
-                              (lib.optionalAttrs (profile.command != null) { "Command" = profile.command; })
-                            );
-                            "Appearance" = (
-                              {
-                                # If the font size is not set we leave a comma a the end after the name
-                                # We should fix this probs but konsole doesn't seem to care ¯\_(ツ)_/¯
-                                "Font" = fontString.content;
-                              } //
-                              (lib.optionalAttrs (profile.colorScheme != null) { "ColorScheme" = profile.colorScheme; })
-                            );
-                          }
-                          profile.extraConfig
-                        );
-                    }
-                )
-                cfg.profiles
+            (
+              lib.mkMerge (
+                lib.mapAttrsToList
+                  (
+                    attrName: profile:
+                      let
+                        # Use the name from the name option if it's set
+                        profileName = if builtins.isString profile.name then profile.name else attrName;
+                        fontString = lib.mkIf (profile.font.name != null) "${profile.font.name},${builtins.toString profile.font.size}";
+                      in
+                      {
+                        "konsole/${profileName}.profile".text = lib.generators.toINI { }
+                          (lib.recursiveUpdate
+                            {
+                              "General" = (
+                                {
+                                  "Name" = profileName;
+                                  # Konsole generated profiles seem to always have this
+                                  "Parent" = "FALLBACK/";
+                                } //
+                                (lib.optionalAttrs (profile.command != null) { "Command" = profile.command; })
+                              );
+                              "Appearance" = (
+                                {
+                                  # If the font size is not set we leave a comma a the end after the name
+                                  # We should fix this probs but konsole doesn't seem to care ¯\_(ツ)_/¯
+                                  "Font" = fontString.content;
+                                } //
+                                (lib.optionalAttrs (profile.colorScheme != null) { "ColorScheme" = profile.colorScheme; })
+                              );
+                            }
+                            profile.extraConfig
+                          );
+                      }
+                  )
+                  cfg.profiles
+              )
             )
-          )
           ])
         )
       )
