@@ -232,31 +232,31 @@ in
   #     WRITING THE KATERC
   config.programs.plasma.configFile."katerc" = lib.mkIf cfg.enable {
     "KTextEditor Document" = {
-      "Auto Detect Indent".value = cfg.editor.indent.autodetect;
-      "Indentation Width".value = cfg.editor.indent.width;
+      "Auto Detect Indent" = cfg.editor.indent.autodetect;
+      "Indentation Width" = cfg.editor.indent.width;
       "Tab Handling" = (tabHandlingMode cfg.editor.indent);
-      "Tab Width".value = cfg.editor.tabWidth;
-      "Keep Extra Spaces".value = cfg.editor.indent.keepExtraSpaces;
-      "ReplaceTabsDyn".value = cfg.editor.indent.replaceWithSpaces;
+      "Tab Width" = cfg.editor.tabWidth;
+      "Keep Extra Spaces" = cfg.editor.indent.keepExtraSpaces;
+      "ReplaceTabsDyn" = cfg.editor.indent.replaceWithSpaces;
     };
 
     "KTextEditor Renderer" = {
-      "Show Indentation Lines".value = cfg.editor.indent.showLines;
+      "Show Indentation Lines" = cfg.editor.indent.showLines;
 
-      "Animate Bracket Matching".value = cfg.editor.brackets.flashMatching;
+      "Animate Bracket Matching" = cfg.editor.brackets.flashMatching;
 
       # Do pick the theme if the user chose one,
       # Do not touch the theme settings otherwise
-      "Auto Color Theme Selection".value = lib.mkIf (cfg.editor.theme.name != "") false;
-      "Color Theme".value = lib.mkIf (cfg.editor.theme.name != "") cfg.editor.theme.name;
+      "Auto Color Theme Selection" = lib.mkIf (cfg.editor.theme.name != "") false;
+      "Color Theme" = lib.mkIf (cfg.editor.theme.name != "") cfg.editor.theme.name;
     };
 
     "KTextEditor View" = {
-      "Chars To Enclose Selection".value = cfg.editor.brackets.characters;
-      "Bracket Match Preview".value = cfg.editor.brackets.highlightMatching;
-      "Auto Brackets".value = cfg.editor.brackets.automaticallyAddClosing;
+      "Chars To Enclose Selection" = cfg.editor.brackets.characters;
+      "Bracket Match Preview" = cfg.editor.brackets.highlightMatching;
+      "Auto Brackets" = cfg.editor.brackets.automaticallyAddClosing;
     };
 
-    "UiSettings"."ColorScheme".value = lib.mkIf (cfg.ui.colorScheme != null) cfg.ui.colorScheme;
+    "UiSettings"."ColorScheme" = lib.mkIf (cfg.ui.colorScheme != null) cfg.ui.colorScheme;
   };
 }
