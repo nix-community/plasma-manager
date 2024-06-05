@@ -197,24 +197,64 @@ in
   };
 
   # ==================================
+  #     BRACKETS
+  options.programs.kate.editor.brackets = {
+    characters = lib.mkOption {
+      type = lib.types.str;
+      default = "<>(){}[]'\"\`";
+      example = "<>(){}[]'\"\`*_~";
+      description = "Which characters kate will treat as brackets.";
+    };
+    automaticallyAddClosing = lib.mkEnableOption {
+      description = "that a closing bracket is automatically inserted upon typing the opening";
+    };
+    highlightRangeBetween = lib.mkEnableOption {
+      description = ''
+        that the range between the brackets is highlighted when the cursor is adjacent
+        to any of the brackets
+      '';
+    };
+    highlightMatching = lib.mkEnableOption {
+      description = ''
+        that the first two lines of the matching opening bracket are shown in a small floating window
+        when the cursor is next to the closing bracket and the opening bracket is not in the visible
+        area
+      '';
+    };
+    flashMatching = lib.mkEnableOption {
+      description = ''
+        that the matching bracket flashes when the cursor moves adjacent to the other
+      '';
+    };
+  };
+
+  # ==================================
   #     WRITING THE KATERC
   config.programs.plasma.configFile."katerc" = lib.mkIf cfg.enable {
     "KTextEditor Document" = {
-      "Auto Detect Indent" = cfg.editor.indent.autodetect;
-      "Indentation Width" = cfg.editor.indent.width;
+      "Auto Detect Indent".value = cfg.editor.indent.autodetect;
+      "Indentation Width".value = cfg.editor.indent.width;
       "Tab Handling" = (tabHandlingMode cfg.editor.indent);
-      "Tab Width" = cfg.editor.tabWidth;
-      "Keep Extra Spaces" = cfg.editor.indent.keepExtraSpaces;
-      "ReplaceTabsDyn" = cfg.editor.indent.replaceWithSpaces;
+      "Tab Width".value = cfg.editor.tabWidth;
+      "Keep Extra Spaces".value = cfg.editor.indent.keepExtraSpaces;
+      "ReplaceTabsDyn".value = cfg.editor.indent.replaceWithSpaces;
     };
 
     "KTextEditor Renderer" = {
-      "Show Indentation Lines" = cfg.editor.indent.showLines;
+      "Show Indentation Lines".value = cfg.editor.indent.showLines;
+
+      "Animate Bracket Matching".value = cfg.editor.brackets.flashMatching;
 
       # Do pick the theme if the user chose one,
       # Do not touch the theme settings otherwise
-      "Auto Color Theme Selection" = lib.mkIf (cfg.editor.theme.name != "") false;
-      "Color Theme" = lib.mkIf (cfg.editor.theme.name != "") cfg.editor.theme.name;
+      "Auto Color Theme Selection".value = lib.mkIf (cfg.editor.theme.name != "") false;
+      "Color Theme".value = lib.mkIf (cfg.editor.theme.name != "") cfg.editor.theme.name;
+    };
+
+    "KTextEditor View" = {
+      "Chars To Enclose Selection".value = cfg.editor.brackets.characters;
+      "Bracket Match Preview".value = cfg.editor.brackets.highlightMatching;
+      "Auto Brackets".value = cfg.editor.brackets.automaticallyAddClosing;
     };
 
     "UiSettings"."ColorScheme".value = lib.mkIf (cfg.ui.colorScheme != null) cfg.ui.colorScheme;
