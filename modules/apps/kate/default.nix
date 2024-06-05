@@ -203,27 +203,31 @@ in
       type = lib.types.str;
       default = "<>(){}[]'\"\`";
       example = "<>(){}[]'\"\`*_~";
-      description = "Which characters kate will treat as brackets.";
+      description = "This options determines which characters kate will treat as brackets.";
     };
     automaticallyAddClosing = lib.mkEnableOption {
-      description = "that a closing bracket is automatically inserted upon typing the opening";
+      description = ''
+        When enabled, a closing bracket is automatically inserted upon typing the opening.
+      '';
     };
     highlightRangeBetween = lib.mkEnableOption {
       description = ''
-        that the range between the brackets is highlighted when the cursor is adjacent
-        to any of the brackets
+        This option enables automatich highlighting of the lines between an opening and a
+        closing bracket when the cursor is adjacent to either.
       '';
     };
     highlightMatching = lib.mkEnableOption {
       description = ''
-        that the first two lines of the matching opening bracket are shown in a small floating window
-        when the cursor is next to the closing bracket and the opening bracket is not in the visible
-        area
+        When enabled, and the cursor is adjacent to a closing bracket, and the corresponding
+        closing bracket is outside of the currently visible area, then the line of the opening
+        bracket and the line directly after will be shown in a small, floating window
+        at the top of the text area.
       '';
     };
     flashMatching = lib.mkEnableOption {
       description = ''
-        that the matching bracket flashes when the cursor moves adjacent to the other
+        When this option is enabled, then a bracket will quickly flash whenever the cursor
+        moves adjacent to the corresponding bracket.
       '';
     };
   };
