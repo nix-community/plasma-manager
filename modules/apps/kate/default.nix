@@ -33,8 +33,7 @@ in
       Enable configuration management for kate.
     '';
 
-    package = lib.mkPackageOption pkgs "kate" {
-      default = [ "kate" ];
+    package = lib.mkPackageOption pkgs [ "kdePackages" "kate" ] {
       example = "pkgs.libsForQt5.kate";
       extraDescription = ''
         Which kate package to install. Use `pkgs.libsForQt5.kate` in Plasma5 and
