@@ -205,31 +205,23 @@ in
       example = "<>(){}[]'\"\`*_~";
       description = "This options determines which characters kate will treat as brackets.";
     };
-    automaticallyAddClosing = lib.mkEnableOption {
-      description = ''
-        When enabled, a closing bracket is automatically inserted upon typing the opening.
-      '';
-    };
-    highlightRangeBetween = lib.mkEnableOption {
-      description = ''
-        This option enables automatich highlighting of the lines between an opening and a
-        closing bracket when the cursor is adjacent to either.
-      '';
-    };
-    highlightMatching = lib.mkEnableOption {
-      description = ''
-        When enabled, and the cursor is adjacent to a closing bracket, and the corresponding
-        closing bracket is outside of the currently visible area, then the line of the opening
-        bracket and the line directly after will be shown in a small, floating window
-        at the top of the text area.
-      '';
-    };
-    flashMatching = lib.mkEnableOption {
-      description = ''
-        When this option is enabled, then a bracket will quickly flash whenever the cursor
-        moves adjacent to the corresponding bracket.
-      '';
-    };
+    automaticallyAddClosing = lib.mkEnableOption ''
+      When enabled, a closing bracket is automatically inserted upon typing the opening.
+    '';
+    highlightRangeBetween = lib.mkEnableOption ''
+      This option enables automatch highlighting of the lines between an opening and a
+      closing bracket when the cursor is adjacent to either.
+    '';
+    highlightMatching = lib.mkEnableOption ''
+      When enabled, and the cursor is adjacent to a closing bracket, and the corresponding
+      closing bracket is outside of the currently visible area, then the line of the opening
+      bracket and the line directly after will be shown in a small, floating window
+      at the top of the text area.
+    '';
+    flashMatching = lib.mkEnableOption ''
+      When this option is enabled, then a bracket will quickly flash whenever the cursor
+      moves adjacent to the corresponding bracket.
+    '';
   };
 
   # ==================================
