@@ -197,6 +197,34 @@ in
   };
 
   # ==================================
+  #     BRACKETS
+  options.programs.kate.editor.brackets = {
+    characters = lib.mkOption {
+      type = lib.types.str;
+      default = "<>(){}[]'\"\`";
+      example = "<>(){}[]'\"\`*_~";
+      description = "This options determines which characters kate will treat as brackets.";
+    };
+    automaticallyAddClosing = lib.mkEnableOption ''
+      When enabled, a closing bracket is automatically inserted upon typing the opening.
+    '';
+    highlightRangeBetween = lib.mkEnableOption ''
+      This option enables automatch highlighting of the lines between an opening and a
+      closing bracket when the cursor is adjacent to either.
+    '';
+    highlightMatching = lib.mkEnableOption ''
+      When enabled, and the cursor is adjacent to a closing bracket, and the corresponding
+      closing bracket is outside of the currently visible area, then the line of the opening
+      bracket and the line directly after will be shown in a small, floating window
+      at the top of the text area.
+    '';
+    flashMatching = lib.mkEnableOption ''
+      When this option is enabled, then a bracket will quickly flash whenever the cursor
+      moves adjacent to the corresponding bracket.
+    '';
+  };
+
+  # ==================================
   #     WRITING THE KATERC
   config.programs.plasma.configFile."katerc" = lib.mkIf cfg.enable {
     "KTextEditor Document" = {
@@ -211,12 +239,20 @@ in
     "KTextEditor Renderer" = {
       "Show Indentation Lines" = cfg.editor.indent.showLines;
 
+      "Animate Bracket Matching" = cfg.editor.brackets.flashMatching;
+
       # Do pick the theme if the user chose one,
       # Do not touch the theme settings otherwise
       "Auto Color Theme Selection" = lib.mkIf (cfg.editor.theme.name != "") false;
       "Color Theme" = lib.mkIf (cfg.editor.theme.name != "") cfg.editor.theme.name;
     };
 
-    "UiSettings"."ColorScheme".value = lib.mkIf (cfg.ui.colorScheme != null) cfg.ui.colorScheme;
+    "KTextEditor View" = {
+      "Chars To Enclose Selection" = cfg.editor.brackets.characters;
+      "Bracket Match Preview" = cfg.editor.brackets.highlightMatching;
+      "Auto Brackets" = cfg.editor.brackets.automaticallyAddClosing;
+    };
+
+    "UiSettings"."ColorScheme" = lib.mkIf (cfg.ui.colorScheme != null) cfg.ui.colorScheme;
   };
 }
