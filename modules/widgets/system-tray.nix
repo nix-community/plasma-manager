@@ -154,7 +154,7 @@ in
           shownItems = items.shown;
           showAllItems = items.showAll;
 
-          scaleItemsToFit = icons.scaleToFit;
+          scaleIconsToFit = icons.scaleToFit;
           iconSpacing = icons.spacing;
         };
       in
