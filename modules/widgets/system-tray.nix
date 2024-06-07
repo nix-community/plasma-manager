@@ -29,7 +29,12 @@ in
               if builtins.isInt spacing then
                 toString spacing
               else
-                widgets.lib.getEnum enum spacing;
+                builtins.elemAt [ "1" "2" "6" ] (
+                  lib.lists.findFirstIndex
+                    (x: x == spacing)
+                    (throw "systemTray: nonexistent spacing ${spacing}! This is a bug!")
+                    enum
+                );
           };
         scaleToFit = mkBoolOption ''
           Whether to automatically scale System Tray icons to fix the available thickness of the panel.
