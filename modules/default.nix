@@ -12,6 +12,7 @@
     ./startup.nix
     ./panels.nix
     ./fonts.nix
+    ./window-rules.nix
     ./apps
   ];
 
