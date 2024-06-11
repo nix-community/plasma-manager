@@ -133,60 +133,6 @@ let
         default = false;
         description = "Whether the font has a fixed pitch.";
       };
-      capitalization = mkOption {
-        type = qfont.capitalization;
-        default = "mixedCase";
-        description = ''
-          The capitalization settings for this font.
-
-          See https://doc.qt.io/qt-6/qfont.html#Capitalization-enum for more.
-        '';
-      };
-      letterSpacingType = mkOption {
-        type = qfont.spacingType;
-        default = "percentage";
-        description = ''
-          Whether to use percentage or absolute spacing for this font.
-
-          See https://doc.qt.io/qt-6/qfont.html#SpacingType-enum for more.
-        '';
-      };
-      letterSpacing = mkOption {
-        type = types.number;
-        default = 0;
-        description = ''
-          The amount of letter spacing for this font.
-
-          Could be a percentage or an absolute spacing change (positive increases spacing, negative decreases spacing),
-          based on the selected `letterSpacingType`.
-        '';
-      };
-      wordSpacing = mkOption {
-        type = types.number;
-        default = 0;
-        description = ''
-          The amount of word spacing for this font, in pixels.
-
-          Positive values increase spacing while negative ones decrease spacing.
-        '';
-      };
-      stretch = mkOption {
-        type = types.either (types.ints.between 1 4000) qfont.stretch;
-        default = "anyStretch";
-        description = ''
-          The stretch factor for this font, as an integral percentage (i.e. 150 means a 150% stretch),
-          or as a pre-defined stretch factor string.
-        '';
-      };
-      styleStrategy = mkOption {
-        type = styleStrategyType;
-        default = { };
-        description = ''
-          The strategy for matching similar fonts to this font.
-
-          See https://doc.qt.io/qt-6/qfont.html#StyleStrategy-enum for more.
-        '';
-      };
       styleName = mkOption {
         type = types.nullOr types.str;
         default = null;
