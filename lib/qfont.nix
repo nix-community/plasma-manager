@@ -20,15 +20,15 @@
 
     # QFont::Weight
     weight = {
-      thin = 100;
-      extraLight = 200;
-      light = 300;
-      normal = 400;
-      medium = 500;
-      demiBold = 600;
-      bold = 700;
-      extraBold = 800;
-      black = 900;
+      thin = 0;
+      extraLight = 12;
+      light = 25;
+      normal = 50;
+      medium = 57;
+      demiBold = 63;
+      bold = 75;
+      extraBold = 81;
+      black = 87;
     };
 
     # QFont::Style
@@ -168,12 +168,6 @@ in
             (zeroOrOne strikeOut)
             (zeroOrOne fixedPitch)
             "0"
-            (toString enums.capitalization.${capitalization})
-            (toString enums.spacingType.${letterSpacingType})
-            (toString letterSpacing)
-            (toString wordSpacing)
-            (numOrEnum enums.stretch stretch)
-            (toString styleStrategy')
           ]
           ++ lib.optional (styleName != null) styleName);
   }
