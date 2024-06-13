@@ -32,13 +32,34 @@ let
     };
   };
 
+  cursorType = with lib.types; submodule {
+    options = {
+      cursorTheme = lib.mkOption {
+        type = nullOr str;
+        default = null;
+        example = "Breeze_Snow";
+        description = "The Plasma cursortheme. Run plasma-apply-cursortheme --list-themes for valid options.";
+      };
+      size = lib.mkOption {
+        type = nullOr ints.positive;
+        default = null;
+        example = 24;
+        description = "The size of the cursor. See the settings GUI for allowed sizes for each cursortheme.";
+      };
+    };
+  };
+
   anyThemeSet = (cfg.workspace.theme != null ||
     cfg.workspace.colorScheme != null ||
-    cfg.workspace.cursorTheme != null ||
+    (cfg.workspace.cursor != null && cfg.workspace.cursor.cursorTheme != null) ||
     cfg.workspace.lookAndFeel != null ||
     cfg.workspace.iconTheme != null);
 in
 {
+  imports = [
+    (lib.mkRenamedOptionModule [ "programs" "plasma" "workspace" "cursorTheme" ] [ "programs" "plasma" "workspace" "cursor" "cursorTheme" ])
+  ];
+
   options.programs.plasma.workspace = {
     clickItemTo = lib.mkOption {
       type = with lib.types; nullOr (enum [ "open" "select" ]);
@@ -75,12 +96,12 @@ in
       '';
     };
 
-    cursorTheme = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
+    cursor = lib.mkOption {
+      type = lib.types.nullOr cursorType;
       default = null;
-      example = "Breeze_Snow";
+      example = { cursorTheme = "Breeze_Snow"; size = 24; };
       description = ''
-        The Plasma cursortheme. Run plasma-apply-cursortheme --list-themes for valid options.
+        Allows to configure the cursor in plasma. Both the theme and size are configurable.
       '';
     };
 
@@ -128,7 +149,6 @@ in
         Allows you to set wallpaper using the picture of the day plugin. Needs the provider.
       '';
     };
-
   };
 
   config = (lib.mkIf cfg.enable {
@@ -151,6 +171,9 @@ in
         plasmarc = (lib.mkIf (cfg.workspace.tooltipDelay != null) {
           PlasmaToolTips.Delay = cfg.workspace.tooltipDelay;
         });
+        kcminputrc = (lib.mkIf (cfg.workspace.cursor != null && cfg.workspace.cursor.size != null) {
+          Mouse.cursorSize = cfg.workspace.cursor.size;
+        });
       }
       # We add persistence to some keys in order to not reset the themes on
       # each generation when we use overrideConfig.
@@ -165,7 +188,7 @@ in
         (lib.mkMerge
           [
             {
-              kcminputrc.Mouse.cursorTheme.persistent = lib.mkDefault (cfg.workspace.cursorTheme != null);
+              kcminputrc.Mouse.cursorTheme.persistent = lib.mkDefault (cfg.workspace.cursor != null && cfg.workspace.cursor.cursorTheme != null);
               kdeglobals.General.ColorScheme.persistent = lib.mkDefault (cfg.workspace.colorScheme != null);
               kdeglobals.Icons.Theme.persistent = lib.mkDefault (cfg.workspace.iconTheme != null);
               kdeglobals.KDE.LookAndFeelPackage.persistent = lib.mkDefault (cfg.workspace.lookAndFeel != null);
@@ -180,17 +203,19 @@ in
     # kde tools. We then run this using an autostart script, where this is
     # run only on the first login (unless overrideConfig is enabled),
     # granted all the commands succeed (until we change the settings again).
-    programs.plasma.startup.startupScript."apply_themes" = (lib.mkIf anyThemeSet
-      {
-        text = ''
-          ${if cfg.workspace.lookAndFeel != null then "plasma-apply-lookandfeel -a ${cfg.workspace.lookAndFeel}" else ""}
-          ${if cfg.workspace.theme != null then "plasma-apply-desktoptheme ${cfg.workspace.theme}" else ""}
-          ${if cfg.workspace.cursorTheme != null then "plasma-apply-cursortheme ${cfg.workspace.cursorTheme}" else ""}
-          ${if cfg.workspace.colorScheme != null then "plasma-apply-colorscheme ${cfg.workspace.colorScheme}" else ""}
-          ${if cfg.workspace.iconTheme != null then "${pkgs.kdePackages.plasma-workspace}/libexec/plasma-changeicons ${cfg.workspace.iconTheme}" else ""}
-        '';
-        priority = 1;
-      });
+    programs.plasma.startup.startupScript."apply_themes" = (lib.mkIf anyThemeSet {
+      text = ''
+        ${if cfg.workspace.lookAndFeel != null then "plasma-apply-lookandfeel -a ${cfg.workspace.lookAndFeel}" else ""}
+        ${if cfg.workspace.theme != null then "plasma-apply-desktoptheme ${cfg.workspace.theme}" else ""}
+        ${if (cfg.workspace.cursor != null && cfg.workspace.cursor.cursorTheme != null) then
+          "plasma-apply-cursortheme ${cfg.workspace.cursor.cursorTheme}" +
+            (if cfg.workspace.cursor.size != null then " --size ${builtins.toString cfg.workspace.cursor.size}" else "")
+          else ""}
+        ${if cfg.workspace.colorScheme != null then "plasma-apply-colorscheme ${cfg.workspace.colorScheme}" else ""}
+        ${if cfg.workspace.iconTheme != null then "${pkgs.kdePackages.plasma-workspace}/libexec/plasma-changeicons ${cfg.workspace.iconTheme}" else ""}
+      '';
+      priority = 1;
+    });
 
     # The wallpaper configuration can be found in panels.nix due to wallpaper
     # configuration and panel configuration being stored in the same file, and
