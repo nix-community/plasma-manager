@@ -208,6 +208,7 @@ in
 
             firstDayOfWeek = calendar.firstDayOfWeek;
             enabledCalendarPlugins = calendar.plugins;
+            showWeekNumbers = calendar.showWeekNumbers;
           }
           // date.format
           // font
