@@ -26,15 +26,17 @@ in
               Could be an integer unit, or "small" (1 unit), "medium" (2 units) or "large" (6 units).
             '';
             apply = spacing:
-              if builtins.isInt spacing then
-                toString spacing
+              (if (spacing == null) then null
               else
-                builtins.elemAt [ "1" "2" "6" ] (
-                  lib.lists.findFirstIndex
-                    (x: x == spacing)
-                    (throw "systemTray: nonexistent spacing ${spacing}! This is a bug!")
-                    enum
-                );
+                (if builtins.isInt spacing then
+                  toString spacing
+                else
+                  builtins.elemAt [ "1" "2" "6" ] (
+                    lib.lists.findFirstIndex
+                      (x: x == spacing)
+                      (throw "systemTray: nonexistent spacing ${spacing}! This is a bug!")
+                      enum
+                  )));
           };
         scaleToFit = mkBoolOption ''
           Whether to automatically scale System Tray icons to fix the available thickness of the panel.
