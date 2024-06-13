@@ -1,7 +1,7 @@
 { lib, widgets, ... }:
 let
   inherit (lib) mkOption types;
-  inherit (widgets.lib) mkBoolOption mkEnumOption boolToString' getEnum;
+  inherit (widgets.lib) mkBoolOption mkEnumOption boolToString';
 
   fontType = types.submodule {
     options = {
@@ -71,7 +71,7 @@ in
                   customDateFormat = f.custom;
                 }
               else
-                { dateFormat = getEnum enum f; };
+                { dateFormat = f; };
 
           };
 
