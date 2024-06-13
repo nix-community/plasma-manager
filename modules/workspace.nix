@@ -34,7 +34,7 @@ let
 
   cursorType = with lib.types; submodule {
     options = {
-      cursorTheme = lib.mkOption {
+      theme = lib.mkOption {
         type = nullOr str;
         default = null;
         example = "Breeze_Snow";
@@ -51,13 +51,13 @@ let
 
   anyThemeSet = (cfg.workspace.theme != null ||
     cfg.workspace.colorScheme != null ||
-    (cfg.workspace.cursor != null && cfg.workspace.cursor.cursorTheme != null) ||
+    (cfg.workspace.cursor != null && cfg.workspace.cursor.theme != null) ||
     cfg.workspace.lookAndFeel != null ||
     cfg.workspace.iconTheme != null);
 in
 {
   imports = [
-    (lib.mkRenamedOptionModule [ "programs" "plasma" "workspace" "cursorTheme" ] [ "programs" "plasma" "workspace" "cursor" "cursorTheme" ])
+    (lib.mkRenamedOptionModule [ "programs" "plasma" "workspace" "cursorTheme" ] [ "programs" "plasma" "workspace" "cursor" "theme" ])
   ];
 
   options.programs.plasma.workspace = {
@@ -99,7 +99,7 @@ in
     cursor = lib.mkOption {
       type = lib.types.nullOr cursorType;
       default = null;
-      example = { cursorTheme = "Breeze_Snow"; size = 24; };
+      example = { theme = "Breeze_Snow"; size = 24; };
       description = ''
         Allows to configure the cursor in plasma. Both the theme and size are configurable.
       '';
@@ -188,7 +188,7 @@ in
         (lib.mkMerge
           [
             {
-              kcminputrc.Mouse.cursorTheme.persistent = lib.mkDefault (cfg.workspace.cursor != null && cfg.workspace.cursor.cursorTheme != null);
+              kcminputrc.Mouse.cursorTheme.persistent = lib.mkDefault (cfg.workspace.cursor != null && cfg.workspace.cursor.theme != null);
               kdeglobals.General.ColorScheme.persistent = lib.mkDefault (cfg.workspace.colorScheme != null);
               kdeglobals.Icons.Theme.persistent = lib.mkDefault (cfg.workspace.iconTheme != null);
               kdeglobals.KDE.LookAndFeelPackage.persistent = lib.mkDefault (cfg.workspace.lookAndFeel != null);
@@ -207,8 +207,8 @@ in
       text = ''
         ${if cfg.workspace.lookAndFeel != null then "plasma-apply-lookandfeel -a ${cfg.workspace.lookAndFeel}" else ""}
         ${if cfg.workspace.theme != null then "plasma-apply-desktoptheme ${cfg.workspace.theme}" else ""}
-        ${if (cfg.workspace.cursor != null && cfg.workspace.cursor.cursorTheme != null) then
-          "plasma-apply-cursortheme ${cfg.workspace.cursor.cursorTheme}" +
+        ${if (cfg.workspace.cursor != null && cfg.workspace.cursor.theme != null) then
+          "plasma-apply-cursortheme ${cfg.workspace.cursor.theme}" +
             (if cfg.workspace.cursor.size != null then " --size ${builtins.toString cfg.workspace.cursor.size}" else "")
           else ""}
         ${if cfg.workspace.colorScheme != null then "plasma-apply-colorscheme ${cfg.workspace.colorScheme}" else ""}
