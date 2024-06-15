@@ -180,7 +180,7 @@ in
       (lib.mkIf (cfg.overrideConfig && anyThemeSet) (
         let
           colorSchemeIgnore =
-            if (cfg.workspace.colorScheme != null) then
+            if (cfg.workspace.colorScheme != null || cfg.workspace.lookAndFeel != null) then
               (import ../lib/colorscheme.nix {
                 inherit lib;
               }) else { };
@@ -189,7 +189,7 @@ in
           [
             {
               kcminputrc.Mouse.cursorTheme.persistent = lib.mkDefault (cfg.workspace.cursor != null && cfg.workspace.cursor.theme != null);
-              kdeglobals.General.ColorScheme.persistent = lib.mkDefault (cfg.workspace.colorScheme != null);
+              kdeglobals.General.ColorScheme.persistent = lib.mkDefault (cfg.workspace.colorScheme != null || cfg.workspace.lookAndFeel != null);
               kdeglobals.Icons.Theme.persistent = lib.mkDefault (cfg.workspace.iconTheme != null);
               kdeglobals.KDE.LookAndFeelPackage.persistent = lib.mkDefault (cfg.workspace.lookAndFeel != null);
               plasmarc.Theme.name.persistent = lib.mkDefault (cfg.workspace.theme != null);
