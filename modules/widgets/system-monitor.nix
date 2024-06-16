@@ -1,6 +1,7 @@
-{ lib, ... }:
+{ lib, widgets, ... }:
 let
   inherit (lib) mkOption types;
+  inherit (widgets.lib) mkBoolOption;
 
   # KDE expects a key/value pair like this:
   # ```ini
@@ -21,7 +22,7 @@ let
     else null;
 
   mkListOption = mkOption {
-    type = types.nullOr (types.listOf types.str);
+    type = with types; nullOr (listOf str);
     default = null;
     apply = toEscapedList;
   };
@@ -55,44 +56,44 @@ in
       # See https://invent.kde.org/plasma/plasma-workspace/-/blob/master/applets/systemmonitor/systemmonitor/package/contents/config/main.xml for the accepted raw options 
 
       title = mkOption {
-        type = types.nullOr types.str;
+        type = with types; nullOr str;
         default = null;
         description = "The title of this system monitor.";
       };
+      showTitle = mkBoolOption "Show or hide the title.";
       displayStyle = mkOption {
-        type = types.nullOr types.str;
+        type = with types; nullOr str;
         default = null;
         example = "org.kde.ksysguard.barchart";
         description = "The display style of the chart. Uses the internal plugin name.";
       };
       sensors = mkOption {
-        type = types.nullOr (types.listOf (types.submodule {
-          options = {
-            name = mkOption {
-              type = types.str;
-              example = "cpu/all/usage";
-              description = "The name of the sensor.";
+        type = with types;
+          nullOr (listOf (submodule {
+            options = {
+              name = mkOption {
+                type = str;
+                example = "cpu/all/usage";
+                description = "The name of the sensor.";
+              };
+              color = mkOption {
+                type = str; # TODO maybe use a better type
+                example = "255,255,255";
+                description = "The color of the sensor, as a string containing 8-bit integral RGB values separated by commas";
+              };
+              label = mkOption {
+                type = str;
+                example = "CPU %";
+                description = "The label of the sensor.";
+              };
             };
-            color = mkOption {
-              type = types.str; # TODO maybe use a better type
-              example = "255,255,255";
-              description = "The color of the sensor, as a string containing 8-bit integral RGB values separated by commas";
-            };
-            label = mkOption {
-              type = types.str;
-              example = "CPU %";
-              description = "The label of the sensor.";
-            };
-          };
-        }));
+          }));
         default = null;
-        example = [
-          {
-            name = "gpu/gpu1/usage";
-            color = "180,190,254";
-            label = "GPU %";
-          }
-        ];
+        example = [{
+          name = "gpu/gpu1/usage";
+          color = "180,190,254";
+          label = "GPU %";
+        }];
         description = ''
           The list of sensors displayed as a part of the graph/chart.
         '';
@@ -119,6 +120,7 @@ in
 
     convert =
       { title
+      , showTitle
       , displayStyle
       , totalSensors
       , sensors
@@ -129,6 +131,7 @@ in
           {
             Appearance = {
               inherit title;
+              inherit showTitle;
               chartFace = displayStyle;
             };
             Sensors = {
