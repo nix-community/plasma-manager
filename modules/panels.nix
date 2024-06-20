@@ -167,9 +167,9 @@ in
                 var desktop = allDesktops[desktopIndex];
                 desktop.wallpaperPlugin = "org.kde.slideshow";
                 desktop.currentConfigGroup = Array("Wallpaper", "org.kde.slideshow", "General");
-                desktop.writeConfig("SlidePaths", ${if (builtins.isPath cfg.workspace.wallpaperSlideShow.path) then
-                  "\"" + cfg.workspace.wallpaperSlideShow.path + "\"" else
-                  "[" + (builtins.concatStringsSep "," (map (s: "\"" + s + "\"") cfg.workspace.wallpaperSlideShow.path)) + "]"});
+                desktop.writeConfig("SlidePaths", ${with cfg.workspace.wallpaperSlideShow; if ((builtins.isPath path) || (builtins.isString path)) then
+                  "\"" + (builtins.toString path) + "\"" else
+                  "[" + (builtins.concatStringsSep "," (map (s: "\"" + s + "\"") path)) + "]"});
                 desktop.writeConfig("SlideInterval", "${builtins.toString cfg.workspace.wallpaperSlideShow.interval}");
             }
           '' else "");
