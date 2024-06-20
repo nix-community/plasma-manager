@@ -12,21 +12,20 @@ let
   # attribute-set as json. Here a is the attribute-set.
   #
   # Type: AttrSet -> string
-  writeConfig = json: overrideConfig: ocRemoveList:
+  writeConfig = json: overrideConfig: resetFilesList:
     let
       jsonStr = builtins.toJSON json;
       # Writing to file handles special characters better than passing it in as
       # an argument to the script.
       jsonFile = pkgs.writeText "data.json" jsonStr;
-      overrideConfigStr = builtins.toString overrideConfig;
-      ocRemoveStr = builtins.toString
+      resetFilesStr = builtins.toString
         (if overrideConfig then
-          ocRemoveList ++ [ "${config.xdg.dataHome}/plasma-manager/last_run_*" ]
+          resetFilesList ++ [ "${config.xdg.dataHome}/plasma-manager/last_run_*" ]
         else
-          ocRemoveList);
+          resetFilesList);
     in
     ''
-      ${writeConfigScript}/bin/write_config ${jsonFile} "${overrideConfigStr}" "${ocRemoveStr}"
+      ${writeConfigScript}/bin/write_config ${jsonFile} "${resetFilesStr}"
     '';
 in
 {
