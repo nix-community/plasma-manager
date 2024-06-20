@@ -138,11 +138,16 @@ class ConfigValue:
 
 
 class KConfManager:
-    def __init__(self, filepath: str, json_dict: Dict, override_config: bool):
+    def __init__(self, filepath: str, json_dict: Dict, reset: bool):
+        """
+        filepath (str): The full path to the config-file to manage
+        json_dict (Dict): The nix-configuration presented in a dictionary (converted from json)
+        reset (bool): Whether to reset the file, i.e. remove all the lines not present in the configuration
+        """
         self.data = {}
         self.json_dict = json_dict
         self.filepath = filepath
-        self.override_config = override_config
+        self.reset = reset
         self._json_value_checks()
         # The nix expressions will have / to separate groups, and \/ to escape a /.
         # This parses the groups into tuples of unescaped group names.
@@ -221,12 +226,9 @@ class KConfManager:
                     # We won't bother reading empty lines.
                     if l.strip() != "":
                         key, value = ConfigValue.parse_line(l)
-
-                        # We only read the current key if overrideConfig is
-                        # disabled or the value is marked as persistent in the
-                        # plasma-manager config.
                         is_persistent = self.key_is_persistent(current_group, key)
-                        if not self.override_config or is_persistent:
+                        should_keep_key = is_persistent or not self.reset
+                        if should_keep_key:
                             self.set_value(
                                 current_group,
                                 key,
@@ -314,27 +316,19 @@ def write_configs(d: Dict, reset_files: Set):
 
 
 def main():
-    if len(sys.argv) != 4:
+    if len(sys.argv) != 3:
         raise ValueError(
-            f"Must receive exactly three arguments, got: {len(sys.argv) - 1}"
+            f"Must receive exactly two arguments, got: {len(sys.argv) - 1}"
         )
 
     json_path = sys.argv[1]
     with open(json_path, "r") as f:
         json_str = f.read()
 
-    # We send in "true" as the second argument if overrideConfig is enabled in
-    # plasma-manager.
-    override_config = bool(sys.argv[2])
-    # The files to be reset when we have overrideConfig enabled.
-    oc_reset_files = set(sys.argv[3].split(" "))
-
+    reset_files = set(sys.argv[2].split(" ")) if len(sys.argv) >= 2 else {}
     d = json.loads(json_str)
-    # If overrideConfig is enabled we delete all the kde config files which are
-    # not configured through plasma-manager.
-    if override_config:
-        remove_config_files(d, oc_reset_files)
-    write_configs(d, oc_reset_files if override_config else {})
+    remove_config_files(d, reset_files)
+    write_configs(d, reset_files)
 
 
 if __name__ == "__main__":

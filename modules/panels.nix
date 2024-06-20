@@ -40,7 +40,7 @@ let
           else
             null;
         example = "fit";
-        description = "(Plasma 6 only) The length mode of the panel. Defaults to `custom` if either `minLength` or `maxLength` is set.";
+        description = "The length mode of the panel. Defaults to `custom` if either `minLength` or `maxLength` is set.";
       };
       location = lib.mkOption {
         type = lib.types.str;
@@ -74,7 +74,7 @@ let
           plasma 6 only.
         '';
       };
-      floating = lib.mkEnableOption "Enable or disable floating style (plasma 6 only).";
+      floating = lib.mkEnableOption "Enable or disable floating style.";
       widgets = lib.mkOption {
         type = lib.types.listOf widgets.type;
         default = [
