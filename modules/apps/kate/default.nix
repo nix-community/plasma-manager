@@ -247,7 +247,7 @@ in
     };
 
     "KTextEditor View" = {
-      "User Sets Of Chars To Enclose Selection" = cfg.editor.brackets.characters;
+      "Chars To Enclose Selection" = cfg.editor.brackets.characters;
       "Bracket Match Preview" = cfg.editor.brackets.highlightMatching;
       "Auto Brackets" = cfg.editor.brackets.automaticallyAddClosing;
     };
