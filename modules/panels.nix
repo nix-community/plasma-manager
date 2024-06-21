@@ -15,25 +15,25 @@ let
         description = "The height of the panel.";
       };
       offset = lib.mkOption {
-        type = lib.types.nullOr lib.types.int;
+        type = with lib.types; nullOr int;
         default = null;
         example = 100;
         description = "The offset of the panel from the anchor-point.";
       };
       minLength = lib.mkOption {
-        type = lib.types.nullOr lib.types.int;
+        type = with lib.types; nullOr int;
         default = null;
         example = 1000;
         description = "The minimum required length/width of the panel.";
       };
       maxLength = lib.mkOption {
-        type = lib.types.nullOr lib.types.int;
+        type = with lib.types; nullOr int;
         default = null;
         example = 1600;
         description = "The maximum allowed length/width of the panel.";
       };
       lengthMode = lib.mkOption {
-        type = lib.types.nullOr (lib.types.enum [ "fit" "fill" "custom" ]);
+        type = with lib.types; nullOr (enum [ "fit" "fill" "custom" ]);
         default =
           if config.minLength != null || config.maxLength != null then
             "custom"
@@ -44,18 +44,18 @@ let
       };
       location = lib.mkOption {
         type = lib.types.str;
-        default = lib.types.nullOr (lib.types.enum [ "top" "bottom" "left" "right" "floating" ]);
+        default = with lib.types; nullOr (enum [ "top" "bottom" "left" "right" "floating" ]);
         example = "left";
         description = "The location of the panel.";
       };
       alignment = lib.mkOption {
-        type = lib.types.nullOr (lib.types.enum [ "left" "center" "right" ]);
+        type = with lib.types; nullOr (enum [ "left" "center" "right" ]);
         default = "center";
         example = "right";
         description = "The alignment of the panel.";
       };
       hiding = lib.mkOption {
-        type = lib.types.nullOr (lib.types.enum [
+        type = with lib.types; nullOr (enum [
           "none"
           "autohide"
           # Plasma 5 only
@@ -102,12 +102,12 @@ let
         apply = map widgets.convert;
       };
       screen = lib.mkOption {
-        type = lib.types.int;
-        default = 0;
+        type = with lib.types; nullOr int;
+        default = null;
         description = "The screen the panel should appear on";
       };
       extraSettings = lib.mkOption {
-        type = lib.types.nullOr lib.types.str;
+        type = with lib.types; nullOr str;
         default = null;
         description = ''
           Extra lines to add to the layout.js. See
@@ -136,7 +136,7 @@ in
       (
         let
           anyPanels = ((builtins.length cfg.panels) > 0);
-          anyNonDefaultScreens = ((builtins.any (panel: panel.screen != 0)) cfg.panels);
+          anyNonDefaultScreens = ((builtins.any (panel: panel.screen != null)) cfg.panels);
           panelPreCMD = (if anyPanels then ''
             # We delete plasma-org.kde.plasma.desktop-appletsrc to hinder it
             # growing indefinitely. See:
@@ -145,11 +145,7 @@ in
           '' else "");
           panelLayoutStr = (if anyPanels then (import ../lib/panel.nix { inherit lib; inherit config; }) else "");
           panelPostCMD = (if anyNonDefaultScreens then ''
-            if [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ]; then
-              sed -i 's/^lastScreen\\x5b$i\\x5d=/lastScreen[$i]=/' ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
-              # We sleep a second in order to prevent some bugs (like the incorrect height being set)
-              sleep 1; nohup plasmashell --replace &
-            fi
+            sed -i 's/^lastScreen\\x5b$i\\x5d=/lastScreen[$i]=/' ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
           '' else "");
           # This meaningless comment inserts the URL into the desktop-script
           # which means that when the wallpaper is updated, the sha256 hash
@@ -189,6 +185,7 @@ in
           preCommands = panelPreCMD;
           text = panelLayoutStr + wallpaperDesktopScript + wallpaperSlideShow + wallpaperPOTD;
           postCommands = panelPostCMD + wallpaperPostCMD;
+          restartServices = (if anyNonDefaultScreens then [ "plasma-plasmashell" ] else [ ]);
           priority = 2;
         }
       ));
