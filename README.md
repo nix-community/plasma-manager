@@ -32,6 +32,7 @@ At the moment `plasma-manager` supports configuring the following:
 - Panels (via the `panels` module)
 - Screen locker (via the `kscreenlocker` module)
 - Fonts (via the `fonts` module)
+- Window Rules (via the `window-rules` module)
 - KDE apps (via the `apps` module). In particular the following kde apps have
   modules in `plasma-manager`:
   - kate

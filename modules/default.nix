@@ -13,6 +13,7 @@
     ./spectacle.nix
     ./startup.nix
     ./windows.nix
+    ./window-rules.nix
     ./workspace.nix
   ];
 

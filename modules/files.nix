@@ -58,7 +58,7 @@ let
     "plasmarc"
     "plasmashellrc"
     "systemsettingsrc"
-  ] else [ ]);
+  ] else lib.optional (builtins.length plasmaCfg.window-rules > 0) "kwinrulesrc");
 in
 {
   options.programs.plasma = {

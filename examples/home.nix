@@ -104,6 +104,28 @@
       }
     ];
 
+    window-rules = [
+      {
+        description = "Dolphin";
+        match = {
+          window-class = {
+            value = "dolphin";
+            type = "substring";
+          };
+          window-types = [ "normal" ];
+        };
+        apply = {
+          noborder = {
+            value = true;
+            apply = "force";
+          };
+          # `apply` defaults to "apply-initially"
+          maximizehoriz = true;
+          maximizevert = true;
+        };
+      }
+    ];
+
 
     #
     # Some mid-level settings:
