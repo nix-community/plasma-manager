@@ -3,34 +3,7 @@
 
 let
   cfg = config.programs.plasma;
-
-  wallpaperSlideShowType = with lib.types; submodule {
-    options = {
-      path = lib.mkOption {
-        type = either path (listOf path);
-        description = "The path(s) where the wallpapers are located.";
-      };
-      interval = lib.mkOption {
-        type = int;
-        default = 300;
-        description = "The length between wallpaper switches.";
-      };
-    };
-  };
-
-  wallpaperPictureOfTheDayType = with lib.types; submodule {
-    options = {
-      provider = lib.mkOption {
-        type = nullOr (enum [ "apod" "bing" "flickr" "natgeo" "noaa" "wcpotd" "epod" "simonstalenhag" ]);
-        description = "The provider for the Picture of the Day plugin.";
-      };
-      updateOverMeteredConnection = lib.mkOption {
-        type = bool;
-        default = false;
-        description = "Whether to update the wallpaper on a metered connection.";
-      };
-    };
-  };
+  inherit (import ../lib/wallpapers.nix { inherit lib; }) wallpaperPictureOfTheDayType wallpaperSlideShowType;
 
   cursorType = with lib.types; submodule {
     options = {
@@ -137,7 +110,7 @@ in
     wallpaperSlideShow = lib.mkOption {
       type = lib.types.nullOr wallpaperSlideShowType;
       default = null;
-      example = "${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/";
+      example = { path = "${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/"; };
       description = ''
         Allows you to set wallpaper slideshow. Needs a directory of your wallpapers and an interval length.
       '';
