@@ -1,8 +1,7 @@
- {
-  lib,
-  pkgs,
-  config,
-  ...
+{ lib
+, pkgs
+, config
+, ...
 }:
 with lib.types; let
   inherit (builtins) length listToAttrs foldl' toString attrNames getAttr hasAttr concatStringsSep add isAttrs;
@@ -60,7 +59,7 @@ with lib.types; let
           };
         };
     };
-  basicValueType = oneOf [bool float int str];
+  basicValueType = oneOf [ bool float int str ];
   applyOptionType = submodule {
     options = {
       value = mkOption {
@@ -76,28 +75,29 @@ with lib.types; let
   };
   mkMatchOption = name: hasMatchWhole:
     mkOption {
-      type = nullOr (coercedTo str (value: {inherit value;}) (matchOptionType hasMatchWhole));
+      type = nullOr (coercedTo str (value: { inherit value; }) (matchOptionType hasMatchWhole));
       default = null;
       description = "${name} matching";
     };
   fixMatchName = name: matchNameMap.${name} or name;
   buildMatchRule = name: rule: ({
-      "${fixMatchName name}" = rule.value;
-      "${fixMatchName name}match" = getAttr rule.type matchRules;
-    }
-    // optionalAttrs (rule ? match-whole) {
-      "${fixMatchName name}complete" = rule.match-whole;
-    });
+    "${fixMatchName name}" = rule.value;
+    "${fixMatchName name}match" = getAttr rule.type matchRules;
+  }
+  // optionalAttrs (rule ? match-whole) {
+    "${fixMatchName name}complete" = rule.match-whole;
+  });
   buildApplyRule = name: rule: {
     "${name}" = rule.value;
     "${name}rule" = getAttr rule.apply applyRules;
   };
-  buildWindowRule = rule: let
-    matchOptions = filterAttrs (_name: isAttrs) rule.match;
-    matchRules = mapAttrsToList buildMatchRule matchOptions;
-    applyRules = mapAttrsToList buildApplyRule rule.apply;
-    combinedRules = foldl' mergeAttrs {} (matchRules ++ applyRules);
-  in
+  buildWindowRule = rule:
+    let
+      matchOptions = filterAttrs (_name: isAttrs) rule.match;
+      matchRules = mapAttrsToList buildMatchRule matchOptions;
+      applyRules = mapAttrsToList buildApplyRule rule.apply;
+      combinedRules = foldl' mergeAttrs { } (matchRules ++ applyRules);
+    in
     {
       Description = rule.description;
     }
@@ -105,12 +105,14 @@ with lib.types; let
       types = rule.match.window-types;
     }
     // combinedRules;
-  windowRules = listToAttrs (imap0 (i: rule: {
+  windowRules = listToAttrs (imap0
+    (i: rule: {
       name = toString (i + 1);
       value = buildWindowRule rule;
     })
     cfg.window-rules);
-in {
+in
+{
   options.programs.plasma = {
     window-rules = mkOption {
       type = listOf (submodule {
@@ -124,7 +126,7 @@ in {
                 machine = mkMatchOption "clientmachine" false;
                 window-types = mkOption {
                   type = listOf (enum (attrNames windowTypes));
-                  default = [];
+                  default = [ ];
                   description = "Window types to match";
                   apply = values: foldl' add 0 (map (val: getAttr val windowTypes) values);
                 };
@@ -132,8 +134,8 @@ in {
             };
           };
           apply = mkOption {
-            type = attrsOf (coercedTo basicValueType (value: {inherit value;}) applyOptionType);
-            default = {};
+            type = attrsOf (coercedTo basicValueType (value: { inherit value; }) applyOptionType);
+            default = { };
             description = "Values to apply";
           };
           description = mkOption {
@@ -143,7 +145,7 @@ in {
         };
       });
       description = "Kwin window rules";
-      default = [];
+      default = [ ];
     };
   };
 
@@ -157,15 +159,6 @@ in {
           };
         }
         // windowRules;
-    };
-
-    home.activation = {
-      reload-kwin =
-        lib.hm.dag.entryAfter ["configure-plasma"]
-        ''
-          # qdbus fails if the graphical session isn't running
-          $DRY_RUN_CMD qdbus org.kde.KWin /KWin reconfigure || true
-        '';
     };
   };
 }
