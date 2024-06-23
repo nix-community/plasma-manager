@@ -125,6 +125,15 @@ in
       '';
     };
 
+    wallpaperPlainColor = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      example = "0,64,174,256";
+      description = ''
+        Allows you to set wallpaper using a plain color. Color is a comma-seperated R,G,B,A string. Alpha optional (default is 256).
+      '';
+    };
+
     soundTheme = lib.mkOption {
       type = with lib.types; nullOr str;
       default = null;
@@ -188,10 +197,10 @@ in
       {
         assertion =
           let
-            wallpapers = with cfg.workspace; [ wallpaperSlideShow wallpaper wallpaperPictureOfTheDay ];
+            wallpapers = with cfg.workspace; [ wallpaperSlideShow wallpaper wallpaperPictureOfTheDay wallpaperPlainColor ];
           in
           lib.count (x: x != null) wallpapers <= 1;
-        message = "Can set only one of wallpaper, wallpaperSlideShow and wallpaperPictureOfTheDay.";
+        message = "Can set only one of wallpaper, wallpaperSlideShow, wallpaperPictureOfTheDay, and wallpaperPlainColor.";
       }
       {
         assertion = (cfg.workspace.splashScreen.engine == null || cfg.workspace.splashScreen.theme != null);

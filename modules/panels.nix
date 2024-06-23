@@ -120,6 +120,7 @@ let
   anyPanelOrWallpaperSet = ((cfg.workspace.wallpaper != null) ||
     (cfg.workspace.wallpaperSlideShow != null) ||
     (cfg.workspace.wallpaperPictureOfTheDay != null) ||
+    (cfg.workspace.wallpaperPlainColor != null) ||
     ((builtins.length cfg.panels) > 0));
 in
 {
@@ -178,12 +179,22 @@ in
                 desktop.writeConfig("Provider", "${cfg.workspace.wallpaperPictureOfTheDay.provider}");
                 desktop.writeConfig("UpdateOverMeteredConnection", "${if (cfg.workspace.wallpaperPictureOfTheDay.updateOverMeteredConnection) then "1" else "0"}");
               }
+          '' else "");
+          wallpaperPlainColor = (if (cfg.workspace.wallpaperPlainColor != null) then ''
+            // Wallpaper plain color
+            let allDesktops = desktops();
+            for (var desktopIndex = 0; desktopIndex < allDesktops.length; desktopIndex++) {
+                var desktop = allDesktops[desktopIndex];
+                desktop.wallpaperPlugin = "org.kde.color";
+                desktop.currentConfigGroup = Array("Wallpaper", "org.kde.color", "General");
+                desktop.writeConfig("Color", "${cfg.workspace.wallpaperPlainColor}");
+            }
           '' else ""
           );
         in
         {
           preCommands = panelPreCMD;
-          text = panelLayoutStr + wallpaperDesktopScript + wallpaperSlideShow + wallpaperPOTD;
+          text = panelLayoutStr + wallpaperDesktopScript + wallpaperSlideShow + wallpaperPOTD + wallpaperPlainColor;
           postCommands = panelPostCMD + wallpaperPostCMD;
           restartServices = (if anyNonDefaultScreens then [ "plasma-plasmashell" ] else [ ]);
           priority = 2;

@@ -30,6 +30,14 @@ in
         to at least one directory.
       '';
     };
+    wallpaperPlainColor = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      example = "0,64,174,256";
+      description = ''
+        Allows you to set wallpaper using a plain color. Color is a comma-seperated R,G,B,A string. Alpha optional (default is 256).
+      '';
+    };
   };
 
   config = {
@@ -37,10 +45,10 @@ in
       {
         assertion =
           let
-            wallpapers = with cfg.workspace; [ wallpaperSlideShow wallpaper wallpaperPictureOfTheDay ];
+            wallpapers = with cfg.workspace; [ wallpaperSlideShow wallpaper wallpaperPictureOfTheDay wallpaperPlainColor ];
           in
           lib.count (x: x != null) wallpapers <= 1;
-        message = "Can set only one of wallpaper, wallpaperSlideShow and wallpaperPictureOfTheDay for kscreenlocker.";
+        message = "Can set only one of wallpaper, wallpaperSlideShow, wallpaperPictureOfTheDay, and wallpaperPlainColor for kscreenlocker.";
       }
     ];
     programs.plasma.configFile.kscreenlockerrc = (lib.mkMerge [
@@ -65,6 +73,10 @@ in
               (builtins.concatStringsSep "," cfg.kscreenlocker.wallpaperSlideShow.path));
           SlideInterval = cfg.kscreenlocker.wallpaperSlideShow.interval;
         };
+      })
+      (lib.mkIf (cfg.kscreenlocker.wallpaperPlainColor != null) {
+        Greeter.WallpaperPlugin = "org.kde.color";
+        "Greeter/Wallpaper/org.kde.color/General".Color = cfg.kscreenlocker.wallpaperPlainColor;
       })
     ]);
   };
