@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 let
-  inherit (import ../../lib/types.nix { inherit lib; }) basicSettingsType;
+  inherit (import ../../lib/types.nix { inherit lib; inherit config; }) basicSettingsType;
 
   # used as shown in the example in the library docs:
   # https://ryantm.github.io/nixpkgs/functions/library/attrsets/#function-library-lib.attrsets.mapAttrs-prime

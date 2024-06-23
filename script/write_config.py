@@ -162,35 +162,35 @@ class KConfManager:
     def _json_value_checks(self):
         for group, entry in self.json_dict.items():
             for key, value in entry.items():
-                if value["immutable"] and value["value"] is None:
-                    # We don't allow immutability for keys with no value given (it doesn't make sense).
+                if (
+                    value["immutable"]
+                    and value["value"] is None
+                    and value["persistent"] is None
+                ):
                     raise Exception(
                         f'Plasma-manager: Immutability enabled for key "{key}" in group "{group}" in configfile "{self.filepath}"'
-                        " with no value set. Keys without values cannot be declared immutable"
+                        " with no value set. Keys without values/persistence cannot be declared immutable"
                     )
-                if value["shellExpand"] and value["value"] is None:
-                    # We don't allow immutability for keys with no value given (it doesn't make sense).
+                if (
+                    value["shellExpand"]
+                    and value["value"] is None
+                    and value["persistent"] is None
+                ):
                     raise Exception(
                         f'Plasma-manager: Shell-expansion enabled for key "{key}" in group "{group}" in configfile "{self.filepath}"'
-                        " with no value set. Keys without values cannot have shell-expansion enabled"
+                        " with no value set. Keys without values/persistence cannot have shell-expansion enabled"
                     )
                 elif value["persistent"]:
                     base_msg = f'Plasma-manager: Persistency enabled for key "{key}" in group "{group}" in configfile "{self.filepath}"'
-                    # We don't allow persistency when the value is set,
-                    # immutability is enabled, or when shell-expansion is
-                    # enabled.
+                    # We don't allow persistency when the value is set, as that
+                    # doesn't make sense. Currently we allow for persistency
+                    # when immutability or shellExpansion is enabled, but it's
+                    # worth noting that these settings will be meaningless when
+                    # persistency is enabled.
                     if value["value"] is not None:
                         raise Exception(
                             f"{base_msg} with non-null value \"{value['value']}\". "
                             "A value cannot be given when persistency is enabled"
-                        )
-                    elif value["immutable"]:
-                        raise Exception(
-                            f"{base_msg} with immutability enabled. Persistency and immutability cannot both be enabled"
-                        )
-                    elif value["shellExpand"]:
-                        raise Exception(
-                            f"{base_msg} with shell-expansion enabled. Persistency and shell-expansion cannot both be enabled"
                         )
 
     def key_is_persistent(self, group, key) -> bool:
