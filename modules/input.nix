@@ -44,8 +44,6 @@ in
       (
         # For some reason the numlock settings are here and not on kxkbrc?
         mkIf (cfg.input.keyboard.numlockOnStartup != null) {
-          # Ideally you would want to get rid of Numlock, setting it to anything
-          # else works too (or at least seems to)
           Keyboard.NumLock.value = lists.findFirstIndex (x: x == cfg.input.keyboard.numlockOnStartup) null numlockSettings;
         }
       )
