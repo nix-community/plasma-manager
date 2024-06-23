@@ -2,17 +2,20 @@
 
 {
   imports = [
+    ./apps
     ./files.nix
+    ./fonts.nix
     ./hotkeys.nix
+    ./kscreenlocker.nix
+    ./kwin.nix
+    ./panels.nix
     ./shortcuts.nix
     ./spectacle.nix
-    ./windows.nix
-    ./workspace.nix
-    ./kwin.nix
     ./startup.nix
-    ./panels.nix
+    ./windows.nix
+    ./window-rules.nix
+    ./workspace.nix
     ./input.nix
-    ./apps
   ];
 
   options.programs.plasma.enable = lib.mkEnableOption ''

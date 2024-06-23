@@ -33,8 +33,7 @@ in
       Enable configuration management for kate.
     '';
 
-    package = lib.mkPackageOption pkgs "kate" {
-      default = [ "kate" ];
+    package = lib.mkPackageOption pkgs [ "kdePackages" "kate" ] {
       example = "pkgs.libsForQt5.kate";
       extraDescription = ''
         Which kate package to install. Use `pkgs.libsForQt5.kate` in Plasma5 and
@@ -112,32 +111,8 @@ in
     }
   ];
 
-  config.programs.plasma.configFile."katerc" = lib.mkIf cfg.enable {
-    "KTextEditor Document" = {
-      "Auto Detect Indent".value = cfg.editor.indent.autodetect;
-      "Indentation Width".value = cfg.editor.indent.width;
-      "Tab Handling".value = (tabHandlingMode cfg.editor.indent);
-      "Tab Width".value = cfg.editor.tabWidth;
-      "Keep Extra Spaces".value = cfg.editor.indent.keepExtraSpaces;
-      "ReplaceTabsDyn".value = cfg.editor.indent.replaceWithSpaces;
-    };
-
-    "KTextEditor Renderer" = {
-      "Show Indentation Lines".value = cfg.editor.indent.showLines;
-
-
-      # COLORTHEME (cannot define this below)
-      # Do pick the theme if the user chose one,
-      # Do not touch the theme settings otherwise
-      "Auto Color Theme Selection".value = lib.mkIf (cfg.editor.theme.name != "") false;
-      "Color Theme".value = lib.mkIf (cfg.editor.theme.name != "") cfg.editor.theme.name;
-    };
-  };
-
-
   # ==================================
   #     COLORTHEME
-
   options.programs.kate.editor.theme = {
     src = lib.mkOption {
       description = ''
@@ -193,9 +168,8 @@ in
 
   # ==================================
   #     LSP Servers
-
   options.programs.kate.lsp.customServers = lib.mkOption {
-    default = {};
+    default = { };
     type = lib.types.attrs;
     description = ''
       Add more lsp server settings here. Check out the format on the
@@ -206,5 +180,78 @@ in
 
   config.xdg.configFile."kate/lspclient/settings.json" = {
     text = builtins.toJSON { servers = cfg.lsp.customServers; };
+  };
+
+  # ==================================
+  #     UI
+  options.programs.kate.ui.colorScheme = lib.mkOption {
+    type = lib.types.nullOr lib.types.str;
+    default = null;
+
+    example = "Krita dark orange";
+    description = ''
+      The colour scheme of the UI. Leave this setting at `null` in order to
+      not override the systems default scheme for for this application.
+    '';
+  };
+
+  # ==================================
+  #     BRACKETS
+  options.programs.kate.editor.brackets = {
+    characters = lib.mkOption {
+      type = lib.types.str;
+      default = "<>(){}[]'\"\`";
+      example = "<>(){}[]'\"\`*_~";
+      description = "This options determines which characters kate will treat as brackets.";
+    };
+    automaticallyAddClosing = lib.mkEnableOption ''
+      When enabled, a closing bracket is automatically inserted upon typing the opening.
+    '';
+    highlightRangeBetween = lib.mkEnableOption ''
+      This option enables automatch highlighting of the lines between an opening and a
+      closing bracket when the cursor is adjacent to either.
+    '';
+    highlightMatching = lib.mkEnableOption ''
+      When enabled, and the cursor is adjacent to a closing bracket, and the corresponding
+      closing bracket is outside of the currently visible area, then the line of the opening
+      bracket and the line directly after will be shown in a small, floating window
+      at the top of the text area.
+    '';
+    flashMatching = lib.mkEnableOption ''
+      When this option is enabled, then a bracket will quickly flash whenever the cursor
+      moves adjacent to the corresponding bracket.
+    '';
+  };
+
+  # ==================================
+  #     WRITING THE KATERC
+  config.programs.plasma.configFile."katerc" = lib.mkIf cfg.enable {
+    "KTextEditor Document" = {
+      "Auto Detect Indent" = cfg.editor.indent.autodetect;
+      "Indentation Width" = cfg.editor.indent.width;
+      "Tab Handling" = (tabHandlingMode cfg.editor.indent);
+      "Tab Width" = cfg.editor.tabWidth;
+      "Keep Extra Spaces" = cfg.editor.indent.keepExtraSpaces;
+      "ReplaceTabsDyn" = cfg.editor.indent.replaceWithSpaces;
+    };
+
+    "KTextEditor Renderer" = {
+      "Show Indentation Lines" = cfg.editor.indent.showLines;
+
+      "Animate Bracket Matching" = cfg.editor.brackets.flashMatching;
+
+      # Do pick the theme if the user chose one,
+      # Do not touch the theme settings otherwise
+      "Auto Color Theme Selection" = lib.mkIf (cfg.editor.theme.name != "") false;
+      "Color Theme" = lib.mkIf (cfg.editor.theme.name != "") cfg.editor.theme.name;
+    };
+
+    "KTextEditor View" = {
+      "Chars To Enclose Selection" = cfg.editor.brackets.characters;
+      "Bracket Match Preview" = cfg.editor.brackets.highlightMatching;
+      "Auto Brackets" = cfg.editor.brackets.automaticallyAddClosing;
+    };
+
+    "UiSettings"."ColorScheme" = lib.mkIf (cfg.ui.colorScheme != null) cfg.ui.colorScheme;
   };
 }

@@ -37,8 +37,11 @@ let
       };
     };
   });
+  coercedSettingsType = with lib.types;
+    coercedTo basicSettingsType (value: { inherit value; }) advancedSettingsType;
 in
 {
   inherit basicSettingsType;
   inherit advancedSettingsType;
+  inherit coercedSettingsType;
 }

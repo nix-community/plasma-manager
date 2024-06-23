@@ -6,6 +6,7 @@ to configure KDE Plasma using Nix.
 ## Table of contents
 - [What's supported](#whats-supported)
 - [What's not supported](#whats-not-well-supported-at-the-moment)
+- [What will not be supported](#what-will-not-be-supported)
 - [Getting started](#getting-started)
 - [Enabling declarative configuration](#make-your-configuration-more-declarative-with-overrideconfig)
 - [Capturing existing configuration](#capturing-your-current-configuration-with-rc2nix)
@@ -30,6 +31,9 @@ At the moment `plasma-manager` supports configuring the following:
 - Hotkeys (via the `hotkeys` module)
 - Panels (via the `panels` module)
 - Keyboards (via the `input` module)
+- Screen locker (via the `kscreenlocker` module)
+- Fonts (via the `fonts` module)
+- Window Rules (via the `window-rules` module)
 - KDE apps (via the `apps` module). In particular the following kde apps have
   modules in `plasma-manager`:
   - kate
@@ -49,6 +53,11 @@ particular:
 
 There may also be more things we aren't aware of. If you find some other
 limitations don't hesitate to open an issue or submit a pr.
+
+## What will not be supported
+There are some things which are out of bounds for this project due to technical
+reasons. For example
+- SDDM configuration (requires root-privileges and thus not suited for a `home-manager` module)
 
 ## Getting started
 We provide some examples to help you get started. These are located in the
@@ -110,7 +119,7 @@ interest we would love to move this into [nix-community] once it has matured.
 
 ## Special Thanks
 
-This work was inspired by the suggestions on [Home Manger Issue #607][hm607] by
+This work was inspired by the suggestions on [Home Manager Issue #607][hm607] by
 people such as [bew](https://github.com/bew) and
 [kurnevsky](https://github.com/kurnevsky).  Thank you.
 

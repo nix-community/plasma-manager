@@ -94,19 +94,17 @@ in
       };
 
       programs.plasma.configFile."kglobalshortcutsrc"."${group.desktop}" = {
-        _k_friendly_name.value = group.description;
+        _k_friendly_name = group.description;
       } // lib.mapAttrs
         (_: command:
           let
             keys = command.keys ++ lib.optionals (command.key != "") [ command.key ];
           in
-          {
-            value = lib.concatStringsSep "," [
-              (lib.concatStringsSep "\t" (map (lib.escape [ "," ]) keys))
-              "" # List of default keys, not needed.
-              command.comment
-            ];
-          })
+          lib.concatStringsSep "," [
+            (lib.concatStringsSep "\t" (map (lib.escape [ "," ]) keys))
+            "" # List of default keys, not needed.
+            command.comment
+          ])
         cfg.hotkeys.commands;
     };
 }

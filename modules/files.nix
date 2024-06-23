@@ -3,7 +3,7 @@
 
 let
   inherit (import ../lib/writeconfig.nix { inherit lib pkgs config; }) writeConfig;
-  inherit (import ../lib/types.nix { inherit lib; }) advancedSettingsType;
+  inherit (import ../lib/types.nix { inherit lib; }) coercedSettingsType;
 
   # Helper function to prepend the appropriate path prefix (e.g. XDG_CONFIG_HOME) to file
   prependPath = prefix: attrset:
@@ -16,17 +16,17 @@ let
     (prependPath config.xdg.configHome plasmaCfg.configFile) //
     (prependPath config.xdg.dataHome plasmaCfg.dataFile);
 
-  fileSettingsType = with lib.types; attrsOf (attrsOf (attrsOf advancedSettingsType));
+  fileSettingsType = with lib.types; attrsOf (attrsOf (attrsOf coercedSettingsType));
 
   ##############################################################################
   # Generate a script that will use write_config.py to update all
   # settings.
-  ocRemoveList = (map (f: "${config.xdg.configHome}/${f}") (lib.lists.subtractLists plasmaCfg.overrideConfigExclude plasmaCfg.overrideConfigFiles));
-  script = pkgs.writeScript "plasma-config" (writeConfig cfg plasmaCfg.overrideConfig ocRemoveList);
+  resetFilesList = (map (f: "${config.xdg.configHome}/${f}") (lib.lists.subtractLists plasmaCfg.resetFilesExclude plasmaCfg.resetFiles));
+  script = pkgs.writeScript "plasma-config" (writeConfig cfg plasmaCfg.overrideConfig resetFilesList);
 
   ##############################################################################
   # Generate a script that will remove all the current config files.
-  defaultResetFiles = [
+  defaultResetFiles = (if plasmaCfg.overrideConfig then [
     "baloofilerc"
     "dolphinrc"
     "ffmpegthumbsrc"
@@ -34,6 +34,7 @@ let
     "katerc"
     "kcminputrc"
     "kded5rc"
+    "kded6rc"
     "kdeglobals"
     "kgammarc"
     "kglobalshortcutsrc"
@@ -57,7 +58,7 @@ let
     "plasmarc"
     "plasmashellrc"
     "systemsettingsrc"
-  ];
+  ] else lib.optional (builtins.length plasmaCfg.window-rules > 0) "kwinrulesrc");
 in
 {
   options.programs.plasma = {
@@ -99,14 +100,14 @@ in
         option.
       '';
     };
-    overrideConfigFiles = lib.mkOption {
+    resetFiles = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = defaultResetFiles;
       description = ''
         Config-files which should be deleted on each generation.
       '';
     };
-    overrideConfigExclude = lib.mkOption {
+    resetFilesExclude = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
       description = ''
@@ -117,6 +118,8 @@ in
 
   imports = [
     (lib.mkRenamedOptionModule [ "programs" "plasma" "files" ] [ "programs" "plasma" "configFile" ])
+    (lib.mkRenamedOptionModule [ "programs" "plasma" "overrideConfigFiles" ] [ "programs" "plasma" "resetFiles" ])
+    (lib.mkRenamedOptionModule [ "programs" "plasma" "overrideConfigExclude" ] [ "programs" "plasma" "resetFilesExclude" ])
   ];
 
   config.home.activation = lib.mkIf plasmaCfg.enable {

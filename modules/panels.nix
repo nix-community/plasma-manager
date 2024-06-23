@@ -1,27 +1,13 @@
-{ config, lib, ... }:
+{ lib
+, config
+, ...
+} @ args:
 let
   cfg = config.programs.plasma;
 
-  # Widget types
-  widgetType = lib.types.submodule {
-    options = {
-      name = lib.mkOption {
-        type = lib.types.str;
-        example = "org.kde.plasma.kickoff";
-        description = "The name of the widget to add.";
-      };
-      config = lib.mkOption {
-        type = with lib.types; nullOr (attrsOf (attrsOf (either str (listOf str))));
-        default = null;
-        example = {
-          General.icon = "nix-snowflake-white";
-        };
-        description = "Extra configuration-options for the widget.";
-      };
-    };
-  };
+  widgets = import ./widgets args;
 
-  panelType = lib.types.submodule ({config, ...}: {
+  panelType = lib.types.submodule ({ config, ... }: {
     options = {
       height = lib.mkOption {
         type = lib.types.int;
@@ -29,47 +15,47 @@ let
         description = "The height of the panel.";
       };
       offset = lib.mkOption {
-        type = lib.types.nullOr lib.types.int;
+        type = with lib.types; nullOr int;
         default = null;
         example = 100;
         description = "The offset of the panel from the anchor-point.";
       };
       minLength = lib.mkOption {
-        type = lib.types.nullOr lib.types.int;
+        type = with lib.types; nullOr int;
         default = null;
         example = 1000;
         description = "The minimum required length/width of the panel.";
       };
       maxLength = lib.mkOption {
-        type = lib.types.nullOr lib.types.int;
+        type = with lib.types; nullOr int;
         default = null;
         example = 1600;
         description = "The maximum allowed length/width of the panel.";
       };
       lengthMode = lib.mkOption {
-        type = lib.types.nullOr (lib.types.enum ["fit" "fill" "custom"]);
-        default = 
+        type = with lib.types; nullOr (enum [ "fit" "fill" "custom" ]);
+        default =
           if config.minLength != null || config.maxLength != null then
             "custom"
           else
             null;
         example = "fit";
-        description = "(Plasma 6 only) The length mode of the panel. Defaults to `custom` if either `minLength` or `maxLength` is set.";
+        description = "The length mode of the panel. Defaults to `custom` if either `minLength` or `maxLength` is set.";
       };
       location = lib.mkOption {
         type = lib.types.str;
-        default = lib.types.nullOr (lib.types.enum [ "top" "bottom" "left" "right" "floating" ]);
+        default = with lib.types; nullOr (enum [ "top" "bottom" "left" "right" "floating" ]);
         example = "left";
         description = "The location of the panel.";
       };
       alignment = lib.mkOption {
-        type = lib.types.nullOr (lib.types.enum [ "left" "center" "right" ]);
+        type = with lib.types; nullOr (enum [ "left" "center" "right" ]);
         default = "center";
         example = "right";
         description = "The alignment of the panel.";
       };
       hiding = lib.mkOption {
-        type = lib.types.nullOr (lib.types.enum [
+        type = with lib.types; nullOr (enum [
           "none"
           "autohide"
           # Plasma 5 only
@@ -88,9 +74,9 @@ let
           plasma 6 only.
         '';
       };
-      floating = lib.mkEnableOption "Enable or disable floating style (plasma 6 only).";
+      floating = lib.mkEnableOption "Enable or disable floating style.";
       widgets = lib.mkOption {
-        type = with lib.types; listOf (either str widgetType);
+        type = lib.types.listOf widgets.type;
         default = [
           "org.kde.plasma.kickoff"
           "org.kde.plasma.pager"
@@ -113,14 +99,15 @@ let
           widgets/plasmoids are for example plasma-desktop and
           plasma-workspace.
         '';
+        apply = map widgets.convert;
       };
       screen = lib.mkOption {
-        type = lib.types.int;
-        default = 0;
+        type = with lib.types; nullOr int;
+        default = null;
         description = "The screen the panel should appear on";
       };
       extraSettings = lib.mkOption {
-        type = lib.types.nullOr lib.types.str;
+        type = with lib.types; nullOr str;
         default = null;
         description = ''
           Extra lines to add to the layout.js. See
@@ -130,87 +117,11 @@ let
     };
   });
 
-  # list of panels -> bool
-  # Checks if any panels have non-default screens. If any of them do we need
-  # some hacky tricks to place them on their screens.
-  anyNonDefaultScreens = builtins.any (panel: panel.screen != 0);
-
-  # any value or null -> string -> string 
-  # If value is null, returns the empty string, otherwise returns the provided string
-  stringIfNotNull = v: lib.optionalString (v != null);
-
-  # string -> string
-  # Wrap a string in double quotes.
-  wrapInQuotes = s: ''"${s}"'';
-
-  # list of strings -> string
-  # Converts a list of strings to a single string, that can be parsed as a string list in JavaScript
-  toJSStringList = values: ''[${lib.concatMapStringsSep ", " wrapInQuotes values}]'';
-
-  # Generate writeConfig calls to include for a widget with additional
-  # configurations.
-  genWidgetConfigStr = widget: group: key: value:
-    ''
-      var w = panelWidgets["${widget}"];
-      w.currentConfigGroup = ${toJSStringList (lib.splitString "/" group)};
-      w.writeConfig("${key}", ${
-        if builtins.isString value then 
-          wrapInQuotes value 
-        else
-          toJSStringList value 
-      });
-    '';
-  # Generate the text for all of the configuration for a widget with additional
-  # configurations.
-  widgetConfigsToStr = widget: config: lib.pipe config [
-    (lib.mapAttrsToList
-      (group: lib.mapAttrsToList (genWidgetConfigStr widget group))
-    )
-    lib.concatLists
-    (lib.concatStringsSep "\n")
-  ];
-
-  #
-  # Functions to aid us creating a single panel in the layout.js
-  #
-  plasma6OnlyCmd = cmd: ''
-    if (applicationVersion.split(".")[0] == 6) {
-      ${cmd}
-    }
-  '';
-
-  panelAddWidgetStr = widget: let 
-    createWidget = name: ''panelWidgets["${name}"] = panel.addWidget("${name}");'';
-  in 
-    if builtins.isString widget then 
-      createWidget widget
-    else
-      ''
-        ${createWidget widget.name}
-        ${stringIfNotNull widget.config (widgetConfigsToStr widget.name widget.config)}
-      '';
-
-  panelToLayout = panel: let 
-    inherit (lib) boolToString optionalString;
-    inherit (builtins) toString;
-  in ''
-    var panel = new Panel;
-    panel.height = ${toString panel.height};
-    panel.floating = ${boolToString panel.floating};
-    ${stringIfNotNull panel.alignment ''panel.alignment = "${panel.alignment}";''}
-    ${stringIfNotNull panel.hiding ''panel.hiding = "${panel.hiding}";''}
-    ${stringIfNotNull panel.location ''panel.location = "${panel.location}";''}
-    ${stringIfNotNull panel.lengthMode (plasma6OnlyCmd ''panel.lengthMode = "${panel.lengthMode}";'')}
-    ${stringIfNotNull panel.maxLength "panel.maximumLength = ${toString panel.maxLength};"}
-    ${stringIfNotNull panel.minLength "panel.minimumLength = ${toString panel.minLength};"}
-    ${stringIfNotNull panel.offset "panel.offset = ${toString panel.offset};"}
-    ${optionalString (panel.screen != 0) ''panel.writeConfig("lastScreen[$i]", ${toString panel.screen});''}
-
-    var panelWidgets = {};
-    ${lib.concatMapStringsSep "\n" panelAddWidgetStr panel.widgets}
-
-    ${stringIfNotNull panel.extraSettings panel.extraSettings}
-  '';
+  anyPanelOrWallpaperSet = ((cfg.workspace.wallpaper != null) ||
+    (cfg.workspace.wallpaperSlideShow != null) ||
+    (cfg.workspace.wallpaperPictureOfTheDay != null) ||
+    (cfg.workspace.wallpaperPlainColor != null) ||
+    ((builtins.length cfg.panels) > 0));
 in
 {
   options.programs.plasma.panels = lib.mkOption {
@@ -218,30 +129,77 @@ in
     default = [ ];
   };
 
-  config = lib.mkIf (cfg.enable && (lib.length cfg.panels) > 0) {
-    programs.plasma.startup.desktopScript."apply_panels" = {
-      preCommands = ''
-        # We delete plasma-org.kde.plasma.desktop-appletsrc to hinder it
-        # growing indefinitely. See:
-        # https://github.com/pjones/plasma-manager/issues/76
-        [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ] && rm ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
-      '';
-      text = ''
-        // Removes all existing panels
-        panels().forEach((panel) => panel.remove());
-
-        // Adds the panels
-        ${lib.concatMapStringsSep "\n" panelToLayout config.programs.plasma.panels}
-      '';
-      postCommands = lib.mkIf (anyNonDefaultScreens cfg.panels) ''
-        if [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ]; then
-          sed -i 's/^lastScreen\\x5b$i\\x5d=/lastScreen[$i]=/' ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
-          # We sleep a second in order to prevent some bugs (like the incorrect height being set)
-          sleep 1; nohup plasmashell --replace &
-        fi
-      '';
-      priority = 2;
-    };
-  };
+  # Wallpaper and panels are in the same script since the resetting of the
+  # panels in the panels-script also has a tendency to reset the wallpaper, so
+  # these should run at the same time.
+  config = (lib.mkIf cfg.enable {
+    programs.plasma.startup.desktopScript."panels_and_wallpaper" = (lib.mkIf anyPanelOrWallpaperSet
+      (
+        let
+          anyPanels = ((builtins.length cfg.panels) > 0);
+          anyNonDefaultScreens = ((builtins.any (panel: panel.screen != null)) cfg.panels);
+          panelPreCMD = (if anyPanels then ''
+            # We delete plasma-org.kde.plasma.desktop-appletsrc to hinder it
+            # growing indefinitely. See:
+            # https://github.com/pjones/plasma-manager/issues/76
+            [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ] && rm ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
+          '' else "");
+          panelLayoutStr = (if anyPanels then (import ../lib/panel.nix { inherit lib; inherit config; }) else "");
+          panelPostCMD = (if anyNonDefaultScreens then ''
+            sed -i 's/^lastScreen\\x5b$i\\x5d=/lastScreen[$i]=/' ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
+          '' else "");
+          # This meaningless comment inserts the URL into the desktop-script
+          # which means that when the wallpaper is updated, the sha256 hash
+          # changes and the script will be re-run.
+          wallpaperDesktopScript = (if (cfg.workspace.wallpaper != null) then ''
+            // Wallpaper to set later: ${cfg.workspace.wallpaper}
+          '' else "");
+          wallpaperPostCMD = (if (cfg.workspace.wallpaper != null) then ''
+            plasma-apply-wallpaperimage ${cfg.workspace.wallpaper}
+          '' else "");
+          wallpaperSlideShow = (if (cfg.workspace.wallpaperSlideShow != null) then ''
+            // Wallpaper slideshow
+            let allDesktops = desktops();
+            for (var desktopIndex = 0; desktopIndex < allDesktops.length; desktopIndex++) {
+                var desktop = allDesktops[desktopIndex];
+                desktop.wallpaperPlugin = "org.kde.slideshow";
+                desktop.currentConfigGroup = Array("Wallpaper", "org.kde.slideshow", "General");
+                desktop.writeConfig("SlidePaths", ${with cfg.workspace.wallpaperSlideShow; if ((builtins.isPath path) || (builtins.isString path)) then
+                  "\"" + (builtins.toString path) + "\"" else
+                  "[" + (builtins.concatStringsSep "," (map (s: "\"" + s + "\"") path)) + "]"});
+                desktop.writeConfig("SlideInterval", "${builtins.toString cfg.workspace.wallpaperSlideShow.interval}");
+            }
+          '' else "");
+          wallpaperPOTD = (if (cfg.workspace.wallpaperPictureOfTheDay != null) then ''
+            // Wallpaper POTD
+            let allDesktops = desktops();
+            for (const desktop of allDesktops) {
+                desktop.wallpaperPlugin = "org.kde.potd";
+                desktop.currentConfigGroup = ["Wallpaper", "org.kde.potd", "General"];
+                desktop.writeConfig("Provider", "${cfg.workspace.wallpaperPictureOfTheDay.provider}");
+                desktop.writeConfig("UpdateOverMeteredConnection", "${if (cfg.workspace.wallpaperPictureOfTheDay.updateOverMeteredConnection) then "1" else "0"}");
+              }
+          '' else "");
+          wallpaperPlainColor = (if (cfg.workspace.wallpaperPlainColor != null) then ''
+            // Wallpaper plain color
+            let allDesktops = desktops();
+            for (var desktopIndex = 0; desktopIndex < allDesktops.length; desktopIndex++) {
+                var desktop = allDesktops[desktopIndex];
+                desktop.wallpaperPlugin = "org.kde.color";
+                desktop.currentConfigGroup = Array("Wallpaper", "org.kde.color", "General");
+                desktop.writeConfig("Color", "${cfg.workspace.wallpaperPlainColor}");
+            }
+          '' else ""
+          );
+        in
+        {
+          preCommands = panelPreCMD;
+          text = panelLayoutStr + wallpaperDesktopScript + wallpaperSlideShow + wallpaperPOTD + wallpaperPlainColor;
+          postCommands = panelPostCMD + wallpaperPostCMD;
+          restartServices = (if anyNonDefaultScreens then [ "plasma-plasmashell" ] else [ ]);
+          priority = 2;
+        }
+      ));
+  });
 }
 

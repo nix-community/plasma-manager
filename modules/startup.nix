@@ -5,30 +5,33 @@ let
   cfg = config.programs.plasma;
   topScriptName = "run_all.sh";
 
+  textOption = lib.mkOption {
+    type = lib.types.str;
+    description = "The content of the startup-script.";
+  };
+  priorityOption = lib.mkOption {
+    type = (lib.types.ints.between 0 8);
+    default = 0;
+    description = "The priority for the execution of the script. Lower priority means earlier execution.";
+  };
+  restartServicesOption = lib.mkOption {
+    type = with lib.types; listOf str;
+    default = [ ];
+    description = "Services to restart after the script has been run.";
+  };
+
   startupScriptType = lib.types.submodule {
     options = {
-      text = lib.mkOption {
-        type = lib.types.str;
-        description = "The content of the startup-script.";
-      };
-      priority = lib.mkOption {
-        type = lib.types.int;
-        description = "The priority for the execution of the script. Lower priority means earlier execution.";
-        default = 0;
-      };
+      text = textOption;
+      priority = priorityOption;
+      restartServices = restartServicesOption;
     };
   };
   desktopScriptType = lib.types.submodule {
     options = {
-      text = lib.mkOption {
-        type = lib.types.str;
-        description = "The content of the desktop script.";
-      };
-      priority = lib.mkOption {
-        type = lib.types.int;
-        description = "The priority for the execution of the desktop-script. Lower priority means earlier execution.";
-        default = 0;
-      };
+      text = textOption;
+      priority = priorityOption;
+      restartServices = restartServicesOption;
       preCommands = lib.mkOption {
         type = lib.types.str;
         description = "Commands to run before the desktop script lines.";
@@ -42,24 +45,26 @@ let
     };
   };
 
-  createScriptContent = name: priority: text: {
-    "plasma-manager/${cfg.startup.scriptsDir}/${builtins.toString priority}_${name}.sh" = {
-      text =
-        ''
-          #!/bin/sh
-          last_update="$(sha256sum $0)"
-          last_update_file=${config.xdg.dataHome}/plasma-manager/last_run_${name}
-          if [ -f "$last_update_file" ]; then
-            stored_last_update=$(cat "$last_update_file")
-          fi
+  createScriptContent = name: sha256sumFile: script: text: {
+    "plasma-manager/${cfg.startup.scriptsDir}/${builtins.toString script.priority}_${name}.sh" = {
+      text = ''
+        #!/bin/sh
+        last_update="$(sha256sum ${sha256sumFile})"
+        last_update_file=${config.xdg.dataHome}/plasma-manager/last_run_${name}
+        if [ -f "$last_update_file" ]; then
+          stored_last_update=$(cat "$last_update_file")
+        fi
 
-          if ! [ "$last_update" = "$stored_last_update" ]; then
-            success=1
-            trap 'success=0' ERR
-            ${text}
-            [ $success -eq 1 ] && echo "$last_update" > "$last_update_file"
+        if ! [ "$last_update" = "$stored_last_update" ]; then
+          success=1
+          trap 'success=0' ERR
+          ${text}
+          if [ $success -eq 1 ]; then
+            echo "$last_update" > "$last_update_file"
+            ${builtins.concatStringsSep "\n" (map (s: "echo ${s} >> ${config.xdg.dataHome}/plasma-manager/services_to_restart") script.restartServices)}
           fi
-        '';
+        fi
+      '';
       executable = true;
     };
   };
@@ -81,7 +86,7 @@ in
       '';
     };
     dataFile = lib.mkOption {
-      type = lib.types.attrsOf lib.types.str;
+      type = with lib.types; attrsOf str;
       default = { };
       description = "Datafiles, typically for use in autostart scripts.";
     };
@@ -98,23 +103,27 @@ in
   };
 
   config.xdg = lib.mkIf
-    (cfg.enable && builtins.length (builtins.attrNames cfg.startup.startupScript) != 0)
+    (cfg.enable &&
+      (builtins.length (builtins.attrNames cfg.startup.startupScript) != 0 ||
+        (builtins.length (builtins.attrNames cfg.startup.desktopScript)) != 0))
     {
       dataFile = lib.mkMerge [
         # Autostart scripts
         (lib.mkMerge
           (lib.mapAttrsToList
-            (name: script: createScriptContent name script.priority script.text)
+            (name: script: createScriptContent name "$0" script script.text)
             cfg.startup.startupScript))
         # Desktop scripts
         (lib.mkMerge
           ((lib.mapAttrsToList
-            (name: script: createScriptContent "desktop_script_${name}" script.priority
-              ''
-                ${script.preCommands}
-                qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$(cat ${config.xdg.dataHome}/plasma-manager/${cfg.startup.dataDir}/desktop_script_${name}.js)"
-                ${script.postCommands}
-              '')
+            (name: script:
+              let layoutScriptPath = "${config.xdg.dataHome}/plasma-manager/${cfg.startup.dataDir}/desktop_script_${name}.js";
+              in createScriptContent "desktop_script_${name}" layoutScriptPath script
+                ''
+                  ${script.preCommands}
+                  qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$(cat ${layoutScriptPath})"
+                  ${script.postCommands}
+                '')
             cfg.startup.desktopScript) ++
           (lib.mapAttrsToList
             (name: content: {
@@ -138,9 +147,24 @@ in
           "plasma-manager/${topScriptName}" = {
             text = ''
               #!/bin/sh
+
+              services_restart_file="${config.xdg.dataHome}/plasma-manager/services_to_restart"
+
+              # Reset the file keeping track of which scripts to restart.
+              # Technically can be put at the end as well (maybe better, at
+              # least assuming the file hasn't been tampered with of some sort).
+              if [ -f $services_restart_file ]; then rm $services_restart_file; fi
+
               for script in ${config.xdg.dataHome}/plasma-manager/${cfg.startup.scriptsDir}/*.sh; do
                   [ -x "$script" ] && $script
               done
+
+              # Restart the services
+              if [ -f $services_restart_file ]; then
+                for service in $(sort $services_restart_file | uniq); do
+                  systemctl --user restart $service
+                done
+              fi
             '';
             executable = true;
           };

@@ -26,17 +26,14 @@ let
       escape = lib.escape [ "," ];
       keysStr = (if ((builtins.length keys) == 1) then (escape (builtins.head keys)) else "\t" + (lib.concatStringsSep "\t" (map escape keys)));
     in
-    {
-      value =
-        if (isService group) then
-          keysStr
-        else
-          (lib.concatStringsSep "," [
-            keysStr
-            "" # List of default keys, not needed.
-            "" # Display string, not needed.
-          ]);
-    };
+    (if (isService group) then
+      keysStr
+    else
+      (lib.concatStringsSep "," [
+        keysStr
+        "" # List of default keys, not needed.
+        "" # Display string, not needed.
+      ]));
 
   shortcutsToSettings = groups:
     lib.mapAttrs
