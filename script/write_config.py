@@ -327,7 +327,7 @@ def main():
     with open(json_path, "r") as f:
         json_str = f.read()
 
-    reset_files = set(sys.argv[2].split(" ")) if sys.argv[2] != "" else {}
+    reset_files = set(sys.argv[2].split(" ")) if sys.argv[2] != "" else set()
     immutable_by_default = bool(sys.argv[3])
     d = json.loads(json_str)
     remove_config_files(d, reset_files)
