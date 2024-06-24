@@ -175,7 +175,7 @@ in
         description = ''
           The library for the window decorations theme. To see available values
           see the library key in the org.kde.kdecoration2 section of
-          ~/.config/kdeglobals after applying the window-decoration via the
+          ~/.config/kwinrc after applying the window-decoration via the
           settings app.
         '';
       };
@@ -185,7 +185,7 @@ in
         example = "__aurorae__svg__CatppuccinMocha-Modern";
         description = ''
           The window decorations theme. To see available values see the theme key
-          in the org.kde.kdecoration2 section of ~/.config/kdeglobals after
+          in the org.kde.kdecoration2 section of ~/.config/kwinrc after
           applying the window-decoration via the settings app.
         '';
       };
