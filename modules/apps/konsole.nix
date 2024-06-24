@@ -146,7 +146,7 @@ in
         "UiSettings"."ColorScheme" = lib.mkIf (cfg.ui.colorScheme != null) {
           value = cfg.ui.colorScheme;
           # The key needs to be immutable to work properly when using overrideConfig.
-          # See discussion at: https://github.com/pjones/plasma-manager/pull/186
+          # See discussion at: https://github.com/nix-community/plasma-manager/pull/186
           immutable = lib.mkIf config.programs.plasma.overrideConfig (lib.mkDefault true);
         };
       }

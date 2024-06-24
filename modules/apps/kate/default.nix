@@ -162,7 +162,7 @@ in
     # In case of using a system theme, there should be a check that there exists such a theme
     # but I could not figure out where to find them
     # That's why there is no check for now
-    # See also [the original PR](https://github.com/pjones/plasma-manager/pull/95#issue-2206192839)
+    # See also [the original PR](https://github.com/nix-community/plasma-manager/pull/95#issue-2206192839)
   };
 
 

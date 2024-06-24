@@ -3,7 +3,7 @@
 Add this repository as a channel:
 
 ```nix
-$ nix-channel --add https://github.com/pjones/plasma-manager/archive/trunk.tar.gz plasma-manager
+$ nix-channel --add https://github.com/nix-community/plasma-manager/archive/trunk.tar.gz plasma-manager
 ```
 
 Update / unpack the channel:
