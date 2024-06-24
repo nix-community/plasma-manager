@@ -141,7 +141,7 @@ in
           panelPreCMD = (if anyPanels then ''
             # We delete plasma-org.kde.plasma.desktop-appletsrc to hinder it
             # growing indefinitely. See:
-            # https://github.com/pjones/plasma-manager/issues/76
+            # https://github.com/nix-community/plasma-manager/issues/76
             [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ] && rm ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
           '' else "");
           panelLayoutStr = (if anyPanels then (import ../lib/panel.nix { inherit lib; inherit config; }) else "");

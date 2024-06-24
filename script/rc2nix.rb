@@ -6,7 +6,7 @@
 # the license terms in the LICENSE file found in the top-level
 # directory of this distribution and at:
 #
-#   https://github.com/pjones/plasma-manager
+#   https://github.com/nix-community/plasma-manager
 #
 # No part of this package, including this file, may be copied,
 # modified, propagated, or distributed except according to the terms
