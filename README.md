@@ -113,8 +113,7 @@ nix run github:pjones/plasma-manager
 
 ## Contributions and Maintenance
 
-This is a community project and we welcome all contributions.  If there's enough
-interest we would love to move this into [nix-community] once it has matured.
+This is a community project and we welcome all contributions.
 
 ## Special Thanks
 
