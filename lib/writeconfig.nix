@@ -23,9 +23,10 @@ let
           resetFilesList ++ [ "${config.xdg.dataHome}/plasma-manager/last_run_*" ]
         else
           resetFilesList);
+      immutableByDefault = (builtins.toString config.programs.plasma.immutableByDefault);
     in
     ''
-      ${writeConfigScript}/bin/write_config ${jsonFile} "${resetFilesStr}"
+      ${writeConfigScript}/bin/write_config ${jsonFile} "${resetFilesStr}" "${immutableByDefault}"
     '';
 in
 {

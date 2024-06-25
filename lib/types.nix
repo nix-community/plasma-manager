@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, config, ... }:
 let
   ##############################################################################
   # Types for storing settings.
@@ -13,7 +13,7 @@ let
       };
       immutable = lib.mkOption {
         type = bool;
-        default = false;
+        default = config.programs.plasma.immutableByDefault;
         description = ''
           Whether to make the key immutable. This corresponds to adding [$i] to
           the end of the key.

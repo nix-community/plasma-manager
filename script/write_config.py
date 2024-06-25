@@ -154,7 +154,9 @@ class ConfigValue:
 
 
 class KConfManager:
-    def __init__(self, filepath: str, json_dict: Dict, reset: bool):
+    def __init__(
+        self, filepath: str, json_dict: Dict, reset: bool, immutable_by_default: bool
+    ):
         """
         filepath (str): The full path to the config-file to manage
         json_dict (Dict): The nix-configuration presented in a dictionary (converted from json)
@@ -164,6 +166,7 @@ class KConfManager:
         self.json_dict = json_dict
         self.filepath = filepath
         self.reset = reset
+        self.immutable_by_default = immutable_by_default
         self._json_value_checks()
         # The nix expressions will have / to separate groups, and \/ to escape a /.
         # This parses the groups into tuples of unescaped group names.
@@ -178,35 +181,32 @@ class KConfManager:
     def _json_value_checks(self):
         for group, entry in self.json_dict.items():
             for key, value in entry.items():
-                if value["immutable"] and value["value"] is None:
-                    # We don't allow immutability for keys with no value given (it doesn't make sense).
+                non_default_immutability = (
+                    value["immutable"] != self.immutable_by_default
+                )
+                if (
+                    value["value"] is None
+                    and not value["persistent"]
+                    and (non_default_immutability or value["shellExpand"])
+                ):
                     raise Exception(
-                        f'Plasma-manager: Immutability enabled for key "{key}" in group "{group}" in configfile "{self.filepath}"'
-                        " with no value set. Keys without values cannot be declared immutable"
-                    )
-                if value["shellExpand"] and value["value"] is None:
-                    # We don't allow immutability for keys with no value given (it doesn't make sense).
-                    raise Exception(
-                        f'Plasma-manager: Shell-expansion enabled for key "{key}" in group "{group}" in configfile "{self.filepath}"'
-                        " with no value set. Keys without values cannot have shell-expansion enabled"
+                        f'Plasma-manager: No value or persistency set for key "{key}" in group "{group}" in configfile "{self.filepath}"'
+                        ", but one of immutability/persistency takes a non-default value. This is not supported"
                     )
                 elif value["persistent"]:
                     base_msg = f'Plasma-manager: Persistency enabled for key "{key}" in group "{group}" in configfile "{self.filepath}"'
-                    # We don't allow persistency when the value is set,
-                    # immutability is enabled, or when shell-expansion is
-                    # enabled.
                     if value["value"] is not None:
                         raise Exception(
                             f"{base_msg} with non-null value \"{value['value']}\". "
                             "A value cannot be given when persistency is enabled"
                         )
-                    elif value["immutable"]:
+                    elif non_default_immutability:
                         raise Exception(
-                            f"{base_msg} with immutability enabled. Persistency and immutability cannot both be enabled"
+                            f"{base_msg} with non-default immutability. Persistency with non-default immutability is not supported"
                         )
                     elif value["shellExpand"]:
                         raise Exception(
-                            f"{base_msg} with shell-expansion enabled. Persistency and shell-expansion cannot both be enabled"
+                            f"{base_msg} with shell-expansion enabled. Persistency with shell-expansion enabled is not supported"
                         )
 
     def key_is_persistent(self, group, key) -> bool:
@@ -324,15 +324,17 @@ def remove_config_files(d: Dict, reset_files: Set):
                 os.remove(file_to_del)
 
 
-def write_configs(d: Dict, reset_files: Set):
+def write_configs(d: Dict, reset_files: Set, immutable_by_default: bool):
     for filepath, c in d.items():
-        config = KConfManager(filepath, c, filepath in reset_files)
+        config = KConfManager(
+            filepath, c, filepath in reset_files, immutable_by_default
+        )
         config.run()
         config.save()
 
 
 def main():
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 4:
         raise ValueError(
             f"Must receive exactly two arguments, got: {len(sys.argv) - 1}"
         )
@@ -341,11 +343,12 @@ def main():
     with open(json_path, "r") as f:
         json_str = f.read()
 
-    reset_files = set(sys.argv[2].split(" ")) if len(sys.argv) >= 2 else {}
+    reset_files = set(sys.argv[2].split(" ")) if sys.argv[2] != "" else set()
+    immutable_by_default = bool(sys.argv[3])
     dRaw = json.loads(json_str)
     d = transformValues(dRaw)
     remove_config_files(d, reset_files)
-    write_configs(d, reset_files)
+    write_configs(d, reset_files, immutable_by_default)
 
 
 if __name__ == "__main__":
