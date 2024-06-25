@@ -3,7 +3,7 @@
 
 let
   inherit (import ../lib/writeconfig.nix { inherit lib pkgs config; }) writeConfig;
-  inherit (import ../lib/types.nix { inherit lib; }) coercedSettingsType;
+  inherit (import ../lib/types.nix { inherit lib; inherit config; }) coercedSettingsType;
 
   # Helper function to prepend the appropriate path prefix (e.g. XDG_CONFIG_HOME) to file
   prependPath = prefix: attrset:
@@ -114,6 +114,7 @@ in
         Config-files which explicitly should not be deleted on each generation.
       '';
     };
+    immutableByDefault = lib.mkEnableOption "Make keys written by plasma-manager immutable by default.";
   };
 
   imports = [
