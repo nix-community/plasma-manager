@@ -5,6 +5,7 @@ let
   };
 
   sources = lib.attrsets.mergeAttrsList (map (s: import s args') [
+    ./application-title-bar.nix
     ./battery.nix
     ./digital-clock.nix
     ./system-monitor.nix
