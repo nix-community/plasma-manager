@@ -87,14 +87,14 @@ in
           apply = builtins.toString;
         };
         horizontalAlignment = mkOption {
-          type = types.nullOr (types.enum [ "left" "right" "center" "justify" ]);
-          default = null;
+          type = types.enum [ "left" "right" "center" "justify" ];
+          default = "left";
           description = "The horizontal alignment of the widget.";
           apply = convertHorizontalAlignment;
         };
         verticalAlignment = mkOption {
-          type = types.nullOr (types.enum [ "top" "center" "bottom" "baseline" ]);
-          default = null;
+          type = types.enum [ "top" "center" "bottom" "baseline" ];
+          default = "center";
           description = "The vertical alignment of the widget.";
           apply = convertVerticalAlignment;
         };
