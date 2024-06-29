@@ -189,7 +189,7 @@ in
         hideEmptyTitle = mkBoolOption "Whether to hide the window title when it's empty.";
         undefinedWindowTitle = mkOption {
           type = types.nullOr types.str;
-          default = null;
+          default = "<Unknown>";
           description = "The text to show when the window title is undefined.";
         };
         source = mkEnumOption [ "AppName" "Decoration" "GenericAppName" "AlwaysUndefined" ] // {
