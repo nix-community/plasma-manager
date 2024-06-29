@@ -1,5 +1,6 @@
 { lib
 , config
+, pkgs
 , ...
 } @ args:
 let
@@ -129,10 +130,23 @@ in
     default = [ ];
   };
 
+  options.programs.plasma.extraWidgets = lib.mkOption {
+    type = with lib.types; listOf (enum [ "application-title-bar" ]);
+    default = [];
+    example = [ "application-title-bar" ];
+    description = ''
+      Additional third-party widgets to be installed, that can be included in the panels.
+      The names of the supported third-party widget packages can be found in the share/plasma/plasmoids folder of the corresponding Nix package.
+    '';
+  };
+
   # Wallpaper and panels are in the same script since the resetting of the
   # panels in the panels-script also has a tendency to reset the wallpaper, so
   # these should run at the same time.
   config = (lib.mkIf cfg.enable {
+    home.packages = with pkgs; []
+      ++ lib.optionals (lib.elem "application-title-bar" cfg.extraWidgets) [ application-title-bar ];
+
     programs.plasma.startup.desktopScript."panels_and_wallpaper" = (lib.mkIf anyPanelOrWallpaperSet
       (
         let
