@@ -5,6 +5,7 @@
 } @ args:
 let
   cfg = config.programs.plasma;
+  hasWidget = widgetName: builtins.any (panel: builtins.any (widget: widget.name == widgetName) panel.widgets) cfg.panels;
 
   widgets = import ./widgets args;
 
