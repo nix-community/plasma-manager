@@ -146,7 +146,7 @@ in
   # these should run at the same time.
   config = (lib.mkIf cfg.enable {
     home.packages = with pkgs; []
-      ++ lib.optionals (lib.elem "application-title-bar" cfg.extraWidgets) [ application-title-bar ];
+      ++ lib.optionals (lib.elem "application-title-bar" cfg.extraWidgets || hasWidget "com.github.antroids.application-title-bar") [ application-title-bar ];
 
     programs.plasma.startup.desktopScript."panels_and_wallpaper" = (lib.mkIf anyPanelOrWallpaperSet
       (
