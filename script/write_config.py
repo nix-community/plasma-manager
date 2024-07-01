@@ -320,7 +320,7 @@ def write_configs(d: Dict, reset_files: Set, immutable_by_default: bool):
 def main():
     if len(sys.argv) != 4:
         raise ValueError(
-            f"Must receive exactly two arguments, got: {len(sys.argv) - 1}"
+            f"Must receive exactly four arguments, got: {len(sys.argv) - 1}"
         )
 
     json_path = sys.argv[1]
