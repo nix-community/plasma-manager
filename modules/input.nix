@@ -60,15 +60,12 @@ in
         You can find it out running cat /proc/bus/input/devices | grep -i touchpad
       '';
     };
-    # Plasma writes down the IDs as decimal, I could do the conversion here but I looked how to do it and it's rough
-    # We should do this on write_config.py
-    # https://github.com/Misterio77/nix-colors/blob/b92df8f5eb1fa20d8e09810c03c9dc0d94ef2820/lib/core/conversions.nix#L87
     vendorId = mkOption {
       type = with types; nullOr str;
       default = null;
       example = "2321";
       description = ''
-        The vendor ID of the trackpad, in decimal.
+        The vendor ID of the trackpad
         You can find it out running cat /proc/bus/input/devices | grep -i touchpad
       '';
     };
@@ -77,7 +74,7 @@ in
       default = null;
       example = "21128";
       description = ''
-        The product ID of the trackpad, in decimal.
+        The product ID of the trackpad
         You can find it out running cat /proc/bus/input/devices | grep -i touchpad
       '';
     };
