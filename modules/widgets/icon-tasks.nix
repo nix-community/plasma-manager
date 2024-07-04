@@ -5,14 +5,14 @@ let
 
   convertSpacing = spacing: let
     mappings = {
-      "Small" = "0";
-      "Medium" = "1";
-      "Large" = "3";
+      "small" = "0";
+      "medium" = "1";
+      "large" = "3";
     };
   in mappings.${spacing} or (throw "Invalid spacing: ${spacing}");
 
   positionToReverse = position: let
-    mappings = { "Left" = "true"; "Right" = "false"; };
+    mappings = { "left" = "true"; "right" = "false"; };
   in mappings.${position} or (throw "Invalid position: ${position}");
 in
 {
@@ -33,11 +33,11 @@ in
         fill = mkBoolOption "Whether task manager should occupy all available space.";
         rows = {
           multirowView = mkOption {
-            type = types.enum [ "Never" "LowSpace" "Always" ];
-            default = "Never";
-            example = "LowSpace";
+            type = types.enum [ "never" "lowSpace" "always" ];
+            default = "never";
+            example = "lowSpace";
             description = "When to use multi-row view.";
-            apply = multirowView: if multirowView == "Never" then "false" else (if multirowView == "Always" then "true" else null);
+            apply = multirowView: if multirowView == "never" then "false" else (if multirowView == "always" then "true" else null);
           };
           maximum = mkOption {
             type = types.nullOr types.ints.positive;
@@ -48,31 +48,31 @@ in
           };
         };
         iconSpacing = mkOption {
-          type = types.enum [ "Small" "Medium" "Large" ];
-          default = "Medium";
-          example = "Small";
+          type = types.enum [ "small" "medium" "large" ];
+          default = "medium";
+          example = "small";
           description = "The spacing between icons.";
           apply = convertSpacing;
         };
       };
       behavior = {
         grouping = {
-          method = mkEnumOption [ "None" "ByProgramName" ] // {
-            example = "None";
+          method = mkEnumOption [ "none" "byProgramName" ] // {
+            example = "none";
             description = "How tasks are grouped";
           };  
-          clickAction = mkEnumOption [ "Cycle" "ShowTooltips" "ShowPresentWindowsEffect" "ShowTextualList" ] // {
-            example = "Cycle";
+          clickAction = mkEnumOption [ "cycle" "showTooltips" "showPresentWindowsEffect" "showTextualList" ] // {
+            example = "cycle";
             description = "What happens when clicking on a grouped task";
           };
         };
-        sortingMethod = mkEnumOption [ "None" "Manually" "Alphabetically" "ByDesktop" "ByActivity" ] // {
-          example = "Manually";
+        sortingMethod = mkEnumOption [ "none" "manually" "alphabetically" "byDesktop" "byActivity" ] // {
+          example = "manually";
           description = "How to sort tasks";
         };
         minimizeActiveTaskOnClick = mkBoolOption "Whether to minimize the currently-active task when clicked. If false, clicking on the currently-active task will do nothing.";
-        middleClickAction = mkEnumOption [ "None" "Close" "NewInstance" "ToggleMinimized" "ToggleGrouping" "BringToCurrentDesktop" ] // {
-          example = "BringToCurrentDesktop";
+        middleClickAction = mkEnumOption [ "none" "close" "newInstance" "toggleMinimized" "toggleGrouping" "bringToCurrentDesktop" ] // {
+          example = "bringToCurrentDesktop";
           description = "What to do on middle-mouse click on a task button.";
         };
         wheel = {
@@ -87,9 +87,9 @@ in
         };
         unhideOnAttentionNeeded = mkBoolOption "Whether to unhide if a window wants attention.";
         newTasksAppearOn = mkOption {
-          type = types.enum [ "Left" "Right" ];
-          default = "Right";
-          example = "Left";
+          type = types.enum [ "left" "right" ];
+          default = "right";
+          example = "left";
           description = "Whether new tasks should appear in the left or right.";
           apply = positionToReverse;
         };
