@@ -4,7 +4,7 @@ let
   inherit (widgets.lib) mkBoolOption mkEnumOption;
 
   convertSidebarPosition = sidebarPosition: let
-    mappings = { "Left" = "false"; "Right" = "true"; };
+    mappings = { "left" = "false"; "right" = "true"; };
   in mappings.${sidebarPosition} or (throw "Invalid sidebar position: ${sidebarPosition}");
 in
 {
@@ -27,9 +27,9 @@ in
       sortAlphabetically = mkBoolOption "Whether to sort menu contents alphabetically or use manual/system sort order.";
       compactDisplayStyle = mkBoolOption "Whether to use a compact display style for list items.";
       sidebarPosition = mkOption {
-        type = types.enum [ "Left" "Right" ];
-        default = "Left";
-        example = "Right";
+        type = types.enum [ "left" "right" ];
+        default = "left";
+        example = "right";
         description = "The position of the sidebar.";
         apply = convertSidebarPosition;
       };
@@ -44,16 +44,16 @@ in
           document URLs and KPeople contact URIs.
         '';
       };
-      favoritesDisplayMode = mkEnumOption [ "Grid" "List" ] // {
-        example = "List";
+      favoritesDisplayMode = mkEnumOption [ "grid" "list" ] // {
+        example = "list";
         description = "How to display favorites.";
       };
-      applicationsDisplayMode = mkEnumOption [ "Grid" "List" ] // {
-        example = "Grid";
+      applicationsDisplayMode = mkEnumOption [ "grid" "list" ] // {
+        example = "grid";
         description = "How to display applications.";
       };
-      showButtonsFor = mkEnumOption [ "Power" "Session" "Custom" "PowerAndSession" ] // {
-        example = "PowerAndSession";
+      showButtonsFor = mkEnumOption [ "power" "session" "custom" "powerAndSession" ] // {
+        example = "powerAndSession";
         description = "Which actions should be displayed in the footer.";
       };
       showActionButtonCaptions = mkBoolOption "Whether to display captions ('shut down', 'log out', etc.) for the footer action buttons";
