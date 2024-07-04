@@ -98,7 +98,7 @@ in
           description = "The vertical alignment of the widget.";
           apply = convertVerticalAlignment;
         };
-        showDisableElements = mkEnumOption [ "Deactivated" "HideKeepSpace" "Hide" ] // {
+        showDisabledElements = mkEnumOption [ "Deactivated" "HideKeepSpace" "Hide" ] // {
           example = "Deactivated";
           description = "How to show the elements when the widget is disabled.";
         };
@@ -378,7 +378,7 @@ in
             widgetSpacing = layout.spacingBetweenElements;
             widgetHorizontalAlignment = layout.horizontalAlignment;
             widgetVerticalAlignment = layout.verticalAlignment;
-            widgetElementsDisabledMode = layout.showDisableElements;
+            widgetElementsDisabledMode = layout.showDisabledElements;
             widgetFillWidth = layout.fillFreeSpace;
             widgetElements = layout.elements;
 
