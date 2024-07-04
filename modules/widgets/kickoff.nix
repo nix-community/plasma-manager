@@ -6,19 +6,6 @@ let
   convertSidebarPosition = sidebarPosition: let
     mappings = { "Left" = "false"; "Right" = "true"; };
   in mappings.${sidebarPosition} or (throw "Invalid sidebar position: ${sidebarPosition}");
-
-  convertAppDisplay = appDisplay: let
-    mappings = { "Grid" = "0"; "List" = "1"; };
-  in mappings.${appDisplay} or (throw "Invalid app display mode: ${appDisplay}");
-
-  convertActions = actions: let
-    mappings = {
-      "Power" = "0";
-      "Session" = "1";
-      "Custom" = "2"; 
-      "PowerAndSession" = "3";
-    };
-  in mappings.${actions} or (throw "Invalid actions: ${actions}");
 in
 {
   kickoff = {
@@ -57,26 +44,17 @@ in
           document URLs and KPeople contact URIs.
         '';
       };
-      favoritesDisplayMode = mkOption {
-        type = types.enum [ "Grid" "List" ];
-        default = "Grid";
+      favoritesDisplayMode = mkEnumOption [ "Grid" "List" ] // {
         example = "List";
         description = "How to display favorites.";
-        apply = convertAppDisplay;
       };
-      applicationsDisplayMode = mkOption {
-        type = types.enum [ "Grid" "List" ];
-        default = "List";
+      applicationsDisplayMode = mkEnumOption [ "Grid" "List" ] // {
         example = "Grid";
         description = "How to display applications.";
-        apply = convertAppDisplay;
       };
-      showButtonsFor = mkOption {
-        type = types.enum [ "Power" "Session" "PowerAndSession" ];
-        default = "Power";
-        example = "Session";
-        description = "Which actions should be displayed in the footer";
-        apply = convertActions;
+      showButtonsFor = mkEnumOption [ "Power" "Session" "Custom" "PowerAndSession" ] // {
+        example = "PowerAndSession";
+        description = "Which actions should be displayed in the footer.";
       };
       showActionButtonCaptions = mkBoolOption "Whether to display captions ('shut down', 'log out', etc.) for the footer action buttons";
       pin = mkBoolOption "Whether the popup should remain open when another window is activated.";
