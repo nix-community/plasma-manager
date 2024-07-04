@@ -44,7 +44,7 @@ in
 
         format =
           let
-            enum = [ "ShortDate" "LongDate" "IsoDate" ];
+            enum = [ "shortDate" "longDate" "isoDate" ];
           in
           mkOption {
             type = types.nullOr (types.either (types.enum enum) (types.submodule {
@@ -75,8 +75,8 @@ in
 
           };
 
-        position = mkEnumOption [ "Adaptive" "BesideTime" "BelowTime" ] // {
-          example = "BelowTime";
+        position = mkEnumOption [ "adaptive" "besideTime" "belowTime" ] // {
+          example = "belowTime";
           description = ''
             The position where the date is displayed.
 
@@ -86,15 +86,15 @@ in
       };
 
       time = {
-        showSeconds = mkEnumOption [ "Never" "OnlyInTooltip" "Always" ] // {
-          example = "Always";
+        showSeconds = mkEnumOption [ "never" "onlyInTooltip" "always" ] // {
+          example = "always";
           description = ''
             When and where the seconds should be shown on the clock.
 
             Could be never, only in the tooltip on hover, or always.
           '';
         };
-        format = mkEnumOption [ "12h" "Default" "24h" ] // {
+        format = mkEnumOption [ "12h" "default" "24h" ] // {
           example = "24h";
           description = ''
             The time format used for this clock.
@@ -125,8 +125,8 @@ in
           '';
         };
         changeOnScroll = mkBoolOption "Allow changing the displayed timezone by scrolling on the widget with the mouse wheel.";
-        format = mkEnumOption [ "Code" "City" "Offset" ] // {
-          example = "Code";
+        format = mkEnumOption [ "code" "city" "offset" ] // {
+          example = "code";
           description = ''
             The format of the timezone displayed, whether as a
             code, full name of the city that the timezone belongs to,
@@ -140,8 +140,8 @@ in
       };
 
       calendar = {
-        firstDayOfWeek = mkEnumOption [ "Sunday" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday" ] // {
-          example = "Monday";
+        firstDayOfWeek = mkEnumOption [ "sunday" "monday" "tuesday" "wednesday" "thursday" "friday" "saturday" ] // {
+          example = "monday";
           description = ''
             The first day of the week that the calendar uses.
 

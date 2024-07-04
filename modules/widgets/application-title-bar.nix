@@ -5,20 +5,20 @@ let
 
   convertHorizontalAlignment = horizontalAlignment: let
     mappings = {
-      "Left" = "1";
-      "Right" = "2";
-      "Center" = "4";
-      "Justify" = "8";
+      "left" = "1";
+      "right" = "2";
+      "center" = "4";
+      "justify" = "8";
     };
   in
     mappings.${horizontalAlignment} or (throw "Invalid enum value: ${horizontalAlignment}");
 
   convertVerticalAlignment = verticalAlignment: let
     mappings = {
-      "Top" = "1";
-      "Center" = "128";
-      "Bottom" = "64";
-      "Baseline" = "256";
+      "top" = "1";
+      "center" = "128";
+      "bottom" = "64";
+      "baseline" = "256";
     };
   in
     mappings.${verticalAlignment} or (throw "Invalid enum value: ${verticalAlignment}");
@@ -26,8 +26,8 @@ let
   fontType = types.submodule {
     options = {
       bold = mkBoolOption "Enable bold text.";
-      fit = mkEnumOption [ "FixedSize" "HorizontalFit" "VerticalFit" "Fit" ] // {
-        example = "FixedSize";
+      fit = mkEnumOption [ "fixedSize" "horizontalFit" "verticalFit" "fit" ] // {
+        example = "fixedSize";
         description = "The mode of the size of the font.";
       };
       size = mkOption {
@@ -87,19 +87,19 @@ in
           apply = builtins.toString;
         };
         horizontalAlignment = mkOption {
-          type = types.enum [ "Left" "Right" "Center" "Justify" ];
-          default = "Left";
+          type = types.enum [ "left" "right" "center" "justify" ];
+          default = "left";
           description = "The horizontal alignment of the widget.";
           apply = convertHorizontalAlignment;
         };
         verticalAlignment = mkOption {
-          type = types.enum [ "Top" "Center" "Bottom" "Baseline" ];
-          default = "Center";
+          type = types.enum [ "top" "center" "bottom" "baseline" ];
+          default = "center";
           description = "The vertical alignment of the widget.";
           apply = convertVerticalAlignment;
         };
-        showDisableElements = mkEnumOption [ "Deactivated" "HideKeepSpace" "Hide" ] // {
-          example = "Deactivated";
+        showDisabledElements = mkEnumOption [ "deactivated" "hideKeepSpace" "hide" ] // {
+          example = "deactivated";
           description = "How to show the elements when the widget is disabled.";
         };
         fillFreeSpace = mkBoolOption "Whether the widget should fill the free space on the panel.";
@@ -123,8 +123,8 @@ in
         };
       };
       windowControlButtons = {
-        iconSource = mkEnumOption [ "Plasma" "Breeze" "Aurorae" "Oxygen" ] // {
-          example = "Plasma";
+        iconSource = mkEnumOption [ "plasma" "breeze" "aurorae" "oxygen" ] // {
+          example = "plasma";
           description = ''
             The icon source for the control buttons.
 
@@ -192,15 +192,15 @@ in
           default = null;
           description = "The text to show when the window title is undefined.";
         };
-        source = mkEnumOption [ "AppName" "Decoration" "GenericAppName" "AlwaysUndefined" ] // {
-          example = "AppName";
+        source = mkEnumOption [ "appName" "decoration" "genericAppName" "alwaysUndefined" ] // {
+          example = "appName";
           description = ''
             The source of the window title.
 
-            - AppName: The name of the application
-            - Decoration: The title of the window decoration
-            - GenericAppName: The generic name of the application
-            - AlwaysUndefined: Always show the undefined title
+            - appName: The name of the application
+            - decoration: The title of the window decoration
+            - genericAppName: The generic name of the application
+            - alwaysUndefined: Always show the undefined title
           '';
         };
         margins = mkOption {
@@ -241,27 +241,27 @@ in
             The elements to show in the widget for maximized windows.
           '';
         };
-        source = mkEnumOption [ "AppName" "Decoration" "GenericAppName" "AlwaysUndefined" ] // {
-          example = "AppName";
+        source = mkEnumOption [ "appName" "decoration" "genericAppName" "alwaysUndefined" ] // {
+          example = "appName";
           description = ''
             The source of the window title for maximized windows.
 
-            - AppName: The name of the application
-            - Decoration: The title of the window decoration
-            - GenericAppName: The generic name of the application
-            - AlwaysUndefined: Always show the undefined title
+            - appName: The name of the application
+            - decoration: The title of the window decoration
+            - genericAppName: The generic name of the application
+            - alwaysUndefined: Always show the undefined title
           '';
         };
       };
       behavior = {
-        activeTaskSource = mkEnumOption [ "ActiveTask" "LastActiveTask" "LastActiveMaximized" ] // {
-          example = "ActiveTask";
+        activeTaskSource = mkEnumOption [ "activeTask" "lastActiveTask" "lastActiveMaximized" ] // {
+          example = "activeTask";
           description = ''
             The source of the active task.
 
-            - ActiveTask: The active task
-            - LastActiveTask: The last active task
-            - LastActiveMaximized: The last active maximized task
+            - activeTask: The active task
+            - lastActiveTask: The last active task
+            - lastActiveMaximized: The last active maximized task
           '';
         };
         filterByActivity = mkBoolOption "Whether to filter the tasks by activity.";
@@ -378,7 +378,7 @@ in
             widgetSpacing = layout.spacingBetweenElements;
             widgetHorizontalAlignment = layout.horizontalAlignment;
             widgetVerticalAlignment = layout.verticalAlignment;
-            widgetElementsDisabledMode = layout.showDisableElements;
+            widgetElementsDisabledMode = layout.showDisabledElements;
             widgetFillWidth = layout.fillFreeSpace;
             widgetElements = layout.elements;
 
