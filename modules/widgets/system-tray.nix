@@ -15,7 +15,7 @@ in
       icons = {
         spacing =
           let
-            enum = [ "small" "medium" "large" ];
+            enum = [ "Small" "Medium" "Large" ];
           in
           mkOption {
             type = types.nullOr (types.either (types.enum enum) types.ints.positive);
@@ -23,7 +23,7 @@ in
             description = ''
               The spacing between icons.
 
-              Could be an integer unit, or "small" (1 unit), "medium" (2 units) or "large" (6 units).
+              Could be an integer unit, or "Small" (1 unit), "Medium" (2 units) or "Large" (6 units).
             '';
             apply = spacing:
               (if (spacing == null) then null

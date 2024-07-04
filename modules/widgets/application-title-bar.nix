@@ -5,20 +5,20 @@ let
 
   convertHorizontalAlignment = horizontalAlignment: let
     mappings = {
-      "left" = "1";
-      "right" = "2";
-      "center" = "4";
-      "justify" = "8";
+      "Left" = "1";
+      "Right" = "2";
+      "Center" = "4";
+      "Justify" = "8";
     };
   in
     mappings.${horizontalAlignment} or (throw "Invalid enum value: ${horizontalAlignment}");
 
   convertVerticalAlignment = verticalAlignment: let
     mappings = {
-      "top" = "1";
-      "center" = "128";
-      "bottom" = "64";
-      "baseline" = "256";
+      "Top" = "1";
+      "Center" = "128";
+      "Bottom" = "64";
+      "Baseline" = "256";
     };
   in
     mappings.${verticalAlignment} or (throw "Invalid enum value: ${verticalAlignment}");
@@ -87,14 +87,14 @@ in
           apply = builtins.toString;
         };
         horizontalAlignment = mkOption {
-          type = types.enum [ "left" "right" "center" "justify" ];
-          default = "left";
+          type = types.enum [ "Left" "Right" "Center" "Justify" ];
+          default = "Left";
           description = "The horizontal alignment of the widget.";
           apply = convertHorizontalAlignment;
         };
         verticalAlignment = mkOption {
-          type = types.enum [ "top" "center" "bottom" "baseline" ];
-          default = "center";
+          type = types.enum [ "Top" "Center" "Bottom" "Baseline" ];
+          default = "Center";
           description = "The vertical alignment of the widget.";
           apply = convertVerticalAlignment;
         };
