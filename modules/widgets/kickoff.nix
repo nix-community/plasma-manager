@@ -1,7 +1,7 @@
 { lib, widgets, ...}:
 let
   inherit (lib) mkOption types;
-  inherit (widgets.lib) mkBoolOption;
+  inherit (widgets.lib) mkBoolOption mkEnumOption;
 
   convertSidebarPosition = sidebarPosition: let
     mappings = { "Left" = "false"; "Right" = "true"; };
