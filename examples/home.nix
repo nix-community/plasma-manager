@@ -73,7 +73,7 @@
           # some modifications in which entries to show.
           {
             digitalClock = {
-              calendar.firstDayOfWeek = "sunday";
+              calendar.firstDayOfWeek = "Sunday";
               time.format = "12h";
             };
           }
