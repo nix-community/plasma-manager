@@ -33,17 +33,6 @@ in
         description = "The position of the sidebar.";
         apply = convertSidebarPosition;
       };
-      favorites = mkOption {
-        type = types.nullOr (types.listOf types.str);
-        default = null;
-        example = [ "preferred://browser" "org.kde.dolphin.desktop" "org.kde.konsole.desktop" ];
-        description = ''
-          List of general favorites.
-          Supported values are menu id's (usually .desktop file names),
-          special URLs that expand into default applications (e.g. preferred://browser),
-          document URLs and KPeople contact URIs.
-        '';
-      };
       favoritesDisplayMode = mkEnumOption [ "grid" "list" ] // {
         example = "list";
         description = "How to display favorites.";
@@ -65,7 +54,6 @@ in
       , sortAlphabetically
       , compactDisplayStyle
       , sidebarPosition
-      , favorites
       , favoritesDisplayMode
       , applicationsDisplayMode
       , showButtonsFor
@@ -87,7 +75,6 @@ in
             
             # Other useful options
             pin = pin;
-            favorites = favorites;
           }
         );
       };
