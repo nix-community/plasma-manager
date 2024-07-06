@@ -8,6 +8,7 @@ let
     ./application-title-bar.nix
     ./battery.nix
     ./digital-clock.nix
+    ./icon-tasks.nix
     ./kickoff.nix
     ./system-monitor.nix
     ./system-tray.nix
