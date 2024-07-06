@@ -1,19 +1,28 @@
-{ lib, widgets, ... }:
+{ lib, ... }:
 let
   inherit (lib) mkOption types;
-  inherit (widgets.lib) mkBoolOption mkEnumOption;
 
-  convertSpacing = spacing: let
-    mappings = {
-      "small" = "0";
-      "medium" = "1";
-      "large" = "3";
-    };
-  in mappings.${spacing} or (throw "Invalid spacing: ${spacing}");
+  mkBoolOption = description: mkOption {
+    type = with types; nullOr bool;
+    default = null;
+    inherit description;
+  };
 
-  positionToReverse = position: let
-    mappings = { "left" = "true"; "right" = "false"; };
-  in mappings.${position} or (throw "Invalid position: ${position}");
+  convertSpacing = spacing:
+    let
+      mappings = {
+        "small" = "0";
+        "medium" = "1";
+        "large" = "3";
+      };
+    in
+      mappings.${spacing} or (throw "Invalid spacing: ${spacing}");
+
+  positionToReverse = position:
+    let
+      mappings = { "left" = "true"; "right" = "false"; };
+    in
+      mappings.${position} or (throw "Invalid position: ${position}");
 in
 {
   iconTasks = {
@@ -57,21 +66,29 @@ in
       };
       behavior = {
         grouping = {
-          method = mkEnumOption [ "none" "byProgramName" ] // {
+          method = mkOption {
+            type = with types; nullOr (enum [ "none" "byProgramName" ]);
+            default = null;
             example = "none";
             description = "How tasks are grouped";
-          };  
-          clickAction = mkEnumOption [ "cycle" "showTooltips" "showPresentWindowsEffect" "showTextualList" ] // {
+          };
+          clickAction = mkOption {
+            type = with types; nullOr (enum [ "cycle" "showTooltips" "showPresentWindowsEffect" "showTextualList" ]);
+            default = null;
             example = "cycle";
             description = "What happens when clicking on a grouped task";
           };
         };
-        sortingMethod = mkEnumOption [ "none" "manually" "alphabetically" "byDesktop" "byActivity" ] // {
+        sortingMethod = mkOption {
+          type = with types; nullOr (enum [ "none" "manually" "alphabetically" "byDesktop" "byActivity" ]);
+          default = null;
           example = "manually";
           description = "How to sort tasks";
         };
         minimizeActiveTaskOnClick = mkBoolOption "Whether to minimize the currently-active task when clicked. If false, clicking on the currently-active task will do nothing.";
-        middleClickAction = mkEnumOption [ "none" "close" "newInstance" "toggleMinimized" "toggleGrouping" "bringToCurrentDesktop" ] // {
+        middleClickAction = mkOption {
+          type = with types; nullOr (enum [ "none" "close" "newInstance" "toggleMinimized" "toggleGrouping" "bringToCurrentDesktop" ]);
+          default = null;
           example = "bringToCurrentDesktop";
           description = "What to do on middle-mouse click on a task button.";
         };
@@ -98,9 +115,10 @@ in
     convert =
       { appearance
       , behavior
-      , launchers }: {
-      name = "org.kde.plasma.icontasks";
-      config.General = lib.filterAttrs (_: v: v != null) (
+      , launchers
+      }: {
+        name = "org.kde.plasma.icontasks";
+        config.General = lib.filterAttrs (_: v: v != null) (
           {
             launchers = launchers;
 
@@ -134,6 +152,6 @@ in
             reverseMode = behavior.newTasksAppearOn;
           }
         );
-    };
+      };
   };
 }

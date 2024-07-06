@@ -1,16 +1,23 @@
-{ lib, widgets, ...}:
+{ lib, ... }:
 let
   inherit (lib) mkOption types;
-  inherit (widgets.lib) mkBoolOption mkEnumOption;
 
-  convertSidebarPosition = sidebarPosition: let
-    mappings = { "left" = "false"; "right" = "true"; };
-  in mappings.${sidebarPosition} or (throw "Invalid sidebar position: ${sidebarPosition}");
+  mkBoolOption = description: mkOption {
+    type = with types; nullOr bool;
+    default = null;
+    inherit description;
+  };
+
+  convertSidebarPosition = sidebarPosition:
+    let
+      mappings = { "left" = "false"; "right" = "true"; };
+    in
+      mappings.${sidebarPosition} or (throw "Invalid sidebar position: ${sidebarPosition}");
 in
 {
   kickoff = {
     description = "Kickoff is the default application launcher of the Plasma desktop.";
-    
+
     opts = {
       icon = mkOption {
         type = types.nullOr types.str;
@@ -33,15 +40,21 @@ in
         description = "The position of the sidebar.";
         apply = convertSidebarPosition;
       };
-      favoritesDisplayMode = mkEnumOption [ "grid" "list" ] // {
+      favoritesDisplayMode = mkOption {
+        type = with types; nullOr (enum [ "grid" "list" ]);
+        default = null;
         example = "list";
         description = "How to display favorites.";
       };
-      applicationsDisplayMode = mkEnumOption [ "grid" "list" ] // {
+      applicationsDisplayMode = mkOption {
+        type = with types; nullOr (enum [ "grid" "list" ]);
+        default = null;
         example = "grid";
         description = "How to display applications.";
       };
-      showButtonsFor = mkEnumOption [ "power" "session" "custom" "powerAndSession" ] // {
+      showButtonsFor = mkOption {
+        type = with types; nullOr (enum [ "power" "session" "custom" "powerAndSession" ]);
+        default = null;
         example = "powerAndSession";
         description = "Which actions should be displayed in the footer.";
       };
@@ -72,7 +85,7 @@ in
             applicationsDisplay = applicationsDisplayMode;
             primaryActions = showButtonsFor;
             showActionButtonCaptions = showActionButtonCaptions;
-            
+
             # Other useful options
             pin = pin;
           }

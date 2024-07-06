@@ -5,7 +5,6 @@ let
   mkBoolOption = description: lib.mkOption {
     type = with lib.types; nullOr bool;
     default = null;
-    example = true;
     inherit description;
   };
 
