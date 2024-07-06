@@ -31,7 +31,7 @@ let
         description = "The name of the widget to add.";
       };
       config = lib.mkOption {
-        type = with lib.types; nullOr (attrsOf (attrsOf (either str (listOf str))));
+        type = (import ./lib.nix (args // { widgets = self; })).configValueType;
         default = null;
         example = {
           General.icon = "nix-snowflake-white";

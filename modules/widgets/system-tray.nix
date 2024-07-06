@@ -1,7 +1,12 @@
 { lib, widgets, ... }:
 let
   inherit (lib) mkOption types;
-  inherit (widgets.lib) mkBoolOption;
+
+  mkBoolOption = description: mkOption {
+    type = with types; nullOr bool;
+    default = null;
+    inherit description;
+  };
 in
 {
   systemTray = {

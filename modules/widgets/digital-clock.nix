@@ -1,7 +1,12 @@
-{ lib, widgets, ... }:
+{ lib, ... }:
 let
   inherit (lib) mkOption types;
-  inherit (widgets.lib) mkBoolOption mkEnumOption boolToString';
+
+  mkBoolOption = description: mkOption {
+    type = with types; nullOr bool;
+    default = null;
+    inherit description;
+  };
 
   fontType = types.submodule {
     options = {
@@ -16,7 +21,6 @@ let
         type = types.ints.between 1 1000;
         default = 50;
         description = "The weight of the font.";
-        apply = builtins.toString;
       };
       style = mkOption {
         type = types.nullOr types.str;
@@ -27,7 +31,6 @@ let
         type = types.ints.positive;
         default = 10;
         description = "The size of the font.";
-        apply = builtins.toString;
       };
     };
   };
@@ -75,7 +78,9 @@ in
 
           };
 
-        position = mkEnumOption [ "adaptive" "besideTime" "belowTime" ] // {
+        position = mkOption {
+          type = with types; nullOr (enum [ "adaptive" "besideTime" "belowTime" ]);
+          default = null;
           example = "belowTime";
           description = ''
             The position where the date is displayed.
@@ -86,7 +91,9 @@ in
       };
 
       time = {
-        showSeconds = mkEnumOption [ "never" "onlyInTooltip" "always" ] // {
+        showSeconds = mkOption {
+          type = with types; nullOr (enum [ "never" "onlyInTooltip" "always" ]);
+          default = null;
           example = "always";
           description = ''
             When and where the seconds should be shown on the clock.
@@ -94,7 +101,9 @@ in
             Could be never, only in the tooltip on hover, or always.
           '';
         };
-        format = mkEnumOption [ "12h" "default" "24h" ] // {
+        format = mkOption {
+          type = with types; nullOr (enum [ "12h" "default" "24h" ]);
+          default = null;
           example = "24h";
           description = ''
             The time format used for this clock.
@@ -125,7 +134,9 @@ in
           '';
         };
         changeOnScroll = mkBoolOption "Allow changing the displayed timezone by scrolling on the widget with the mouse wheel.";
-        format = mkEnumOption [ "code" "city" "offset" ] // {
+        format = mkOption {
+          type = with types; nullOr (enum [ "code" "city" "offset" ]);
+          default = null;
           example = "code";
           description = ''
             The format of the timezone displayed, whether as a
@@ -140,7 +151,9 @@ in
       };
 
       calendar = {
-        firstDayOfWeek = mkEnumOption [ "sunday" "monday" "tuesday" "wednesday" "thursday" "friday" "saturday" ] // {
+        firstDayOfWeek = mkOption {
+          type = with types; nullOr (enum [ "sunday" "monday" "tuesday" "wednesday" "thursday" "friday" "saturday" ]);
+          default = null;
           example = "monday";
           description = ''
             The first day of the week that the calendar uses.
@@ -171,7 +184,7 @@ in
         '';
         apply = font:
           {
-            autoFontAndSize = boolToString' (font == null);
+            autoFontAndSize = (font == null);
           }
           // lib.optionalAttrs (font != null) {
             fontFamily = font.family;
