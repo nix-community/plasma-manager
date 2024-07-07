@@ -78,6 +78,39 @@ in
         You can find it out running cat /proc/bus/input/devices | grep -i touchpad
       '';
     };
+    disableWhileTyping = mkOption {
+      type = with types; nullOr bool;
+      default = null;
+      example = true;
+      description = ''
+        Disables the trackpad while typing
+      '';
+    };
+    leftHanded = mkOption {
+      type = with types; nullOr bool;
+      default = null;
+      example = false;
+      description = ''
+        Swap the left and right buttons
+      '';
+    };
+    middleMouseEmulation = mkOption {
+      type = with types; nullOr bool;
+      default = null;
+      example = false;
+      description = ''
+        Middle click by pressing the left and right buttons at the same time.
+        Activating this increases the click latency by 50ms
+      '';
+    };
+    pointerSpeed = mkOption {
+      type = with types; nullOr (numbers.between (-1) 1 );
+      default = null;
+      example = "0";
+      description = ''
+        How fast the pointer moves
+      '';
+    };
   };
 
   config.programs.plasma.configFile."kcminputrc" =
@@ -96,9 +129,25 @@ in
         )
         (
           mkIf (cfg.input.touchpad.enable != null) {
-            "Libinput/${touchVendor}/${touchProduct}/${touchName}".Enabled.value = cfg.input.touchpad.enable;
+            "Libinput/${touchVendor}/${touchProduct}/${touchName}" = {
+              Enabled.value = cfg.input.touchpad.enable;
+              DisableWhileTyping.value = cfg.input.touchpad.disableWhileTyping;
+              LeftHanded.value = cfg.input.touchpad.leftHanded;
+              MiddleMouseEmulation.value = cfg.input.touchpad.middleMouseEmulation;
+              PointerAcceleration.value = cfg.input.touchpad.pointerSpeed;
+            };
           }
         )
       ]
     );
+
+  # Assertions
+  # TODO: implement
+
+  config.assertions = [
+    {
+      assertion = true;
+      message = "test";
+    }
+  ];
 }
