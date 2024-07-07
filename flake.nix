@@ -79,6 +79,13 @@
           buildInputs = with nixpkgsFor.${system}; [
             ruby
             ruby.devdoc
+            (
+              python3.withPackages (
+                pyPkgs: [
+                  pyPkgs.python-lsp-server
+                ]
+              )
+            )
           ];
         };
       });
