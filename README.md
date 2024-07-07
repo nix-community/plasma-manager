@@ -42,6 +42,7 @@ At the moment `plasma-manager` supports configuring the following:
   modules in `plasma-manager`:
   - kate
   - konsole
+  - okular
 
 Additionally there are more functionality than just listed above, and more
 functionality to come in the future!
