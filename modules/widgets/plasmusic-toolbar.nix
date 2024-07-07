@@ -36,7 +36,6 @@ in
             default = null;
             example = 8;
             description = "Radius of the album cover icon.";
-            apply = builtins.toString;
           };
         };
       };
@@ -55,7 +54,6 @@ in
           default = null;
           example = 200;
           description = "Maximum width of the song text.";
-          apply = builtins.toString;
         };
         scrolling = {
           behavior =
@@ -74,7 +72,6 @@ in
             default = null;
             example = 3;
             description = "Speed of the scrolling text.";
-            apply = builtins.toString;
           };
         };
         displayInSeparateLines = mkBoolOption "Whether to display song information (title and artist) in separate lines or not.";

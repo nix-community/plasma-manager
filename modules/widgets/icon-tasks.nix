@@ -30,7 +30,7 @@ let
 
   positionToReverse = position:
     let
-      mappings = { "left" = "true"; "right" = "false"; };
+      mappings = { "left" = true; "right" = false; };
     in
       mappings.${position} or (throw "Invalid position: ${position}");
 in
@@ -56,14 +56,13 @@ in
             default = "never";
             example = "lowSpace";
             description = "When to use multi-row view.";
-            apply = multirowView: if multirowView == "never" then "false" else (if multirowView == "always" then "true" else null);
+            apply = multirowView: if multirowView == "never" then false else (if multirowView == "always" then true else null);
           };
           maximum = mkOption {
             type = types.nullOr types.ints.positive;
             default = null;
             example = 5;
             description = "The maximum number of rows (in a horizontal-orientation containment, i.e. panel) or columns (in a vertical-orientation containment) to layout task buttons in.";
-            apply = builtins.toString;
           };
         };
         iconSpacing = mkOption {
