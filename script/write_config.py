@@ -78,19 +78,19 @@ def escape(s: str) -> str:
     return "".join(s)
 
 # Some values need to be "transformed", such as being converted from hex to decimal
-def transformValues(dOrig):
-    d = dOrig
+def transformValues(d_orig):
+    d = d_orig.copy()
 
-    cPath = os.path.expanduser("~/.config/kcminputrc")
-    if cPath in d:
-        for itemStr in list(d[cPath]):
-            if itemStr.startswith("Libinput/"):
-                item = d[cPath].pop(itemStr)
-                itemStrList = itemStr.split("/")
-                itemStrList[1] = str(int(itemStrList[1],16))
-                itemStrList[2] = str(int(itemStrList[2],16))
-                itemStr = "/".join(itemStrList)
-                d[cPath][itemStr] = item
+    c_path = os.path.expanduser("~/.config/kcminputrc")
+    if c_path in d:
+        for item_str in list(d[c_path]):
+            if item_str.startswith("Libinput/"):
+                item = d[c_path].pop(item_str)
+                item_str_list = item_str.split("/")
+                item_str_list[1] = str(int(item_str_list[1],16))
+                item_str_list[2] = str(int(item_str_list[2],16))
+                item_str = "/".join(item_str_list)
+                d[c_path][item_str] = item
     return d;
 
 @dataclass
@@ -345,8 +345,8 @@ def main():
 
     reset_files = set(sys.argv[2].split(" ")) if sys.argv[2] != "" else set()
     immutable_by_default = bool(sys.argv[3])
-    dRaw = json.loads(json_str)
-    d = transformValues(dRaw)
+    d_raw = json.loads(json_str)
+    d = transformValues(d_raw)
     remove_config_files(d, reset_files)
     write_configs(d, reset_files, immutable_by_default)
 
