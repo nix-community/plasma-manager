@@ -18,6 +18,16 @@ let
     in
       mappings.${spacing} or (throw "Invalid spacing: ${spacing}");
 
+
+  getIndexFromEnum = enum: value:
+    if value == null
+    then null
+    else
+      lib.lists.findFirstIndex
+        (x: x == value)
+        (throw "getIndexFromEnum (icon-tasks widget): Value ${value} isn't present in the enum. This is a bug")
+        enum;
+
   positionToReverse = position:
     let
       mappings = { left = "true"; right = "false"; };
@@ -66,32 +76,44 @@ in
       };
       behavior = {
         grouping = {
-          method = mkOption {
-            type = with types; nullOr (enum [ "none" "byProgramName" ]);
-            default = null;
-            example = "none";
-            description = "How tasks are grouped";
-          };
-          clickAction = mkOption {
-            type = with types; nullOr (enum [ "cycle" "showTooltips" "showPresentWindowsEffect" "showTextualList" ]);
-            default = null;
-            example = "cycle";
-            description = "What happens when clicking on a grouped task";
-          };
+          method =
+            let enumVals = [ "none" "byProgramName" ];
+            in mkOption {
+              type = with types; nullOr (enum enumVals);
+              default = null;
+              example = "none";
+              description = "How tasks are grouped";
+              apply = getIndexFromEnum enumVals;
+            };
+          clickAction =
+            let enumVals = [ "cycle" "showTooltips" "showPresentWindowsEffect" "showTextualList" ];
+            in mkOption {
+              type = with types; nullOr (enum enumVals);
+              default = null;
+              example = "cycle";
+              description = "What happens when clicking on a grouped task";
+              apply = getIndexFromEnum enumVals;
+            };
         };
-        sortingMethod = mkOption {
-          type = with types; nullOr (enum [ "none" "manually" "alphabetically" "byDesktop" "byActivity" ]);
-          default = null;
-          example = "manually";
-          description = "How to sort tasks";
-        };
+        sortingMethod =
+          let enumVals = [ "none" "manually" "alphabetically" "byDesktop" "byActivity" ];
+          in mkOption {
+            type = with types; nullOr (enum enumVals);
+            default = null;
+            example = "manually";
+            description = "How to sort tasks";
+            apply = getIndexFromEnum enumVals;
+          };
         minimizeActiveTaskOnClick = mkBoolOption "Whether to minimize the currently-active task when clicked. If false, clicking on the currently-active task will do nothing.";
-        middleClickAction = mkOption {
-          type = with types; nullOr (enum [ "none" "close" "newInstance" "toggleMinimized" "toggleGrouping" "bringToCurrentDesktop" ]);
-          default = null;
-          example = "bringToCurrentDesktop";
-          description = "What to do on middle-mouse click on a task button.";
-        };
+        middleClickAction =
+          let enumVals = [ "none" "close" "newInstance" "toggleMinimized" "toggleGrouping" "bringToCurrentDesktop" ];
+          in mkOption {
+            type = with types; nullOr (enum enumVals);
+            default = null;
+            example = "bringToCurrentDesktop";
+            description = "What to do on middle-mouse click on a task button.";
+            apply = getIndexFromEnum enumVals;
+          };
         wheel = {
           switchBetweenTasks = mkBoolOption "Whether using the mouse wheel with the mouse pointer above the widget should switch between tasks.";
           ignoreMinimizedTasks = mkBoolOption "Whether to skip minimized tasks when switching between them using the mouse wheel.";

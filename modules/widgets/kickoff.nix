@@ -8,6 +8,15 @@ let
     inherit description;
   };
 
+  getIndexFromEnum = enum: value:
+    if value == null
+    then null
+    else
+      lib.lists.findFirstIndex
+        (x: x == value)
+        (throw "getIndexFromEnum (kickoff widget): Value ${value} isn't present in the enum. This is a bug")
+        enum;
+
   convertSidebarPosition = sidebarPosition:
     let
       mappings = { left = "false"; right = "true"; };
@@ -40,24 +49,33 @@ in
         description = "The position of the sidebar.";
         apply = convertSidebarPosition;
       };
-      favoritesDisplayMode = mkOption {
-        type = with types; nullOr (enum [ "grid" "list" ]);
-        default = null;
-        example = "list";
-        description = "How to display favorites.";
-      };
-      applicationsDisplayMode = mkOption {
-        type = with types; nullOr (enum [ "grid" "list" ]);
-        default = null;
-        example = "grid";
-        description = "How to display applications.";
-      };
-      showButtonsFor = mkOption {
-        type = with types; nullOr (enum [ "power" "session" "custom" "powerAndSession" ]);
-        default = null;
-        example = "powerAndSession";
-        description = "Which actions should be displayed in the footer.";
-      };
+      favoritesDisplayMode =
+        let enumVals = [ "grid" "list" ];
+        in mkOption {
+          type = with types; nullOr (enum enumVals);
+          default = null;
+          example = "list";
+          description = "How to display favorites.";
+          apply = getIndexFromEnum enumVals;
+        };
+      applicationsDisplayMode =
+        let enumVals = [ "grid" "list" ];
+        in mkOption {
+          type = with types; nullOr (enum enumVals);
+          default = null;
+          example = "grid";
+          description = "How to display applications.";
+          apply = getIndexFromEnum enumVals;
+        };
+      showButtonsFor =
+        let enumVals = [ "power" "session" "custom" "powerAndSession" ];
+        in mkOption {
+          type = with types; nullOr (enum enumVals);
+          default = null;
+          example = "powerAndSession";
+          description = "Which actions should be displayed in the footer.";
+          apply = getIndexFromEnum enumVals;
+        };
       showActionButtonCaptions = mkBoolOption "Whether to display captions ('shut down', 'log out', etc.) for the footer action buttons";
       pin = mkBoolOption "Whether the popup should remain open when another window is activated.";
     };

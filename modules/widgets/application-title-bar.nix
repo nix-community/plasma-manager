@@ -30,15 +30,27 @@ let
     in
       mappings.${verticalAlignment} or (throw "Invalid enum value: ${verticalAlignment}");
 
+  getIndexFromEnum = enum: value:
+    if value == null
+    then null
+    else
+      lib.lists.findFirstIndex
+        (x: x == value)
+        (throw "getIndexFromEnum (application-title-bar widget): Value ${value} isn't present in the enum. This is a bug")
+        enum;
+
   fontType = types.submodule {
     options = {
       bold = mkBoolOption "Enable bold text.";
-      fit = mkOption {
-        type = with types; nullOr (enum [ "fixedSize" "horizontalFit" "verticalFit" "fit" ]);
-        default = null;
-        example = "fixedSize";
-        description = "The mode of the size of the font.";
-      };
+      fit =
+        let enumVals = [ "fixedSize" "horizontalFit" "verticalFit" "fit" ];
+        in mkOption {
+          type = with types; nullOr (enum enumVals);
+          default = null;
+          example = "fixedSize";
+          description = "The mode of the size of the font.";
+          apply = getIndexFromEnum enumVals;
+        };
       size = mkOption {
         type = types.ints.positive;
         default = 10;
@@ -100,12 +112,15 @@ in
           description = "The vertical alignment of the widget.";
           apply = convertVerticalAlignment;
         };
-        showDisabledElements = mkOption {
-          type = with types; nullOr (enum [ "deactivated" "hideKeepSpace" "hide" ]);
-          default = null;
-          example = "deactivated";
-          description = "How to show the elements when the widget is disabled.";
-        };
+        showDisabledElements =
+          let enumVals = [ "deactivated" "hideKeepSpace" "hide" ];
+          in mkOption {
+            type = with types; nullOr (enum enumVals);
+            default = null;
+            example = "deactivated";
+            description = "How to show the elements when the widget is disabled.";
+            apply = getIndexFromEnum enumVals;
+          };
         fillFreeSpace = mkBoolOption "Whether the widget should fill the free space on the panel.";
         elements = mkOption {
           type = types.nullOr (types.listOf (types.enum [
@@ -127,19 +142,22 @@ in
         };
       };
       windowControlButtons = {
-        iconSource = mkOption {
-          type = with types; nullOr (enum [ "plasma" "breeze" "aurorae" "oxygen" ]);
-          default = null;
-          example = "plasma";
-          description = ''
-            The icon source for the control buttons.
+        iconSource =
+          let enumVals = [ "plasma" "breeze" "aurorae" "oxygen" ];
+          in mkOption {
+            type = with types; nullOr (enum enumVals);
+            default = null;
+            example = "plasma";
+            description = ''
+              The icon source for the control buttons.
 
-            - Plasma: Global icon theme
-            - Breeze: Implicit Breeze icons
-            - Aurorae: Window decorations theme
-            - Oxygen: Implicit Oxygen icons
-          '';
-        };
+              - Plasma: Global icon theme
+              - Breeze: Implicit Breeze icons
+              - Aurorae: Window decorations theme
+              - Oxygen: Implicit Oxygen icons
+            '';
+            apply = getIndexFromEnum enumVals;
+          };
         auroraeTheme = mkOption {
           type = types.nullOr types.str;
           default = null;
@@ -193,19 +211,22 @@ in
           default = null;
           description = "The text to show when the window title is undefined.";
         };
-        source = mkOption {
-          type = with types; nullOr (enum [ "appName" "decoration" "genericAppName" "alwaysUndefined" ]);
-          default = null;
-          example = "appName";
-          description = ''
-            The source of the window title.
+        source =
+          let enumVals = [ "appName" "decoration" "genericAppName" "alwaysUndefined" ];
+          in mkOption {
+            type = with types; nullOr (enum enumVals);
+            default = null;
+            example = "appName";
+            description = ''
+              The source of the window title.
 
-            - appName: The name of the application
-            - decoration: The title of the window decoration
-            - genericAppName: The generic name of the application
-            - alwaysUndefined: Always show the undefined title
-          '';
-        };
+              - appName: The name of the application
+              - decoration: The title of the window decoration
+              - genericAppName: The generic name of the application
+              - alwaysUndefined: Always show the undefined title
+            '';
+            apply = getIndexFromEnum enumVals;
+          };
         margins = mkOption {
           type = types.nullOr marginType;
           default = null;
@@ -244,33 +265,41 @@ in
             The elements to show in the widget for maximized windows.
           '';
         };
-        source = mkOption {
-          type = with types; nullOr (enum [ "appName" "decoration" "genericAppName" "alwaysUndefined" ]);
-          default = null;
-          example = "appName";
-          description = ''
-            The source of the window title for maximized windows.
+        source =
+          let
+            enumVals = [ "appName" "decoration" "genericAppName" "alwaysUndefined" ];
+          in
+          mkOption {
+            type = with types; nullOr (enum enumVals);
+            default = null;
+            example = "appName";
+            description = ''
+              The source of the window title for maximized windows.
 
-            - appName: The name of the application
-            - decoration: The title of the window decoration
-            - genericAppName: The generic name of the application
-            - alwaysUndefined: Always show the undefined title
-          '';
-        };
+              - appName: The name of the application
+              - decoration: The title of the window decoration
+              - genericAppName: The generic name of the application
+              - alwaysUndefined: Always show the undefined title
+            '';
+            apply = getIndexFromEnum enumVals;
+          };
       };
       behavior = {
-        activeTaskSource = mkOption {
-          type = with types; nullOr (enum [ "activeTask" "lastActiveTask" "lastActiveMaximized" ]);
-          default = null;
-          example = "activeTask";
-          description = ''
-            The source of the active task.
+        activeTaskSource =
+          let enumVals = [ "activeTask" "lastActiveTask" "lastActiveMaximized" ];
+          in mkOption {
+            type = with types; nullOr (enum enumVals);
+            default = null;
+            example = "activeTask";
+            description = ''
+              The source of the active task.
 
-            - activeTask: The active task
-            - lastActiveTask: The last active task
-            - lastActiveMaximized: The last active maximized task
-          '';
-        };
+              - activeTask: The active task
+              - lastActiveTask: The last active task
+              - lastActiveMaximized: The last active maximized task
+            '';
+            apply = getIndexFromEnum enumVals;
+          };
         filterByActivity = mkBoolOption "Whether to filter the tasks by activity.";
         filterByScreen = mkBoolOption "Whether to filter the tasks by screen.";
         filterByVirtualDesktop = mkBoolOption "Whether to filter the tasks by virtual desktop.";
