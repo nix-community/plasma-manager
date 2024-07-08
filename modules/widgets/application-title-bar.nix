@@ -11,10 +11,10 @@ let
   convertHorizontalAlignment = horizontalAlignment:
     let
       mappings = {
-        "left" = 1;
-        "right" = 2;
-        "center" = 4;
-        "justify" = 8;
+        left = 1;
+        right = 2;
+        center = 4;
+        justify = 8;
       };
     in
       mappings.${horizontalAlignment} or (throw "Invalid enum value: ${horizontalAlignment}");
@@ -22,10 +22,10 @@ let
   convertVerticalAlignment = verticalAlignment:
     let
       mappings = {
-        "top" = 1;
-        "center" = 128;
-        "bottom" = 64;
-        "baseline" = 256;
+        top = 1;
+        center = 128;
+        bottom = 64;
+        baseline = 256;
       };
     in
       mappings.${verticalAlignment} or (throw "Invalid enum value: ${verticalAlignment}");

@@ -19,7 +19,7 @@ let
 
   convertSidebarPosition = sidebarPosition:
     let
-      mappings = { "left" = false; "right" = true; };
+      mappings = { left = false; right = true; };
     in
       mappings.${sidebarPosition} or (throw "Invalid sidebar position: ${sidebarPosition}");
 in
