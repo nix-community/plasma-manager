@@ -11,9 +11,9 @@ let
   convertSpacing = spacing:
     let
       mappings = {
-        "small" = 0;
-        "medium" = 1;
-        "large" = 3;
+        small = 0;
+        medium = 1;
+        large = 3;
       };
     in
       mappings.${spacing} or (throw "Invalid spacing: ${spacing}");
@@ -30,7 +30,7 @@ let
 
   positionToReverse = position:
     let
-      mappings = { "left" = "true"; "right" = "false"; };
+      mappings = { left = "true"; right = "false"; };
     in
       mappings.${position} or (throw "Invalid position: ${position}");
 in
