@@ -19,53 +19,23 @@ import re
 import sys
 from pathlib import Path
 
-############################################################################
 # The root directory where configuration files are stored.
 XDG_CONFIG_HOME = os.path.expanduser(os.getenv("XDG_CONFIG_HOME", "~/.config"))
 
-################################################################################
 class Rc2Nix:
-
-    ############################################################################
     # Files that we'll scan by default.
     KNOWN_FILES = [
-        "kcminputrc",
-        "kglobalshortcutsrc",
-        "kactivitymanagerdrc",
-        "ksplashrc",
-        "kwin_rules_dialogrc",
-        "kmixrc",
-        "kwalletrc",
-        "kgammarc",
-        "krunnerrc",
-        "klaunchrc",
-        "plasmanotifyrc",
-        "systemsettingsrc",
-        "kscreenlockerrc",
-        "kwinrulesrc",
-        "khotkeysrc",
-        "ksmserverrc",
-        "kded5rc",
-        "plasmarc",
-        "kwinrc",
-        "kdeglobals",
-        "baloofilerc",
-        "dolphinrc",
-        "klipperrc",
-        "plasma-localerc",
-        "kxkbrc",
-        "ffmpegthumbsrc",
-        "kservicemenurc",
-        "kiorc",
+        "kcminputrc", "kglobalshortcutsrc", "kactivitymanagerdrc", "ksplashrc",
+        "kwin_rules_dialogrc", "kmixrc", "kwalletrc", "kgammarc", "krunnerrc",
+        "klaunchrc", "plasmanotifyrc", "systemsettingsrc", "kscreenlockerrc",
+        "kwinrulesrc", "khotkeysrc", "ksmserverrc", "kded5rc", "plasmarc",
+        "kwinrc", "kdeglobals", "baloofilerc", "dolphinrc", "klipperrc",
+        "plasma-localerc", "kxkbrc", "ffmpegthumbsrc", "kservicemenurc", "kiorc"
     ]
     KNOWN_FILES = [os.path.join(XDG_CONFIG_HOME, f) for f in KNOWN_FILES]
 
-    ############################################################################
     class RcFile:
-
-        ########################################################################
         # Any group that matches a listed regular expression is blocked
-        # from being passed through to the settings attribute.
         GROUP_BLOCK_LIST = [
             r"^(ConfigDialog|FileDialogSize|ViewPropertiesDialog|KPropertiesDialog)$",
             r"^\$Version$",
@@ -79,7 +49,6 @@ class Rc2Nix:
             r"^Session:",
         ]
 
-        ########################################################################
         # Similar to the GROUP_BLOCK_LIST but for setting keys.
         KEY_BLOCK_LIST = [
             r"^activate widget \d+$",  # Depends on state :(
@@ -93,64 +62,69 @@ class Rc2Nix:
             r"Timestamp$",
         ]
 
-        ########################################################################
-        # List of functions that get called with a group name and a key
-        # name.  If the function returns +true+ then block that key.
+        # List of functions that get called with a group name and a key name.
         BLOCK_LIST_LAMBDA = [
             lambda group, key: group == "org.kde.kdecoration2" and key == "library"
         ]
 
-        ########################################################################
         def __init__(self, file_name):
             self.file_name = file_name
             self.settings = {}
             self.last_group = None
 
-        ########################################################################
         def parse(self):
             with open(self.file_name, 'r') as file:
                 for line in file:
                     line = line.strip()
                     if not line:
                         continue
-                    if re.match(r'^\s*(\[[^\]]+\]){1,}\s*$', line):
+                    if self.is_group_line(line):
                         self.last_group = self.parse_group(line)
-                    elif re.match(r'^\s*([^=]+)=?(.*)\s*$', line):
-                        key, val = re.match(r'^\s*([^=]+)=?(.*)\s*$', line).groups()
-                        key = key.strip()
-                        val = val.strip()
-
-                        if self.last_group is None:
-                            raise Exception(f"{self.file_name}: setting outside of group: {line}")
-
-                        # Reasons to skip this group or key:
-                        if any(re.match(reg, self.last_group) for reg in self.GROUP_BLOCK_LIST):
-                            continue
-                        if any(re.match(reg, key) for reg in self.KEY_BLOCK_LIST):
-                            continue
-                        if any(fn(self.last_group, key) for fn in self.BLOCK_LIST_LAMBDA):
-                            continue
-                        if os.path.basename(self.file_name) == "plasmanotifyrc" and key == "Seen":
-                            continue
-
-                        if self.last_group not in self.settings:
-                            self.settings[self.last_group] = {}
-                        self.settings[self.last_group][key] = val
+                    elif self.is_setting_line(line):
+                        key, val = self.parse_setting(line)
+                        self.process_setting(key, val)
                     else:
                         raise Exception(f"{self.file_name}: can't parse line: {line}")
 
-        ########################################################################
+        def is_group_line(self, line):
+            return re.match(r'^\s*(\[[^\]]+\]){1,}\s*$', line)
+
+        def is_setting_line(self, line):
+            return re.match(r'^\s*([^=]+)=?(.*)\s*$', line)
+
         def parse_group(self, line):
             return re.sub(r'\s*\[([^\]]+)\]\s*', r'\1/', line.replace("/", "\\/")).rstrip("/")
 
-    ############################################################################
-    class App:
+        def parse_setting(self, line):
+            return re.match(r'^\s*([^=]+)=?(.*)\s*$', line).groups()
 
-        ########################################################################
+        def process_setting(self, key, val):
+            key = key.strip()
+            val = val.strip()
+
+            if self.last_group is None:
+                raise Exception(f"{self.file_name}: setting outside of group: {key}={val}")
+
+            if self.should_skip_group(self.last_group) or self.should_skip_key(key) or self.should_skip_by_lambda(self.last_group, key):
+                return
+
+            if self.last_group not in self.settings:
+                self.settings[self.last_group] = {}
+            self.settings[self.last_group][key] = val
+
+        def should_skip_group(self, group):
+            return any(re.match(reg, group) for reg in self.GROUP_BLOCK_LIST)
+
+        def should_skip_key(self, key):
+            return any(re.match(reg, key) for reg in self.KEY_BLOCK_LIST)
+
+        def should_skip_by_lambda(self, group, key):
+            return any(fn(group, key) for fn in self.BLOCK_LIST_LAMBDA)
+
+    class App:
         def __init__(self, args):
             self.files = Rc2Nix.KNOWN_FILES.copy()
 
-        ########################################################################
         def run(self):
             settings = {}
 
@@ -164,6 +138,9 @@ class Rc2Nix:
                 path = Path(file).relative_to(XDG_CONFIG_HOME)
                 settings[str(path)] = rc.settings
 
+            self.print_output(settings)
+
+        def print_output(self, settings):
             print("{")
             print("  programs.plasma = {")
             print("    enable = true;")
@@ -176,7 +153,6 @@ class Rc2Nix:
             print("  };")
             print("}")
 
-        ########################################################################
         def pp_settings(self, settings, indent):
             for file in sorted(settings.keys()):
                 for group in sorted(settings[file].keys()):
@@ -191,7 +167,6 @@ class Rc2Nix:
                         print(self.nix_val(settings[file][group][key]), end="")
                         print(";")
 
-        ########################################################################
         def pp_shortcuts(self, groups, indent):
             if not groups:
                 return
@@ -220,7 +195,6 @@ class Rc2Nix:
 
                     print(";")
 
-        ########################################################################
         def nix_val(self, str):
             if str is None:
                 return "null"
@@ -230,5 +204,4 @@ class Rc2Nix:
                 return str
             return '"' + str.replace('"', '\\"') + '"'
 
-################################################################################
 Rc2Nix.App(sys.argv[1:]).run()
