@@ -69,7 +69,7 @@
           # configuring the widgets. See modules/widgets for supported widgets
           # and options for these widgets. The widgets below shows two examples
           # of usage, one where we add a digital clock, setting 12h time and
-          # first day of the week to sunday and another adding a systray with
+          # first day of the week to Sunday and another adding a systray with
           # some modifications in which entries to show.
           {
             digitalClock = {

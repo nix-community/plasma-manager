@@ -25,7 +25,7 @@ let
         ${stringIfNotNull panel.maxLength "panel.maximumLength = ${toString panel.maxLength};"}
         ${stringIfNotNull panel.minLength "panel.minimumLength = ${toString panel.minLength};"}
         ${stringIfNotNull panel.offset "panel.offset = ${toString panel.offset};"}
-        ${optionalString (panel.screen != null) ''panel.writeConfig("lastScreen[$i]", ${toString panel.screen});''}
+        ${stringIfNotNull panel.screen ''panel.writeConfig("lastScreen[$i]", ${toString panel.screen});''}
 
         ${addWidgetStmts "panel" "panelWidgets" panel.widgets}
         ${stringIfNotNull panel.extraSettings panel.extraSettings}
