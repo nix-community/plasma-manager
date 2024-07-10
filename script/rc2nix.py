@@ -25,7 +25,7 @@ XDG_CONFIG_HOME: str = os.path.expanduser(os.getenv("XDG_CONFIG_HOME", "~/.confi
 
 class Rc2Nix:
     # Files that we'll scan by default.
-    KNOWN_FILES: List[str] = [
+    KNOWN_FILES: List[str] = [os.path.join(XDG_CONFIG_HOME, f) for f in [
         "kcminputrc",
         "kglobalshortcutsrc",
         "kactivitymanagerdrc",
@@ -54,8 +54,7 @@ class Rc2Nix:
         "ffmpegthumbsrc",
         "kservicemenurc",
         "kiorc",
-    ]
-    KNOWN_FILES: List[str] = [os.path.join(XDG_CONFIG_HOME, f) for f in KNOWN_FILES]
+    ]]
 
     class RcFile:
         # Any group that matches a listed regular expression is blocked
@@ -121,7 +120,7 @@ class Rc2Nix:
         def parse_setting(self, line: str) -> Tuple[str, str]:
             match = re.match(r'^\s*([^=]+)=?(.*)\s*$', line)
             if match:
-                return match.groups()
+                return match.groups() #type: ignore
             raise Exception(f"{self.file_name}: can't parse setting line: {line}")
 
         def process_setting(self, key: str, val: str):
@@ -166,7 +165,7 @@ class Rc2Nix:
 
             self.print_output(settings)
 
-        def print_output(self, settings):
+        def print_output(self, settings: Dict[str, Dict[str, Dict[str, str]]]):
             print("{")
             print("  programs.plasma = {")
             print("    enable = true;")
@@ -180,7 +179,7 @@ class Rc2Nix:
             print("}")
 
         def pp_settings(self, settings: Dict[str, Dict[str, Dict[str, str]]], indent: int) -> str:
-            result = []
+            result : List[str] = []
             for file in sorted(settings.keys()):
                 for group in sorted(settings[file].keys()):
                     for key in sorted(settings[file][group].keys()):
@@ -194,7 +193,7 @@ class Rc2Nix:
             if not groups:
                 return ""
 
-            result = []
+            result : List[str] = []
             for group in sorted(groups.keys()):
                 for action in sorted(groups[group].keys()):
                     if action == "_k_friendly_name":
@@ -214,7 +213,7 @@ class Rc2Nix:
                     result.append(f"{' ' * indent}\"{group}\".\"{action}\" = {keys_str};")
             return "\n".join(result)
 
-def nix_val(s: str) -> str:
+def nix_val(s: Optional[str]) -> str:
     if s is None:
         return "null"
     if re.match(r'^true|false$', s, re.IGNORECASE):
