@@ -205,11 +205,11 @@ class Rc2Nix:
                     if not keys:
                         keys_str = "[ ]"
                     elif len(keys) > 1:
-                        keys_str = f"[ {' '.join(nix_val(k) for k in keys)} ]"
+                        keys_str = f"[{' '.join(nix_val(k.rstrip(',')) for k in keys)}]"
                     elif keys[0] == "none":
                         keys_str = "[ ]"
                     else:
-                        keys_str = nix_val(keys[0])
+                        keys_str = nix_val(keys[0].rstrip(","))
 
                     result.append(f"{' ' * indent}\"{group}\".\"{action}\" = {keys_str};")
             return "\n".join(result)
