@@ -181,12 +181,11 @@ class Rc2Nix:
         def pp_settings(self, settings: Dict[str, Dict[str, Dict[str, str]]], indent: int) -> str:
             result : List[str] = []
             for file in sorted(settings.keys()):
-                for group in sorted(settings[file].keys()):
-                    for key in sorted(settings[file][group].keys()):
-                        if file == "kglobalshortcutsrc" and key != "_k_friendly_name":
-                            continue
-
-                        result.append(f"{' ' * indent}\"{file}\".\"{group}\".\"{key}\" = {nix_val(settings[file][group][key])};")
+                if file != "kglobalshortcutsrc":
+                    for group in sorted(settings[file].keys()):
+                        for key in sorted(settings[file][group].keys()):
+                            if key != "_k_friendly_name":
+                                result.append(f"{' ' * indent}\"{file}\".\"{group}\".\"{key}\" = {nix_val(settings[file][group][key])};")
             return "\n".join(result)
 
         def pp_shortcuts(self, groups: Dict[str, Dict[str, str]], indent: int) -> str:
@@ -201,14 +200,14 @@ class Rc2Nix:
 
                     keys = groups[group][action].split(r'(?<!\\),')[0].replace(r'\?', ',').replace(r'\t', '\t').split('\t')
 
-                    if not keys:
+                    if not keys or keys[0] == "none":
                         keys_str = "[ ]"
                     elif len(keys) > 1:
                         keys_str = f"[{' '.join(nix_val(k.rstrip(',')) for k in keys)}]"
-                    elif keys[0] == "none":
-                        keys_str = "[ ]"
                     else:
-                        keys_str = nix_val(keys[0].rstrip(","))
+                        ks = keys[0].split(",")
+                        k = ks[0] if len(ks) == 3 and ks[0] == ks[1] else keys[0]
+                        keys_str = "[ ]" if k == "" or k == "none" else nix_val(k.rstrip(","))
 
                     result.append(f"{' ' * indent}\"{group}\".\"{action}\" = {keys_str};")
             return "\n".join(result)
