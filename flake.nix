@@ -47,8 +47,8 @@
 
           rc2nix = pkgs.writeShellApplication {
             name = "rc2nix";
-            runtimeInputs = with pkgs; [ ruby ];
-            text = ''ruby ${script/rc2nix.rb} "$@"'';
+            runtimeInputs = with pkgs; [ python3 ];
+            text = ''python3 ${script/rc2nix.py} "$@"'';
           };
         });
 
