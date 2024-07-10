@@ -195,21 +195,19 @@ class Rc2Nix:
             result : List[str] = []
             for group in sorted(groups.keys()):
                 for action in sorted(groups[group].keys()):
-                    if action == "_k_friendly_name":
-                        continue
+                    if action != "_k_friendly_name":
+                        keys = groups[group][action].split(r'(?<!\\),')[0].replace(r'\?', ',').replace(r'\t', '\t').split('\t')
 
-                    keys = groups[group][action].split(r'(?<!\\),')[0].replace(r'\?', ',').replace(r'\t', '\t').split('\t')
+                        if not keys or keys[0] == "none":
+                            keys_str = "[ ]"
+                        elif len(keys) > 1:
+                            keys_str = f"[{' '.join(nix_val(k.rstrip(',')) for k in keys)}]"
+                        else:
+                            ks = keys[0].split(",")
+                            k = ks[0] if len(ks) == 3 and ks[0] == ks[1] else keys[0]
+                            keys_str = "[ ]" if k == "" or k == "none" else nix_val(k.rstrip(","))
 
-                    if not keys or keys[0] == "none":
-                        keys_str = "[ ]"
-                    elif len(keys) > 1:
-                        keys_str = f"[{' '.join(nix_val(k.rstrip(',')) for k in keys)}]"
-                    else:
-                        ks = keys[0].split(",")
-                        k = ks[0] if len(ks) == 3 and ks[0] == ks[1] else keys[0]
-                        keys_str = "[ ]" if k == "" or k == "none" else nix_val(k.rstrip(","))
-
-                    result.append(f"{' ' * indent}\"{group}\".\"{action}\" = {keys_str};")
+                        result.append(f"{' ' * indent}\"{group}\".\"{action}\" = {keys_str};")
             return "\n".join(result)
 
 def nix_val(s: Optional[str]) -> str:
