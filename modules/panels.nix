@@ -104,9 +104,14 @@ let
         apply = map widgets.convert;
       };
       screen = lib.mkOption {
-        type = with lib.types; nullOr int;
+        type = with lib.types; nullOr (oneOf [ ints.unsigned (listOf ints.unsigned) (enum [ "all" ]) ]);
         default = null;
-        description = "The screen the panel should appear on";
+        description = ''
+          The screen the panel should appear on. Can be an int, or a list of ints,
+          starting from 0, representing the ID of the screen the panel should
+          appear on. Alternatively it can be set to "any" if the panel should
+          appear on all the screens.
+        '';
       };
       extraSettings = lib.mkOption {
         type = with lib.types; nullOr str;
@@ -133,7 +138,7 @@ in
 
   options.programs.plasma.extraWidgets = lib.mkOption {
     type = with lib.types; listOf (enum [ "application-title-bar" "plasmusic-toolbar" ]);
-    default = [];
+    default = [ ];
     example = [ "application-title-bar" ];
     description = ''
       Additional third-party widgets to be installed, that can be included in the panels.
@@ -145,7 +150,7 @@ in
   # panels in the panels-script also has a tendency to reset the wallpaper, so
   # these should run at the same time.
   config = (lib.mkIf cfg.enable {
-    home.packages = with pkgs; []
+    home.packages = with pkgs; [ ]
       ++ lib.optionals (lib.elem "application-title-bar" cfg.extraWidgets || hasWidget "com.github.antroids.application-title-bar") [ application-title-bar ]
       ++ lib.optionals (lib.elem "plasmusic-toolbar" cfg.extraWidgets || hasWidget "plasmusic-toolbar") [ plasmusic-toolbar ];
 
