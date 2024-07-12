@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#!/usr/bin/env nix
+#! nix shell nixpkgs#python3Packages.python nixpkgs#ruby -c python3
 import unittest
 import subprocess
 import os
@@ -16,15 +17,22 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 def path(relative_path: str) -> str:
     return os.path.abspath(os.path.join(current_dir, relative_path))
 
-script_path = path("../../script/rc2nix.py")
+rc2nix_py = path("../../script/rc2nix.py")
+rc2nix_rb = path("../../script/rc2nix.rb")
 
 class TestRc2nix (unittest.TestCase):
 
     def test(self):
-        result = subprocess.run([script_path], check=True, env={'XDG_CONFIG_HOME': path('./test_data')}, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        print(red(result.stdout))
-        result.check_returncode()
-        print(result.stderr)
+        def run_script(*command: str) -> str:
+            rst = subprocess.run(command, env={'XDG_CONFIG_HOME': path('./test_data'), 'PATH': os.environ["PATH"]}, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            print(red(rst.stderr))
+            rst.check_returncode()
+            return rst.stdout
+
+        rst_py = run_script(rc2nix_py)
+        rst_rb = run_script(rc2nix_rb)
+
+        assert rst_py == rst_rb
 
 if __name__ == '__main__': # pragma: no cover
     _ = unittest.main()
