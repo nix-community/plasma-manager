@@ -520,8 +520,8 @@ in
               widgetMouseAreaWheelRightAction = mouseAreaWheel.wheelRight;
             }
           );
+          TitleReplacements = titleReplacements;
         };
-        TitleReplacements = titleReplacements;
       };
   };
 }
