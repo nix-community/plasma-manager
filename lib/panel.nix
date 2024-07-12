@@ -4,7 +4,7 @@ let
   panelToLayout = panel:
     let
       inherit (widgets.lib) addWidgetStmts stringIfNotNull;
-      inherit (lib) boolToString optionalString;
+      inherit (lib) boolToString;
       inherit (builtins) toString;
 
       plasma6OnlyCmd = cmd: ''
@@ -14,6 +14,9 @@ let
       '';
     in
     ''
+      ${if (panel.screen == "all") then "for (screenID = 0; screenID < screenCount; screenID++)"
+        else if (builtins.isList panel.screen) then "for (var screenID in [${builtins.concatStringsSep "," (map builtins.toString panel.screen)}])"
+        else ""}
       {
         const panel = new Panel();
         panel.height = ${toString panel.height};
@@ -25,7 +28,7 @@ let
         ${stringIfNotNull panel.maxLength "panel.maximumLength = ${toString panel.maxLength};"}
         ${stringIfNotNull panel.minLength "panel.minimumLength = ${toString panel.minLength};"}
         ${stringIfNotNull panel.offset "panel.offset = ${toString panel.offset};"}
-        ${stringIfNotNull panel.screen ''panel.writeConfig("lastScreen[$i]", ${toString panel.screen});''}
+        ${stringIfNotNull panel.screen ''panel.writeConfig("lastScreen[$i]", ${if ((panel.screen == "all") || (builtins.isList panel.screen)) then "screenID" else toString panel.screen});''}
 
         ${addWidgetStmts "panel" "panelWidgets" panel.widgets}
         ${stringIfNotNull panel.extraSettings panel.extraSettings}
