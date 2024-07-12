@@ -180,7 +180,7 @@ in
                               );
                               "Appearance" = (
                                 {
-                                  # If the font size is not set we leave a comma a the end after the name
+                                  # If the font size is not set we leave a comma at the end after the name
                                   # We should fix this probs but konsole doesn't seem to care ¯\_(ツ)_/¯
                                   "Font" = fontString.content;
                                 } //

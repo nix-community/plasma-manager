@@ -54,7 +54,7 @@ in
     programs.plasma.configFile.kscreenlockerrc = (lib.mkMerge [
       (lib.mkIf (cfg.kscreenlocker.wallpaper != null) {
         Greeter.WallpaperPlugin = "org.kde.image";
-        "Greeter/Wallpaper/org.kde.image/General".Image = cfg.kscreenlocker.wallpaper;
+        "Greeter/Wallpaper/org.kde.image/General".Image = (builtins.toString cfg.kscreenlocker.wallpaper);
       })
       (lib.mkIf (cfg.kscreenlocker.wallpaperPictureOfTheDay != null) {
         Greeter.WallpaperPlugin = "org.kde.potd";
