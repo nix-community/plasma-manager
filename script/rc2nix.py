@@ -95,56 +95,58 @@ class Rc2Nix:
             self.last_group: Optional[str] = None
 
         def parse(self):
+
+            def is_group_line(line: str) -> bool:
+                return re.match(r'^\s*(\[[^\]]+\]){1,}\s*$', line) is not None
+
+            def is_setting_line(line: str) -> bool:
+                return re.match(r'^\s*([^=]+)=?(.*)\s*$', line) is not None
+
+            def parse_group(line: str) -> str:
+                return re.sub(r'\s*\[([^\]]+)\]\s*', r'\1/', line.replace("/", "\\/")).rstrip("/")
+
+            def parse_setting(line: str) -> Tuple[str, str]:
+                match = re.match(r'^\s*([^=]+)=?(.*)\s*$', line)
+                if match:
+                    return match.groups() #type: ignore
+                raise Exception(f"{self.file_name}: can't parse setting line: {line}")
+
             with open(self.file_name, 'r') as file:
                 for line in file:
                     line = line.strip()
                     if not line:
                         continue
-                    if self.is_group_line(line):
-                        self.last_group = self.parse_group(line)
-                    elif self.is_setting_line(line):
-                        key, val = self.parse_setting(line)
+                    if is_group_line(line):
+                        self.last_group = parse_group(line)
+                    elif is_setting_line(line):
+                        key, val = parse_setting(line)
                         self.process_setting(key, val)
                     else:
                         raise Exception(f"{self.file_name}: can't parse line: {line}")
 
-        def is_group_line(self, line: str) -> bool:
-            return re.match(r'^\s*(\[[^\]]+\]){1,}\s*$', line) is not None
-
-        def is_setting_line(self, line: str) -> bool:
-            return re.match(r'^\s*([^=]+)=?(.*)\s*$', line) is not None
-
-        def parse_group(self, line: str) -> str:
-            return re.sub(r'\s*\[([^\]]+)\]\s*', r'\1/', line.replace("/", "\\/")).rstrip("/")
-
-        def parse_setting(self, line: str) -> Tuple[str, str]:
-            match = re.match(r'^\s*([^=]+)=?(.*)\s*$', line)
-            if match:
-                return match.groups() #type: ignore
-            raise Exception(f"{self.file_name}: can't parse setting line: {line}")
-
         def process_setting(self, key: str, val: str):
+
+            def should_skip_group(group: str) -> bool:
+                return any(re.match(reg, group) for reg in self.GROUP_BLOCK_LIST)
+
+            def should_skip_key(key: str) -> bool:
+                return any(re.match(reg, key) for reg in self.KEY_BLOCK_LIST)
+
+            def should_skip_by_lambda(group: str, key: str) -> bool:
+                return any(fn(group, key) for fn in self.BLOCK_LIST_LAMBDA)
+
             key = key.strip()
             val = val.strip()
 
             if self.last_group is None:
                 raise Exception(f"{self.file_name}: setting outside of group: {key}={val}")
 
-            if self.should_skip_group(self.last_group) or self.should_skip_key(key) or self.should_skip_by_lambda(self.last_group, key):
+            if should_skip_group(self.last_group) or should_skip_key(key) or should_skip_by_lambda(self.last_group, key):
                 return
 
             if self.last_group not in self.settings:
                 self.settings[self.last_group] = {}
             self.settings[self.last_group][key] = val
-
-        def should_skip_group(self, group: str) -> bool:
-            return any(re.match(reg, group) for reg in self.GROUP_BLOCK_LIST)
-
-        def should_skip_key(self, key: str) -> bool:
-            return any(re.match(reg, key) for reg in self.KEY_BLOCK_LIST)
-
-        def should_skip_by_lambda(self, group: str, key: str) -> bool:
-            return any(fn(group, key) for fn in self.BLOCK_LIST_LAMBDA)
 
     class App:
         def __init__(self, args: List[str]):
