@@ -4,7 +4,7 @@
 
   programs.plasma = {
     enable = true;
-    extraWidgets = ["application-title-bar" "plasmusic-toolbar"];
+    extraWidgets = [ "application-title-bar" "plasmusic-toolbar" ];
 
     #
     # Some high-level settings:
@@ -129,7 +129,7 @@
                 activeTaskSource = "activeTask";
               };
               layout = {
-                elements = ["windowTitle"];
+                elements = [ "windowTitle" ];
                 horizontalAlignment = "left";
                 showDisabledElements = "deactivated";
                 verticalAlignment = "center";
@@ -252,4 +252,3 @@
     };
   };
 }
-
