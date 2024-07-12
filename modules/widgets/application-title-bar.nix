@@ -83,6 +83,30 @@ let
       };
     };
   };
+
+  titleReplacementType = types.submodule {
+    options = {
+      type = 
+        let enumVals = [ "string" "regexp" ];
+        in mkOption {
+          type = types.enum enumVals;
+          default = null;
+          example = "string";
+          description = "The type of the replacement.";
+          apply = getIndexFromEnum enumVals;
+        };
+      originalTitle = mkOption {
+        type = types.str;
+        example = "Brave Web Browser";
+        description = "The original text to replace.";
+      };
+      newTitle = mkOption {
+        type = types.str;
+        example = "Brave";
+        description = "The new text to replace with.";
+      };
+    };
+  };
 in
 {
   applicationTitleBar = {
@@ -391,6 +415,28 @@ in
           description = "The action to perform on wheel right.";
         };
       };
+      titleReplacements = mkOption {
+        type = with types; nullOr (listOf titleReplacementType);
+        default = null;
+        example = [
+          {
+            type = "string";
+            originalTitle = "Brave Web Browser";
+            newTitle = "Brave";
+          }
+          {
+            type = "regexp";
+            originalTitle = ''\\bDolphin\\b'';
+            newTitle = "File manager";
+          }
+        ];
+        description = "The replacements for the window title.";
+        apply = replacements: lib.optionalAttrs (replacements != null) {
+          titleReplacementsPatterns = map (r: r.originalTitle) replacements;
+          titleReplacementsTemplates = map (r: r.newTitle) replacements;
+          titleReplacementsTypes = map (r: r.type) replacements;
+        };
+      };
     };
     convert =
       { layout
@@ -401,6 +447,7 @@ in
       , mouseAreaDrag
       , mouseAreaClick
       , mouseAreaWheel
+      , titleReplacements
       }: {
         name = "com.github.antroids.application-title-bar";
         config = {
@@ -474,6 +521,7 @@ in
             }
           );
         };
+        TitleReplacements = titleReplacements;
       };
   };
 }
