@@ -11,3 +11,6 @@ cursorTheme=Oxygen_White
 
 [Tmp]
 update_info=delete_cursor_old_default_size.upd:DeleteCursorOldDefaultSize,kcminputrc_repeat.upd:kcminputrc_migrate_repeat_value
+
+[Libinput][2][14][ETPS/2 Elantech Touchpad]
+NaturalScroll=true
