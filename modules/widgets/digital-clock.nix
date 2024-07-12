@@ -1,7 +1,21 @@
-{ lib, widgets, ... }:
+{ lib, ... }:
 let
   inherit (lib) mkOption types;
-  inherit (widgets.lib) mkBoolOption mkEnumOption boolToString';
+
+  mkBoolOption = description: mkOption {
+    type = with types; nullOr bool;
+    default = null;
+    inherit description;
+  };
+
+  getIndexFromEnum = enum: value:
+    if value == null
+    then null
+    else
+      lib.lists.findFirstIndex
+        (x: x == value)
+        (throw "getIndexFromEnum (digital-clock widget): Value ${value} isn't present in the enum. This is a bug")
+        enum;
 
   fontType = types.submodule {
     options = {
@@ -16,7 +30,6 @@ let
         type = types.ints.between 1 1000;
         default = 50;
         description = "The weight of the font.";
-        apply = builtins.toString;
       };
       style = mkOption {
         type = types.nullOr types.str;
@@ -27,7 +40,6 @@ let
         type = types.ints.positive;
         default = 10;
         description = "The size of the font.";
-        apply = builtins.toString;
       };
     };
   };
@@ -44,12 +56,12 @@ in
 
         format =
           let
-            enum = [ "shortDate" "longDate" "isoDate" ];
+            enumVals = [ "shortDate" "longDate" "isoDate" ];
           in
           mkOption {
-            type = types.nullOr (types.either (types.enum enum) (types.submodule {
+            type = with types; nullOr (either (enum enumVals) (submodule {
               options.custom = mkOption {
-                type = types.str;
+                type = str;
                 example = "ddd d";
                 description = "The custom date format to use.";
               };
@@ -75,38 +87,53 @@ in
 
           };
 
-        position = mkEnumOption [ "adaptive" "besideTime" "belowTime" ] // {
-          example = "belowTime";
-          description = ''
-            The position where the date is displayed.
+        position =
+          let enumVals = [ "adaptive" "besideTime" "belowTime" ];
+          in mkOption {
+            type = with types; nullOr (enum enumVals);
+            default = null;
+            example = "belowTime";
+            description = ''
+              The position where the date is displayed.
 
-            Could be adaptive, always beside the displayed time, or below the displayed time.
-          '';
-        };
+              Could be adaptive, always beside the displayed time, or below the displayed time.
+            '';
+            apply = getIndexFromEnum enumVals;
+          };
       };
 
       time = {
-        showSeconds = mkEnumOption [ "never" "onlyInTooltip" "always" ] // {
-          example = "always";
-          description = ''
-            When and where the seconds should be shown on the clock.
+        showSeconds =
+          let enumVals = [ "never" "onlyInTooltip" "always" ];
+          in mkOption {
+            type = with types; nullOr (enum enumVals);
+            default = null;
+            example = "always";
+            description = ''
+              When and where the seconds should be shown on the clock.
 
-            Could be never, only in the tooltip on hover, or always.
-          '';
-        };
-        format = mkEnumOption [ "12h" "default" "24h" ] // {
-          example = "24h";
-          description = ''
-            The time format used for this clock.
+              Could be never, only in the tooltip on hover, or always.
+            '';
+            apply = getIndexFromEnum enumVals;
+          };
+        format =
+          let enumVals = [ "12h" "default" "24h" ];
+          in mkOption {
+            type = with types; nullOr (enum enumVals);
+            default = null;
+            example = "24h";
+            description = ''
+              The time format used for this clock.
 
-            Could be 12-hour, the default for your locale, or 24-hour.
-          '';
-        };
+              Could be 12-hour, the default for your locale, or 24-hour.
+            '';
+            apply = getIndexFromEnum enumVals;
+          };
       };
 
       timeZone = {
         selected = mkOption {
-          type = types.nullOr (types.listOf types.str);
+          type = with types; nullOr (listOf str);
           default = null;
           example = [ "Europe/Berlin" "Asia/Shanghai" ];
           description = ''
@@ -116,7 +143,7 @@ in
           '';
         };
         lastSelected = mkOption {
-          type = types.nullOr types.str;
+          type = with types; nullOr str;
           default = null;
           description = ''
             The timezone to show upon widget restore.
@@ -125,29 +152,39 @@ in
           '';
         };
         changeOnScroll = mkBoolOption "Allow changing the displayed timezone by scrolling on the widget with the mouse wheel.";
-        format = mkEnumOption [ "code" "city" "offset" ] // {
-          example = "code";
-          description = ''
-            The format of the timezone displayed, whether as a
-            code, full name of the city that the timezone belongs to,
-            or as an UTC offset.
+        format =
+          let enumVals = [ "code" "city" "offset" ];
+          in mkOption {
+            type = with types; nullOr (enum enumVals);
+            default = null;
+            example = "code";
+            description = ''
+              The format of the timezone displayed, whether as a
+              code, full name of the city that the timezone belongs to,
+              or as an UTC offset.
 
-            For example, for the timezone Asia/Shanghai, the three formats
-            listed above would display "CST", "Shanghai" and "+8" respectively.
-          '';
-        };
+              For example, for the timezone Asia/Shanghai, the three formats
+              listed above would display "CST", "Shanghai" and "+8" respectively.
+            '';
+            apply = getIndexFromEnum enumVals;
+          };
         alwaysShow = mkBoolOption "Always show the selected timezone, when it's the same with the system timezone";
       };
 
       calendar = {
-        firstDayOfWeek = mkEnumOption [ "sunday" "monday" "tuesday" "wednesday" "thursday" "friday" "saturday" ] // {
-          example = "monday";
-          description = ''
-            The first day of the week that the calendar uses.
+        firstDayOfWeek =
+          let enumVals = [ "sunday" "monday" "tuesday" "wednesday" "thursday" "friday" "saturday" ];
+          in mkOption {
+            type = with types; nullOr (enum enumVals);
+            default = null;
+            example = "monday";
+            description = ''
+              The first day of the week that the calendar uses.
 
-            If null, then the default for the user locale is used.
-          '';
-        };
+              If null, then the default for the user locale is used.
+            '';
+            apply = getIndexFromEnum enumVals;
+          };
         plugins = mkOption {
           type = types.nullOr (types.listOf types.str);
           default = null;
@@ -171,7 +208,7 @@ in
         '';
         apply = font:
           {
-            autoFontAndSize = boolToString' (font == null);
+            autoFontAndSize = (font == null);
           }
           // lib.optionalAttrs (font != null) {
             fontFamily = font.family;

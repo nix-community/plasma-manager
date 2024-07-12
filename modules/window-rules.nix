@@ -1,10 +1,9 @@
 { lib
-, pkgs
 , config
 , ...
 }:
 with lib.types; let
-  inherit (builtins) length listToAttrs foldl' toString attrNames getAttr hasAttr concatStringsSep add isAttrs;
+  inherit (builtins) length listToAttrs foldl' toString attrNames getAttr concatStringsSep add isAttrs;
   inherit (lib) mkOption mkIf;
   inherit (lib.trivial) mergeAttrs;
   inherit (lib.lists) imap0;
