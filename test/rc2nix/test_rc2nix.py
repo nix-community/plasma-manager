@@ -32,7 +32,7 @@ class TestRc2nix (unittest.TestCase):
         rst_py = run_script(rc2nix_py)
         rst_rb = run_script(rc2nix_rb)
 
-        self.assertEquals(rst_py.splitlines(), rst_rb.splitlines())
+        self.assertEqual(rst_py.splitlines(), rst_rb.splitlines())
 
 
 if __name__ == '__main__': # pragma: no cover

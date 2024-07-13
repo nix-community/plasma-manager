@@ -103,7 +103,7 @@ class Rc2Nix:
                 return re.match(r'^\s*([^=]+)=?(.*)\s*$', line) is not None
 
             def parse_group(line: str) -> str:
-                return re.sub(r'\s*\[([^\]]+)\]\s*', r'\1/', line.replace("/", "\\/")).rstrip("/")
+                return re.sub(r'\s*\[([^\]]+)\]\s*', r'\1/', line.replace("/", "\\\\/")).rstrip("/")
 
             def parse_setting(line: str) -> Tuple[str, str]:
                 match = re.match(r'^\s*([^=]+)=?(.*)\s*$', line)
@@ -219,6 +219,6 @@ def nix_val(s: Optional[str]) -> str:
         return s.lower()
     if re.match(r'^[0-9]+(\.[0-9]+)?$', s):
         return s
-    return '"' + s.replace('"', '\\"') + '"'
+    return '"' + re.sub(r'(?<!\\)"', r'\\"', s) + '"'
 
 Rc2Nix.App(sys.argv[1:]).run()
