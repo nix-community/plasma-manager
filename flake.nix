@@ -83,6 +83,8 @@
               python3.withPackages (
                 pyPkgs: [
                   pyPkgs.python-lsp-server
+                  pyPkgs.black
+                  pyPkgs.isort
                 ]
               )
             )
