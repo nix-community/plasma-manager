@@ -1,7 +1,6 @@
-{ lib, widgets, ... }:
+{ lib, ... }:
 let
   inherit (lib) mkOption types;
-  inherit (widgets.lib) mkBoolOption;
 
   # KDE expects a key/value pair like this:
   # ```ini
@@ -60,7 +59,11 @@ in
         default = null;
         description = "The title of this system monitor.";
       };
-      showTitle = mkBoolOption "Show or hide the title.";
+      showTitle = mkOption {
+        type = with types; nullOr bool;
+        default = null;
+        description = "Show or hide the title.";
+      };
       displayStyle = mkOption {
         type = with types; nullOr str;
         default = null;
@@ -116,6 +119,18 @@ in
           The list of text-only sensors, displayed in the pop-up upon clicking the widget.
         '';
       };
+      range = {
+        from = mkOption {
+          type = with lib.types; nullOr (ints.between 0 100);
+          default = null;
+          description = "The lower range the sensors can take.";
+        };
+        to = mkOption {
+          type = with lib.types; nullOr (ints.between 0 100);
+          default = null;
+          description = "The upper range the sensors can take.";
+        };
+      };
     };
 
     convert =
@@ -125,21 +140,28 @@ in
       , totalSensors
       , sensors
       , textOnlySensors
+      , range
       }: {
         name = "org.kde.plasma.systemmonitor";
-        config = lib.filterAttrsRecursive (_: v: v != null) (lib.recursiveUpdate
-          {
-            Appearance = {
-              inherit title;
-              inherit showTitle;
-              chartFace = displayStyle;
-            };
-            Sensors = {
-              lowPrioritySensorIds = textOnlySensors;
-              totalSensors = totalSensors;
-            };
-          }
-          sensors);
+        config = lib.filterAttrsRecursive (_: v: v != null)
+          (lib.recursiveUpdate
+            ({
+              Appearance = {
+                inherit title;
+                inherit showTitle;
+                chartFace = displayStyle;
+              };
+              Sensors = {
+                lowPrioritySensorIds = textOnlySensors;
+                totalSensors = totalSensors;
+              };
+              "org.kde.ksysguard.piechart/General" = {
+                rangeAuto = (range.from == null && range.to == null);
+                rangeFrom = range.from;
+                rangeTo = range.to;
+              };
+            })
+            sensors);
       };
   };
 }
