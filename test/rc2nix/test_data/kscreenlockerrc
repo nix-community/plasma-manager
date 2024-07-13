@@ -1,0 +1,6 @@
+[Greeter]
+WallpaperPlugin=org.kde.potd
+
+[Greeter][Wallpaper][org.kde.potd][General]
+Provider=bing
+UpdateOverMeteredConnection=0
