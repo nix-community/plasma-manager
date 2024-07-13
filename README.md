@@ -4,14 +4,17 @@ This project aims to provide [Home Manager][home-manager] modules which allow yo
 to configure KDE Plasma using Nix.
 
 ## Table of contents
+- [Manage KDE Plasma with Home Manager](#manage-kde-plasma-with-home-manager)
+- [Table of contents](#table-of-contents)
+- [Supported versions](#supported-versions)
 - [What's supported](#whats-supported)
-- [What's not supported](#whats-not-well-supported-at-the-moment)
+- [What's not well supported (at the moment)](#whats-not-well-supported-at-the-moment)
 - [What will not be supported](#what-will-not-be-supported)
 - [Getting started](#getting-started)
-- [Enabling declarative configuration](#make-your-configuration-more-declarative-with-overrideconfig)
-- [Capturing existing configuration](#capturing-your-current-configuration-with-rc2nix)
-- [Contributions and maintenance](#contributions-and-maintenance)
-- [Special thanks](#special-thanks)
+- [Make your configuration more declarative with overrideConfig](#make-your-configuration-more-declarative-with-overrideconfig)
+- [Capturing Your Current Configuration with rc2nix](#capturing-your-current-configuration-with-rc2nix)
+- [Contributions and Maintenance](#contributions-and-maintenance)
+- [Special Thanks](#special-thanks)
 
 ## Supported versions
 `plasma-manager` supports both plasma 5 and plasma 6. The `trunk` branch is the
@@ -33,7 +36,7 @@ At the moment `plasma-manager` supports configuring the following:
 - Configuration of spectacle shortcuts (via the `spectacle` module)
 - Shortcuts (via the `shortcuts` module)
 - Hotkeys (via the `hotkeys` module)
-- Panels (via the `panels` module)
+- Panels and Extra Widgets (via the `panels` module)
 - Screen locker (via the `kscreenlocker` module)
 - Fonts (via the `fonts` module)
 - Window Rules (via the `window-rules` module)
