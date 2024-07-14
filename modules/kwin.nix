@@ -199,6 +199,13 @@ in
         '';
       };
     };
+
+    borderlessMaximizedWindows = mkOption {
+      type = with types; nullOr bool;
+      default = null;
+      example = true;
+      description = "Maximized windows will not have a border.";
+    };
   };
 
   config.assertions = [
@@ -306,6 +313,13 @@ in
           }
           (virtualDesktopNameAttrs cfg.kwin.virtualDesktops.names)
         ];
+      })
+
+      # Borderless maximized windows
+      (mkIf (cfg.kwin.borderlessMaximizedWindows != null) {
+        Windows = {
+          BorderlessMaximizedWindows = cfg.kwin.BorderlessMaximizedWindows;
+        };
       })
     ]);
 }
