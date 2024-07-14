@@ -64,6 +64,11 @@ in
         default = null;
         description = "Show or hide the title.";
       };
+      showLegend = mkOption {
+        type = with types; nullOr bool;
+        default = null;
+        description = "Show or hide the legend.";
+      };
       displayStyle = mkOption {
         type = with types; nullOr str;
         default = null;
@@ -136,6 +141,7 @@ in
     convert =
       { title
       , showTitle
+      , showLegend
       , displayStyle
       , totalSensors
       , sensors
@@ -156,6 +162,7 @@ in
                 totalSensors = totalSensors;
               };
               "org.kde.ksysguard.piechart/General" = {
+                inherit showLegend;
                 rangeAuto = (range.from == null && range.to == null);
                 rangeFrom = range.from;
                 rangeTo = range.to;
