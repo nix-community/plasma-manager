@@ -318,7 +318,7 @@ in
       # Borderless maximized windows
       (mkIf (cfg.kwin.borderlessMaximizedWindows != null) {
         Windows = {
-          BorderlessMaximizedWindows = cfg.kwin.BorderlessMaximizedWindows;
+          BorderlessMaximizedWindows = cfg.kwin.borderlessMaximizedWindows;
         };
       })
     ]);
