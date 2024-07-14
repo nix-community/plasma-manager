@@ -4,7 +4,6 @@
 
   programs.plasma = {
     enable = true;
-    extraWidgets = [ "application-title-bar" "plasmusic-toolbar" ];
 
     #
     # Some high-level settings:
