@@ -67,7 +67,7 @@ let
     let
       removeColon = string: builtins.replaceStrings [ ":" ] [ "" ] string;
     in
-      toInt (removeColon time);
+      removeColon time;
 in
 {
   imports = [
