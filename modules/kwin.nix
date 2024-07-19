@@ -63,11 +63,7 @@ let
     in  
       "${toUpper firstLetter}${rest}";
 
-  convertTime = time:
-    let
-      removeColon = string: builtins.replaceStrings [ ":" ] [ "" ] string;
-    in
-      removeColon time;
+  removeColon = string: builtins.replaceStrings [ ":" ] [ "" ] string;
 in
 {
   imports = [
@@ -268,14 +264,14 @@ in
           default = null;
           example = "06:30";
           description = "The exact time when the morning light starts.";
-          apply = morning: if morning == null then null else convertTime morning;
+          apply = time: if time == null then null else removeColon time;
         };
         evening = mkOption {
           type = with types; nullOr str;
           default = null;
           example = "19:30";
           description = "The exact time when the evening light starts.";
-          apply = evening: if evening == null then null else convertTime evening;
+          apply = time: if time == null then null else removeColon time;
         };
       };
       transitionTime = mkOption {
@@ -320,8 +316,12 @@ in
       message = "programs.plasma.kwin.nightLight.location.latitude and programs.plasma.kwin.nightLight.location.longitude must be set when programs.plasma.kwin.nightLight.mode is set to location.";
     }
     {
-      assertion = (cfg.kwin.nightLight.time.morning == null || builtins.stringLength cfg.kwin.nightLight.time.morning == 5) && (cfg.kwin.nightLight.time.evening == null || builtins.stringLength cfg.kwin.nightLight.time.evening == 5);
-      message = "programs.plasma.kwin.nightLight.time.morning and programs.plasma.kwin.nightLight.time.evening must have the exact length of 5. So it can have this time format: HH:MM";
+      assertion = cfg.kwin.nightLight.time.morning == null || builtins.stringLength cfg.kwin.nightLight.time.morning == 4;
+      message = "programs.plasma.kwin.nightLight.time.morning must have the exact length of 4. If it doesn't have, it means that it doesn't have this time format: HH:MM";
+    }
+    {
+      assertion = cfg.kwin.nightLight.time.evening == null || builtins.stringLength cfg.kwin.nightLight.time.evening == 4;
+      message = "programs.plasma.kwin.nightLight.time.evening must have the exact length of 4. If it doesn't have, it means that it doesn't have this time format: HH:MM";
     }
   ];
 
