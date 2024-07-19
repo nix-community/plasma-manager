@@ -308,8 +308,8 @@ in
       message = "programs.plasma.kwin.effects.minimization.duration is only supported for the magic lamp effect";
     }
     {
-      assertion = cfg.kwin.nightLight.enable == null || cfg.kwin.nightLight.mode != null;
-      message = "programs.plasma.kwin.nightLight.mode must be set when programs.plasma.kwin.nightLight.enable is set.";
+      assertion = (cfg.kwin.nightLight.enable == null || cfg.kwin.nightLight.enable == false) || cfg.kwin.nightLight.mode != null;
+      message = "programs.plasma.kwin.nightLight.mode must be set when programs.plasma.kwin.nightLight.enable is true.";
     }
     {
       assertion = cfg.kwin.nightLight.mode != "Times" || (cfg.kwin.nightLight.time.morning != null && cfg.kwin.nightLight.time.evening != null);
