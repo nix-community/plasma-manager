@@ -250,13 +250,13 @@ in
       };
       temperature = {
         day = mkOption {
-          type = with types; nullOr int;
+          type = with types; nullOr ints.positive;
           default = null;
           example = 4500;
           description = "The temperature of the screen during the day.";
         };
         night = mkOption {
-          type = with types; nullOr int;
+          type = with types; nullOr ints.positive;
           default = null;
           example = 4500;
           description = "The temperature of the screen during the night.";
@@ -266,7 +266,7 @@ in
         morning = mkOption {
           type = with types; nullOr str;
           default = null;
-          example = "6:30";
+          example = "06:30";
           description = "The exact time when the morning light starts.";
           apply = morning: if morning == null then null else convertTime morning;
         };
@@ -279,7 +279,7 @@ in
         };
       };
       transitionTime = mkOption {
-        type = with types; nullOr int;
+        type = with types; nullOr ints.positive;
         default = null;
         example = 30;
         description = "The time in minutes it takes to transition from day to night.";
@@ -318,6 +318,10 @@ in
     {
       assertion = cfg.kwin.nightLight.mode != "Location" || (cfg.kwin.nightLight.location.latitude != null && cfg.kwin.nightLight.location.longitude != null);
       message = "programs.plasma.kwin.nightLight.location.latitude and programs.plasma.kwin.nightLight.location.longitude must be set when programs.plasma.kwin.nightLight.mode is set to location.";
+    }
+    {
+      assertion = (cfg.kwin.nightLight.time.morning == null || builtins.stringLength cfg.kwin.nightLight.time.morning == 5) && (cfg.kwin.nightLight.time.evening == null || builtins.stringLength cfg.kwin.nightLight.time.evening == 5);
+      message = "programs.plasma.kwin.nightLight.time.morning and programs.plasma.kwin.nightLight.time.evening must have the exact length of 5. So it can have this time format: HH:MM";
     }
   ];
 
