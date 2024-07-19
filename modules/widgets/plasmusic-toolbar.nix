@@ -1,6 +1,6 @@
 { lib, ... }:
 let
-  inherit (lib) mkOption types mkIf;
+  inherit (lib) mkOption types;
   qfont = import ../../lib/qfont.nix { inherit lib; };
 
   mkBoolOption = description: lib.mkOption {
