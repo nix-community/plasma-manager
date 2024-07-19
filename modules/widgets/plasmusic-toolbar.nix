@@ -280,7 +280,7 @@ in
             pointSize = 10;
           };
           description = "Custom font to use for the widget.";
-          apply = settings: if settings == null then null else qfont.fontToString;
+          apply = settings: if settings == null then null else qfont.fontToString settings;
         };
       };
     };
