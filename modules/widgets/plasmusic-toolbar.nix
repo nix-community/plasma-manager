@@ -77,30 +77,48 @@ in
         displayInSeparateLines = mkBoolOption "Whether to display song information (title and artist) in separate lines or not.";
       };
       showPlaybackControls = mkBoolOption "Whether to show playback controls or not.";
+      extraConfig = mkOption {
+        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        default = null;
+        example = {
+          General = {
+            useCustomFont = true;
+          };
+        };
+        description = ''
+          Extra configuration for the widget options.
+          
+          See available options at https://github.com/ccatterina/plasmusic-toolbar/blob/main/src/contents/config/main.xml
+        '';
+        apply = extraConfig: if extraConfig == null then {} else extraConfig;
+      };
     };
     convert =
       { panelIcon
       , preferredSource
       , songText
       , showPlaybackControls
+      , extraConfig
       }: {
         name = "plasmusic-toolbar";
-        config.General = lib.filterAttrs (_: v: v != null) (
-          {
-            panelIcon = panelIcon.icon;
-            useAlbumCoverAsPanelIcon = panelIcon.albumCover.useAsIcon;
-            albumCoverRadius = panelIcon.albumCover.radius;
+        config = {
+          General = lib.filterAttrs (_: v: v != null) (
+            {
+              panelIcon = panelIcon.icon;
+              useAlbumCoverAsPanelIcon = panelIcon.albumCover.useAsIcon;
+              albumCoverRadius = panelIcon.albumCover.radius;
 
-            sourceIndex = preferredSource;
+              sourceIndex = preferredSource;
 
-            maxSongWidthInPanel = songText.maximumWidth;
-            textScrollingSpeed = songText.scrolling.speed;
-            separateText = songText.displayInSeparateLines;
-            textScrollingBehaviour = songText.scrolling.behavior;
+              maxSongWidthInPanel = songText.maximumWidth;
+              textScrollingSpeed = songText.scrolling.speed;
+              separateText = songText.displayInSeparateLines;
+              textScrollingBehaviour = songText.scrolling.behavior;
 
-            commandsInPanel = showPlaybackControls;
-          }
-        );
+              commandsInPanel = showPlaybackControls;
+            }
+          );
+        } // extraConfig;
       };
   };
 }

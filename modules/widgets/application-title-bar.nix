@@ -437,6 +437,21 @@ in
           titleReplacementsTypes = map (r: r.type) replacements;
         };
       };
+      extraConfig = mkOption {
+        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        default = null;
+        example = {
+          General = {
+            launchers = [ "applications:org.kde.dolphin.desktop" "applications:org.kde.konsole.desktop" ];
+          };
+        };
+        description = ''
+          Extra configuration for the widget
+
+          See available options at https://github.com/antroids/application-title-bar/blob/main/package/contents/config/main.xml
+        '';
+        apply = extraConfig: if extraConfig == null then {} else extraConfig;
+      };
     };
     convert =
       { layout
@@ -448,6 +463,7 @@ in
       , mouseAreaClick
       , mouseAreaWheel
       , titleReplacements
+      , extraConfig
       }: {
         name = "com.github.antroids.application-title-bar";
         config = {
@@ -521,7 +537,7 @@ in
             }
           );
           TitleReplacements = titleReplacements;
-        };
+        } // extraConfig;
       };
   };
 }

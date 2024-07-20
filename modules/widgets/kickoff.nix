@@ -78,6 +78,17 @@ in
         };
       showActionButtonCaptions = mkBoolOption "Whether to display captions ('shut down', 'log out', etc.) for the footer action buttons";
       pin = mkBoolOption "Whether the popup should remain open when another window is activated.";
+      extraConfig = mkOption {
+        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        default = null;
+        example = {
+          General = {
+            icon = "nix-snowflake-white";
+          };
+        };
+        description = "Extra configuration options for the widget.";
+        apply = extraConfig: if extraConfig == null then {} else extraConfig;
+      };
     };
     convert =
       { icon
@@ -90,24 +101,27 @@ in
       , showButtonsFor
       , showActionButtonCaptions
       , pin
+      , extraConfig
       }: {
         name = "org.kde.plasma.kickoff";
-        config.General = lib.filterAttrs (_: v: v != null) (
-          {
-            icon = icon;
-            menuLabel = label;
-            alphaSort = sortAlphabetically;
-            compactMode = compactDisplayStyle;
-            paneSwap = sidebarPosition;
-            favoritesDisplay = favoritesDisplayMode;
-            applicationsDisplay = applicationsDisplayMode;
-            primaryActions = showButtonsFor;
-            showActionButtonCaptions = showActionButtonCaptions;
+        config = {
+          General = lib.filterAttrs (_: v: v != null) (
+            {
+              icon = icon;
+              menuLabel = label;
+              alphaSort = sortAlphabetically;
+              compactMode = compactDisplayStyle;
+              paneSwap = sidebarPosition;
+              favoritesDisplay = favoritesDisplayMode;
+              applicationsDisplay = applicationsDisplayMode;
+              primaryActions = showButtonsFor;
+              showActionButtonCaptions = showActionButtonCaptions;
 
-            # Other useful options
-            pin = pin;
-          }
-        );
+              # Other useful options
+              pin = pin;
+            }
+          );
+        } // extraConfig;
       };
   };
 }

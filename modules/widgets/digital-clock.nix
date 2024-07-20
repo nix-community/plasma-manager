@@ -219,6 +219,21 @@ in
             fontSize = font.size;
           };
       };
+      extraConfig = mkOption {
+        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        default = null;
+        example = {
+          Appearance = {
+            showDate = true;
+          };
+        };
+        description = ''
+          Extra configuration options for the widget.
+
+          See https://develop.kde.org/docs/plasma/scripting/keys/ for an list of options
+        '';
+        apply = extraConfig: if extraConfig == null then {} else extraConfig;
+      };
     };
 
     convert =
@@ -227,29 +242,32 @@ in
       , timeZone
       , calendar
       , font
+      , extraConfig
       }: {
         name = "org.kde.plasma.digitalclock";
-        config.Appearance = lib.filterAttrs (_: v: v != null) (
-          {
-            showDate = date.enable;
-            dateDisplayFormat = date.position;
+        config = {
+          Appearance = lib.filterAttrs (_: v: v != null) (
+            {
+              showDate = date.enable;
+              dateDisplayFormat = date.position;
 
-            showSeconds = time.showSeconds;
-            use24hFormat = time.format;
+              showSeconds = time.showSeconds;
+              use24hFormat = time.format;
 
-            selectedTimeZones = timeZone.selected;
-            lastSelectedTimezone = timeZone.lastSelected;
-            wheelChangesTimezone = timeZone.changeOnScroll;
-            displayTimezoneFormat = timeZone.format;
-            showLocalTimezone = timeZone.alwaysShow;
+              selectedTimeZones = timeZone.selected;
+              lastSelectedTimezone = timeZone.lastSelected;
+              wheelChangesTimezone = timeZone.changeOnScroll;
+              displayTimezoneFormat = timeZone.format;
+              showLocalTimezone = timeZone.alwaysShow;
 
-            firstDayOfWeek = calendar.firstDayOfWeek;
-            enabledCalendarPlugins = calendar.plugins;
-            showWeekNumbers = calendar.showWeekNumbers;
-          }
-          // date.format
-          // font
-        );
+              firstDayOfWeek = calendar.firstDayOfWeek;
+              enabledCalendarPlugins = calendar.plugins;
+              showWeekNumbers = calendar.showWeekNumbers;
+            }
+            // date.format
+            // font
+          );
+        } // extraConfig;
       };
   };
 }

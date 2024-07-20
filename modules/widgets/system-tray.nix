@@ -151,24 +151,33 @@ in
             );
         };
       };
+      extraConfig = mkOption {
+        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        default = null;
+        description = "Extra configuration options for the widget.";
+        apply = extraConfig: if extraConfig == null then {} else extraConfig;
+      };
     });
 
     convert =
       { pin
       , icons
       , items
+      , extraConfig
       }:
       let
-        settings.General = lib.filterAttrs (_: v: v != null) {
-          inherit pin;
-          extraItems = items.extra;
-          hiddenItems = items.hidden;
-          shownItems = items.shown;
-          showAllItems = items.showAll;
+        settings = {
+          General = lib.filterAttrs (_: v: v != null) {
+            inherit pin;
+            extraItems = items.extra;
+            hiddenItems = items.hidden;
+            shownItems = items.shown;
+            showAllItems = items.showAll;
 
-          scaleIconsToFit = icons.scaleToFit;
-          iconSpacing = icons.spacing;
-        };
+            scaleIconsToFit = icons.scaleToFit;
+            iconSpacing = icons.spacing;
+          };
+        } // extraConfig;
       in
       {
         name = "org.kde.plasma.systemtray";
