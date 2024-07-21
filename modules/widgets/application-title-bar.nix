@@ -441,8 +441,8 @@ in
         type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
         default = null;
         example = {
-          General = {
-            launchers = [ "applications:org.kde.dolphin.desktop" "applications:org.kde.konsole.desktop" ];
+          Appearance = {
+            windowTitleUndefined = "Plasma";
           };
         };
         description = ''
