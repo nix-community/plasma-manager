@@ -38,7 +38,7 @@ let
     options = {
       height = lib.mkOption {
         type = lib.types.int;
-        default = 32;
+        default = 44;
         description = "The height of the panel.";
       };
       offset = lib.mkOption {
