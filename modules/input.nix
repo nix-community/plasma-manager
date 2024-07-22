@@ -6,6 +6,15 @@ let
   cfg = config.programs.plasma;
   numlockSettings = [ "on" "off" "unchanged" ];
 
+  scrollMethods = {
+    twoFingers = 1;
+    touchPadEdges = 2;
+  };
+  rightClickMethods = {
+    bottomRight = 1;
+    twoFingers = 2;
+  };
+
   touchPadType = types.submodule {
     options = {
       enable = mkOption {
@@ -92,6 +101,49 @@ let
           Enables tap-to-click for the touchpad.
         '';
       };
+      tapAndDrag = mkOption {
+        type = with types; nullOr bool;
+        default = null;
+        example = true;
+        description = ''
+          Enables tap-and-drag for the touchpad.
+        '';
+      };
+      tapDragLock = mkOption {
+        type = with types; nullOr bool;
+        default = null;
+        example = true;
+        description = ''
+          Enables tap-and-drag lock for the touchpad.
+        '';
+      };
+      scrollMethod = mkOption {
+        type = with types; nullOr (enum (builtins.attrNames scrollMethods));
+        default = null;
+        example = "touchPadEdges";
+        description = ''
+          How scrolling is performed on the touchpad.
+        '';
+        apply = method: if (method == null) then null else scrollMethods."${method}";
+      };
+      rightClickMethod = mkOption {
+        type = with types; nullOr (enum (builtins.attrNames rightClickMethods));
+        default = null;
+        example = "twoFingers";
+        description = ''
+          How right-clicking is performed on the touchpad.
+        '';
+        apply = method: if (method == null) then null else rightClickMethods."${method}";
+      };
+      twoFingerTap = mkOption {
+        type = with types; nullOr (enum [ "rightClick" "middleClick" ]);
+        default = null;
+        example = "twoFingers";
+        description = ''
+          How right-clicking is performed on the touchpad.
+        '';
+        apply = v: if (v == null) then null else (v == "middleClick");
+      };
     };
   };
   touchPadToConfig = touchpad:
@@ -109,6 +161,11 @@ let
         PointerAcceleration = touchpad.pointerSpeed;
         NaturalScroll = touchpad.naturalScroll;
         TapToClick = touchpad.tapToClick;
+        TapAndDrag = touchpad.tapAndDrag;
+        TapDragLock = touchpad.tapDragLock;
+        ScrollMethod = touchpad.scrollMethod;
+        ClickMethod = touchpad.rightClickMethod;
+        LmrTapButtonMap = touchpad.twoFingerTap;
       };
     };
 in
