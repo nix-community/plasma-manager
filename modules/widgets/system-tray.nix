@@ -166,7 +166,7 @@ in
       , extraConfig
       }:
       let
-        settings = {
+        settings = lib.recursiveUpdate {
           General = lib.filterAttrs (_: v: v != null) {
             inherit pin;
             extraItems = items.extra;
@@ -177,7 +177,7 @@ in
             scaleIconsToFit = icons.scaleToFit;
             iconSpacing = icons.spacing;
           };
-        } // extraConfig;
+        } extraConfig;
       in
       {
         name = "org.kde.plasma.systemtray";

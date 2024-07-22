@@ -24,11 +24,11 @@
 
     convert = { showPercentage, extraConfig }: {
       name = "org.kde.plasma.battery";
-      config = {
+      config = lib.recursiveUpdate {
         General = lib.filterAttrs (_: v: v != null) {
           inherit showPercentage;
         };
-      } // extraConfig;
+      } extraConfig;
     };
   };
 }

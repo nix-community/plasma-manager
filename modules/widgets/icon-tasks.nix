@@ -151,7 +151,7 @@ in
       , extraConfig
       }: {
         name = "org.kde.plasma.icontasks";
-        config = {
+        config = lib.recursiveUpdate {
           General = lib.filterAttrs (_: v: v != null) (
             {
               launchers = launchers;
@@ -186,7 +186,7 @@ in
               reverseMode = behavior.newTasksAppearOn;
             }
           );
-        } // extraConfig;
+        } extraConfig;
       };
   };
 }

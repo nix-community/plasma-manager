@@ -101,7 +101,7 @@ in
       , extraConfig
       }: {
         name = "plasmusic-toolbar";
-        config = {
+        config = lib.recursiveUpdate {
           General = lib.filterAttrs (_: v: v != null) (
             {
               panelIcon = panelIcon.icon;
@@ -118,7 +118,7 @@ in
               commandsInPanel = showPlaybackControls;
             }
           );
-        } // extraConfig;
+        } extraConfig;
       };
   };
 }

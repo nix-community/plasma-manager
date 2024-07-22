@@ -466,7 +466,7 @@ in
       , extraConfig
       }: {
         name = "com.github.antroids.application-title-bar";
-        config = {
+        config = lib.recursiveUpdate {
           Appearance = lib.filterAttrs (_: v: v != null) (
             {
               # Widget layout
@@ -537,7 +537,7 @@ in
             }
           );
           TitleReplacements = titleReplacements;
-        } // extraConfig;
+        } extraConfig;
       };
   };
 }

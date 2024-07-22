@@ -245,7 +245,7 @@ in
       , extraConfig
       }: {
         name = "org.kde.plasma.digitalclock";
-        config = {
+        config = lib.recursiveUpdate {
           Appearance = lib.filterAttrs (_: v: v != null) (
             {
               showDate = date.enable;
@@ -267,7 +267,7 @@ in
             // date.format
             // font
           );
-        } // extraConfig;
+        } extraConfig;
       };
   };
 }

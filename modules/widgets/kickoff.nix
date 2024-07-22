@@ -104,7 +104,7 @@ in
       , extraConfig
       }: {
         name = "org.kde.plasma.kickoff";
-        config = {
+        config = lib.recursiveUpdate {
           General = lib.filterAttrs (_: v: v != null) (
             {
               icon = icon;
@@ -121,7 +121,7 @@ in
               pin = pin;
             }
           );
-        } // extraConfig;
+        } extraConfig;
       };
   };
 }
