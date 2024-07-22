@@ -175,7 +175,7 @@ in
                 rangeTo = range.to;
               };
             })
-            (lib.recursiveUpdate sensors settings)
+            (lib.recursiveUpdate sensors settings));
       };
   };
 }
