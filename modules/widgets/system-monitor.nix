@@ -158,26 +158,24 @@ in
         name = "org.kde.plasma.systemmonitor";
         config = lib.filterAttrsRecursive (_: v: v != null)
           (lib.recursiveUpdate
-            (lib.recursiveUpdate
-              ({
-                Appearance = {
-                  inherit title;
-                  inherit showTitle;
-                  chartFace = displayStyle;
-                };
-                Sensors = {
-                  lowPrioritySensorIds = textOnlySensors;
-                  totalSensors = totalSensors;
-                };
-                "org.kde.ksysguard.piechart/General" = {
-                  inherit showLegend;
-                  rangeAuto = (range.from == null && range.to == null);
-                  rangeFrom = range.from;
-                  rangeTo = range.to;
-                };
-              })
-              sensors)
-            settings);
+            ({
+              Appearance = {
+                inherit title;
+                inherit showTitle;
+                chartFace = displayStyle;
+              };
+              Sensors = {
+                lowPrioritySensorIds = textOnlySensors;
+                totalSensors = totalSensors;
+              };
+              "org.kde.ksysguard.piechart/General" = {
+                inherit showLegend;
+                rangeAuto = (range.from == null && range.to == null);
+                rangeFrom = range.from;
+                rangeTo = range.to;
+              };
+            })
+            (lib.recursiveUpdate sensors settings);
       };
   };
 }
