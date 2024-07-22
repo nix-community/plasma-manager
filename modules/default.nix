@@ -9,10 +9,10 @@
     ./kscreenlocker.nix
     ./kwin.nix
     ./panels.nix
+    ./powerdevil.nix
     ./shortcuts.nix
     ./spectacle.nix
     ./startup.nix
-    ./windows.nix
     ./window-rules.nix
     ./workspace.nix
   ];

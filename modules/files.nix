@@ -57,6 +57,7 @@ let
     "plasmanotifyrc"
     "plasmarc"
     "plasmashellrc"
+    "powerdevilrc"
     "systemsettingsrc"
   ] else lib.optional (builtins.length plasmaCfg.window-rules > 0) "kwinrulesrc");
 in

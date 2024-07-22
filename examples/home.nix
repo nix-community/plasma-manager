@@ -212,6 +212,18 @@
       }
     ];
 
+    powerdevil = {
+      powerButtonAction = "lockScreen";
+      autoSuspend = {
+        action = "shutDown";
+        idleTimeout = 1000;
+      };
+      turnOffDisplay = {
+        idleTimeout = 1000;
+        idleTimeoutWhenLocked = "immediately";
+      };
+    };
+
 
     #
     # Some mid-level settings:
