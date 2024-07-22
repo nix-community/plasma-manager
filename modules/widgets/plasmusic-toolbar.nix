@@ -270,7 +270,7 @@ in
         displayInSeparateLines = mkBoolOption "Whether to display song information (title and artist) in separate lines or not.";
       };
       showPlaybackControls = mkBoolOption "Whether to show playback controls or not.";
-      font = {
+      font = mkOption {
         type = types.nullOr fontType;
         default = null;
         example = {
