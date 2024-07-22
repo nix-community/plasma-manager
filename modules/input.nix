@@ -168,6 +168,112 @@ let
         LmrTapButtonMap = touchpad.twoFingerTap;
       };
     };
+  
+  mouseType = types.submodule {
+    options = {
+      enable = mkOption {
+        type = with types; nullOr bool;
+        default = null;
+        example = true;
+        description = ''
+          Enables or disables the mouse
+        '';
+      };
+      name = mkOption {
+        type = types.str;
+        default = null;
+        example = "Logitech G403 HERO Gaming Mouse";
+        description = ''
+          The name of the mouse.
+          You can find it out running cat /proc/bus/input/devices | grep -B 1 -i mouse
+        '';
+      };
+      vendorId = mkOption {
+        type = types.str;
+        default = null;
+        example = "046d";
+        description = ''
+          The vendor ID of the mouse.
+          You can find it out running cat /proc/bus/input/devices | grep -B 1 -i mouse
+        '';
+      };
+      productId = mkOption {
+        type = types.str;
+        default = null;
+        example = "c077";
+        description = ''
+          The product ID of the mouse.
+          You can find it out running cat /proc/bus/input/devices | grep -B 1 -i mouse
+        '';
+      };
+      leftHanded = mkOption {
+        type = with types; nullOr bool;
+        default = null;
+        example = false;
+        description = ''
+          Swap the left and right buttons
+        '';
+      };
+      middleMouseEmulation = mkOption {
+        type = with types; nullOr bool;
+        default = null;
+        example = false;
+        description = ''
+          Middle click by pressing the left and right buttons at the same time.
+          Activating this increases the click latency by 50ms
+        '';
+      };
+      acceleration = mkOption {
+        type = with types; nullOr (numbers.between (-1) 1);
+        default = null;
+        example = 0.5;
+        description = ''
+          Mouse acceleration
+        '';
+      };
+      accelerationProfile = mkOption {
+        type = with types; nullOr (enum [ "none" "default" ]);
+        default = null;
+        example = "none";
+        description = "Mouse acceleration profile";
+        apply = profile: if profile == "none" then 1 else if profile == "default" then 2 else null;
+      };
+      naturalScroll = mkOption {
+        type = with types; nullOr bool;
+        default = null;
+        example = true;
+        description = ''
+          Enables natural scrolling for the mouse.
+        '';
+      };
+      scrollSpeed = mkOption {
+        type = with types; nullOr (numbers.between 0.1 20);
+        default = null;
+        example = 0;
+        description = ''
+          How fast the scroll wheel moves
+        '';
+      };
+    };
+  };
+
+  mouseToConfig = mouse:
+    let
+      mouseName = mouse.name;
+      mouseVendor = mouse.vendorId;
+      mouseProduct = mouse.productId;
+    in
+    {
+      "Libinput/${mouseVendor}/${mouseProduct}/${mouseName}" = {
+        Enabled = mouse.enable;
+        LeftHanded = mouse.leftHanded;
+        MiddleMouseEmulation = mouse.middleMouseEmulation;
+        NaturalScroll = mouse.naturalScroll;
+        PointerAcceleration = mouse.acceleration;
+        PointerAccelerationProfile = mouse.accelerationProfile;
+        ScrollFactor = mouse.scrollSpeed;
+      };
+    };
 in
 {
   # Keyboard options
@@ -243,6 +349,28 @@ in
     '';
   };
 
+  options.programs.plasma.input.mouses = mkOption {
+    type = with types; listOf mouseType;
+    default = [ ];
+    example = [
+      {
+        enable = true;
+        name = "Logitech G403 HERO Gaming Mouse";
+        vendorId = "046d";
+        productId = "c08f";
+        leftHanded = false;
+        middleMouseEmulation = false;
+        acceleration = 0.5;
+        accelerationProfile = "none";
+        naturalScroll = false;
+        scrollSpeed = 0;
+      }
+    ];
+    description = ''
+      Configure the different mice.
+    '';
+  };
+
   config.programs.plasma.configFile."kcminputrc" = mkIf (cfg.enable) (mkMerge [
     {
       Keyboard = (lib.filterAttrs (k: v: v != null) {
@@ -252,6 +380,7 @@ in
       });
     }
     (mkMerge (map touchPadToConfig cfg.input.touchpads))
+    (mkMerge (map mouseToConfig cfg.input.mouses))
   ]
   );
 }
