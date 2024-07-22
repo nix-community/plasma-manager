@@ -151,24 +151,34 @@ in
             );
         };
       };
+      settings = mkOption {
+        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        default = null;
+        description = "Extra configuration options for the widget.";
+        apply = settings: if settings == null then {} else settings;
+      };
     });
 
     convert =
       { pin
       , icons
       , items
+      , settings
       }:
       let
-        settings.General = lib.filterAttrs (_: v: v != null) {
-          inherit pin;
-          extraItems = items.extra;
-          hiddenItems = items.hidden;
-          shownItems = items.shown;
-          showAllItems = items.showAll;
+        sets = {
+          General = lib.filterAttrs (_: v: v != null) {
+            inherit pin;
+            extraItems = items.extra;
+            hiddenItems = items.hidden;
+            shownItems = items.shown;
+            showAllItems = items.showAll;
 
-          scaleIconsToFit = icons.scaleToFit;
-          iconSpacing = icons.spacing;
+            scaleIconsToFit = icons.scaleToFit;
+            iconSpacing = icons.spacing;
+          };
         };
+        mergedSettings = lib.recursiveUpdate sets settings;
       in
       {
         name = "org.kde.plasma.systemtray";
@@ -177,7 +187,7 @@ in
             const tray = desktopById(widget.readConfig("SystrayContainmentId"));
             if (!tray) return; // if somehow the containment doesn't exist
           
-            ${widgets.lib.setWidgetSettings "tray" settings}
+            ${widgets.lib.setWidgetSettings "tray" mergedSettings}
             ${widgets.lib.addWidgetStmts "tray" "trayWidgets" items.configs}
           }
         '';

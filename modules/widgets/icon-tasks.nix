@@ -132,47 +132,61 @@ in
           apply = positionToReverse;
         };
       };
+      settings = mkOption {
+        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        default = null;
+        example = {
+          General = {
+            launchers = [ "applications:org.kde.dolphin.desktop" "applications:org.kde.konsole.desktop" ];
+          };
+        };
+        description = "Extra configuration options for the widget.";
+        apply = settings: if settings == null then {} else settings;
+      };
     };
     convert =
       { appearance
       , behavior
       , launchers
+      , settings
       }: {
         name = "org.kde.plasma.icontasks";
-        config.General = lib.filterAttrs (_: v: v != null) (
-          {
-            launchers = launchers;
+        config = lib.recursiveUpdate {
+          General = lib.filterAttrs (_: v: v != null) (
+            {
+              launchers = launchers;
 
-            # Appearance
-            showToolTips = appearance.showTooltips;
-            highlightWindows = appearance.highlightWindows;
-            indicateAudioStreams = appearance.indicateAudioStreams;
-            fill = appearance.fill;
+              # Appearance
+              showToolTips = appearance.showTooltips;
+              highlightWindows = appearance.highlightWindows;
+              indicateAudioStreams = appearance.indicateAudioStreams;
+              fill = appearance.fill;
 
-            forceStripes = appearance.rows.multirowView;
-            maxStripes = appearance.rows.maximum;
+              forceStripes = appearance.rows.multirowView;
+              maxStripes = appearance.rows.maximum;
 
-            iconSpacing = appearance.iconSpacing;
+              iconSpacing = appearance.iconSpacing;
 
-            # Behavior
-            groupingStrategy = behavior.grouping.method;
-            groupedTaskVisualization = behavior.grouping.clickAction;
-            sortingStrategy = behavior.sortingMethod;
-            minimizeActiveTaskOnClick = behavior.minimizeActiveTaskOnClick;
-            middleClickAction = behavior.middleClickAction;
+              # Behavior
+              groupingStrategy = behavior.grouping.method;
+              groupedTaskVisualization = behavior.grouping.clickAction;
+              sortingStrategy = behavior.sortingMethod;
+              minimizeActiveTaskOnClick = behavior.minimizeActiveTaskOnClick;
+              middleClickAction = behavior.middleClickAction;
 
-            wheelEnabled = behavior.wheel.switchBetweenTasks;
-            wheelSkipMinimized = behavior.wheel.ignoreMinimizedTasks;
+              wheelEnabled = behavior.wheel.switchBetweenTasks;
+              wheelSkipMinimized = behavior.wheel.ignoreMinimizedTasks;
 
-            showOnlyCurrentScreen = behavior.showTasks.onlyInCurrentScreen;
-            showOnlyCurrentDesktop = behavior.showTasks.onlyInCurrentDesktop;
-            showOnlyCurrentActivity = behavior.showTasks.onlyInCurrentActivity;
-            showOnlyMinimized = behavior.showTasks.onlyMinimized;
+              showOnlyCurrentScreen = behavior.showTasks.onlyInCurrentScreen;
+              showOnlyCurrentDesktop = behavior.showTasks.onlyInCurrentDesktop;
+              showOnlyCurrentActivity = behavior.showTasks.onlyInCurrentActivity;
+              showOnlyMinimized = behavior.showTasks.onlyMinimized;
 
-            unhideOnAttention = behavior.unhideOnAttentionNeeded;
-            reverseMode = behavior.newTasksAppearOn;
-          }
-        );
+              unhideOnAttention = behavior.unhideOnAttentionNeeded;
+              reverseMode = behavior.newTasksAppearOn;
+            }
+          );
+        } settings;
       };
   };
 }

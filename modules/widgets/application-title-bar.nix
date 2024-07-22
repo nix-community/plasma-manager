@@ -437,6 +437,21 @@ in
           titleReplacementsTypes = map (r: r.type) replacements;
         };
       };
+      settings = mkOption {
+        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        default = null;
+        example = {
+          Appearance = {
+            windowTitleUndefined = "Plasma";
+          };
+        };
+        description = ''
+          Extra configuration for the widget
+
+          See available options at https://github.com/antroids/application-title-bar/blob/main/package/contents/config/main.xml
+        '';
+        apply = settings: if settings == null then {} else settings;
+      };
     };
     convert =
       { layout
@@ -448,9 +463,10 @@ in
       , mouseAreaClick
       , mouseAreaWheel
       , titleReplacements
+      , settings
       }: {
         name = "com.github.antroids.application-title-bar";
-        config = {
+        config = lib.recursiveUpdate {
           Appearance = lib.filterAttrs (_: v: v != null) (
             {
               # Widget layout
@@ -521,7 +537,7 @@ in
             }
           );
           TitleReplacements = titleReplacements;
-        };
+        } settings;
       };
   };
 }

@@ -280,6 +280,21 @@ in
         description = "Custom font to use for the widget.";
         apply = font: if font == null then null else qfont.fontToString font;
       };
+      settings = mkOption {
+        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        default = null;
+        example = {
+          General = {
+            useCustomFont = true;
+          };
+        };
+        description = ''
+          Extra configuration for the widget options.
+          
+          See available options at https://github.com/ccatterina/plasmusic-toolbar/blob/main/src/contents/config/main.xml
+        '';
+        apply = settings: if settings == null then {} else settings;
+      };
     };
     convert =
       { panelIcon
@@ -287,27 +302,30 @@ in
       , songText
       , showPlaybackControls
       , font
+      , settings
       }: {
         name = "plasmusic-toolbar";
-        config.General = lib.filterAttrs (_: v: v != null) (
-          {
-            panelIcon = panelIcon.icon;
-            useAlbumCoverAsPanelIcon = panelIcon.albumCover.useAsIcon;
-            albumCoverRadius = panelIcon.albumCover.radius;
+        config = lib.recursiveUpdate {
+          General = lib.filterAttrs (_: v: v != null) (
+            {
+              panelIcon = panelIcon.icon;
+              useAlbumCoverAsPanelIcon = panelIcon.albumCover.useAsIcon;
+              albumCoverRadius = panelIcon.albumCover.radius;
 
-            sourceIndex = preferredSource;
+              sourceIndex = preferredSource;
 
-            maxSongWidthInPanel = songText.maximumWidth;
-            textScrollingSpeed = songText.scrolling.speed;
-            separateText = songText.displayInSeparateLines;
-            textScrollingBehaviour = songText.scrolling.behavior;
+              maxSongWidthInPanel = songText.maximumWidth;
+              textScrollingSpeed = songText.scrolling.speed;
+              separateText = songText.displayInSeparateLines;
+              textScrollingBehaviour = songText.scrolling.behavior;
 
-            commandsInPanel = showPlaybackControls;
-
-            useCustomFont = (font != null);
-            customFont = font;
-          }
-        );
+              commandsInPanel = showPlaybackControls;
+              
+              useCustomFont = (font != null);
+              customFont = font;
+            }
+          );
+        } settings;
       };
   };
 }
