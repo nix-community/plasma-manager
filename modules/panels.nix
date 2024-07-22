@@ -38,7 +38,7 @@ let
     options = {
       height = lib.mkOption {
         type = lib.types.int;
-        default = 32;
+        default = 44;
         description = "The height of the panel.";
       };
       offset = lib.mkOption {
@@ -70,8 +70,8 @@ let
         description = "The length mode of the panel. Defaults to `custom` if either `minLength` or `maxLength` is set.";
       };
       location = lib.mkOption {
-        type = lib.types.str;
-        default = with lib.types; nullOr (enum [ "top" "bottom" "left" "right" "floating" ]);
+        type = with lib.types; nullOr (enum [ "top" "bottom" "left" "right" "floating" ]);
+        default = "bottom";
         example = "left";
         description = "The location of the panel.";
       };
