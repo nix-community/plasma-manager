@@ -271,17 +271,14 @@ in
       };
       showPlaybackControls = mkBoolOption "Whether to show playback controls or not.";
       font = {
-        useCustomFont = mkBoolOption "Whether to use custom font or not.";
-        settings = mkOption {
-          type = types.nullOr fontType;
-          default = null;
-          example = {
-            family = "Noto Sans";
-            pointSize = 10;
-          };
-          description = "Custom font to use for the widget.";
-          apply = settings: if settings == null then null else qfont.fontToString settings;
+        type = types.nullOr fontType;
+        default = null;
+        example = {
+          family = "Noto Sans";
+          pointSize = 10;
         };
+        description = "Custom font to use for the widget.";
+        apply = settings: if settings == null then null else qfont.fontToString settings;
       };
     };
     convert =
@@ -307,8 +304,8 @@ in
 
             commandsInPanel = showPlaybackControls;
 
-            useCustomFont = font.useCustomFont;
-            customFont = font.settings;
+            useCustomFont = (font != null);
+            customFont = font;
           }
         );
       };
