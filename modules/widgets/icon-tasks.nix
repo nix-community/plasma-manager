@@ -132,7 +132,7 @@ in
           apply = positionToReverse;
         };
       };
-      extraConfig = mkOption {
+      settings = mkOption {
         type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
         default = null;
         example = {
@@ -141,14 +141,14 @@ in
           };
         };
         description = "Extra configuration options for the widget.";
-        apply = extraConfig: if extraConfig == null then {} else extraConfig;
+        apply = settings: if settings == null then {} else settings;
       };
     };
     convert =
       { appearance
       , behavior
       , launchers
-      , extraConfig
+      , settings
       }: {
         name = "org.kde.plasma.icontasks";
         config = lib.recursiveUpdate {
@@ -186,7 +186,7 @@ in
               reverseMode = behavior.newTasksAppearOn;
             }
           );
-        } extraConfig;
+        } settings;
       };
   };
 }

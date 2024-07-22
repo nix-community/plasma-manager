@@ -437,7 +437,7 @@ in
           titleReplacementsTypes = map (r: r.type) replacements;
         };
       };
-      extraConfig = mkOption {
+      settings = mkOption {
         type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
         default = null;
         example = {
@@ -450,7 +450,7 @@ in
 
           See available options at https://github.com/antroids/application-title-bar/blob/main/package/contents/config/main.xml
         '';
-        apply = extraConfig: if extraConfig == null then {} else extraConfig;
+        apply = settings: if settings == null then {} else settings;
       };
     };
     convert =
@@ -463,7 +463,7 @@ in
       , mouseAreaClick
       , mouseAreaWheel
       , titleReplacements
-      , extraConfig
+      , settings
       }: {
         name = "com.github.antroids.application-title-bar";
         config = lib.recursiveUpdate {
@@ -537,7 +537,7 @@ in
             }
           );
           TitleReplacements = titleReplacements;
-        } extraConfig;
+        } settings;
       };
   };
 }

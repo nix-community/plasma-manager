@@ -10,7 +10,7 @@
         example = true;
         description = "Enable to show the battery percentage as a small label over the battery icon.";
       };
-      extraConfig = lib.mkOption {
+      settings = lib.mkOption {
         type = with lib.types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
         default = null;
         example = {
@@ -18,17 +18,17 @@
             showPercentage = true;
           };
         };
-        apply = extraConfig: if extraConfig == null then {} else extraConfig;
+        apply = settings: if settings == null then {} else settings;
       };
     };
 
-    convert = { showPercentage, extraConfig }: {
+    convert = { showPercentage, settings }: {
       name = "org.kde.plasma.battery";
       config = lib.recursiveUpdate {
         General = lib.filterAttrs (_: v: v != null) {
           inherit showPercentage;
         };
-      } extraConfig;
+      } settings;
     };
   };
 }

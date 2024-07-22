@@ -219,7 +219,7 @@ in
             fontSize = font.size;
           };
       };
-      extraConfig = mkOption {
+      settings = mkOption {
         type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
         default = null;
         example = {
@@ -232,7 +232,7 @@ in
 
           See https://develop.kde.org/docs/plasma/scripting/keys/ for an list of options
         '';
-        apply = extraConfig: if extraConfig == null then {} else extraConfig;
+        apply = settings: if settings == null then {} else settings;
       };
     };
 
@@ -242,7 +242,7 @@ in
       , timeZone
       , calendar
       , font
-      , extraConfig
+      , settings
       }: {
         name = "org.kde.plasma.digitalclock";
         config = lib.recursiveUpdate {
@@ -267,7 +267,7 @@ in
             // date.format
             // font
           );
-        } extraConfig;
+        } settings;
       };
   };
 }
