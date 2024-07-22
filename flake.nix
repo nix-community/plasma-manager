@@ -47,8 +47,8 @@
 
           rc2nix = pkgs.writeShellApplication {
             name = "rc2nix";
-            runtimeInputs = with pkgs; [ ruby ];
-            text = ''ruby ${script/rc2nix.rb} "$@"'';
+            runtimeInputs = with pkgs; [ python3 ];
+            text = ''python3 ${script/rc2nix.py} "$@"'';
           };
         });
 
@@ -79,6 +79,15 @@
           buildInputs = with nixpkgsFor.${system}; [
             ruby
             ruby.devdoc
+            (
+              python3.withPackages (
+                pyPkgs: [
+                  pyPkgs.python-lsp-server
+                  pyPkgs.black
+                  pyPkgs.isort
+                ]
+              )
+            )
           ];
         };
       });

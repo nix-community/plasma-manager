@@ -55,6 +55,15 @@ let
   virtualDesktopNameAttrs = names:
     builtins.listToAttrs
       (imap1 (i: v: (nameValuePair "Name_${builtins.toString i}" v)) names);
+
+  capitalizeWord = word:
+    let 
+      firstLetter = builtins.substring 0 1 word;
+      rest = builtins.substring 1 (builtins.stringLength word - 1) word;
+    in  
+      "${toUpper firstLetter}${rest}";
+
+  removeColon = string: builtins.replaceStrings [ ":" ] [ "" ] string;
 in
 {
   imports = [
@@ -199,6 +208,79 @@ in
         '';
       };
     };
+
+    borderlessMaximizedWindows = mkOption {
+      type = with types; nullOr bool;
+      default = null;
+      example = true;
+      description = "Maximized windows will not have a border.";
+    };
+
+    nightLight = {
+      enable = mkOption {
+        type = with types; nullOr bool;
+        default = null;   
+        example = true;
+        description = "Enable the night light effect.";
+      };
+      mode = mkOption {
+        type = with types; nullOr (enum [ "constant" "location" "times" ]);
+        default = null;
+        example = "times";
+        description = "The mode of the night light effect.";
+        apply = mode: if mode == null then null else capitalizeWord mode;
+      };
+      location = {
+        latitude = mkOption {
+          type = with types; nullOr str;
+          default = null;
+          example = "39.160305343511446";
+          description = "The latitude of your location.";
+        };
+        longitude = mkOption {
+          type = with types; nullOr str;
+          default = null;
+          example = "-35.86466165413535";
+          description = "The longitude of your location.";
+        };  
+      };
+      temperature = {
+        day = mkOption {
+          type = with types; nullOr ints.positive;
+          default = null;
+          example = 4500;
+          description = "The temperature of the screen during the day.";
+        };
+        night = mkOption {
+          type = with types; nullOr ints.positive;
+          default = null;
+          example = 4500;
+          description = "The temperature of the screen during the night.";
+        };
+      };
+      time = {
+        morning = mkOption {
+          type = with types; nullOr str;
+          default = null;
+          example = "06:30";
+          description = "The exact time when the morning light starts.";
+          apply = time: if time == null then null else removeColon time;
+        };
+        evening = mkOption {
+          type = with types; nullOr str;
+          default = null;
+          example = "19:30";
+          description = "The exact time when the evening light starts.";
+          apply = time: if time == null then null else removeColon time;
+        };
+      };
+      transitionTime = mkOption {
+        type = with types; nullOr ints.positive;
+        default = null;
+        example = 30;
+        description = "The time in minutes it takes to transition from day to night.";
+      };
+    };
   };
 
   config.assertions = [
@@ -220,6 +302,26 @@ in
     {
       assertion = cfg.kwin.effects.minimization.duration == null || cfg.kwin.effects.minimization.animation == "magiclamp";
       message = "programs.plasma.kwin.effects.minimization.duration is only supported for the magic lamp effect";
+    }
+    {
+      assertion = (cfg.kwin.nightLight.enable == null || cfg.kwin.nightLight.enable == false) || cfg.kwin.nightLight.mode != null;
+      message = "programs.plasma.kwin.nightLight.mode must be set when programs.plasma.kwin.nightLight.enable is true.";
+    }
+    {
+      assertion = cfg.kwin.nightLight.mode != "Times" || (cfg.kwin.nightLight.time.morning != null && cfg.kwin.nightLight.time.evening != null);
+      message = "programs.plasma.kwin.nightLight.time.morning and programs.plasma.kwin.nightLight.time.evening must be set when programs.plasma.kwin.nightLight.mode is set to times.";
+    }
+    {
+      assertion = cfg.kwin.nightLight.mode != "Location" || (cfg.kwin.nightLight.location.latitude != null && cfg.kwin.nightLight.location.longitude != null);
+      message = "programs.plasma.kwin.nightLight.location.latitude and programs.plasma.kwin.nightLight.location.longitude must be set when programs.plasma.kwin.nightLight.mode is set to location.";
+    }
+    {
+      assertion = cfg.kwin.nightLight.time.morning == null || builtins.stringLength cfg.kwin.nightLight.time.morning == 4;
+      message = "programs.plasma.kwin.nightLight.time.morning must have the exact length of 4. If it doesn't have, it means that it doesn't have this time format: HH:MM";
+    }
+    {
+      assertion = cfg.kwin.nightLight.time.evening == null || builtins.stringLength cfg.kwin.nightLight.time.evening == 4;
+      message = "programs.plasma.kwin.nightLight.time.evening must have the exact length of 4. If it doesn't have, it means that it doesn't have this time format: HH:MM";
     }
   ];
 
@@ -306,6 +408,28 @@ in
           }
           (virtualDesktopNameAttrs cfg.kwin.virtualDesktops.names)
         ];
+      })
+
+      # Borderless maximized windows
+      (mkIf (cfg.kwin.borderlessMaximizedWindows != null) {
+        Windows = {
+          BorderlessMaximizedWindows = cfg.kwin.borderlessMaximizedWindows;
+        };
+      })
+
+      # Night Light
+      (mkIf (cfg.kwin.nightLight.enable != null) {
+        NightColor = {
+          Active = cfg.kwin.nightLight.enable;
+          DayTemperature = cfg.kwin.nightLight.temperature.day;
+          EveningBeginFixed = cfg.kwin.nightLight.time.evening;
+          LatitudeFixed = cfg.kwin.nightLight.location.latitude;
+          LongitudeFixed = cfg.kwin.nightLight.location.longitude;
+          Mode = cfg.kwin.nightLight.mode;
+          MorningBeginFixed = cfg.kwin.nightLight.time.morning;
+          NightTemperature = cfg.kwin.nightLight.temperature.night;
+          TransitionTime = cfg.kwin.nightLight.transitionTime;
+        };
       })
     ]);
 }

@@ -1,7 +1,21 @@
-{lib, widgets, ...}: 
+{ lib, ... }:
 let
   inherit (lib) mkOption types;
-  inherit (widgets.lib) mkBoolOption mkEnumOption;
+
+  mkBoolOption = description: lib.mkOption {
+    type = with lib.types; nullOr bool;
+    default = null;
+    inherit description;
+  };
+
+  getIndexFromEnum = enum: value:
+    if value == null
+    then null
+    else
+      lib.lists.findFirstIndex
+        (x: x == value)
+        (throw "getIndexFromEnum (plasmusic-toolbar widget): Value ${value} isn't present in the enum. This is a bug")
+        enum;
 in
 {
   plasmusicToolbar = {
@@ -22,40 +36,49 @@ in
             default = null;
             example = 8;
             description = "Radius of the album cover icon.";
-            apply = builtins.toString;
           };
         };
       };
-      preferredSource = mkEnumOption [ "any" "spotify" "vlc" ] // {
-        example = "any";
-        description = "Preferred source for song information.";
-      };
+      preferredSource =
+        let enumVals = [ "any" "spotify" "vlc" ];
+        in mkOption {
+          type = with types; nullOr (enum enumVals);
+          default = null;
+          example = "any";
+          description = "Preferred source for song information.";
+          apply = getIndexFromEnum enumVals;
+        };
       songText = {
         maximumWidth = mkOption {
           type = types.nullOr types.ints.unsigned;
           default = null;
           example = 200;
           description = "Maximum width of the song text.";
-          apply = builtins.toString;
         };
         scrolling = {
-          behavior = mkEnumOption [ "alwaysScroll" "scrollOnHover" "alwaysScrollExceptOnHover" ] // {
-            example = "alwaysScroll";
-            description = "Scrolling behavior of the song text.";
-          };
+          behavior =
+            let
+              enumVals = [ "alwaysScroll" "scrollOnHover" "alwaysScrollExceptOnHover" ];
+            in
+            mkOption {
+              type = with types; nullOr (enum enumVals);
+              default = null;
+              example = "alwaysScroll";
+              description = "Scrolling behavior of the song text.";
+              apply = getIndexFromEnum enumVals;
+            };
           speed = mkOption {
             type = types.nullOr (types.ints.between 1 10);
             default = null;
             example = 3;
             description = "Speed of the scrolling text.";
-            apply = builtins.toString;
           };
         };
         displayInSeparateLines = mkBoolOption "Whether to display song information (title and artist) in separate lines or not.";
       };
       showPlaybackControls = mkBoolOption "Whether to show playback controls or not.";
     };
-    convert = 
+    convert =
       { panelIcon
       , preferredSource
       , songText

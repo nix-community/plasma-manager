@@ -1,16 +1,32 @@
-{ lib, widgets, ...}:
+{ lib, ... }:
 let
   inherit (lib) mkOption types;
-  inherit (widgets.lib) mkBoolOption mkEnumOption;
 
-  convertSidebarPosition = sidebarPosition: let
-    mappings = { "left" = "false"; "right" = "true"; };
-  in mappings.${sidebarPosition} or (throw "Invalid sidebar position: ${sidebarPosition}");
+  mkBoolOption = description: mkOption {
+    type = with types; nullOr bool;
+    default = null;
+    inherit description;
+  };
+
+  getIndexFromEnum = enum: value:
+    if value == null
+    then null
+    else
+      lib.lists.findFirstIndex
+        (x: x == value)
+        (throw "getIndexFromEnum (kickoff widget): Value ${value} isn't present in the enum. This is a bug")
+        enum;
+
+  convertSidebarPosition = sidebarPosition:
+    let
+      mappings = { left = false; right = true; };
+    in
+      mappings.${sidebarPosition} or (throw "Invalid sidebar position: ${sidebarPosition}");
 in
 {
   kickoff = {
     description = "Kickoff is the default application launcher of the Plasma desktop.";
-    
+
     opts = {
       icon = mkOption {
         type = types.nullOr types.str;
@@ -33,18 +49,33 @@ in
         description = "The position of the sidebar.";
         apply = convertSidebarPosition;
       };
-      favoritesDisplayMode = mkEnumOption [ "grid" "list" ] // {
-        example = "list";
-        description = "How to display favorites.";
-      };
-      applicationsDisplayMode = mkEnumOption [ "grid" "list" ] // {
-        example = "grid";
-        description = "How to display applications.";
-      };
-      showButtonsFor = mkEnumOption [ "power" "session" "custom" "powerAndSession" ] // {
-        example = "powerAndSession";
-        description = "Which actions should be displayed in the footer.";
-      };
+      favoritesDisplayMode =
+        let enumVals = [ "grid" "list" ];
+        in mkOption {
+          type = with types; nullOr (enum enumVals);
+          default = null;
+          example = "list";
+          description = "How to display favorites.";
+          apply = getIndexFromEnum enumVals;
+        };
+      applicationsDisplayMode =
+        let enumVals = [ "grid" "list" ];
+        in mkOption {
+          type = with types; nullOr (enum enumVals);
+          default = null;
+          example = "grid";
+          description = "How to display applications.";
+          apply = getIndexFromEnum enumVals;
+        };
+      showButtonsFor =
+        let enumVals = [ "power" "session" "custom" "powerAndSession" ];
+        in mkOption {
+          type = with types; nullOr (enum enumVals);
+          default = null;
+          example = "powerAndSession";
+          description = "Which actions should be displayed in the footer.";
+          apply = getIndexFromEnum enumVals;
+        };
       showActionButtonCaptions = mkBoolOption "Whether to display captions ('shut down', 'log out', etc.) for the footer action buttons";
       pin = mkBoolOption "Whether the popup should remain open when another window is activated.";
     };
@@ -72,7 +103,7 @@ in
             applicationsDisplay = applicationsDisplayMode;
             primaryActions = showButtonsFor;
             showActionButtonCaptions = showActionButtonCaptions;
-            
+
             # Other useful options
             pin = pin;
           }

@@ -7,13 +7,38 @@ let
   cfg = config.programs.plasma;
   hasWidget = widgetName: builtins.any (panel: builtins.any (widget: widget.name == widgetName) panel.widgets) cfg.panels;
 
+  # An attrset keeping track of the packages which should be added when a
+  # widget is present in the config.
+  additionalWidgetPackages = with pkgs; {
+    "com.github.antroids.application-title-bar" = [ application-title-bar ];
+    plasmusic-toolbar = [ plasmusic-toolbar ];
+  };
+  # An attrset of service-names and widgets/conditions. If any of the
+  # conditions (given in cond) evaluate to true for any of the widgets with the
+  # name given in the widget attribute, the service is marked for restart in
+  # the panel-script.
+  serviceRestarts = {
+    "plasma-plasmashell" = [
+      {
+        widget = "org.kde.plasma.systemmonitor";
+        cond = widget: ((builtins.hasAttr "org.kde.ksysguard.piechart/General" widget.config) && (builtins.hasAttr "showLegend" widget.config."org.kde.ksysguard.piechart/General"));
+      }
+    ];
+  };
+  widgetsOfName = name: (lib.filter (w: w.name == name) (lib.flatten (map (panel: panel.widgets) cfg.panels)));
+  shouldRestart = service:
+    (
+      let candidates = serviceRestarts."${service}";
+      in (builtins.any (x: x) (map (v: (builtins.any v.cond (widgetsOfName v.widget))) candidates))
+    );
+
   widgets = import ./widgets args;
 
   panelType = lib.types.submodule ({ config, ... }: {
     options = {
       height = lib.mkOption {
         type = lib.types.int;
-        default = 32;
+        default = 44;
         description = "The height of the panel.";
       };
       offset = lib.mkOption {
@@ -45,8 +70,8 @@ let
         description = "The length mode of the panel. Defaults to `custom` if either `minLength` or `maxLength` is set.";
       };
       location = lib.mkOption {
-        type = lib.types.str;
-        default = with lib.types; nullOr (enum [ "top" "bottom" "left" "right" "floating" ]);
+        type = with lib.types; nullOr (enum [ "top" "bottom" "left" "right" "floating" ]);
+        default = "bottom";
         example = "left";
         description = "The location of the panel.";
       };
@@ -104,9 +129,14 @@ let
         apply = map widgets.convert;
       };
       screen = lib.mkOption {
-        type = with lib.types; nullOr int;
+        type = with lib.types; nullOr (oneOf [ ints.unsigned (listOf ints.unsigned) (enum [ "all" ]) ]);
         default = null;
-        description = "The screen the panel should appear on";
+        description = ''
+          The screen the panel should appear on. Can be an int, or a list of ints,
+          starting from 0, representing the ID of the screen the panel should
+          appear on. Alternatively it can be set to "any" if the panel should
+          appear on all the screens.
+        '';
       };
       extraSettings = lib.mkOption {
         type = with lib.types; nullOr str;
@@ -126,28 +156,23 @@ let
     ((builtins.length cfg.panels) > 0));
 in
 {
+  imports = [
+    (lib.mkRemovedOptionModule [ "programs" "plasma" "extraWidgets" ] "Place the widget packages in home.packages or environment.systemPackages instead.")
+  ];
+
   options.programs.plasma.panels = lib.mkOption {
     type = lib.types.listOf panelType;
     default = [ ];
-  };
-
-  options.programs.plasma.extraWidgets = lib.mkOption {
-    type = with lib.types; listOf (enum [ "application-title-bar" "plasmusic-toolbar" ]);
-    default = [];
-    example = [ "application-title-bar" ];
-    description = ''
-      Additional third-party widgets to be installed, that can be included in the panels.
-      The names of the supported third-party widget packages can be found in the share/plasma/plasmoids folder of the corresponding Nix package.
-    '';
   };
 
   # Wallpaper and panels are in the same script since the resetting of the
   # panels in the panels-script also has a tendency to reset the wallpaper, so
   # these should run at the same time.
   config = (lib.mkIf cfg.enable {
-    home.packages = with pkgs; []
-      ++ lib.optionals (lib.elem "application-title-bar" cfg.extraWidgets || hasWidget "com.github.antroids.application-title-bar") [ application-title-bar ]
-      ++ lib.optionals (lib.elem "plasmusic-toolbar" cfg.extraWidgets || hasWidget "plasmusic-toolbar") [ plasmusic-toolbar ];
+    home.packages = (lib.flatten (lib.filter (x: x != null)
+      (lib.mapAttrsToList
+        (widgetName: packages: if (hasWidget widgetName) then packages else null)
+        additionalWidgetPackages)));
 
     programs.plasma.startup.desktopScript."panels_and_wallpaper" = (lib.mkIf anyPanelOrWallpaperSet
       (
@@ -212,10 +237,11 @@ in
           preCommands = panelPreCMD;
           text = panelLayoutStr + wallpaperDesktopScript + wallpaperSlideShow + wallpaperPOTD + wallpaperPlainColor;
           postCommands = panelPostCMD + wallpaperPostCMD;
-          restartServices = (if anyNonDefaultScreens then [ "plasma-plasmashell" ] else [ ]);
+          restartServices =
+            (lib.unique (if anyNonDefaultScreens then [ "plasma-plasmashell" ] else [ ])
+              ++ (lib.filter (service: shouldRestart service) (builtins.attrNames serviceRestarts)));
           priority = 2;
         }
       ));
   });
 }
-

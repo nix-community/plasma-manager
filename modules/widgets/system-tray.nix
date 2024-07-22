@@ -1,7 +1,12 @@
 { lib, widgets, ... }:
 let
   inherit (lib) mkOption types;
-  inherit (widgets.lib) mkBoolOption;
+
+  mkBoolOption = description: mkOption {
+    type = with types; nullOr bool;
+    default = null;
+    inherit description;
+  };
 in
 {
   systemTray = {
@@ -29,9 +34,9 @@ in
               (if (spacing == null) then null
               else
                 (if builtins.isInt spacing then
-                  toString spacing
+                  spacing
                 else
-                  builtins.elemAt [ "1" "2" "6" ] (
+                  builtins.elemAt [ 1 2 6 ] (
                     lib.lists.findFirstIndex
                       (x: x == spacing)
                       (throw "systemTray: nonexistent spacing ${spacing}! This is a bug!")
