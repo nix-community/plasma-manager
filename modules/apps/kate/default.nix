@@ -27,6 +27,16 @@ let
 
   script = pkgs.writeScript "kate-check" (checkThemeName cfg.editor.theme.name);
 
+
+  getIndexFromEnum = enum: value:
+    if value == null
+    then null
+    else
+      lib.lists.findFirstIndex
+        (x: x == value)
+        (throw "getIndexFromEnum (kate): Value ${value} isn't present in the enum. This is a bug")
+        enum;
+
   qfont = import ../../../lib/qfont.nix { inherit lib; };
 
   styleStrategyType = lib.types.submodule {
@@ -296,6 +306,16 @@ in
         type = lib.types.bool;
       };
 
+      inputMode = let
+        enumVals = [ "normal" "vi" ];
+      in lib.mkOption {
+        type = lib.types.enum enumVals;
+        description = "The input mode for the editor.";
+        default = "normal";
+        example = "vi";
+        apply = getIndexFromEnum enumVals;
+      };
+
       font = lib.mkOption {
         type = fontType;
         default = {
@@ -459,6 +479,7 @@ in
       "Chars To Enclose Selection" = cfg.editor.brackets.characters;
       "Bracket Match Preview" = cfg.editor.brackets.highlightMatching;
       "Auto Brackets" = cfg.editor.brackets.automaticallyAddClosing;
+      "Input Mode" = cfg.editor.inputMode;
     };
 
     "UiSettings"."ColorScheme" = lib.mkIf (cfg.ui.colorScheme != null) cfg.ui.colorScheme;
