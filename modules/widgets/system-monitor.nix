@@ -176,7 +176,7 @@ in
                   rangeTo = range.to;
                 };
               })
-              sensors);
+              sensors)
             settings);
       };
   };
