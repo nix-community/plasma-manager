@@ -278,7 +278,7 @@ in
           pointSize = 10;
         };
         description = "Custom font to use for the widget.";
-        apply = settings: if settings == null then null else qfont.fontToString settings;
+        apply = font: if font == null then null else qfont.fontToString font;
       };
     };
     convert =
