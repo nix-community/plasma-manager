@@ -249,7 +249,7 @@ let
       scrollSpeed = mkOption {
         type = with types; nullOr (numbers.between 0.1 20);
         default = null;
-        example = 0;
+        example = 1;
         description = ''
           How fast the scroll wheel moves
         '';
