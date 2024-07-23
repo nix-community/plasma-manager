@@ -161,7 +161,8 @@ let
   anyDesktopFolderSettingsSet = (
     (cfg.workspace.desktop.icons.arrangement != null) ||
     (cfg.workspace.desktop.icons.size != null) ||
-    (cfg.workspace.desktop.icons.folderPreviewPopups != null)
+    (cfg.workspace.desktop.icons.folderPreviewPopups != null) ||
+    (cfg.workspace.desktop.icons.previewPlugins != null)
   );
 in
 {
@@ -248,6 +249,7 @@ in
                 ${lib.optionalString (cfg.workspace.desktop.icons.arrangement == "topToBottom") ''desktop.writeConfig("arrangement", 1);''}
                 ${stringIfNotNull cfg.workspace.desktop.icons.size ''desktop.writeConfig("iconSize", ${builtins.toString cfg.workspace.desktop.icons.size});''}
                 ${lib.optionalString (!cfg.workspace.desktop.icons.folderPreviewPopups) ''desktop.writeConfig("popups", false);''}
+                ${stringIfNotNull cfg.workspace.desktop.icons.previewPlugins ''desktop.writeConfig("previewPlugins", "${lib.strings.concatStringsSep "," cfg.workspace.desktop.icons.previewPlugins}");''}
               }
           '' else ""
           );

@@ -223,6 +223,15 @@ in
             Is enabled by default.
           '';
         };
+
+        previewPlugins = lib.mkOption {
+          type = with lib.types; nullOr (listOf str);
+          default = null;
+          example = ["audiothumbnail" "fontthumbnail"];
+          description = ''
+            Configures the preview plugins used to preview desktop files and folders.
+          '';
+        };
       };
     };
   };
