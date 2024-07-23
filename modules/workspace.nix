@@ -212,6 +212,17 @@ in
             The fourth position (3) is the default.
           '';
         };
+
+        folderPreviewPopups = lib.mkOption {
+          type = with lib.types; nullOr bool;
+          default = null;
+          example = false;
+          description = ''
+            Enables the arrow button when hovering over a folder on the desktop
+            which shows a preview popup of the folder’s contents.
+            Is enabled by default.
+          '';
+        };
       };
     };
   };
