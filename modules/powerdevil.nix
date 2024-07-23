@@ -100,8 +100,8 @@ in
         AutoSuspendIdleTimeoutSec = cfg.powerdevil.autoSuspend.idleTimeout;
       };
       "AC/Display" = {
-        TunOffDisplayIdleTimeoutSec = cfg.powerdevil.turnOffDisplay.idleTimeout;
-        TunOffDisplayIdleTimeoutWhenLockedSec = cfg.powerdevil.turnOffDisplay.idleTimeoutWhenLocked;
+        TurnOffDisplayIdleTimeoutSec = cfg.powerdevil.turnOffDisplay.idleTimeout;
+        TurnOffDisplayIdleTimeoutWhenLockedSec = cfg.powerdevil.turnOffDisplay.idleTimeoutWhenLocked;
       };
     };
   };
