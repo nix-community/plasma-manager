@@ -7,6 +7,8 @@ let
   cfg = config.programs.plasma;
   hasWidget = widgetName: builtins.any (panel: builtins.any (widget: widget.name == widgetName) panel.widgets) cfg.panels;
 
+  inherit (widgets.lib) stringIfNotNull;
+
   # An attrset keeping track of the packages which should be added when a
   # widget is present in the config.
   additionalWidgetPackages = with pkgs; {
@@ -157,7 +159,8 @@ let
     ((builtins.length cfg.panels) > 0));
 
   anyDesktopFolderSettingsSet = (
-    (cfg.workspace.desktop.icons.arrangement != null)
+    (cfg.workspace.desktop.icons.arrangement != null) ||
+    (cfg.workspace.desktop.icons.size != null)
   );
 in
 {
@@ -242,6 +245,7 @@ in
             for (const desktop of allDesktops) {
                 desktop.currentConfigGroup = ["General"];
                 ${lib.optionalString (cfg.workspace.desktop.icons.arrangement == "topToBottom") ''desktop.writeConfig("arrangement", 1);''}
+                ${stringIfNotNull cfg.workspace.desktop.icons.size ''desktop.writeConfig("iconSize", ${builtins.toString cfg.workspace.desktop.icons.size});''}
               }
           '' else ""
           );

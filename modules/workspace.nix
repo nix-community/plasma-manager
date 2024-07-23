@@ -201,6 +201,17 @@ in
             The direction, in which desktop icons are to be arranged.
           '';
         };
+
+        size = lib.mkOption {
+          type = (lib.types.ints.between 0 6);
+          default = null;
+          example = 2;
+          description = ''
+            The desktop icon size, which is normally configured via a slider
+            with seven possible values ranging from small (0) to large (6).
+            The fourth position (3) is the default.
+          '';
+        };
       };
     };
   };
