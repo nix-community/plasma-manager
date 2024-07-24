@@ -68,7 +68,7 @@ let
           Swap the left and right buttons
         '';
       };
-      middleMouseEmulation = mkOption {
+      middleButtonEmulation = mkOption {
         type = with types; nullOr bool;
         default = null;
         example = false;
@@ -157,7 +157,7 @@ let
         Enabled = touchpad.enable;
         DisableWhileTyping = touchpad.disableWhileTyping;
         LeftHanded = touchpad.leftHanded;
-        MiddleMouseEmulation = touchpad.middleMouseEmulation;
+        MiddleButtonEmulation = touchpad.middleButtonEmulation;
         PointerAcceleration = touchpad.pointerSpeed;
         NaturalScroll = touchpad.naturalScroll;
         TapToClick = touchpad.tapToClick;
