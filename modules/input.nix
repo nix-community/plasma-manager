@@ -191,7 +191,7 @@ let
       vendorId = mkOption {
         type = types.str;
         default = null;
-        example = "1133"; # 046d in decimal
+        example = "046d";
         description = ''
           The vendor ID of the mouse.
           You can find it out running cat /proc/bus/input/devices | grep -B 1 -i mouse
@@ -200,7 +200,7 @@ let
       productId = mkOption {
         type = types.str;
         default = null;
-        example = "49295"; # c08f in decimal
+        example = "c077";
         description = ''
           The product ID of the mouse.
           You can find it out running cat /proc/bus/input/devices | grep -B 1 -i mouse
@@ -356,8 +356,8 @@ in
       {
         enable = true;
         name = "Logitech G403 HERO Gaming Mouse";
-        vendorId = "1133";
-        productId = "49295";
+        vendorId = "046d";
+        productId = "c08f";
         leftHanded = false;
         middleMouseEmulation = false;
         acceleration = 0.5;
