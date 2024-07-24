@@ -37,7 +37,7 @@ let
       vendorId = mkOption {
         type = types.str;
         default = null;
-        example = "2321";
+        example = "0911";
         description = ''
           The vendor ID of the touchpad.
           You can find it out running cat /proc/bus/input/devices | grep -B 1 -i touchpad
@@ -46,7 +46,7 @@ let
       productId = mkOption {
         type = types.str;
         default = null;
-        example = "21128";
+        example = "5288";
         description = ''
           The product ID of the touchpad.
           You can find it out running cat /proc/bus/input/devices | grep -B 1 -i touchpad
