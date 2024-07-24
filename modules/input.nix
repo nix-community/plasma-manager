@@ -349,7 +349,7 @@ in
     '';
   };
 
-  options.programs.plasma.input.mouses = mkOption {
+  options.programs.plasma.input.mice = mkOption {
     type = with types; listOf mouseType;
     default = [ ];
     example = [
@@ -380,7 +380,7 @@ in
       });
     }
     (mkMerge (map touchPadToConfig cfg.input.touchpads))
-    (mkMerge (map mouseToConfig cfg.input.mouses))
+    (mkMerge (map mouseToConfig cfg.input.mice))
   ]
   );
 }
