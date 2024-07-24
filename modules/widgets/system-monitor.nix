@@ -136,6 +136,12 @@ in
           description = "The upper range the sensors can take.";
         };
       };
+      settings = mkOption {
+        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        default = null;
+        description = "Extra configuration options for the widget.";
+        apply = settings: if settings == null then {} else settings;
+      };
     };
 
     convert =
@@ -147,6 +153,7 @@ in
       , sensors
       , textOnlySensors
       , range
+      , settings
       }: {
         name = "org.kde.plasma.systemmonitor";
         config = lib.filterAttrsRecursive (_: v: v != null)
@@ -168,7 +175,7 @@ in
                 rangeTo = range.to;
               };
             })
-            sensors);
+            (lib.recursiveUpdate sensors settings));
       };
   };
 }

@@ -10,6 +10,7 @@
     ./kscreenlocker.nix
     ./kwin.nix
     ./panels.nix
+    ./powerdevil.nix
     ./shortcuts.nix
     ./spectacle.nix
     ./startup.nix

@@ -3,18 +3,32 @@
     description = "The battery indicator widget.";
 
     # See https://invent.kde.org/plasma/plasma-workspace/-/blob/master/applets/batterymonitor/package/contents/config/main.xml for the accepted raw options
-    opts.showPercentage = lib.mkOption {
-      type = with lib.types; nullOr bool;
-      default = null;
-      example = true;
-      description = "Enable to show the battery percentage as a small label over the battery icon.";
+    opts = {
+      showPercentage = lib.mkOption {
+        type = with lib.types; nullOr bool;
+        default = null;
+        example = true;
+        description = "Enable to show the battery percentage as a small label over the battery icon.";
+      };
+      settings = lib.mkOption {
+        type = with lib.types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        default = null;
+        example = {
+          General = {
+            showPercentage = true;
+          };
+        };
+        apply = settings: if settings == null then {} else settings;
+      };
     };
 
-    convert = { showPercentage }: {
+    convert = { showPercentage, settings }: {
       name = "org.kde.plasma.battery";
-      config.General = lib.filterAttrs (_: v: v != null) {
-        inherit showPercentage;
-      };
+      config = lib.recursiveUpdate {
+        General = lib.filterAttrs (_: v: v != null) {
+          inherit showPercentage;
+        };
+      } settings;
     };
   };
 }
