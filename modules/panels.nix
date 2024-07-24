@@ -12,6 +12,7 @@ let
   additionalWidgetPackages = with pkgs; {
     "com.github.antroids.application-title-bar" = [ application-title-bar ];
     plasmusic-toolbar = [ plasmusic-toolbar ];
+    "luisbocanegra.panel.colorizer" = [ plasma-panel-colorizer ];
   };
   # An attrset of service-names and widgets/conditions. If any of the
   # conditions (given in cond) evaluate to true for any of the widgets with the
