@@ -42,19 +42,19 @@ with lib.types; let
         {
           value = mkOption {
             type = str;
-            description = "${name} to match";
+            description = "Name to match.";
           };
           type = mkOption {
             type = enum (attrNames matchRules);
             default = "exact";
-            description = "${name} match type";
+            description = "Name match type.";
           };
         }
         // optionalAttrs hasMatchWhole {
           match-whole = mkOption {
             type = bool;
             default = true;
-            description = "Match whole ${name}";
+            description = "Match whole name.";
           };
         };
     };
