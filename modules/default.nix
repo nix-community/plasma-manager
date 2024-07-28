@@ -6,6 +6,7 @@
     ./files.nix
     ./fonts.nix
     ./hotkeys.nix
+    ./input.nix
     ./kscreenlocker.nix
     ./kwin.nix
     ./panels.nix
