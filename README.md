@@ -37,7 +37,7 @@ At the moment `plasma-manager` supports configuring the following:
 - Shortcuts (via the `shortcuts` module)
 - Hotkeys (via the `hotkeys` module)
 - Panels and Extra Widgets (via the `panels` module)
-- Keyboards (via the `input` module)
+- Keyboards, Touchpads and Mice (via the `input` module)
 - Screen locker (via the `kscreenlocker` module)
 - Fonts (via the `fonts` module)
 - Window Rules (via the `window-rules` module)
