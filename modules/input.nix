@@ -22,7 +22,7 @@ let
         default = null;
         example = true;
         description = ''
-          Enables or disables the touchpad
+          Enables or disables the touchpad.
         '';
       };
       name = mkOption {
@@ -31,7 +31,9 @@ let
         example = "PNP0C50:00 0911:5288 Touchpad";
         description = ''
           The name of the touchpad.
-          You can find it out running cat /proc/bus/input/devices | grep -B 1 -i touchpad
+
+          This can be found by looking at the Name attribute in the section in
+          /proc/bus/input/devices belonging to the touchpad.
         '';
       };
       vendorId = mkOption {
@@ -40,7 +42,9 @@ let
         example = "0911";
         description = ''
           The vendor ID of the touchpad.
-          You can find it out running cat /proc/bus/input/devices | grep -B 1 -i touchpad
+
+          This can be found by looking at the Vendor attribute in the section in
+          /proc/bus/input/devices belonging to the touchpad.
         '';
       };
       productId = mkOption {
@@ -49,7 +53,9 @@ let
         example = "5288";
         description = ''
           The product ID of the touchpad.
-          You can find it out running cat /proc/bus/input/devices | grep -B 1 -i touchpad
+
+          This can be found by looking at the Product attribute in the section
+          in /proc/bus/input/devices belonging to the touchpad.
         '';
       };
       disableWhileTyping = mkOption {
@@ -57,7 +63,7 @@ let
         default = null;
         example = true;
         description = ''
-          Disables the touchpad while typing
+          Disables the touchpad while typing.
         '';
       };
       leftHanded = mkOption {
@@ -65,7 +71,7 @@ let
         default = null;
         example = false;
         description = ''
-          Swap the left and right buttons
+          Swap the left and right buttons.
         '';
       };
       middleButtonEmulation = mkOption {
@@ -74,7 +80,7 @@ let
         example = false;
         description = ''
           Middle click by pressing the left and right buttons at the same time.
-          Activating this increases the click latency by 50ms
+          Activating this increases the click latency by 50ms.
         '';
       };
       pointerSpeed = mkOption {
@@ -82,7 +88,7 @@ let
         default = null;
         example = "0";
         description = ''
-          How fast the pointer moves
+          How fast the pointer moves.
         '';
       };
       naturalScroll = mkOption {
@@ -168,7 +174,7 @@ let
         LmrTapButtonMap = touchpad.twoFingerTap;
       };
     };
-  
+
   mouseType = types.submodule {
     options = {
       enable = mkOption {
@@ -176,7 +182,7 @@ let
         default = null;
         example = true;
         description = ''
-          Enables or disables the mouse
+          Enables or disables the mouse.
         '';
       };
       name = mkOption {
@@ -185,7 +191,9 @@ let
         example = "Logitech G403 HERO Gaming Mouse";
         description = ''
           The name of the mouse.
-          You can find it out running cat /proc/bus/input/devices | grep -B 1 -i mouse
+
+          This can be found by looking at the Name attribute in the section in
+          /proc/bus/input/devices belonging to the mouse.
         '';
       };
       vendorId = mkOption {
@@ -194,7 +202,9 @@ let
         example = "046d";
         description = ''
           The vendor ID of the mouse.
-          You can find it out running cat /proc/bus/input/devices | grep -B 1 -i mouse
+
+          This can be found by looking at the Vendor attribute in the section in
+          /proc/bus/input/devices belonging to the mouse.
         '';
       };
       productId = mkOption {
@@ -203,7 +213,9 @@ let
         example = "c077";
         description = ''
           The product ID of the mouse.
-          You can find it out running cat /proc/bus/input/devices | grep -B 1 -i mouse
+
+          This can be found by looking at the Product attribute in the section in
+          /proc/bus/input/devices belonging to the mouse.
         '';
       };
       leftHanded = mkOption {
@@ -211,7 +223,7 @@ let
         default = null;
         example = false;
         description = ''
-          Swap the left and right buttons
+          Swap the left and right buttons.
         '';
       };
       middleMouseEmulation = mkOption {
@@ -220,7 +232,7 @@ let
         example = false;
         description = ''
           Middle click by pressing the left and right buttons at the same time.
-          Activating this increases the click latency by 50ms
+          Activating this increases the click latency by 50ms.
         '';
       };
       acceleration = mkOption {
@@ -228,14 +240,14 @@ let
         default = null;
         example = 0.5;
         description = ''
-          Mouse acceleration
+          Mouse acceleration.
         '';
       };
       accelerationProfile = mkOption {
         type = with types; nullOr (enum [ "none" "default" ]);
         default = null;
         example = "none";
-        description = "Mouse acceleration profile";
+        description = "Mouse acceleration profile.";
         apply = profile: if profile == "none" then 1 else if profile == "default" then 2 else null;
       };
       naturalScroll = mkOption {
@@ -251,7 +263,7 @@ let
         default = null;
         example = 1;
         description = ''
-          How fast the scroll wheel moves
+          How fast the scroll wheel moves.
         '';
       };
     };
