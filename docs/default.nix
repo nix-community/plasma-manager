@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> { }, lib ? pkgs.lib, ... }:
+{ pkgs, lib, ... }:
 let
   dontCheckModules = { _module.check = false; };
   modules = [ ../modules dontCheckModules ];
