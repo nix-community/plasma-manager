@@ -57,11 +57,11 @@ let
       (imap1 (i: v: (nameValuePair "Name_${builtins.toString i}" v)) names);
 
   capitalizeWord = word:
-    let 
+    let
       firstLetter = builtins.substring 0 1 word;
       rest = builtins.substring 1 (builtins.stringLength word - 1) word;
-    in  
-      "${toUpper firstLetter}${rest}";
+    in
+    "${toUpper firstLetter}${rest}";
 
   removeColon = string: builtins.replaceStrings [ ":" ] [ "" ] string;
 in
@@ -219,7 +219,7 @@ in
     nightLight = {
       enable = mkOption {
         type = with types; nullOr bool;
-        default = null;   
+        default = null;
         example = true;
         description = "Enable the night light effect.";
       };
@@ -242,7 +242,7 @@ in
           default = null;
           example = "-35.86466165413535";
           description = "The longitude of your location.";
-        };  
+        };
       };
       temperature = {
         day = mkOption {
@@ -280,6 +280,23 @@ in
         example = 30;
         description = "The time in minutes it takes to transition from day to night.";
       };
+    };
+
+    edgeBarrier = mkOption {
+      type = with types; nullOr (ints.between 0 1000);
+      default = null;
+      example = 50;
+      description = ''
+        Additional distance the cursor needs to travel to cross screen edges. To
+        disable edge-barriers, set this to 0.
+      '';
+    };
+
+    cornerBarrier = mkOption {
+      type = with types; nullOr bool;
+      default = null;
+      example = false;
+      description = "When enabled, prevents the cursor from crossing at screen-corners.";
     };
   };
 
@@ -430,6 +447,13 @@ in
           NightTemperature = cfg.kwin.nightLight.temperature.night;
           TransitionTime = cfg.kwin.nightLight.transitionTime;
         };
+      })
+
+      (mkIf (cfg.kwin.cornerBarrier != null) {
+        EdgeBarrier.CornerBarrier = cfg.kwin.cornerBarrier;
+      })
+      (mkIf (cfg.kwin.edgeBarrier != null) {
+        EdgeBarrier.EdgeBarrier = cfg.kwin.edgeBarrier;
       })
     ]);
 }
