@@ -371,7 +371,7 @@ in
         vendorId = "046d";
         productId = "c08f";
         leftHanded = false;
-        middleMouseEmulation = false;
+        middleButtonEmulation = false;
         acceleration = 0.5;
         accelerationProfile = "none";
         naturalScroll = false;
