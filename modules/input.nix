@@ -375,7 +375,7 @@ in
         acceleration = 0.5;
         accelerationProfile = "none";
         naturalScroll = false;
-        scrollSpeed = 0;
+        scrollSpeed = 1;
       }
     ];
     description = ''
