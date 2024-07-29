@@ -8,7 +8,7 @@ in with lib.types;
     enable = lib.mkEnableOption ''
       Enable configuration management for okular.
     '';
-      
+
     package = lib.mkPackageOption pkgs [ "kdePackages" "okular" ] {
       example = "pkgs.libsForQt5.okular";
       extraDescription = ''
@@ -42,6 +42,53 @@ in with lib.types;
         description = "Open in continous mode by default.";
         default = null;
         type = nullOr bool;
+      };
+
+      viewMode = lib.mkOption {
+        description = "The view mode for the pages.";
+        default = "Single";
+        type =
+          nullOr (enum [ "Single" "Facing" "FacingFirstCentered" "Summary" ]);
+      };
+
+      zoomMode = lib.mkOption {
+        description = ''
+          Specifies the default zoom mode for file which were never opened before. For those files which were opened before the previous zoom mode is applied.
+          0: "100%"
+          1: "Fit Width"
+          2: "Fit Page"
+          3: "Auto Fit"
+          '';
+        default = 1;
+        type = nullOr (enum [ 0 1 2 3 ]);
+      };
+
+      obeyDrm = lib.mkOption {
+        description =
+          "Whether Okular should obey DRM (Digital Rights Management) restrictions. DRM limitations are used to make it impossible to perform certain actions with PDF documents, such as copying content to the clipboard. Note that in some configurations of Okular, this option is not available.";
+        default = true;
+        type = nullOr bool;
+      };
+
+      mouseMode = lib.mkOption {
+        description = ''
+          Browse - The mouse will have its normal behavior, left mouse button for dragging the document and following links and right mouse button for adding bookmarks and fit to width.
+          Zoom - The mouse will work as a zoom tool. Clicking left mouse button and dragging will zoom the view to the selected area, clicking right mouse button will bring the document back to the previous zoom.
+          Area Selection - The mouse will work as a rectangular region selection tool. In that mode clicking left mouse button and dragging will draw a selection box and provide the option of copying the selected content to the clipboard, speaking the selected text, or transforming the selection region into an image and saving it to a file.
+          Text Selection - The mouse will work as a text selection tool. In that mode clicking left mouse button and dragging will give the option of selecting the text of the document. Then, just click with the right mouse button to copy to the clipboard or speak the current selection.
+          Table Selection - Draw a rectangle around the text for the table, then click with the left mouse button to divide the text block into rows and columns. A left mouse button click on an existing line removes it and merges the adjacent rows or columns. Finally, just click with the right mouse button to copy the table to the clipboard.
+          Magnifier - Activates the magnifier mode for the mouse pointer. Press and hold the left mouse button to activate magnifier widget, move the pointer for panning through the document. The magnifier scales each pixel in the document into 10 pixels in the magnifier widget.
+        '';
+        default = "Browse";
+        type = nullOr (enum [
+          "Browse"
+          "Zoom"
+          "RectSelect"
+          "TextSelect"
+          "TableSelect"
+          "Magnifier"
+          "TrimSelect"
+        ]);
       };
     };
 
@@ -117,7 +164,12 @@ in with lib.types;
       "SmoothScrolling" = applyIfSet gen.smoothScrolling;
       "ShowScrollBars" = applyIfSet gen.showScrollbars;
       "ViewContinuous" = applyIfSet gen.viewContinuous;
+      "ViewMode" = applyIfSet gen.viewMode;
+      "MouseMode" = applyIfSet gen.mouseMode;
     };
+
+    "Zoom" = { "ZoomMode" = applyIfSet gen.zoomMode; };
+    "Core General" = { "ObeyDRM" = applyIfSet gen.obeyDrm; };
 
     "General" = {
       "ShellOpenFileInTabs" = applyIfSet gen.openFileInTabs;
@@ -138,7 +190,7 @@ in with lib.types;
     "Core Performance" = {
       "MemoryLevel" = applyIfSet perf.memoryUsage;
     };
-    
+
     "Dlg Performance" = {
       "EnableCompositing" = applyIfSet perf.enableTransparencyEffects;
     };
