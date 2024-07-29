@@ -273,7 +273,7 @@ in
       };
       musicControls = {
         showPlaybackControls = mkBoolOption "Whether to show playback controls or not.";
-        volumeStep = {
+        volumeStep = mkOption {
           type = types.nullOr (types.ints.between 1 100);
           default = null;
           example = 5;
