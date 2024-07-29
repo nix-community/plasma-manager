@@ -226,7 +226,7 @@ let
           Swap the left and right buttons.
         '';
       };
-      middleMouseEmulation = mkOption {
+      middleButtonEmulation = mkOption {
         type = with types; nullOr bool;
         default = null;
         example = false;
@@ -279,7 +279,7 @@ let
       "Libinput/${mouseVendor}/${mouseProduct}/${mouseName}" = {
         Enabled = mouse.enable;
         LeftHanded = mouse.leftHanded;
-        MiddleMouseEmulation = mouse.middleMouseEmulation;
+        MiddleButtonEmulation = mouse.middleButtonEmulation;
         NaturalScroll = mouse.naturalScroll;
         PointerAcceleration = mouse.acceleration;
         PointerAccelerationProfile = mouse.accelerationProfile;
