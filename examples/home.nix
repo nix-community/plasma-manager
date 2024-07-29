@@ -175,7 +175,7 @@
                 icon = "view-media-track";
               };
               preferredSource = "spotify";
-              showPlaybackControls = true;
+              musicControls.showPlaybackControls = true;
               songText = {
                 displayInSeparateLines = true;
                 maximumWidth = 640;
