@@ -1,21 +1,40 @@
-{ config, lib, pkgs, ... }:
+{ config
+, lib
+, pkgs
+, ...
+}:
 
 let
   cfg = config.programs.okular;
-in with lib.types;
+  getIndexFromEnum =
+    enum: value:
+    if value == null then
+      null
+    else
+      lib.lists.findFirstIndex (x: x == value)
+        (throw "getIndexFromEnum (okular): Value ${value} isn't present in the enum. This is a bug.")
+        enum;
+in
+with lib.types;
 {
   options.programs.okular = {
     enable = lib.mkEnableOption ''
       Enable configuration management for okular.
     '';
-      
-    package = lib.mkPackageOption pkgs [ "kdePackages" "okular" ] {
-      example = "pkgs.libsForQt5.okular";
-      extraDescription = ''
-        Which okular package to install. Use `pkgs.libsForQt5.okular` in Plasma5 and
-        `pkgs.kdePackages.okular` in Plasma6.
-      '';
-    };
+
+    package =
+      lib.mkPackageOption pkgs
+        [
+          "kdePackages"
+          "okular"
+        ]
+        {
+          example = "pkgs.libsForQt5.okular";
+          extraDescription = ''
+            Which okular package to install. Use `pkgs.libsForQt5.okular` in Plasma5 and
+            `pkgs.kdePackages.okular` in Plasma6.
+          '';
+        };
 
     # ==================================
     #     GENERAL
@@ -43,6 +62,70 @@ in with lib.types;
         default = null;
         type = nullOr bool;
       };
+
+      viewMode = lib.mkOption {
+        description = "The view mode for the pages.";
+        default = null;
+        type = nullOr (enum [
+          "Single"
+          "Facing"
+          "FacingFirstCentered"
+          "Summary"
+        ]);
+      };
+
+      zoomMode =
+        let
+          enumVals = [
+            "100%"
+            "fitWidth"
+            "fitPage"
+            "autoFit"
+          ];
+        in
+        lib.mkOption {
+          description = ''
+            Specifies the default zoom mode for file which were never opened before.
+            For those files which were opened before the previous zoom mode is applied.
+          '';
+          default = null;
+          type = nullOr (enum enumVals);
+          apply = getIndexFromEnum enumVals;
+        };
+
+      obeyDrm = lib.mkOption {
+        description = ''
+          Whether Okular should obey DRM (Digital Rights Management) restrictions.
+          DRM limitations are used to make it impossible to perform certain actions with PDF documents, such as copying content to the clipboard.
+          Note that in some configurations of Okular, this option is not available.
+        '';
+        default = null;
+        type = nullOr bool;
+      };
+
+      mouseMode = lib.mkOption {
+        description = ''
+          Changes what the mouse does.
+          See https://docs.kde.org/stable5/en/okular/okular/menutools.html for
+          the full description.
+          Browse - Click-and-drag with left mouse button.
+          Zoom - Zoom in with left mouse button. Reset zoom with right mouse button.
+          Rectangle Selection - Draw area selection with left mouse button. Display options with right mouse button.
+          Text Selection - Select text with left mouse button. Display options with right mouse button.
+          Table Selection - Similar to text selection but allows for transforming the document into a table.
+          Magnifier - Activates the magnifier with left mouse button.
+        '';
+        default = null;
+        type = nullOr (enum [
+          "Browse"
+          "Zoom"
+          "RectSelect"
+          "TextSelect"
+          "TableSelect"
+          "Magnifier"
+          "TrimSelect"
+        ]);
+      };
     };
 
     # ==================================
@@ -59,7 +142,11 @@ in with lib.types;
         mode = lib.mkOption {
           description = "Mode used to change the colors.";
           default = null;
-          type = nullOr (enum [ "Inverted" "Paper" "Recolor" ]);
+          type = nullOr (enum [
+            "Inverted"
+            "Paper"
+            "Recolor"
+          ]);
         };
         paperColor = lib.mkOption {
           description = "Paper color in RGB. Used for the `Paper` mode.";
@@ -94,7 +181,12 @@ in with lib.types;
       memoryUsage = lib.mkOption {
         description = "Memory usage of Okular. This impacts the speed performance of Okular as it determines how much computation results are kept in memory and not recomputed.";
         default = null;
-        type = nullOr (enum [ "Low" "Normal" "Agressive" "Greedy" ]);
+        type = nullOr (enum [
+          "Low"
+          "Normal"
+          "Agressive"
+          "Greedy"
+        ]);
       };
     };
   };
@@ -105,42 +197,52 @@ in with lib.types;
 
   # ==================================
   #     WRITING THE OKULARPARTRC
-  config.programs.plasma.configFile."okularpartrc" = lib.mkIf cfg.enable
-  (let
-    gen = cfg.general;
-    acc = cfg.accessibility;
-    perf = cfg.performance;
-    applyIfSet = opt: lib.mkIf (opt != null) opt;
-  in
-  {
-    "PageView" = {
-      "SmoothScrolling" = applyIfSet gen.smoothScrolling;
-      "ShowScrollBars" = applyIfSet gen.showScrollbars;
-      "ViewContinuous" = applyIfSet gen.viewContinuous;
-    };
+  config.programs.plasma.configFile."okularpartrc" = lib.mkIf cfg.enable (
+    let
+      gen = cfg.general;
+      acc = cfg.accessibility;
+      perf = cfg.performance;
+      applyIfSet = opt: lib.mkIf (opt != null) opt;
+    in
+    {
+      "PageView" = {
+        "SmoothScrolling" = applyIfSet gen.smoothScrolling;
+        "ShowScrollBars" = applyIfSet gen.showScrollbars;
+        "ViewContinuous" = applyIfSet gen.viewContinuous;
+        "ViewMode" = applyIfSet gen.viewMode;
+        "MouseMode" = applyIfSet gen.mouseMode;
+      };
 
-    "General" = {
-      "ShellOpenFileInTabs" = applyIfSet gen.openFileInTabs;
-    };
+      "Zoom" = {
+        "ZoomMode" = applyIfSet gen.zoomMode;
+      };
+      "Core General" = {
+        "ObeyDRM" = applyIfSet gen.obeyDrm;
+      };
 
-    "Document" = {
-      "ChangeColors" = applyIfSet acc.changeColors.enable;
-      "RenderMode" = applyIfSet acc.changeColors.mode;
-      "PaperColor" = applyIfSet acc.changeColors.paperColor;
-    };
+      "General" = {
+        "ShellOpenFileInTabs" = applyIfSet gen.openFileInTabs;
+      };
 
-    "Dlg Accessibility" = {
-      "HighlightLinks" = applyIfSet acc.highlightLinks;
-      "RecolorBackground" = applyIfSet acc.changeColors.recolorBackground;
-      "RecolorForeground" = applyIfSet acc.changeColors.recolorForeground;
-    };
+      "Document" = {
+        "ChangeColors" = applyIfSet acc.changeColors.enable;
+        "RenderMode" = applyIfSet acc.changeColors.mode;
+        "PaperColor" = applyIfSet acc.changeColors.paperColor;
+      };
 
-    "Core Performance" = {
-      "MemoryLevel" = applyIfSet perf.memoryUsage;
-    };
-    
-    "Dlg Performance" = {
-      "EnableCompositing" = applyIfSet perf.enableTransparencyEffects;
-    };
-  });
+      "Dlg Accessibility" = {
+        "HighlightLinks" = applyIfSet acc.highlightLinks;
+        "RecolorBackground" = applyIfSet acc.changeColors.recolorBackground;
+        "RecolorForeground" = applyIfSet acc.changeColors.recolorForeground;
+      };
+
+      "Core Performance" = {
+        "MemoryLevel" = applyIfSet perf.memoryUsage;
+      };
+
+      "Dlg Performance" = {
+        "EnableCompositing" = applyIfSet perf.enableTransparencyEffects;
+      };
+    }
+  );
 }
