@@ -968,6 +968,7 @@ in {
       , textAndIcons
       , panelBackground
       , blacklist
+      , layout
       , settings
       }: {
         name = "luisbocanegra.panel.colorizer";
