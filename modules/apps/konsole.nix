@@ -33,7 +33,7 @@ let
       command = lib.mkOption {
         type = with lib.types; nullOr str;
         default = null;
-        example = "''${pkgs.zsh}/bin/zsh";
+        example = lib.literalExpression ''"''${pkgs.zsh}/bin/zsh"'';
         description = ''
           The command to run on new sessions.
         '';
