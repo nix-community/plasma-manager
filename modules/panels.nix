@@ -13,6 +13,7 @@ let
     "com.github.antroids.application-title-bar" = [ application-title-bar ];
     plasmusic-toolbar = [ plasmusic-toolbar ];
     "org.kde.windowbuttons" = [ kdePackages.applet-window-buttons6 ];
+    "luisbocanegra.panelspacer.extended" = [ plasma-panel-spacer-extended ];
   };
   # An attrset of service-names and widgets/conditions. If any of the
   # conditions (given in cond) evaluate to true for any of the widgets with the
