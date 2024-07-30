@@ -123,6 +123,7 @@ with lib.types;
           "TextSelect"
           "TableSelect"
           "Magnifier"
+          "TrimSelect"
         ]);
       };
     };
