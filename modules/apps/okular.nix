@@ -1,29 +1,40 @@
-{ config, lib, pkgs, ... }:
+{ config
+, lib
+, pkgs
+, ...
+}:
 
 let
   cfg = config.programs.okular;
-  getIndexFromEnum = enum: value:
-  if value == null
-  then null
-  else
-    lib.lists.findFirstIndex
-      (x: x == value)
-      (throw "getIndexFromEnum (okular): Value ${value} isn't present in the enum. This is a bug.")
-      enum;
-in with lib.types;
+  getIndexFromEnum =
+    enum: value:
+    if value == null then
+      null
+    else
+      lib.lists.findFirstIndex (x: x == value)
+        (throw "getIndexFromEnum (okular): Value ${value} isn't present in the enum. This is a bug.")
+        enum;
+in
+with lib.types;
 {
   options.programs.okular = {
     enable = lib.mkEnableOption ''
       Enable configuration management for okular.
     '';
 
-    package = lib.mkPackageOption pkgs [ "kdePackages" "okular" ] {
-      example = "pkgs.libsForQt5.okular";
-      extraDescription = ''
-        Which okular package to install. Use `pkgs.libsForQt5.okular` in Plasma5 and
-        `pkgs.kdePackages.okular` in Plasma6.
-      '';
-    };
+    package =
+      lib.mkPackageOption pkgs
+        [
+          "kdePackages"
+          "okular"
+        ]
+        {
+          example = "pkgs.libsForQt5.okular";
+          extraDescription = ''
+            Which okular package to install. Use `pkgs.libsForQt5.okular` in Plasma5 and
+            `pkgs.kdePackages.okular` in Plasma6.
+          '';
+        };
 
     # ==================================
     #     GENERAL
@@ -55,21 +66,32 @@ in with lib.types;
       viewMode = lib.mkOption {
         description = "The view mode for the pages.";
         default = null;
-        type =
-          nullOr (enum [ "Single" "Facing" "FacingFirstCentered" "Summary" ]);
+        type = nullOr (enum [
+          "Single"
+          "Facing"
+          "FacingFirstCentered"
+          "Summary"
+        ]);
       };
 
-      zoomMode = 
-      let enumVals = [ "100%" "fitWidth" "fitPage" "autoFit" ];
-      in lib.mkOption {
-        description = ''
-          Specifies the default zoom mode for file which were never opened before.
-          For those files which were opened before the previous zoom mode is applied.
+      zoomMode =
+        let
+          enumVals = [
+            "100%"
+            "fitWidth"
+            "fitPage"
+            "autoFit"
+          ];
+        in
+        lib.mkOption {
+          description = ''
+            Specifies the default zoom mode for file which were never opened before.
+            For those files which were opened before the previous zoom mode is applied.
           '';
-        default = null;
-        type = nullOr (enum enumVals);
-        apply = getIndexFromEnum enumVals;
-      };
+          default = null;
+          type = nullOr (enum enumVals);
+          apply = getIndexFromEnum enumVals;
+        };
 
       obeyDrm = lib.mkOption {
         description = ''
@@ -119,7 +141,11 @@ in with lib.types;
         mode = lib.mkOption {
           description = "Mode used to change the colors.";
           default = null;
-          type = nullOr (enum [ "Inverted" "Paper" "Recolor" ]);
+          type = nullOr (enum [
+            "Inverted"
+            "Paper"
+            "Recolor"
+          ]);
         };
         paperColor = lib.mkOption {
           description = "Paper color in RGB. Used for the `Paper` mode.";
@@ -154,7 +180,12 @@ in with lib.types;
       memoryUsage = lib.mkOption {
         description = "Memory usage of Okular. This impacts the speed performance of Okular as it determines how much computation results are kept in memory and not recomputed.";
         default = null;
-        type = nullOr (enum [ "Low" "Normal" "Agressive" "Greedy" ]);
+        type = nullOr (enum [
+          "Low"
+          "Normal"
+          "Agressive"
+          "Greedy"
+        ]);
       };
     };
   };
@@ -165,47 +196,52 @@ in with lib.types;
 
   # ==================================
   #     WRITING THE OKULARPARTRC
-  config.programs.plasma.configFile."okularpartrc" = lib.mkIf cfg.enable
-  (let
-    gen = cfg.general;
-    acc = cfg.accessibility;
-    perf = cfg.performance;
-    applyIfSet = opt: lib.mkIf (opt != null) opt;
-  in
-  {
-    "PageView" = {
-      "SmoothScrolling" = applyIfSet gen.smoothScrolling;
-      "ShowScrollBars" = applyIfSet gen.showScrollbars;
-      "ViewContinuous" = applyIfSet gen.viewContinuous;
-      "ViewMode" = applyIfSet gen.viewMode;
-      "MouseMode" = applyIfSet gen.mouseMode;
-    };
+  config.programs.plasma.configFile."okularpartrc" = lib.mkIf cfg.enable (
+    let
+      gen = cfg.general;
+      acc = cfg.accessibility;
+      perf = cfg.performance;
+      applyIfSet = opt: lib.mkIf (opt != null) opt;
+    in
+    {
+      "PageView" = {
+        "SmoothScrolling" = applyIfSet gen.smoothScrolling;
+        "ShowScrollBars" = applyIfSet gen.showScrollbars;
+        "ViewContinuous" = applyIfSet gen.viewContinuous;
+        "ViewMode" = applyIfSet gen.viewMode;
+        "MouseMode" = applyIfSet gen.mouseMode;
+      };
 
-    "Zoom" = { "ZoomMode" = applyIfSet gen.zoomMode; };
-    "Core General" = { "ObeyDRM" = applyIfSet gen.obeyDrm; };
+      "Zoom" = {
+        "ZoomMode" = applyIfSet gen.zoomMode;
+      };
+      "Core General" = {
+        "ObeyDRM" = applyIfSet gen.obeyDrm;
+      };
 
-    "General" = {
-      "ShellOpenFileInTabs" = applyIfSet gen.openFileInTabs;
-    };
+      "General" = {
+        "ShellOpenFileInTabs" = applyIfSet gen.openFileInTabs;
+      };
 
-    "Document" = {
-      "ChangeColors" = applyIfSet acc.changeColors.enable;
-      "RenderMode" = applyIfSet acc.changeColors.mode;
-      "PaperColor" = applyIfSet acc.changeColors.paperColor;
-    };
+      "Document" = {
+        "ChangeColors" = applyIfSet acc.changeColors.enable;
+        "RenderMode" = applyIfSet acc.changeColors.mode;
+        "PaperColor" = applyIfSet acc.changeColors.paperColor;
+      };
 
-    "Dlg Accessibility" = {
-      "HighlightLinks" = applyIfSet acc.highlightLinks;
-      "RecolorBackground" = applyIfSet acc.changeColors.recolorBackground;
-      "RecolorForeground" = applyIfSet acc.changeColors.recolorForeground;
-    };
+      "Dlg Accessibility" = {
+        "HighlightLinks" = applyIfSet acc.highlightLinks;
+        "RecolorBackground" = applyIfSet acc.changeColors.recolorBackground;
+        "RecolorForeground" = applyIfSet acc.changeColors.recolorForeground;
+      };
 
-    "Core Performance" = {
-      "MemoryLevel" = applyIfSet perf.memoryUsage;
-    };
+      "Core Performance" = {
+        "MemoryLevel" = applyIfSet perf.memoryUsage;
+      };
 
-    "Dlg Performance" = {
-      "EnableCompositing" = applyIfSet perf.enableTransparencyEffects;
-    };
-  });
+      "Dlg Performance" = {
+        "EnableCompositing" = applyIfSet perf.enableTransparencyEffects;
+      };
+    }
+  );
 }
