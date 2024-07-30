@@ -2,6 +2,14 @@
 
 let
   cfg = config.programs.okular;
+  getIndexFromEnum = enum: value:
+  if value == null
+  then null
+  else
+    lib.lists.findFirstIndex
+      (x: x == value)
+      (throw "getIndexFromEnum (okular): Value ${value} isn't present in the enum. This is a bug.")
+      enum;
 in with lib.types;
 {
   options.programs.okular = {
@@ -46,40 +54,46 @@ in with lib.types;
 
       viewMode = lib.mkOption {
         description = "The view mode for the pages.";
-        default = "Single";
+        default = null;
         type =
           nullOr (enum [ "Single" "Facing" "FacingFirstCentered" "Summary" ]);
       };
 
-      zoomMode = lib.mkOption {
+      zoomMode = 
+      let enumVals = [ "100%" "fitWidth" "fitPage" "autoFit" ];
+      in lib.mkOption {
         description = ''
-          Specifies the default zoom mode for file which were never opened before. For those files which were opened before the previous zoom mode is applied.
-          0: "100%"
-          1: "Fit Width"
-          2: "Fit Page"
-          3: "Auto Fit"
+          Specifies the default zoom mode for file which were never opened before.
+          For those files which were opened before the previous zoom mode is applied.
           '';
-        default = 1;
-        type = nullOr (enum [ 0 1 2 3 ]);
+        default = null;
+        type = nullOr (enum enumVals);
+        apply = getIndexFromEnum enumVals;
       };
 
       obeyDrm = lib.mkOption {
-        description =
-          "Whether Okular should obey DRM (Digital Rights Management) restrictions. DRM limitations are used to make it impossible to perform certain actions with PDF documents, such as copying content to the clipboard. Note that in some configurations of Okular, this option is not available.";
-        default = true;
+        description = ''
+          Whether Okular should obey DRM (Digital Rights Management) restrictions.
+          DRM limitations are used to make it impossible to perform certain actions with PDF documents, such as copying content to the clipboard.
+          Note that in some configurations of Okular, this option is not available.
+        '';
+        default = null;
         type = nullOr bool;
       };
 
       mouseMode = lib.mkOption {
         description = ''
-          Browse - The mouse will have its normal behavior, left mouse button for dragging the document and following links and right mouse button for adding bookmarks and fit to width.
-          Zoom - The mouse will work as a zoom tool. Clicking left mouse button and dragging will zoom the view to the selected area, clicking right mouse button will bring the document back to the previous zoom.
-          Area Selection - The mouse will work as a rectangular region selection tool. In that mode clicking left mouse button and dragging will draw a selection box and provide the option of copying the selected content to the clipboard, speaking the selected text, or transforming the selection region into an image and saving it to a file.
-          Text Selection - The mouse will work as a text selection tool. In that mode clicking left mouse button and dragging will give the option of selecting the text of the document. Then, just click with the right mouse button to copy to the clipboard or speak the current selection.
-          Table Selection - Draw a rectangle around the text for the table, then click with the left mouse button to divide the text block into rows and columns. A left mouse button click on an existing line removes it and merges the adjacent rows or columns. Finally, just click with the right mouse button to copy the table to the clipboard.
-          Magnifier - Activates the magnifier mode for the mouse pointer. Press and hold the left mouse button to activate magnifier widget, move the pointer for panning through the document. The magnifier scales each pixel in the document into 10 pixels in the magnifier widget.
+          Changes what the mouse does.
+          See https://docs.kde.org/stable5/en/okular/okular/menutools.html for
+          the full description.
+          Browse - Click-and-drag with left mouse button.
+          Zoom - Zoom in with left mouse button. Reset zoom with right mouse button.
+          Rectangle Selection - Draw area selection with left mouse button. Display options with right mouse button.
+          Text Selection - Select text with left mouse button. Display options with right mouse button.
+          Table Selection - Similar to text selection but allows for transforming the document into a table.
+          Magnifier - Activates the magnifier with left mouse button.
         '';
-        default = "Browse";
+        default = null;
         type = nullOr (enum [
           "Browse"
           "Zoom"
@@ -87,7 +101,6 @@ in with lib.types;
           "TextSelect"
           "TableSelect"
           "Magnifier"
-          "TrimSelect"
         ]);
       };
     };
