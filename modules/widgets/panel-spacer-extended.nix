@@ -100,7 +100,6 @@ in {
           example = {
             action = "pausemedia";
             component = "mediacontrol";
-            command = ''date="$(date -u)"; notify-send "Single Click" "$date"'';
           };
           description = "The action to perform on single click.";
           apply = singleClick: let
@@ -117,7 +116,6 @@ in {
           example = {
             action = "pausemedia";
             component = "mediacontrol";
-            command = ''date="$(date -u)"; notify-send "Double Click" "$date"'';
           };
           description = "The action to perform on double click.";
           apply = doubleClick: let
@@ -134,7 +132,6 @@ in {
           example = {
             action = "pausemedia";
             component = "mediacontrol";
-            command = ''date="$(date -u)"; notify-send "Middle Click" "$date"'';
           };
           description = "The action to perform on middle click.";
           apply = middleClick: let
@@ -151,7 +148,6 @@ in {
           example = {
             action = "pausemedia";
             component = "mediacontrol";
-            command = ''date="$(date -u)"; notify-send "Wheel Up" "$date"'';
           };
           description = "The action to perform on mouse wheel up.";
           apply = mouseWheelUp: let
@@ -168,7 +164,6 @@ in {
           example = {
             action = "pausemedia";
             component = "mediacontrol";
-            command = ''date="$(date -u)"; notify-send "Wheel Down" "$date"'';
           };
           description = "The action to perform on mouse wheel down.";
           apply = mouseWheelDown: let
@@ -185,7 +180,6 @@ in {
           example = {
             action = "pausemedia";
             component = "mediacontrol";
-            command = ''date="$(date -u)"; notify-send "Drag Up" "$date"'';
           };
           description = "The action to perform on mouse drag up.";
           apply = mouseDragUp: let
@@ -202,7 +196,6 @@ in {
           example = {
             action = "pausemedia";
             component = "mediacontrol";
-            command = ''date="$(date -u)"; notify-send "Drag Down" "$date"'';
           };
           description = "The action to perform on mouse drag down.";
           apply = mouseDragDown: let
@@ -219,7 +212,6 @@ in {
           example = {
             action = "pausemedia";
             component = "mediacontrol";
-            command = ''date="$(date -u)"; notify-send "Drag Left" "$date"'';
           };
           description = "The action to perform on mouse drag left.";
           apply = mouseDragLeft: let
@@ -236,7 +228,6 @@ in {
           example = {
             action = "pausemedia";
             component = "mediacontrol";
-            command = ''date="$(date -u)"; notify-send "Drag Right" "$date"'';
           };
           description = "The action to perform on mouse drag right.";
           apply = mouseDragRight: let
@@ -253,7 +244,6 @@ in {
           example = {
             action = "pausemedia";
             component = "mediacontrol";
-            command = ''date="$(date -u)"; notify-send "Long Press" "$date"'';
           };
           description = "The action to perform on long press.";
           apply = longPress: let
