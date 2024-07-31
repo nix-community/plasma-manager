@@ -190,6 +190,19 @@ in
         '';
       };
     };
+
+    desktop = {
+      icons = {
+        arrangement = lib.mkOption {
+          type = with lib.types; nullOr (enum [ "leftToRight" "topToBottom" ]);
+          default = null;
+          example = "topToBottom";
+          description = ''
+            The direction, in which desktop icons are to be arranged.
+          '';
+        };
+      };
+    };
   };
 
   config = (lib.mkIf cfg.enable {

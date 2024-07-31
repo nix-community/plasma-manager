@@ -155,6 +155,10 @@ let
     (cfg.workspace.wallpaperPictureOfTheDay != null) ||
     (cfg.workspace.wallpaperPlainColor != null) ||
     ((builtins.length cfg.panels) > 0));
+
+  anyDesktopFolderSettingsSet = (
+    (cfg.workspace.desktop.icons.arrangement != null)
+  );
 in
 {
   imports = [
@@ -231,12 +235,20 @@ in
                 desktop.currentConfigGroup = Array("Wallpaper", "org.kde.color", "General");
                 desktop.writeConfig("Color", "${cfg.workspace.wallpaperPlainColor}");
             }
+          '' else "");
+          desktopFolderSettings = (if anyDesktopFolderSettingsSet then ''
+            // Desktop folder settings
+            let allDesktops = desktops();
+            for (const desktop of allDesktops) {
+                desktop.currentConfigGroup = ["General"];
+                ${lib.optionalString (cfg.workspace.desktop.icons.arrangement == "topToBottom") ''desktop.writeConfig("arrangement", 1);''}
+              }
           '' else ""
           );
         in
         {
           preCommands = panelPreCMD;
-          text = panelLayoutStr + wallpaperDesktopScript + wallpaperSlideShow + wallpaperPOTD + wallpaperPlainColor;
+          text = panelLayoutStr + wallpaperDesktopScript + wallpaperSlideShow + wallpaperPOTD + wallpaperPlainColor + desktopFolderSettings;
           postCommands = panelPostCMD + wallpaperPostCMD;
           restartServices =
             (lib.unique (if anyNonDefaultScreens then [ "plasma-plasmashell" ] else [ ])
