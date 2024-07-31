@@ -8294,12 +8294,12 @@ list of (string or attribute-tagged union or (submodule))</p>
 </dd>
 <dt>
  <span class="term">
- <a id="opt-programs.plasma.powerdevil.autoSuspend.action"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.autoSuspend.action"><code class="option">programs.plasma.powerdevil.autoSuspend.action</code>
+ <a id="opt-programs.plasma.powerdevil.AC.autoSuspend.action"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.AC.autoSuspend.action"><code class="option">programs.plasma.powerdevil.AC.autoSuspend.action</code>
   </a>
  </span>
 </dt>
 <dd>
-<p>The action to perform after a certain period of inactivity.</p>
+<p>The action, when on AC, to perform after a certain period of inactivity.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
 null or one of “nothing”, “shutDown”, “sleep”</p>
@@ -8321,13 +8321,13 @@ null or one of “nothing”, “shutDown”, “sleep”</p>
 </dd>
 <dt>
  <span class="term">
- <a id="opt-programs.plasma.powerdevil.autoSuspend.idleTimeout"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.autoSuspend.idleTimeout"><code class="option">programs.plasma.powerdevil.autoSuspend.idleTimeout</code>
+ <a id="opt-programs.plasma.powerdevil.AC.autoSuspend.idleTimeout"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.AC.autoSuspend.idleTimeout"><code class="option">programs.plasma.powerdevil.AC.autoSuspend.idleTimeout</code>
   </a>
  </span>
 </dt>
 <dd>
-<p>The duration (in seconds) the computer must be idle until the
-auto-suspend action is executed.</p>
+<p>The duration (in seconds), when on AC, the computer must be idle
+until the auto-suspend action is executed.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
 null or integer between 60 and 600000 (both inclusive)</p>
@@ -8349,12 +8349,67 @@ null or integer between 60 and 600000 (both inclusive)</p>
 </dd>
 <dt>
  <span class="term">
- <a id="opt-programs.plasma.powerdevil.powerButtonAction"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.powerButtonAction"><code class="option">programs.plasma.powerdevil.powerButtonAction</code>
+ <a id="opt-programs.plasma.powerdevil.AC.dimDisplay.enable"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.AC.dimDisplay.enable"><code class="option">programs.plasma.powerdevil.AC.dimDisplay.enable</code>
   </a>
  </span>
 </dt>
 <dd>
-<p>The action to perform when the power button is pressed.</p>
+<p>Enable or disable screen dimming.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.AC.dimDisplay.idleTimeOut"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.AC.dimDisplay.idleTimeOut"><code class="option">programs.plasma.powerdevil.AC.dimDisplay.idleTimeOut</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The duration (in seconds), when on AC, the computer must be idle
+until the display starts dimming.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or integer between 20 and 600000 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">300</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.AC.powerButtonAction"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.AC.powerButtonAction"><code class="option">programs.plasma.powerdevil.AC.powerButtonAction</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The action, when on AC, to perform when the power button is pressed.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
 null or one of “lockScreen”, “nothing”, “showLogoutScreen”, “shutDown”, “sleep”, “turnOffScreen”</p>
@@ -8376,13 +8431,13 @@ null or one of “lockScreen”, “nothing”, “showLogoutScreen”, “shutD
 </dd>
 <dt>
  <span class="term">
- <a id="opt-programs.plasma.powerdevil.turnOffDisplay.idleTimeout"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.turnOffDisplay.idleTimeout"><code class="option">programs.plasma.powerdevil.turnOffDisplay.idleTimeout</code>
+ <a id="opt-programs.plasma.powerdevil.AC.turnOffDisplay.idleTimeout"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.AC.turnOffDisplay.idleTimeout"><code class="option">programs.plasma.powerdevil.AC.turnOffDisplay.idleTimeout</code>
   </a>
  </span>
 </dt>
 <dd>
-<p>The duration (in seconds) the computer must be idle (when unlocked)
-until the display turns off.</p>
+<p>The duration (in seconds), when on AC, the computer must be idle
+(when unlocked) until the display turns off.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
 null or value “never” (singular enum) or integer between 30 and 600000 (both inclusive)</p>
@@ -8404,13 +8459,206 @@ null or value “never” (singular enum) or integer between 30 and 600000 (both
 </dd>
 <dt>
  <span class="term">
- <a id="opt-programs.plasma.powerdevil.turnOffDisplay.idleTimeoutWhenLocked"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.turnOffDisplay.idleTimeoutWhenLocked"><code class="option">programs.plasma.powerdevil.turnOffDisplay.idleTimeoutWhenLocked</code>
+ <a id="opt-programs.plasma.powerdevil.AC.turnOffDisplay.idleTimeoutWhenLocked"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.AC.turnOffDisplay.idleTimeoutWhenLocked"><code class="option">programs.plasma.powerdevil.AC.turnOffDisplay.idleTimeoutWhenLocked</code>
   </a>
  </span>
 </dt>
 <dd>
-<p>The duration (in seconds) the computer must be idle (when locked)
-until the display turns off.</p>
+<p>The duration (in seconds), when on AC, the computer must be idle
+(when locked) until the display turns off.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “whenLockedAndUnlocked”, “immediately” or integer between 20 and 600000 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">60</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.battery.autoSuspend.action"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.battery.autoSuspend.action"><code class="option">programs.plasma.powerdevil.battery.autoSuspend.action</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The action, when on battery, to perform after a certain period of inactivity.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “nothing”, “shutDown”, “sleep”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;nothing&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.battery.autoSuspend.idleTimeout"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.battery.autoSuspend.idleTimeout"><code class="option">programs.plasma.powerdevil.battery.autoSuspend.idleTimeout</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The duration (in seconds), when on battery, the computer must be idle
+until the auto-suspend action is executed.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or integer between 60 and 600000 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">600</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.battery.dimDisplay.enable"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.battery.dimDisplay.enable"><code class="option">programs.plasma.powerdevil.battery.dimDisplay.enable</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Enable or disable screen dimming.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.battery.dimDisplay.idleTimeOut"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.battery.dimDisplay.idleTimeOut"><code class="option">programs.plasma.powerdevil.battery.dimDisplay.idleTimeOut</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The duration (in seconds), when on battery, the computer must be idle
+until the display starts dimming.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or integer between 20 and 600000 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">300</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.battery.powerButtonAction"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.battery.powerButtonAction"><code class="option">programs.plasma.powerdevil.battery.powerButtonAction</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The action, when on battery, to perform when the power button is pressed.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “lockScreen”, “nothing”, “showLogoutScreen”, “shutDown”, “sleep”, “turnOffScreen”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;nothing&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.battery.turnOffDisplay.idleTimeout"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.battery.turnOffDisplay.idleTimeout"><code class="option">programs.plasma.powerdevil.battery.turnOffDisplay.idleTimeout</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The duration (in seconds), when on battery, the computer must be idle
+(when unlocked) until the display turns off.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or value “never” (singular enum) or integer between 30 and 600000 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">300</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.battery.turnOffDisplay.idleTimeoutWhenLocked"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.battery.turnOffDisplay.idleTimeoutWhenLocked"><code class="option">programs.plasma.powerdevil.battery.turnOffDisplay.idleTimeoutWhenLocked</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The duration (in seconds), when on battery, the computer must be idle
+(when locked) until the display turns off.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
 null or one of “whenLockedAndUnlocked”, “immediately” or integer between 20 and 600000 (both inclusive)</p>
