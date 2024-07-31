@@ -127,6 +127,6 @@ in
   };
 
   config.programs.plasma.configFile = lib.mkIf cfg.enable {
-    powerdevilrc = lib.filterAttrs (k: v: v != null) ((createPowerDevilConfig "AC" "AC") // (createPowerDevilConfig "BAT" "battery"));
+    powerdevilrc = lib.filterAttrs (k: v: v != null) ((createPowerDevilConfig "AC" "AC") // (createPowerDevilConfig "Battery" "battery"));
   };
 }
