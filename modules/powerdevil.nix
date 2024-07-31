@@ -79,6 +79,23 @@ let
           else timeout;
       };
     };
+    dimDisplay = {
+      enable = lib.mkOption {
+        type = with lib.types; nullOr bool;
+        default = null;
+        example = false;
+        description = "Enable or disable screen dimming.";
+      };
+      idleTimeOut = lib.mkOption {
+        type = with lib.types; nullOr (ints.between 20 600000);
+        default = null;
+        example = 300;
+        description = ''
+          The duration (in seconds), when on ${type}, the computer must be idle
+          until the display starts dimming.
+        '';
+      };
+    };
   };
 
   # By the same logic as createPowerDevilOptions, we can generate the
@@ -94,6 +111,14 @@ let
     "${cfgSectName}/Display" = {
       TurnOffDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.turnOffDisplay.idleTimeout;
       TurnOffDisplayIdleTimeoutWhenLockedSec = cfg.powerdevil.${optionsName}.turnOffDisplay.idleTimeoutWhenLocked;
+      DimDisplayWhenIdle =
+        if (cfg.powerdevil.${optionsName}.dimDisplay.enable != null) then
+          cfg.powerdevil.${optionsName}.dimDisplay.enable
+        else if (cfg.powerdevil.${optionsName}.dimDisplay.idleTimeOut != null) then
+          true
+        else
+          null;
+      DimDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.dimDisplay.idleTimeOut;
     };
   };
 in
@@ -114,6 +139,10 @@ in
         {
           assertion = (cfg.powerdevil.${type}.turnOffDisplay.idleTimeout != -1 || cfg.powerdevil.${type}.turnOffDisplay.idleTimeoutWhenLocked == null);
           message = "Setting programs.plasma.powerdevil.${type}.turnOffDisplay.idleTimeoutWhenLocked for idleTimeout \"never\" is not supported.";
+        }
+        {
+          assertion = (cfg.powerdevil.${type}.dimDisplay.enable != false || cfg.powerdevil.${type}.dimDisplay.idleTimeOut == null);
+          message = "Cannot set programs.plasma.powerdevil.${type}.dimDisplay.idleTimeOut when programs.plasma.powerdevil.${type}.dimDisplay.enable is disabled.";
         }
       ];
     in
