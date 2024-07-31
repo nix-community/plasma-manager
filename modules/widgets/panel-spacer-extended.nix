@@ -106,11 +106,11 @@ in {
           description = "The action to perform on single click.";
           apply = singleClick: let
             convertAction = action: component: "${component},${action}";
-          in lib.optionalAttrs (singleClick != null) lib.filterAttrs (_: v: v != null) ({
+          in lib.optionalAttrs (singleClick != null) {
             singleClickAction = convertAction singleClick.action singleClick.component;
             singleClickCommand = singleClick.command;
             singleClickAppUrl = singleClick.appUrl;
-          });
+          };
         };
         doubleClick = mkOption {
           type = types.nullOr actionType;
@@ -122,11 +122,11 @@ in {
           description = "The action to perform on double click.";
           apply = doubleClick: let
             convertAction = action: component: "${component},${action}";
-          in lib.optionalAttrs (doubleClick != null) lib.filterAttrs (_: v: v != null) ({
+          in lib.optionalAttrs (doubleClick != null) {
             doubleClickAction = convertAction doubleClick.action doubleClick.component;
             doubleClickCommand = doubleClick.command;
             doubleClickAppUrl = doubleClick.appUrl;
-          });
+          };
         };
         middleClick = mkOption {
           type = types.nullOr actionType;
@@ -138,11 +138,11 @@ in {
           description = "The action to perform on middle click.";
           apply = middleClick: let
             convertAction = action: component: "${component},${action}";
-          in lib.optionalAttrs (middleClick != null) lib.filterAttrs (_: v: v != null) ({
+          in lib.optionalAttrs (middleClick != null) {
             middleClickAction = convertAction middleClick.action middleClick.component;
             middleClickCommand = middleClick.command;
             middleClickAppUrl = middleClick.appUrl;
-          });
+          };
         };
         mouseWheelUp = mkOption {
           type = types.nullOr actionType;
@@ -154,11 +154,11 @@ in {
           description = "The action to perform on mouse wheel up.";
           apply = mouseWheelUp: let
             convertAction = action: component: "${component},${action}";
-          in lib.optionalAttrs (mouseWheelUp != null) lib.filterAttrs (_: v: v != null) ({
+          in lib.optionalAttrs (mouseWheelUp != null) {
             mouseWheelUpAction = convertAction mouseWheelUp.action mouseWheelUp.component;
             mouseWheelUpCommand = mouseWheelUp.command;
             mouseWheelUpAppUrl = mouseWheelUp.appUrl;
-          });
+          };
         };
         mouseWheelDown = mkOption {
           type = types.nullOr actionType;
@@ -170,7 +170,7 @@ in {
           description = "The action to perform on mouse wheel down.";
           apply = mouseWheelDown: let
             convertAction = action: component: "${component},${action}";
-          in lib.optionalAttrs (mouseWheelDown != null) lib.filterAttrs (_: v: v != null) ({
+          in lib.optionalAttrs (mouseWheelDown != null) {
             mouseWheelDownAction = convertAction mouseWheelDown.action mouseWheelDown.component;
             mouseWheelDownCommand = mouseWheelDown.command;
             mouseWheelDownAppUrl = mouseWheelDown.appUrl;
@@ -186,11 +186,11 @@ in {
           description = "The action to perform on mouse drag up.";
           apply = mouseDragUp: let
             convertAction = action: component: "${component},${action}";
-          in lib.optionalAttrs (mouseDragUp != null) lib.filterAttrs (_: v: v != null) ({
+          in lib.optionalAttrs (mouseDragUp != null) {
             mouseDragUpAction = convertAction mouseDragUp.action mouseDragUp.component;
             mouseDragUpCommand = mouseDragUp.command;
             mouseDragUpAppUrl = mouseDragUp.appUrl;
-          });
+          };
         };
         mouseDragDown = mkOption {
           type = types.nullOr actionType;
@@ -202,11 +202,11 @@ in {
           description = "The action to perform on mouse drag down.";
           apply = mouseDragDown: let
             convertAction = action: component: "${component},${action}";
-          in lib.optionalAttrs (mouseDragDown != null) lib.filterAttrs (_: v: v != null) ({
+          in lib.optionalAttrs (mouseDragDown != null) {
             mouseDragDownAction = convertAction mouseDragDown.action mouseDragDown.component;
             mouseDragDownCommand = mouseDragDown.command;
             mouseDragDownAppUrl = mouseDragDown.appUrl;
-          });
+          };
         };
         mouseDragLeft = mkOption {
           type = types.nullOr actionType;
@@ -218,11 +218,11 @@ in {
           description = "The action to perform on mouse drag left.";
           apply = mouseDragLeft: let
             convertAction = action: component: "${component},${action}";
-          in lib.optionalAttrs (mouseDragLeft != null) lib.filterAttrs (_: v: v != null) ({
+          in lib.optionalAttrs (mouseDragLeft != null) {
             mouseDragLeftAction = convertAction mouseDragLeft.action mouseDragLeft.component;
             mouseDragLeftCommand = mouseDragLeft.command;
             mouseDragLeftAppUrl = mouseDragLeft.appUrl;
-          });
+          };
         };
         mouseDragRight = mkOption {
           type = types.nullOr actionType;
@@ -234,11 +234,11 @@ in {
           description = "The action to perform on mouse drag right.";
           apply = mouseDragRight: let
             convertAction = action: component: "${component},${action}";
-          in lib.optionalAttrs (mouseDragRight != null) lib.filterAttrs (_: v: v != null) ({
+          in lib.optionalAttrs (mouseDragRight != null) {
             mouseDragRightAction = convertAction mouseDragRight.action mouseDragRight.component;
             mouseDragRightCommand = mouseDragRight.command;
             mouseDragRightAppUrl = mouseDragRight.appUrl;
-          });
+          };
         };
         longPress = mkOption {
           type = types.nullOr actionType;
@@ -250,11 +250,11 @@ in {
           description = "The action to perform on long press.";
           apply = longPress: let
             convertAction = action: component: "${component},${action}";
-          in lib.optionalAttrs (longPress != null) lib.filterAttrs (_: v: v != null) ({
+          in lib.optionalAttrs (longPress != null) {
             pressHoldAction = convertAction longPress.action longPress.component;
             pressHoldCommand = longPress.command;
             pressHoldAppUrl = longPress.appUrl;
-          });
+          };
         };
       };
       troubleshooting = {
