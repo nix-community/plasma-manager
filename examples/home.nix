@@ -166,6 +166,20 @@
           "org.kde.plasma.appmenu"
           "org.kde.plasma.panelspacer"
           {
+            panelSpacerExtended = {
+              actions = {
+                singleClick = {
+                  action = "playpausemedia";
+                  component = "mediacontrol";
+                };
+                doubleClick = {
+                  action = "Overview";
+                  component = "kwin";
+                };
+              };
+            };
+          }
+          {
             plasmusicToolbar = {
               panelIcon = {
                 albumCover = {
