@@ -174,7 +174,7 @@ in {
             mouseWheelDownAction = convertAction mouseWheelDown.action mouseWheelDown.component;
             mouseWheelDownCommand = mouseWheelDown.command;
             mouseWheelDownAppUrl = mouseWheelDown.appUrl;
-          });
+          };
         };
         mouseDragUp = mkOption {
           type = types.nullOr actionType;
