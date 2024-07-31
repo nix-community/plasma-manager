@@ -16,11 +16,13 @@ let
       };
       command = mkOption {
         type = types.nullOr types.str;
+        default = null;
         example = ''date="$(date -u)"; notify-send "Single Click" "$date"'';
         description = "The command to log.";
       };
       appUrl = mkOption {
         type = types.nullOr types.str;
+        default = null;
         description = "The application URL";
       };
     };
