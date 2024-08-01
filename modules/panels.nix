@@ -243,6 +243,8 @@ in
             for (const desktop of allDesktops) {
                 desktop.currentConfigGroup = ["General"];
                 ${lib.optionalString (cfg.workspace.desktop.icons.arrangement == "topToBottom") ''desktop.writeConfig("arrangement", 1);''}
+                ${lib.optionalString (cfg.workspace.desktop.icons.alignment == "right") ''desktop.writeConfig("alignment", 1);''}
+                ${lib.optionalString (cfg.workspace.desktop.icons.lockInPlace) ''desktop.writeConfig("locked", true);''}
                 ${stringIfNotNull cfg.workspace.desktop.icons.size ''desktop.writeConfig("iconSize", ${builtins.toString cfg.workspace.desktop.icons.size});''}
                 ${lib.optionalString (!cfg.workspace.desktop.icons.folderPreviewPopups) ''desktop.writeConfig("popups", false);''}
                 ${stringIfNotNull cfg.workspace.desktop.icons.previewPlugins ''desktop.writeConfig("previewPlugins", "${lib.strings.concatStringsSep "," cfg.workspace.desktop.icons.previewPlugins}");''}

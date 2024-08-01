@@ -202,6 +202,27 @@ in
           '';
         };
 
+        alignment = lib.mkOption {
+          type = with lib.types; nullOr (enum [ "left" "right" ]);
+          default = null;
+          example = "right";
+          description = ''
+            Whether to align the icons on the left (the default) or right
+            side of the screen.
+          '';
+        };
+
+        lockInPlace = lib.mkOption {
+          type = with lib.types; nullOr bool;
+          default = null;
+          example = true;
+          description = ''
+            Locks the position of all desktop icons to the order and placement
+            defined by "arrangement", "alignment" and sorting rules (which
+            don’t have options yet) so they can’t be manually moved.
+          '';
+        };
+
         size = lib.mkOption {
           type = (lib.types.ints.between 0 6);
           default = null;
