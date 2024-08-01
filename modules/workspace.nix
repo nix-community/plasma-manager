@@ -363,8 +363,6 @@ in
         priority = 1;
       });
 
-      # Creates a startup script to set the desktop folder settings defined
-      # in the options under "cfg.workspace.desktop.icons".
       "set_desktop_folder_settings" = (lib.mkIf anyDesktopFolderSettingsSet {
         text = ''
           // Desktop folder settings
