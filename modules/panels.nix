@@ -7,8 +7,6 @@ let
   cfg = config.programs.plasma;
   hasWidget = widgetName: builtins.any (panel: builtins.any (widget: widget.name == widgetName) panel.widgets) cfg.panels;
 
-  inherit (widgets.lib) stringIfNotNull;
-
   # An attrset keeping track of the packages which should be added when a
   # widget is present in the config.
   additionalWidgetPackages = with pkgs; {
@@ -157,9 +155,6 @@ let
     (cfg.workspace.wallpaperPictureOfTheDay != null) ||
     (cfg.workspace.wallpaperPlainColor != null) ||
     ((builtins.length cfg.panels) > 0));
-
-  # Becomes true if any option under "cfg.workspace.desktop.icons" is set to something other than null.
-  anyDesktopFolderSettingsSet = lib.any (v: v != null) (builtins.attrValues cfg.workspace.desktop.icons);
 in
 {
   imports = [
@@ -236,25 +231,12 @@ in
                 desktop.currentConfigGroup = Array("Wallpaper", "org.kde.color", "General");
                 desktop.writeConfig("Color", "${cfg.workspace.wallpaperPlainColor}");
             }
-          '' else "");
-          desktopFolderSettings = (if anyDesktopFolderSettingsSet then ''
-            // Desktop folder settings
-            let allDesktops = desktops();
-            for (const desktop of allDesktops) {
-                desktop.currentConfigGroup = ["General"];
-                ${lib.optionalString (cfg.workspace.desktop.icons.arrangement == "topToBottom") ''desktop.writeConfig("arrangement", 1);''}
-                ${lib.optionalString (cfg.workspace.desktop.icons.alignment == "right") ''desktop.writeConfig("alignment", 1);''}
-                ${lib.optionalString (cfg.workspace.desktop.icons.lockInPlace) ''desktop.writeConfig("locked", true);''}
-                ${stringIfNotNull cfg.workspace.desktop.icons.size ''desktop.writeConfig("iconSize", ${builtins.toString cfg.workspace.desktop.icons.size});''}
-                ${lib.optionalString (!cfg.workspace.desktop.icons.folderPreviewPopups) ''desktop.writeConfig("popups", false);''}
-                ${stringIfNotNull cfg.workspace.desktop.icons.previewPlugins ''desktop.writeConfig("previewPlugins", "${lib.strings.concatStringsSep "," cfg.workspace.desktop.icons.previewPlugins}");''}
-              }
           '' else ""
           );
         in
         {
           preCommands = panelPreCMD;
-          text = panelLayoutStr + wallpaperDesktopScript + wallpaperSlideShow + wallpaperPOTD + wallpaperPlainColor + desktopFolderSettings;
+          text = panelLayoutStr + wallpaperDesktopScript + wallpaperSlideShow + wallpaperPOTD + wallpaperPlainColor;
           postCommands = panelPostCMD + wallpaperPostCMD;
           restartServices =
             (lib.unique (if anyNonDefaultScreens then [ "plasma-plasmashell" ] else [ ])

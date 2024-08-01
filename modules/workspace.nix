@@ -4,6 +4,7 @@
 let
   cfg = config.programs.plasma;
   inherit (import ../lib/wallpapers.nix { inherit lib; }) wallpaperPictureOfTheDayType wallpaperSlideShowType;
+  inherit (widgets.lib) stringIfNotNull;
 
   cursorType = with lib.types; submodule {
     options = {
@@ -27,6 +28,9 @@ let
     (cfg.workspace.cursor != null && cfg.workspace.cursor.theme != null) ||
     cfg.workspace.lookAndFeel != null ||
     cfg.workspace.iconTheme != null);
+
+  # Becomes true if any option under "cfg.workspace.desktop.icons" is set to something other than null.
+  anyDesktopFolderSettingsSet = lib.any (v: v != null) (builtins.attrValues cfg.workspace.desktop.icons);
 
   splashScreenEngineDetect = theme: (if (theme == "None") then "none" else "KSplashQML");
 in
@@ -344,19 +348,40 @@ in
     # kde tools. We then run this using an autostart script, where this is
     # run only on the first login (unless overrideConfig is enabled),
     # granted all the commands succeed (until we change the settings again).
-    programs.plasma.startup.startupScript."apply_themes" = (lib.mkIf anyThemeSet {
-      text = ''
-        ${if cfg.workspace.lookAndFeel != null then "plasma-apply-lookandfeel -a ${cfg.workspace.lookAndFeel}" else ""}
-        ${if cfg.workspace.theme != null then "plasma-apply-desktoptheme ${cfg.workspace.theme}" else ""}
-        ${if (cfg.workspace.cursor != null && cfg.workspace.cursor.theme != null) then
-        "plasma-apply-cursortheme ${cfg.workspace.cursor.theme}" +
-        (if cfg.workspace.cursor.size != null then " --size ${builtins.toString cfg.workspace.cursor.size}" else "")
-        else ""}
-        ${if cfg.workspace.colorScheme != null then "plasma-apply-colorscheme ${cfg.workspace.colorScheme}" else ""}
-        ${if cfg.workspace.iconTheme != null then "${pkgs.kdePackages.plasma-workspace}/libexec/plasma-changeicons ${cfg.workspace.iconTheme}" else ""}
-      '';
-      priority = 1;
-    });
+    programs.plasma.startup.startupScript = {
+      "apply_themes" = (lib.mkIf anyThemeSet {
+        text = ''
+          ${if cfg.workspace.lookAndFeel != null then "plasma-apply-lookandfeel -a ${cfg.workspace.lookAndFeel}" else ""}
+          ${if cfg.workspace.theme != null then "plasma-apply-desktoptheme ${cfg.workspace.theme}" else ""}
+          ${if (cfg.workspace.cursor != null && cfg.workspace.cursor.theme != null) then
+          "plasma-apply-cursortheme ${cfg.workspace.cursor.theme}" +
+          (if cfg.workspace.cursor.size != null then " --size ${builtins.toString cfg.workspace.cursor.size}" else "")
+          else ""}
+          ${if cfg.workspace.colorScheme != null then "plasma-apply-colorscheme ${cfg.workspace.colorScheme}" else ""}
+          ${if cfg.workspace.iconTheme != null then "${pkgs.kdePackages.plasma-workspace}/libexec/plasma-changeicons ${cfg.workspace.iconTheme}" else ""}
+        '';
+        priority = 1;
+      });
+
+      # Creates a startup script to set the desktop folder settings defined
+      # in the options under "cfg.workspace.desktop.icons".
+      "set_desktop_folder_settings" = (lib.mkIf anyDesktopFolderSettingsSet {
+        text = ''
+          // Desktop folder settings
+          let allDesktops = desktops();
+          for (const desktop of allDesktops) {
+            desktop.currentConfigGroup = ["General"];
+            ${lib.optionalString (cfg.workspace.desktop.icons.arrangement == "topToBottom") ''desktop.writeConfig("arrangement", 1);''}
+            ${lib.optionalString (cfg.workspace.desktop.icons.alignment == "right") ''desktop.writeConfig("alignment", 1);''}
+            ${lib.optionalString (cfg.workspace.desktop.icons.lockInPlace) ''desktop.writeConfig("locked", true);''}
+            ${stringIfNotNull cfg.workspace.desktop.icons.size ''desktop.writeConfig("iconSize", ${builtins.toString cfg.workspace.desktop.icons.size});''}
+            ${lib.optionalString (!cfg.workspace.desktop.icons.folderPreviewPopups) ''desktop.writeConfig("popups", false);''}
+            ${stringIfNotNull cfg.workspace.desktop.icons.previewPlugins ''desktop.writeConfig("previewPlugins", "${lib.strings.concatStringsSep "," cfg.workspace.desktop.icons.previewPlugins}");''}
+          }
+        '';
+        priority = 3;
+      });
+    };
 
     # The wallpaper configuration can be found in panels.nix due to wallpaper
     # configuration and panel configuration being stored in the same file, and
