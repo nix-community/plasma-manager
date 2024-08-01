@@ -6,6 +6,7 @@
     ./files.nix
     ./fonts.nix
     ./hotkeys.nix
+    ./input.nix
     ./kscreenlocker.nix
     ./kwin.nix
     ./panels.nix
@@ -14,6 +15,7 @@
     ./spectacle.nix
     ./startup.nix
     ./window-rules.nix
+    ./windows.nix
     ./workspace.nix
   ];
 

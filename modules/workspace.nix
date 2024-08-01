@@ -101,7 +101,7 @@ in
     wallpaper = lib.mkOption {
       type = with lib.types; nullOr path;
       default = null;
-      example = "${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/Kay/contents/images/1080x1920.png";
+      example = lib.literalExpression ''"''${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/Kay/contents/images/1080x1920.png"'';
       description = ''
         The Plasma wallpaper. Can be either be the path to an image file or a kpackage.
       '';
@@ -110,7 +110,7 @@ in
     wallpaperSlideShow = lib.mkOption {
       type = lib.types.nullOr wallpaperSlideShowType;
       default = null;
-      example = { path = "${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/"; };
+      example = lib.literalExpression ''{ path = "''${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/"; }'';
       description = ''
         Allows you to set wallpaper slideshow. Needs a directory of your wallpapers and an interval length.
       '';

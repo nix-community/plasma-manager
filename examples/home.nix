@@ -175,7 +175,7 @@
                 icon = "view-media-track";
               };
               preferredSource = "spotify";
-              showPlaybackControls = true;
+              musicControls.showPlaybackControls = true;
               songText = {
                 displayInSeparateLines = true;
                 maximumWidth = 640;
@@ -222,6 +222,11 @@
         idleTimeout = 1000;
         idleTimeoutWhenLocked = "immediately";
       };
+    };
+
+    kwin = {
+      edgeBarrier = 0; # Disables the edge-barriers introduced in plasma 6.1
+      cornerBarrier = false;
     };
 
 
