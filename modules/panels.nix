@@ -158,12 +158,8 @@ let
     (cfg.workspace.wallpaperPlainColor != null) ||
     ((builtins.length cfg.panels) > 0));
 
-  anyDesktopFolderSettingsSet = (
-    (cfg.workspace.desktop.icons.arrangement != null) ||
-    (cfg.workspace.desktop.icons.size != null) ||
-    (cfg.workspace.desktop.icons.folderPreviewPopups != null) ||
-    (cfg.workspace.desktop.icons.previewPlugins != null)
-  );
+  # Becomes true if any option under "cfg.workspace.desktop.icons" is set to something other than null.
+  anyDesktopFolderSettingsSet = lib.any (v: v != null) (builtins.attrValues cfg.workspace.desktop.icons);
 in
 {
   imports = [
