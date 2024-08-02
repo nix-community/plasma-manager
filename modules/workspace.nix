@@ -348,8 +348,8 @@ in
     # kde tools. We then run this using an autostart script, where this is
     # run only on the first login (unless overrideConfig is enabled),
     # granted all the commands succeed (until we change the settings again).
-    programs.plasma.startup.startupScript = {
-      "apply_themes" = (lib.mkIf anyThemeSet {
+    programs.plasma.startup = {
+      startupScript."apply_themes" = (lib.mkIf anyThemeSet {
         text = ''
           ${if cfg.workspace.lookAndFeel != null then "plasma-apply-lookandfeel -a ${cfg.workspace.lookAndFeel}" else ""}
           ${if cfg.workspace.theme != null then "plasma-apply-desktoptheme ${cfg.workspace.theme}" else ""}
@@ -363,7 +363,7 @@ in
         priority = 1;
       });
 
-      "set_desktop_folder_settings" = (lib.mkIf anyDesktopFolderSettingsSet {
+      desktopScript."set_desktop_folder_settings" = (lib.mkIf anyDesktopFolderSettingsSet {
         text = ''
           // Desktop folder settings
           let allDesktops = desktops();
@@ -371,9 +371,9 @@ in
             desktop.currentConfigGroup = ["General"];
             ${lib.optionalString (cfg.workspace.desktop.icons.arrangement == "topToBottom") ''desktop.writeConfig("arrangement", 1);''}
             ${lib.optionalString (cfg.workspace.desktop.icons.alignment == "right") ''desktop.writeConfig("alignment", 1);''}
-            ${lib.optionalString (cfg.workspace.desktop.icons.lockInPlace) ''desktop.writeConfig("locked", true);''}
+            ${lib.optionalString (cfg.workspace.desktop.icons.lockInPlace == true) ''desktop.writeConfig("locked", true);''}
             ${stringIfNotNull cfg.workspace.desktop.icons.size ''desktop.writeConfig("iconSize", ${builtins.toString cfg.workspace.desktop.icons.size});''}
-            ${lib.optionalString (!cfg.workspace.desktop.icons.folderPreviewPopups) ''desktop.writeConfig("popups", false);''}
+            ${lib.optionalString (cfg.workspace.desktop.icons.folderPreviewPopups == false) ''desktop.writeConfig("popups", false);''}
             ${stringIfNotNull cfg.workspace.desktop.icons.previewPlugins ''desktop.writeConfig("previewPlugins", "${lib.strings.concatStringsSep "," cfg.workspace.desktop.icons.previewPlugins}");''}
           }
         '';
