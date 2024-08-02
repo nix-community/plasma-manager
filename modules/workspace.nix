@@ -4,7 +4,7 @@
 let
   cfg = config.programs.plasma;
   inherit (import ../lib/wallpapers.nix { inherit lib; }) wallpaperPictureOfTheDayType wallpaperSlideShowType;
-  inherit (import ./widgets/lib.nix {inherit lib; }) stringIfNotNull;
+  inherit (import ./widgets/lib.nix { inherit lib; }) stringIfNotNull;
 
   cursorType = with lib.types; submodule {
     options = {
@@ -58,7 +58,7 @@ in
     };
 
     theme = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
+      type = with lib.types; nullOr str;
       default = null;
       example = "breeze-dark";
       description = ''
@@ -67,7 +67,7 @@ in
     };
 
     colorScheme = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
+      type = with lib.types; nullOr str;
       default = null;
       example = "BreezeDark";
       description = ''
@@ -85,7 +85,7 @@ in
     };
 
     lookAndFeel = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
+      type = with lib.types; nullOr str;
       default = null;
       example = "org.kde.breezedark.desktop";
       description = ''
@@ -94,7 +94,7 @@ in
     };
 
     iconTheme = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
+      type = with lib.types; nullOr str;
       default = null;
       example = "Papirus";
       description = ''
@@ -130,7 +130,7 @@ in
     };
 
     wallpaperPlainColor = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
+      type = with lib.types; nullOr str;
       default = null;
       example = "0,64,174,256";
       description = ''
@@ -228,7 +228,7 @@ in
         };
 
         size = lib.mkOption {
-          type = (lib.types.ints.between 0 6);
+          type = with lib.types; nullOr (ints.between 0 6);
           default = null;
           example = 2;
           description = ''
@@ -252,7 +252,7 @@ in
         previewPlugins = lib.mkOption {
           type = with lib.types; nullOr (listOf str);
           default = null;
-          example = ["audiothumbnail" "fontthumbnail"];
+          example = [ "audiothumbnail" "fontthumbnail" ];
           description = ''
             Configures the preview plugins used to preview desktop files and folders.
           '';
