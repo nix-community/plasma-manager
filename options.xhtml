@@ -8302,7 +8302,7 @@ list of (string or attribute-tagged union or (submodule))</p>
 <p>The action, when on AC, to perform after a certain period of inactivity.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
-null or one of “nothing”, “shutDown”, “sleep”</p>
+null or one of “hibernate”, “nothing”, “shutDown”, “sleep”</p>
 
 <p><span class="emphasis"><em>Default:</em></span>
 <code class="literal">null</code></p>
@@ -8412,7 +8412,7 @@ null or integer between 20 and 600000 (both inclusive)</p>
 <p>The action, when on AC, to perform when the power button is pressed.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
-null or one of “lockScreen”, “nothing”, “showLogoutScreen”, “shutDown”, “sleep”, “turnOffScreen”</p>
+null or one of “hibernate”, “lockScreen”, “nothing”, “showLogoutScreen”, “shutDown”, “sleep”, “turnOffScreen”</p>
 
 <p><span class="emphasis"><em>Default:</em></span>
 <code class="literal">null</code></p>
@@ -8487,6 +8487,60 @@ null or one of “whenLockedAndUnlocked”, “immediately” or integer between
 </dd>
 <dt>
  <span class="term">
+ <a id="opt-programs.plasma.powerdevil.AC.whenLaptopLidClosed"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.AC.whenLaptopLidClosed"><code class="option">programs.plasma.powerdevil.AC.whenLaptopLidClosed</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The action, when on AC, to perform when the laptop lid is closed.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “doNothing”, “hibernate”, “lockScreen”, “shutdown”, “sleep”, “turnOffScreen”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;shutdown&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.AC.whenSleepingEnter"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.AC.whenSleepingEnter"><code class="option">programs.plasma.powerdevil.AC.whenSleepingEnter</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The state, when on AC, to enter when sleeping.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “hybridSleep”, “standby”, “standbyThenHibernate”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;standbyThenHibernate&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
  <a id="opt-programs.plasma.powerdevil.battery.autoSuspend.action"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.battery.autoSuspend.action"><code class="option">programs.plasma.powerdevil.battery.autoSuspend.action</code>
   </a>
  </span>
@@ -8495,7 +8549,7 @@ null or one of “whenLockedAndUnlocked”, “immediately” or integer between
 <p>The action, when on battery, to perform after a certain period of inactivity.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
-null or one of “nothing”, “shutDown”, “sleep”</p>
+null or one of “hibernate”, “nothing”, “shutDown”, “sleep”</p>
 
 <p><span class="emphasis"><em>Default:</em></span>
 <code class="literal">null</code></p>
@@ -8605,7 +8659,7 @@ null or integer between 20 and 600000 (both inclusive)</p>
 <p>The action, when on battery, to perform when the power button is pressed.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
-null or one of “lockScreen”, “nothing”, “showLogoutScreen”, “shutDown”, “sleep”, “turnOffScreen”</p>
+null or one of “hibernate”, “lockScreen”, “nothing”, “showLogoutScreen”, “shutDown”, “sleep”, “turnOffScreen”</p>
 
 <p><span class="emphasis"><em>Default:</em></span>
 <code class="literal">null</code></p>
@@ -8668,6 +8722,307 @@ null or one of “whenLockedAndUnlocked”, “immediately” or integer between
 
 <p><span class="emphasis"><em>Example:</em></span>
 <code class="literal">60</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.battery.whenLaptopLidClosed"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.battery.whenLaptopLidClosed"><code class="option">programs.plasma.powerdevil.battery.whenLaptopLidClosed</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The action, when on battery, to perform when the laptop lid is closed.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “doNothing”, “hibernate”, “lockScreen”, “shutdown”, “sleep”, “turnOffScreen”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;shutdown&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.battery.whenSleepingEnter"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.battery.whenSleepingEnter"><code class="option">programs.plasma.powerdevil.battery.whenSleepingEnter</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The state, when on battery, to enter when sleeping.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “hybridSleep”, “standby”, “standbyThenHibernate”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;standbyThenHibernate&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.lowBattery.autoSuspend.action"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.lowBattery.autoSuspend.action"><code class="option">programs.plasma.powerdevil.lowBattery.autoSuspend.action</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The action, when on lowBattery, to perform after a certain period of inactivity.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “hibernate”, “nothing”, “shutDown”, “sleep”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;nothing&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.lowBattery.autoSuspend.idleTimeout"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.lowBattery.autoSuspend.idleTimeout"><code class="option">programs.plasma.powerdevil.lowBattery.autoSuspend.idleTimeout</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The duration (in seconds), when on lowBattery, the computer must be idle
+until the auto-suspend action is executed.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or integer between 60 and 600000 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">600</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.lowBattery.dimDisplay.enable"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.lowBattery.dimDisplay.enable"><code class="option">programs.plasma.powerdevil.lowBattery.dimDisplay.enable</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Enable or disable screen dimming.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.lowBattery.dimDisplay.idleTimeOut"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.lowBattery.dimDisplay.idleTimeOut"><code class="option">programs.plasma.powerdevil.lowBattery.dimDisplay.idleTimeOut</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The duration (in seconds), when on lowBattery, the computer must be idle
+until the display starts dimming.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or integer between 20 and 600000 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">300</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.lowBattery.powerButtonAction"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.lowBattery.powerButtonAction"><code class="option">programs.plasma.powerdevil.lowBattery.powerButtonAction</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The action, when on lowBattery, to perform when the power button is pressed.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “hibernate”, “lockScreen”, “nothing”, “showLogoutScreen”, “shutDown”, “sleep”, “turnOffScreen”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;nothing&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.lowBattery.turnOffDisplay.idleTimeout"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.lowBattery.turnOffDisplay.idleTimeout"><code class="option">programs.plasma.powerdevil.lowBattery.turnOffDisplay.idleTimeout</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The duration (in seconds), when on lowBattery, the computer must be idle
+(when unlocked) until the display turns off.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or value “never” (singular enum) or integer between 30 and 600000 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">300</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.lowBattery.turnOffDisplay.idleTimeoutWhenLocked"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.lowBattery.turnOffDisplay.idleTimeoutWhenLocked"><code class="option">programs.plasma.powerdevil.lowBattery.turnOffDisplay.idleTimeoutWhenLocked</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The duration (in seconds), when on lowBattery, the computer must be idle
+(when locked) until the display turns off.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “whenLockedAndUnlocked”, “immediately” or integer between 20 and 600000 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">60</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.lowBattery.whenLaptopLidClosed"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.lowBattery.whenLaptopLidClosed"><code class="option">programs.plasma.powerdevil.lowBattery.whenLaptopLidClosed</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The action, when on lowBattery, to perform when the laptop lid is closed.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “doNothing”, “hibernate”, “lockScreen”, “shutdown”, “sleep”, “turnOffScreen”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;shutdown&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.lowBattery.whenSleepingEnter"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.lowBattery.whenSleepingEnter"><code class="option">programs.plasma.powerdevil.lowBattery.whenSleepingEnter</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The state, when on lowBattery, to enter when sleeping.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “hybridSleep”, “standby”, “standbyThenHibernate”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;standbyThenHibernate&quot;</code></p>
 
 <p><span class="emphasis"><em>Declared by:</em></span></p>
 <table border="0" summary="Simple list" class="simplelist">
