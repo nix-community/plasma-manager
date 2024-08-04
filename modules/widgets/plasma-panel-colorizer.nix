@@ -574,6 +574,47 @@ in
           };
         };
       };
+      blacklist = {
+        enable = mkBoolOption "Whether to enable the blacklist";
+        colorSource =
+          let enumVals = [ "custom" "system" ];
+          in mkOption {
+            type = types.nullOr (types.enum enumVals);
+            default = null;
+            example = "custom";
+            description = "The source of the color to use for the blacklisted text and icons";
+            apply = getIndexFromEnum enumVals;
+          };
+        customColor = mkOption {
+          type = types.nullOr types.str;
+          default = null;
+          example = "#ff0000";
+          description = "The custom color to use for the blacklisted text and icons";
+        };
+        system = {
+          color = mkOption {
+            type = types.nullOr (types.enum systemColors);
+            default = null;
+            example = "text";
+            description = "The system color to use for the blacklisted text and icons";
+            apply = getIndexFromEnum systemColors;
+          };
+          colorSet = mkOption {
+            type = types.nullOr (types.enum systemColorSets);
+            default = null;
+            example = "view";
+            description = "The system color variant to use for the blacklisted text and icons";
+            apply = getIndexFromEnum systemColorSets;
+          };
+        };
+        widgets = mkOption {
+          type = types.nullOr (types.listOf types.str);
+          default = null;
+          example = [ "org.kde.plasma.digitalclock" ];
+          description = "List of widgets to blacklist, blacklisted widgets will not be colorized";
+          apply = convertWidgets;
+        };
+      };
       settings = mkOption {
         type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
         default = null;
@@ -599,6 +640,7 @@ in
       , widgetBackground
       , textAndIcons
       , panelBackground
+      , blacklist
       , settings
       }: {
         name = "luisbocanegra.panel.colorizer";
@@ -718,6 +760,14 @@ in
                 panelShadowSize = panelBackground.customBackground.shadow.size;
                 panelShadowX = panelBackground.customBackground.shadow.horizontalOffset;
                 panelShadowY = panelBackground.customBackground.shadow.verticalOffset;
+
+                # Blacklist options
+                fgBlacklistedColorEnabled = blacklist.enable;
+                fgBlacklistedColorMode = blacklist.colorSource;
+                blacklistedFgColor = blacklist.customColor;
+                fgBlacklistedColorModeTheme = blacklist.system.color;
+                fgBlacklistedColorModeThemeVariant = blacklist.system.colorSet;
+                blacklist = blacklist.widgets;
               };
             }
             settings;
