@@ -61,6 +61,38 @@ let
     if widgets == null
     then null
     else "|" + builtins.concatStringsSep "|" widgets;
+
+  convertWidgetMarginRules = rules:
+    if rules == null
+    then null
+    else
+      let
+        widgetToString = widget:
+          "${widget.widgetId},${toString widget.margin.vertical},${toString widget.margin.horizontal}";
+      in
+        builtins.concatStringsSep "|" (map widgetToString rules);
+  
+  widgetMarginRuleType = types.submodule {
+    options = {
+      widgetId = mkOption {
+        type = types.str;
+        example = "org.kde.plasma.kickoff";
+        description = "Widget id";
+      };
+      margin = {
+        vertical = mkOption {
+          type = types.int;
+          example = 5;
+          description = "Vertical margin value";
+        };
+        horizontal = mkOption {
+          type = types.int;
+          example = 5;
+          description = "Horizontal margin value";
+        };
+      };
+    };
+  };
 in
 {
   plasmaPanelColorizer = {
@@ -615,6 +647,55 @@ in
           apply = convertWidgets;
         };
       };
+      layout = {
+        enable = mkBoolOption "Whether to enable the layout configuration";
+        backgroundMargin = {
+          spacing = mkOption {
+            type = types.nullOr types.ints.unsigned;
+            default = null;
+            example = 5;
+            description = "The spacing to use for the background margin";
+          };
+          vertical = mkOption {
+            type = types.nullOr types.ints.unsigned;
+            default = null;
+            example = 5;
+            description = "The vertical margin to use for the background margin";
+          };
+          horizontal = mkOption {
+            type = types.nullOr types.ints.unsigned;
+            default = null;
+            example = 5;
+            description = "The horizontal margin to use for the background margin";
+          };
+        };
+        widgetMarginRules = mkOption {
+          type = types.nullOr (types.listOf widgetMarginRuleType);
+          default = null;
+          example = [
+            {
+              widgetId = "org.kde.plasma.kickoff";
+              margin = {
+                vertical = 1;
+                horizontal = 2;
+              };
+            }
+            {
+              widgetId = "org.kde.plasma.digitalclock";
+              margin = {
+                vertical = 2;
+                horizontal = 1;
+              };
+            }
+          ];
+          description = ''
+            List of rules to apply margins to specific widgets
+
+            Define every widget from the panel here.
+          '';
+          apply = convertWidgetMarginRules;
+        };
+      };
       settings = mkOption {
         type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
         default = null;
@@ -768,6 +849,17 @@ in
                 fgBlacklistedColorModeTheme = blacklist.system.color;
                 fgBlacklistedColorModeThemeVariant = blacklist.system.colorSet;
                 blacklist = blacklist.widgets;
+
+                # Layout options
+                layoutEnabled = layout.enable;
+
+                # Layout options > Background margin
+                panelSpacing = layout.backgroundMargin.spacing;
+                widgetBgHMargin = layout.backgroundMargin.horizontal;
+                widgetBgVMargin = layout.backgroundMargin.vertical;
+
+                # Layout options > Widget margin rules
+                marginRules = layout.widgetMarginRules;
               };
             }
             settings;
