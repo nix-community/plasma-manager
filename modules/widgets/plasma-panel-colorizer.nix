@@ -437,6 +437,143 @@ in
           };
         };
       };
+      panelBackground = {
+        originalBackground = {
+          hide = mkBoolOption "Whether to hide the original panel background";
+          opacity = mkOption {
+            type = types.nullOr (types.numbers.between 0 1);
+            default = null;
+            example = 0.5;
+            description = "The opacity to use for the original panel background";
+          };
+          fixedSizePadding = {
+            enable = mkBoolOption "Whether to enable fixed size padding";
+            value = mkOption {
+              type = types.nullOr types.ints.unsigned;
+              default = null;
+              example = 5;
+              description = "The value to use for the fixed size padding in pixels";
+            };
+          };
+        };
+        customBackground = {
+          enable = mkBoolOption "Whether to enable the custom panel background";
+          colorSource =
+            let enumVals = [ "custom" "system" ];
+            in mkOption {
+              type = types.nullOr (types.enum enumVals);
+              default = null;
+              example = "custom";
+              description = "The source of the color to use for the custom panel background";
+              apply = getIndexFromEnum enumVals;
+            };
+          customColor = mkOption {
+            type = types.nullOr types.str;
+            default = null;
+            example = "#ff0000";
+            description = "The custom color to use for the custom panel background";
+          };
+          system = {
+            color = mkOption {
+              type = types.nullOr (types.enum systemColors);
+              default = null;
+              example = "text";
+              description = "The system color to use for the custom panel background";
+              apply = getIndexFromEnum systemColors;
+            };
+            colorSet = mkOption {
+              type = types.nullOr (types.enum systemColorSets);
+              default = null;
+              example = "view";
+              description = "The system color variant to use for the custom panel background";
+              apply = getIndexFromEnum systemColorSets;
+            };
+          };
+          opacity = mkOption {
+            type = types.nullOr (types.numbers.between 0 1);
+            default = null;
+            example = 0.5;
+            description = "The opacity to use for the custom panel background";
+          };
+          radius = mkOption {
+            type = types.nullOr types.ints.unsigned;
+            default = null;
+            example = 5;
+            description = "The radius to use for the custom panel background";
+          };
+          outline = {
+            colorSource = 
+              let enumVals = [ "custom" "system" ];
+              in mkOption {
+                type = types.nullOr (types.enum enumVals);
+                default = null;
+                example = "custom";
+                description = "The source of the color to use for the outline of the custom panel background";
+                apply = getIndexFromEnum enumVals;
+              };
+            customColor = mkOption {
+              type = types.nullOr types.str;
+              default = null;
+              example = "#ff0000";
+              description = "The custom color to use for the outline of the custom panel background";
+            };
+            system = {
+              color = mkOption {
+                type = types.nullOr (types.enum systemColors);
+                default = null;
+                example = "text";
+                description = "The system color to use for the outline of the custom panel background";
+                apply = getIndexFromEnum systemColors;
+              };
+              colorSet = mkOption {
+                type = types.nullOr (types.enum systemColorSets);
+                default = null;
+                example = "view";
+                description = "The system color variant to use for the outline of the custom panel background";
+                apply = getIndexFromEnum systemColorSets;
+              };
+            };
+            opacity = mkOption {
+              type = types.nullOr (types.numbers.between 0 1);
+              default = null;
+              example = 0.5;
+              description = "The opacity to use for the outline of the custom panel background";
+            };
+            width = mkOption {
+              type = types.nullOr types.ints.unsigned;
+              default = null;
+              example = 5;
+              description = "The width to use for the outline of the custom panel background";
+            };
+          };
+          shadow = {
+            color = mkOption {
+              type = types.nullOr types.str;
+              default = null;
+              example = "#7f000000";
+              description = "The color to use for the shadow of the custom panel background";
+            };
+            size = mkOption {
+              type = types.nullOr types.ints.unsigned;
+              default = null;
+              example = 5;
+              description = "The size to use for the shadow of the custom panel background";
+            };
+            horizontalOffset = mkOption {
+              type = types.nullOr types.int;
+              default = null;
+              example = 5;
+              description = "The X offset to use for the shadow of the custom panel background";
+            };
+            verticalOffset = mkOption {
+              type = types.nullOr types.int;
+              default = null;
+              example = 5;
+              description = "The Y offset to use for the shadow of the custom panel background";
+            };
+          };
+        };
+      };
       settings = mkOption {
         type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
         default = null;
@@ -461,6 +598,7 @@ in
       , presetAutoLoading
       , widgetBackground
       , textAndIcons
+      , panelBackground
       , settings
       }: {
         name = "luisbocanegra.panel.colorizer";
@@ -551,6 +689,35 @@ in
 
                 # Text and icons options > Force icon color
                 forceRecolor = textAndIcons.forceIconColor.widgets;
+
+                # Panel background options > Original background
+                hideRealPanelBg = panelBackground.originalBackground.hide;
+                panelRealBgOpacity = panelBackground.originalBackground.opacity;
+                enableCustomPadding = panelBackground.originalBackground.fixedSizePadding.enable;
+                panelPadding = panelBackground.originalBackground.fixedSizePadding.value;
+
+                # Panel background options > Custom background
+                panelBgEnabled = panelBackground.customBackground.enable;
+                panelBgColorMode = panelBackground.customBackground.colorSource;
+                panelBgColor = panelBackground.customBackground.customColor;
+                panelBgColorModeTheme = panelBackground.customBackground.system.color;
+                panelBgColorModeThemeVariant = panelBackground.customBackground.system.colorSet;
+                panelBgOpacity = panelBackground.customBackground.opacity;
+                panelBgRadius = panelBackground.customBackground.radius;
+
+                # Panel background options > Custom background > Outline
+                panelOutlineColorMode = panelBackground.customBackground.outline.colorSource;
+                panelOutlineColor = panelBackground.customBackground.outline.customColor;
+                panelOutlineColorModeTheme = panelBackground.customBackground.outline.system.color;
+                panelOutlineColorModeThemeVariant = panelBackground.customBackground.outline.system.colorSet;
+                panelOutlineOpacity = panelBackground.customBackground.outline.opacity;
+                panelOutlineWidth = panelBackground.customBackground.outline.width;
+
+                # Panel background options > Custom background > Shadow
+                panelShadowColor = panelBackground.customBackground.shadow.color;
+                panelShadowSize = panelBackground.customBackground.shadow.size;
+                panelShadowX = panelBackground.customBackground.shadow.horizontalOffset;
+                panelShadowY = panelBackground.customBackground.shadow.verticalOffset;
               };
             }
             settings;
