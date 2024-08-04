@@ -10,6 +10,39 @@ let
       inherit description;
     };
 
+  systemColors = [
+    "text"
+    "disabledText"
+    "highlightedText"
+    "activeText"
+    "link"
+    "visitedLink"
+    "negativeText"
+    "neutralText"
+    "positiveText"
+    "background"
+    "highlight"
+    "activeBackground"
+    "linkBackground"
+    "visitedLinkBackground"
+    "negativeBackground"
+    "neutralBackground"
+    "positiveBackground"
+    "alternateBackground"
+    "focus"
+    "hover"
+  ];
+
+  systemColorSets = [
+    "view"
+    "window"
+    "button"
+    "selection"
+    "tooltip"
+    "complementary"
+    "header"
+  ];
+
   getIndexFromEnum = enum: value:
     if value == null
     then null
@@ -23,6 +56,11 @@ let
     if colors == null
     then null
     else builtins.concatStringsSep " " colors;
+
+  convertWidgets = widgets:
+    if widgets == null
+    then null
+    else "|" + builtins.concatStringsSep "|" widgets;
 in
 {
   plasmaPanelColorizer = {
@@ -111,55 +149,20 @@ in
           };
           system = {
             color =
-              let
-                enumVals = [
-                  "text"
-                  "disabledText"
-                  "highlightedText"
-                  "activeText"
-                  "link"
-                  "visitedLink"
-                  "negativeText"
-                  "neutralText"
-                  "positiveText"
-                  "background"
-                  "highlight"
-                  "activeBackground"
-                  "linkBackground"
-                  "visitedLinkBackground"
-                  "negativeBackground"
-                  "neutralBackground"
-                  "positiveBackground"
-                  "alternateBackground"
-                  "focus"
-                  "hover"
-                ];
-              in
               mkOption {
-                type = types.nullOr (types.enum enumVals);
+                type = types.nullOr (types.enum systemColors);
                 default = null;
                 example = "text";
                 description = "The system color to use for the widget background";
-                apply = getIndexFromEnum enumVals;
+                apply = getIndexFromEnum systemColors;
               };
             colorSet =
-              let
-                enumVals = [
-                  "view"
-                  "window"
-                  "button"
-                  "selection"
-                  "tooltip"
-                  "complementary"
-                  "header"
-                ];
-              in
               mkOption {
-                type = types.nullOr (types.enum enumVals);
+                type = types.nullOr (types.enum systemColorSets);
                 default = null;
                 example = "view";
                 description = "The system color variant to use for the widget background";
-                apply = getIndexFromEnum enumVals;
+                apply = getIndexFromEnum systemColorSets;
               };
           };
           customColorList = mkOption {
@@ -254,55 +257,20 @@ in
             };
             system = {
               color =
-                let
-                  enumVals = [
-                    "text"
-                    "disabledText"
-                    "highlightedText"
-                    "activeText"
-                    "link"
-                    "visitedLink"
-                    "negativeText"
-                    "neutralText"
-                    "positiveText"
-                    "background"
-                    "highlight"
-                    "activeBackground"
-                    "linkBackground"
-                    "visitedLinkBackground"
-                    "negativeBackground"
-                    "neutralBackground"
-                    "positiveBackground"
-                    "alternateBackground"
-                    "focus"
-                    "hover"
-                  ];
-                in
                 mkOption {
-                  type = types.nullOr (types.enum enumVals);
+                  type = types.nullOr (types.enum systemColors);
                   default = null;
                   example = "text";
                   description = "The system color to use for the outline of the widget background";
-                  apply = getIndexFromEnum enumVals;
+                  apply = getIndexFromEnum systemColors;
                 };
               colorSet =
-                let
-                  enumVals = [
-                    "view"
-                    "window"
-                    "button"
-                    "selection"
-                    "tooltip"
-                    "complementary"
-                    "header"
-                  ];
-                in
                 mkOption {
-                  type = types.nullOr (types.enum enumVals);
+                  type = types.nullOr (types.enum systemColorSets);
                   default = null;
                   example = "view";
                   description = "The system color variant to use for the outline of the widget background";
-                  apply = getIndexFromEnum enumVals;
+                  apply = getIndexFromEnum systemColorSets;
                 };
             };
             opacity = mkOption {
@@ -346,6 +314,129 @@ in
           };
         };
       };
+      textAndIcons = {
+        enable = mkBoolOption "Whether to enable the text and icons configuration";
+        colorMode = {
+          mode =
+            let enumVals = [ "static" "interval" ];
+            in mkOption {
+              type = types.nullOr (types.enum enumVals);
+              default = null;
+              example = "static";
+              description = "The color mode to use for the text and icons";
+              apply = getIndexFromEnum enumVals;
+            };
+          interval = mkOption {
+            type = types.nullOr types.ints.unsigned;
+            default = null;
+            example = 3000;
+            description = "The interval in milliseconds between each color change";
+          };
+        };
+        colors = {
+          source =
+            let enumVals = [ "custom" "system" "widgetBackground" "customList" "random" ];
+            in mkOption {
+              type = types.nullOr (types.enum enumVals);
+              default = null;
+              example = "custom";
+              description = "The source of the colors to use for the text and icons";
+              apply = getIndexFromEnum enumVals;
+            };
+          customColor = mkOption {
+            type = types.nullOr types.str;
+            default = null;
+            example = "#ff0000";
+            description = "The custom color to use for the text and icons";
+          };
+          system = {
+            color = mkOption {
+              type = types.nullOr (types.enum systemColors);
+              default = null;
+              example = "text";
+              description = "The system color to use for the text and icons";
+              apply = getIndexFromEnum systemColors;
+            };
+            colorSet = mkOption {
+              type = types.nullOr (types.enum systemColorSets);
+              default = null;
+              example = "view";
+              description = "The system color variant to use for the text and icons";
+              apply = getIndexFromEnum systemColorSets;
+            };
+          };
+          customColorList = mkOption {
+            type = types.nullOr (types.listOf types.str);
+            default = null;
+            example = [ "#ff0000" "#00ff00" "#0000ff" ];
+            description = "The list of custom colors to use for the text and icons";
+            apply = convertColorList;
+          };
+          opacity = mkOption {
+            type = types.nullOr (types.numbers.between 0 1);
+            default = null;
+            example = 0.5;
+            description = "The opacity to use for the text and icons";
+          };
+          contrastCorrection = {
+            enable = mkBoolOption "Whether to enable contrast correction for the text and icons";
+            saturation = {
+              enable = mkBoolOption "Whether to enable saturation correction for the text and icons";
+              value = mkOption {
+                type = types.nullOr (types.numbers.between 0 1);
+                default = null;
+                example = 0.5;
+                description = "The value to use for the saturation correction";
+              };
+            };
+            lightness = mkOption {
+              type = types.nullOr (types.numbers.between 0 1);
+              default = null;
+              example = 0.5;
+              description = "The value to use for the lightness correction";
+            };
+          };
+        };
+        shadow = {
+          enable = mkBoolOption "Whether to enable the shadow for the text and icons";
+          color = mkOption {
+            type = types.nullOr types.str;
+            default = null;
+            example = "#7f000000";
+            description = "The color to use for the shadow of the text and icons";
+          };
+          strength = mkOption {
+            type = types.nullOr types.ints.unsigned;
+            default = null;
+            example = 5;
+            description = "The strength to use for the shadow of the text and icons";
+          };
+          horizontalOffset = mkOption {
+            type = types.nullOr types.int;
+            default = null;
+            example = 5;
+            description = "The X offset to use for the shadow of the text and icons";
+          };
+          verticalOffset = mkOption {
+            type = types.nullOr types.int;
+            default = null;
+            example = 5;
+            description = "The Y offset to use for the shadow of the text and icons";
+          };
+        };
+        customBadges = {
+          fixCustomBadges = mkBoolOption "Whether to fix custom badges";
+        };
+        forceIconColor = {
+          widgets = mkOption {
+            type = types.nullOr (types.listOf types.str);
+            default = null;
+            example = [ "org.kde.plasma.digitalclock" ];
+            description = "List of widgets to force icon color";
+            apply = convertWidgets;
+          };
+        };
+      };
       settings = mkOption {
         type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
         default = null;
@@ -369,6 +460,7 @@ in
       { general
       , presetAutoLoading
       , widgetBackground
+      , textAndIcons
       , settings
       }: {
         name = "luisbocanegra.panel.colorizer";
@@ -427,6 +519,38 @@ in
                 widgetShadowSize = widgetBackground.shape.shadow.size;
                 widgetShadowX = widgetBackground.shape.shadow.horizontalOffset;
                 widgetShadowY = widgetBackground.shape.shadow.verticalOffset;
+
+                # Text and icons options
+                fgColorEnabled = textAndIcons.enable;
+
+                # Text and icons options > Color mode
+                fgMode = textAndIcons.colorMode.mode;
+                fgRainbowInterval = textAndIcons.colorMode.interval;
+
+                # Text and icons options > Colors
+                fgColorMode = textAndIcons.colors.source;
+                fgSingleColor = textAndIcons.colors.customColor;
+                fgColorModeTheme = textAndIcons.colors.system.color;
+                fgColorModeThemeVariant = textAndIcons.colors.system.colorSet;
+                fgCustomColors = textAndIcons.colors.customColorList;
+                fgOpacity = textAndIcons.colors.opacity;
+                fgContrastFixEnabled = textAndIcons.colors.contrastCorrection.enable;
+                fgSaturationEnabled = textAndIcons.colors.contrastCorrection.saturation.enable;
+                fgSaturation = textAndIcons.colors.contrastCorrection.saturation.value;
+                fgLightness = textAndIcons.colors.contrastCorrection.lightness;
+
+                # Text and icons options > Shadow
+                fgShadowEnabled = textAndIcons.shadow.enable;
+                fgShadowColor = textAndIcons.shadow.color;
+                fgShadowRadius = textAndIcons.shadow.strength;
+                fgShadowX = textAndIcons.shadow.horizontalOffset;
+                fgShadowY = textAndIcons.shadow.verticalOffset;
+
+                # Text and icons options > Custom badges
+                fixCustomBadges = textAndIcons.customBadges.fixCustomBadges;
+
+                # Text and icons options > Force icon color
+                forceRecolor = textAndIcons.forceIconColor.widgets;
               };
             }
             settings;
