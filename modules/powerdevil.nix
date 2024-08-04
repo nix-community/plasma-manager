@@ -5,6 +5,7 @@ let
   powerButtonActions = {
     nothing = 0;
     sleep = 1;
+    hibernate = 2;
     shutDown = 8;
     lockScreen = 32;
     showLogoutScreen = null;
@@ -13,8 +14,24 @@ let
 
   autoSuspendActions = {
     nothing = 0;
+    hibernate = 2;
     sleep = null;
     shutDown = 8;
+  };
+
+  whenSleepingEnterActions = {
+    standby = null;
+    hybridSleep = 2;
+    standbyThenHibernate = 3;
+  };
+
+  whenLaptopLidClosedActions = {
+    doNothing = 0;
+    sleep = null;
+    hibernate = 2;
+    shutdown = 8;
+    lockScreen = 32;
+    turnOffScreen = 64;
   };
 
   # Since AC and battery allows the same options we create a function here which
@@ -49,6 +66,24 @@ let
           until the auto-suspend action is executed.
         '';
       };
+    };
+    whenSleepingEnter = lib.mkOption {
+      type = with lib.types; nullOr (enum (builtins.attrNames whenSleepingEnterActions));
+      default = null;
+      example = "standbyThenHibernate";
+      description = ''
+        The state, when on ${type}, to enter when sleeping.
+      '';
+      apply = action: if (action == null) then null else whenSleepingEnterActions."${action}";
+    };
+    whenLaptopLidClosed = lib.mkOption {
+      type = with lib.types; nullOr (enum (builtins.attrNames whenLaptopLidClosedActions));
+      default = null;
+      example = "shutdown";
+      description = ''
+        The action, when on ${type}, to perform when the laptop lid is closed.
+      '';
+      apply = action: if (action == null) then null else whenLaptopLidClosedActions."${action}";
     };
     turnOffDisplay = {
       idleTimeout = lib.mkOption {
@@ -107,6 +142,8 @@ let
       PowerButtonAction = cfg.powerdevil.${optionsName}.powerButtonAction;
       AutoSuspendAction = cfg.powerdevil.${optionsName}.autoSuspend.action;
       AutoSuspendIdleTimeoutSec = cfg.powerdevil.${optionsName}.autoSuspend.idleTimeout;
+      SleepMode = cfg.powerdevil.${optionsName}.whenSleepingEnter;
+      LidAction = cfg.powerdevil.${optionsName}.whenLaptopLidClosed;
     };
     "${cfgSectName}/Display" = {
       TurnOffDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.turnOffDisplay.idleTimeout;
@@ -146,16 +183,19 @@ in
         }
       ];
     in
-    (createAssertions "AC") ++ (createAssertions "battery");
+    (createAssertions "AC") ++ (createAssertions "battery") ++ (createAssertions "lowBattery");
 
   options = {
     programs.plasma.powerdevil = {
       AC = (createPowerDevilOptions "AC");
       battery = (createPowerDevilOptions "battery");
+      lowBattery = (createPowerDevilOptions "lowBattery");
     };
   };
 
   config.programs.plasma.configFile = lib.mkIf cfg.enable {
-    powerdevilrc = lib.filterAttrs (k: v: v != null) ((createPowerDevilConfig "AC" "AC") // (createPowerDevilConfig "Battery" "battery"));
+    powerdevilrc = lib.filterAttrs (k: v: v != null) ((createPowerDevilConfig "AC" "AC")
+      // (createPowerDevilConfig "Battery" "battery")
+      // (createPowerDevilConfig "LowBattery" "lowBattery"));
   };
 }
