@@ -175,7 +175,7 @@
                 icon = "view-media-track";
               };
               preferredSource = "spotify";
-              showPlaybackControls = true;
+              musicControls.showPlaybackControls = true;
               songText = {
                 displayInSeparateLines = true;
                 maximumWidth = 640;
@@ -213,14 +213,23 @@
     ];
 
     powerdevil = {
-      powerButtonAction = "lockScreen";
-      autoSuspend = {
-        action = "shutDown";
-        idleTimeout = 1000;
+      AC = {
+        powerButtonAction = "lockScreen";
+        autoSuspend = {
+          action = "shutDown";
+          idleTimeout = 1000;
+        };
+        turnOffDisplay = {
+          idleTimeout = 1000;
+          idleTimeoutWhenLocked = "immediately";
+        };
       };
-      turnOffDisplay = {
-        idleTimeout = 1000;
-        idleTimeoutWhenLocked = "immediately";
+      battery = {
+        powerButtonAction = "sleep";
+        whenSleepingEnter = "standbyThenHibernate";
+      };
+      lowBattery = {
+        whenLaptopLidClosed = "hibernate";
       };
     };
 

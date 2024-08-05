@@ -155,8 +155,8 @@ let
   touchPadToConfig = touchpad:
     let
       touchName = touchpad.name;
-      touchVendor = touchpad.vendorId;
-      touchProduct = touchpad.productId;
+      touchVendor = builtins.toString (lib.fromHexString touchpad.vendorId);
+      touchProduct = builtins.toString (lib.fromHexString touchpad.productId);
     in
     {
       "Libinput/${touchVendor}/${touchProduct}/${lib.escape ["/"] touchName}" = {
@@ -272,8 +272,8 @@ let
   mouseToConfig = mouse:
     let
       mouseName = mouse.name;
-      mouseVendor = mouse.vendorId;
-      mouseProduct = mouse.productId;
+      mouseVendor = builtins.toString (lib.fromHexString mouse.vendorId);
+      mouseProduct = builtins.toString (lib.fromHexString mouse.productId);
     in
     {
       "Libinput/${mouseVendor}/${mouseProduct}/${mouseName}" = {
@@ -288,6 +288,21 @@ let
     };
 in
 {
+  config.assertions = [
+    (
+      let
+        validChars = [ "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e" "f" ];
+        hexChars = hexStr: builtins.tail (lib.reverseList (builtins.tail (lib.splitString "" hexStr)));
+        hexCodeInvalid = hex: !(lib.all (c: builtins.elem (lib.toLower c) validChars) (hexChars hex)) && (builtins.stringLength hex) > 0;
+        allHexCodes = lib.flatten ((map (t: [ t.vendorId t.productId ]) (cfg.input.touchpads ++ cfg.input.mice)));
+        invalidHexCodes = builtins.filter hexCodeInvalid allHexCodes;
+      in
+      {
+        assertion = (builtins.length invalidHexCodes) == 0;
+        message = "Invalid hex-code for product or vendor-ID in the input module in plasma-manager: ${builtins.head invalidHexCodes}";
+      }
+    )
+  ];
   # Keyboard options
   options.programs.plasma.input.keyboard = {
     layouts = mkOption {
