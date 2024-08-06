@@ -23,6 +23,14 @@ let
     };
   };
 
+  desktopIconSortingModeId = {
+    manual = -1;
+    name   = 0;
+    size   = 1;
+    date   = 2;
+    type   = 6;
+  }.${cfg.workspace.desktop.icons.sorting.mode};
+
   anyThemeSet = (cfg.workspace.theme != null ||
     cfg.workspace.colorScheme != null ||
     (cfg.workspace.cursor != null && cfg.workspace.cursor.theme != null) ||
@@ -30,7 +38,11 @@ let
     cfg.workspace.iconTheme != null);
 
   # Becomes true if any option under "cfg.workspace.desktop.icons" is set to something other than null.
-  anyDesktopFolderSettingsSet = lib.any (v: v != null) (builtins.attrValues cfg.workspace.desktop.icons);
+  anyDesktopFolderSettingsSet =
+    let
+      recurse = l: lib.any (v: if builtins.isAttrs v then recurse v else v != null) (builtins.attrValues l);
+    in
+      recurse cfg.workspace.desktop.icons;
 
   splashScreenEngineDetect = theme: (if (theme == "None") then "none" else "KSplashQML");
 in
@@ -222,9 +234,43 @@ in
           example = true;
           description = ''
             Locks the position of all desktop icons to the order and placement
-            defined by "arrangement", "alignment" and sorting rules (which
-            don’t have options yet) so they can’t be manually moved.
+            defined by `arrangement`, `alignment` and the `sorting` options
+            so they can’t be manually moved.
           '';
+        };
+
+        sorting = {
+          mode = lib.mkOption {
+            type = with lib.types; nullOr (enum [ "manual" "name" "size" "type" "date" ]);
+            default = null;
+            example = "type";
+            description = ''
+              Specifies the sort mode for the desktop icons. By default they are
+              sorted by name.
+            '';
+          };
+
+          descending = lib.mkOption {
+            type = with lib.types; nullOr bool;
+            default = null;
+            example = true;
+            description = ''
+              Reverses the sorting order if enabled. Sorting is ascending by default.
+            '';
+          };
+
+          foldersFirst  = lib.mkOption {
+            type = with lib.types; nullOr bool;
+            default = null;
+            example = false;
+            description = ''
+              Folders are sorted separately from files by default. This means
+              folders appear first, sorted for example ascending by name,
+              followed by files, also sorted ascending by name.
+              If this option is disabled, all items are sorted irrespective
+              of their type.
+            '';
+          };
         };
 
         size = lib.mkOption {
@@ -375,6 +421,9 @@ in
             ${stringIfNotNull cfg.workspace.desktop.icons.size ''desktop.writeConfig("iconSize", ${builtins.toString cfg.workspace.desktop.icons.size});''}
             ${lib.optionalString (cfg.workspace.desktop.icons.folderPreviewPopups == false) ''desktop.writeConfig("popups", false);''}
             ${stringIfNotNull cfg.workspace.desktop.icons.previewPlugins ''desktop.writeConfig("previewPlugins", "${lib.strings.concatStringsSep "," cfg.workspace.desktop.icons.previewPlugins}");''}
+            ${stringIfNotNull cfg.workspace.desktop.icons.sorting.mode ''desktop.writeConfig("sortMode", ${builtins.toString desktopIconSortingModeId});''}
+            ${lib.optionalString (cfg.workspace.desktop.icons.sorting.descending == true) ''desktop.writeConfig("sortDesc", true);''}
+            ${lib.optionalString (cfg.workspace.desktop.icons.sorting.foldersFirst == false) ''desktop.writeConfig("sortDirsFirst", false);''}
           }
         '';
         priority = 3;
