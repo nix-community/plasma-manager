@@ -71,7 +71,7 @@ in
       {
         assertion =
           let
-            wallpapers = with cfg.workspace; [ wallpaperSlideShow wallpaper wallpaperPictureOfTheDay wallpaperPlainColor ];
+            wallpapers = with cfg.kscreenlocker.appearance; [ wallpaperSlideShow wallpaper wallpaperPictureOfTheDay wallpaperPlainColor ];
           in
           lib.count (x: x != null) wallpapers <= 1;
         message = "Can set only one of wallpaper, wallpaperSlideShow, wallpaperPictureOfTheDay, and wallpaperPlainColor for kscreenlocker.";
