@@ -6854,7 +6854,61 @@ string</p>
 </dd>
 <dt>
  <span class="term">
- <a id="opt-programs.plasma.kscreenlocker.wallpaper"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.wallpaper"><code class="option">programs.plasma.kscreenlocker.wallpaper</code>
+ <a id="opt-programs.plasma.kscreenlocker.appearance.alwaysShowClock"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.appearance.alwaysShowClock"><code class="option">programs.plasma.kscreenlocker.appearance.alwaysShowClock</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to always show the clock on the lockscreen, even if the unlock dialog is not shown.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kscreenlocker.nix" target="_top">
+&lt;plasma-manager/modules/kscreenlocker.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kscreenlocker.appearance.showMediaControls"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.appearance.showMediaControls"><code class="option">programs.plasma.kscreenlocker.appearance.showMediaControls</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to show media controls on the lockscreen.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kscreenlocker.nix" target="_top">
+&lt;plasma-manager/modules/kscreenlocker.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kscreenlocker.appearance.wallpaper"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.appearance.wallpaper"><code class="option">programs.plasma.kscreenlocker.appearance.wallpaper</code>
   </a>
  </span>
 </dt>
@@ -6881,7 +6935,7 @@ null or path</p>
 </dd>
 <dt>
  <span class="term">
- <a id="opt-programs.plasma.kscreenlocker.wallpaperPictureOfTheDay"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.wallpaperPictureOfTheDay"><code class="option">programs.plasma.kscreenlocker.wallpaperPictureOfTheDay</code>
+ <a id="opt-programs.plasma.kscreenlocker.appearance.wallpaperPictureOfTheDay"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.appearance.wallpaperPictureOfTheDay"><code class="option">programs.plasma.kscreenlocker.appearance.wallpaperPictureOfTheDay</code>
   </a>
  </span>
 </dt>
@@ -6910,7 +6964,7 @@ null or (submodule)</p>
 </dd>
 <dt>
  <span class="term">
- <a id="opt-programs.plasma.kscreenlocker.wallpaperPictureOfTheDay.provider"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.wallpaperPictureOfTheDay.provider"><code class="option">programs.plasma.kscreenlocker.wallpaperPictureOfTheDay.provider</code>
+ <a id="opt-programs.plasma.kscreenlocker.appearance.wallpaperPictureOfTheDay.provider"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.appearance.wallpaperPictureOfTheDay.provider"><code class="option">programs.plasma.kscreenlocker.appearance.wallpaperPictureOfTheDay.provider</code>
   </a>
  </span>
 </dt>
@@ -6931,7 +6985,7 @@ null or one of “apod”, “bing”, “flickr”, “natgeo”, “noaa”, �
 </dd>
 <dt>
  <span class="term">
- <a id="opt-programs.plasma.kscreenlocker.wallpaperPictureOfTheDay.updateOverMeteredConnection"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.wallpaperPictureOfTheDay.updateOverMeteredConnection"><code class="option">programs.plasma.kscreenlocker.wallpaperPictureOfTheDay.updateOverMeteredConnection</code>
+ <a id="opt-programs.plasma.kscreenlocker.appearance.wallpaperPictureOfTheDay.updateOverMeteredConnection"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.appearance.wallpaperPictureOfTheDay.updateOverMeteredConnection"><code class="option">programs.plasma.kscreenlocker.appearance.wallpaperPictureOfTheDay.updateOverMeteredConnection</code>
   </a>
  </span>
 </dt>
@@ -6955,7 +7009,7 @@ boolean</p>
 </dd>
 <dt>
  <span class="term">
- <a id="opt-programs.plasma.kscreenlocker.wallpaperPlainColor"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.wallpaperPlainColor"><code class="option">programs.plasma.kscreenlocker.wallpaperPlainColor</code>
+ <a id="opt-programs.plasma.kscreenlocker.appearance.wallpaperPlainColor"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.appearance.wallpaperPlainColor"><code class="option">programs.plasma.kscreenlocker.appearance.wallpaperPlainColor</code>
   </a>
  </span>
 </dt>
@@ -6982,7 +7036,7 @@ null or string</p>
 </dd>
 <dt>
  <span class="term">
- <a id="opt-programs.plasma.kscreenlocker.wallpaperSlideShow"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.wallpaperSlideShow"><code class="option">programs.plasma.kscreenlocker.wallpaperSlideShow</code>
+ <a id="opt-programs.plasma.kscreenlocker.appearance.wallpaperSlideShow"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.appearance.wallpaperSlideShow"><code class="option">programs.plasma.kscreenlocker.appearance.wallpaperSlideShow</code>
   </a>
  </span>
 </dt>
@@ -7010,7 +7064,7 @@ null or (submodule)</p>
 </dd>
 <dt>
  <span class="term">
- <a id="opt-programs.plasma.kscreenlocker.wallpaperSlideShow.interval"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.wallpaperSlideShow.interval"><code class="option">programs.plasma.kscreenlocker.wallpaperSlideShow.interval</code>
+ <a id="opt-programs.plasma.kscreenlocker.appearance.wallpaperSlideShow.interval"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.appearance.wallpaperSlideShow.interval"><code class="option">programs.plasma.kscreenlocker.appearance.wallpaperSlideShow.interval</code>
   </a>
  </span>
 </dt>
@@ -7034,7 +7088,7 @@ signed integer</p>
 </dd>
 <dt>
  <span class="term">
- <a id="opt-programs.plasma.kscreenlocker.wallpaperSlideShow.path"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.wallpaperSlideShow.path"><code class="option">programs.plasma.kscreenlocker.wallpaperSlideShow.path</code>
+ <a id="opt-programs.plasma.kscreenlocker.appearance.wallpaperSlideShow.path"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.appearance.wallpaperSlideShow.path"><code class="option">programs.plasma.kscreenlocker.appearance.wallpaperSlideShow.path</code>
   </a>
  </span>
 </dt>
