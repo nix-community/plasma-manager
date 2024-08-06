@@ -3,7 +3,6 @@ import json
 import os
 import re
 import sys
-import os
 from dataclasses import dataclass
 from typing import Dict, Optional, Self, Set
 
@@ -77,21 +76,6 @@ def escape(s: str) -> str:
             s[i] = "\\s"
     return "".join(s)
 
-# Some values need to be "transformed", such as being converted from hex to decimal
-def transformValues(d_orig):
-    d = d_orig.copy()
-
-    c_path = os.path.expanduser("~/.config/kcminputrc")
-    if c_path in d:
-        for item_str in list(d[c_path]):
-            if item_str.startswith("Libinput/"):
-                item = d[c_path].pop(item_str)
-                item_str_list = item_str.split("/")
-                item_str_list[1] = str(int(item_str_list[1],16))
-                item_str_list[2] = str(int(item_str_list[2],16))
-                item_str = "/".join(item_str_list)
-                d[c_path][item_str] = item
-    return d;
 
 @dataclass
 class ConfigValue:
@@ -345,8 +329,7 @@ def main():
 
     reset_files = set(sys.argv[2].split(" ")) if sys.argv[2] != "" else set()
     immutable_by_default = bool(sys.argv[3])
-    d_raw = json.loads(json_str)
-    d = transformValues(d_raw)
+    d = json.loads(json_str)
     remove_config_files(d, reset_files)
     write_configs(d, reset_files, immutable_by_default)
 
