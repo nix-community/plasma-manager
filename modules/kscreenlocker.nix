@@ -5,6 +5,61 @@ let
 in
 {
   options.programs.plasma.kscreenlocker = {
+    autoLock = lib.mkOption {
+      type = with lib.types; nullOr bool;
+      default = null;
+      example = true;
+      description = ''
+        Sets whether the screen will be locked after the specified time.
+      '';
+    };
+    lockOnResume = lib.mkOption {
+      type = with lib.types; nullOr bool;
+      default = null;
+      example = false;
+      description = ''
+        Whether to lock the screen when the system resumes from sleep.
+      '';
+    };
+
+    timeout = lib.mkOption {
+      type = with lib.types; nullOr ints.unsigned;
+      default = null;
+      example = 5;
+      description = ''
+        Sets the minutes after which the screen is locked.
+      '';
+    };
+
+    passwordRequired = lib.mkOption {
+      type = with lib.types; nullOr bool;
+      default = null;
+      example = true;
+      description = ''
+        Whether the password is required to unlock the screen.
+      '';
+    };
+
+    passwordRequiredDelay = lib.mkOption {
+      type = with lib.types; nullOr ints.unsigned;
+      default = null;
+      example = 5;
+      description = ''
+        The time it takes in seconds for the password to be required after the screen is locked.
+      '';
+    };
+
+    lockOnStartup = lib.mkOption {
+      type = with lib.types; nullOr bool;
+      default = null;
+      example = false;
+      description = ''
+        Whether to lock the screen on startup.
+
+        NOTE: This option is not provided in the system settings.
+      '';
+    };
+
     appearance = {
       alwaysShowClock = lib.mkOption {
         type = with lib.types; nullOr bool;
@@ -110,6 +165,30 @@ in
       })
       (lib.mkIf (cfg.kscreenlocker.appearance.showMediaControls != null) {
         "Greeter/LnF/General".showMediaControls = cfg.kscreenlocker.appearance.showMediaControls;
+      })
+
+      (lib.mkIf (cfg.kscreenlocker.autoLock != null) {
+        Daemon.Autolock = cfg.kscreenlocker.autoLock;
+      })
+
+      (lib.mkIf (cfg.kscreenlocker.lockOnResume != null) {
+        Daemon.LockOnResume = cfg.kscreenlocker.lockOnResume;
+      })
+
+      (lib.mkIf (cfg.kscreenlocker.timeout != null) {
+        Daemon.Timeout = cfg.kscreenlocker.timeout;
+      })
+
+      (lib.mkIf (cfg.kscreenlocker.passwordRequiredDelay != null) {
+        Daemon.LockGrace = cfg.kscreenlocker.passwordRequiredDelay;
+      })
+
+      (lib.mkIf (cfg.kscreenlocker.passwordRequired != null) {
+        Daemon.RequirePassword = cfg.kscreenlocker.passwordRequired;
+      })
+
+      (lib.mkIf (cfg.kscreenlocker.lockOnStartup != null) {
+        Daemon.LockOnStart = cfg.kscreenlocker.lockOnStartup;
       })
     ]);
   };
