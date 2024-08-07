@@ -238,6 +238,10 @@
       cornerBarrier = false;
     };
 
+    kscreenlocker = {
+      lockOnResume = true;
+      timeout = 10;
+    };
 
     #
     # Some mid-level settings:
