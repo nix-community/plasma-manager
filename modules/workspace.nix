@@ -25,10 +25,10 @@ let
 
   desktopIconSortingModeId = {
     manual = -1;
-    name   = 0;
-    size   = 1;
-    date   = 2;
-    type   = 6;
+    name = 0;
+    size = 1;
+    date = 2;
+    type = 6;
   }.${cfg.workspace.desktop.icons.sorting.mode};
 
   anyThemeSet = (cfg.workspace.theme != null ||
@@ -42,7 +42,7 @@ let
     let
       recurse = l: lib.any (v: if builtins.isAttrs v then recurse v else v != null) (builtins.attrValues l);
     in
-      recurse cfg.workspace.desktop.icons;
+    recurse cfg.workspace.desktop.icons;
 
   splashScreenEngineDetect = theme: (if (theme == "None") then "none" else "KSplashQML");
 in
@@ -259,7 +259,7 @@ in
             '';
           };
 
-          foldersFirst  = lib.mkOption {
+          foldersFirst = lib.mkOption {
             type = with lib.types; nullOr bool;
             default = null;
             example = false;
