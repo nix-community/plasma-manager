@@ -420,10 +420,6 @@ in
     };
   };
 
-  config = mkIf cfg.kwin.scripts.polonium.enable {
-    home.packages = with pkgs; [ libsForQt5.polonium ];
-  };
-
   config.assertions = [
     {
       assertion =
@@ -466,8 +462,10 @@ in
     }
   ];
 
-  config.programs.plasma.configFile."kwinrc" = mkIf (cfg.enable)
-    (mkMerge [
+  config = (mkIf cfg.enable {
+    home.packages = with pkgs; [ ] ++ optionals (cfg.kwin.scripts.polonium.enable) [ libsForQt5.polonium ];
+
+    programs.plasma.configFile."kwinrc" = (mkMerge [
       # Titlebar buttons
       (
         mkIf (cfg.kwin.titlebarButtons.left != null) {
@@ -598,4 +596,5 @@ in
         };
       })
     ]);
+  });
 }
