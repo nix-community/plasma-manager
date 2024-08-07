@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 
 with lib;
 
@@ -64,6 +64,20 @@ let
     "${toUpper firstLetter}${rest}";
 
   removeColon = string: builtins.replaceStrings [ ":" ] [ "" ] string;
+
+  getIndexFromEnum = enum: value:
+    if value == null
+    then null
+    else
+      lib.lists.findFirstIndex
+        (x: x == value)
+        (throw "getIndexFromEnum (kwin): Value ${value} isn't present in the enum. This is a bug")
+        enum;
+  
+  convertPoloniumFilter = list:
+    if list == null
+    then null
+    else builtins.concatStringsSep ", " list;
 in
 {
   imports = [
@@ -298,6 +312,116 @@ in
       example = false;
       description = "When enabled, prevents the cursor from crossing at screen-corners.";
     };
+
+    scripts = {
+      polonium = {
+        enable = mkOption {
+          type = with types; nullOr bool;
+          default = null;
+          example = true;
+          description = "Whether to enable Polonium";
+        };
+        settings = {
+          borderVisibility =
+            let enumVals = [ "noBorderAll" "noBorderTiled" "borderSelected" "borderAll" ];
+            in mkOption {
+              type = with types; nullOr (enum enumVals);
+              default = null;
+              example = "noBorderAll";
+              description = "The border visibility setting for Polonium";
+              apply = getIndexFromEnum enumVals;
+            };
+          callbackDelay = mkOption {
+            type = with types; nullOr (ints.between 1 200);
+            default = null;
+            example = 100;
+            description = "The callback delay setting for Polonium";
+          };
+          enableDebug = mkOption {
+            type = with types; nullOr bool;
+            default = null;
+            example = true;
+            description = "Whether to enable debug for Polonium";
+          };
+          filter = {
+            processes = mkOption {
+              type = with types; nullOr (listOf str);
+              default = null;
+              example = [ "firefox" "chromium" ];
+              description = "The processes to filter for Polonium";
+              apply = convertPoloniumFilter;
+            };
+            windowTitles = mkOption {
+              type = with types; nullOr (listOf str);
+              default = null;
+              example = [ "Discord" "Telegram" ];
+              description = "The window titles to filter for Polonium";
+              apply = convertPoloniumFilter;
+            };
+          };
+          layout = {
+            engine =
+              let enumVals = [
+                "binaryTree"
+                "half"
+                "threeColumn"
+                "monocle"
+                "kwin"
+              ];
+              in mkOption {
+                type = with types; nullOr (enum enumVals);
+                default = null;
+                example = "binaryTree";
+                description = "The layout engine setting for Polonium";
+                apply = getIndexFromEnum enumVals;
+              };
+            insertionPoint =
+              let enumVals = [ "left" "right" "activeWindow" ];
+              in mkOption {
+                type = with types; nullOr (enum enumVals);
+                default = null;
+                example = "top";
+                description = "The insertion point setting for Polonium";
+                apply = getIndexFromEnum enumVals;
+              };
+            rotate = mkOption {
+              type = with types; nullOr bool;
+              default = null;
+              example = true;
+              description = "Whether to rotate layout for Polonium";
+            };
+          };
+          maximizeSingleWindow = mkOption {
+            type = with types; nullOr bool;
+            default = null;
+            example = true;
+            description = "Whether to maximize single window for Polonium";
+          };
+          resizeAmount = mkOption {
+            type = with types; nullOr (ints.between 1 450);
+            default = null;
+            example = 100;
+            description = "The resize amount setting for Polonium";
+          };
+          saveOnTileEdit = mkOption {
+            type = with types; nullOr bool;
+            default = null;
+            example = true;
+            description = "Whether to save on tile edit for Polonium";
+          };
+          tilePopups = mkOption {
+            type = with types; nullOr bool;
+            default = null;
+            example = true;
+            description = "Whether to tile popups for Polonium";
+          };
+        };
+      };
+    };
+  };
+
+  config = mkIf cfg.kwin.scripts.polonium.enable {
+    home.packages = with pkgs; [ libsForQt5.polonium ];
   };
 
   config.assertions = [
@@ -454,6 +578,24 @@ in
       })
       (mkIf (cfg.kwin.edgeBarrier != null) {
         EdgeBarrier.EdgeBarrier = cfg.kwin.edgeBarrier;
+      })
+
+      (mkIf (cfg.kwin.scripts.polonium.enable != null) {
+        Plugins.poloniumEnabled = cfg.kwin.scripts.polonium.enable;
+        Script-polonium = {
+          Borders = cfg.kwin.scripts.polonium.settings.borderVisibility;
+          Debug = cfg.kwin.scripts.polonium.settings.enableDebug;
+          EngineType = cfg.kwin.scripts.polonium.settings.layout.engine;
+          FilterCaption = cfg.kwin.scripts.polonium.settings.filter.windowTitles;
+          FilterProcess = cfg.kwin.scripts.polonium.settings.filter.processes;
+          InsertionPoint = cfg.kwin.scripts.polonium.settings.layout.insertionPoint;
+          MaximizeSingle = cfg.kwin.scripts.polonium.settings.maximizeSingleWindow;
+          ResizeAmount = cfg.kwin.scripts.polonium.settings.resizeAmount;
+          RotateLayout = cfg.kwin.scripts.polonium.settings.layout.rotate;
+          SaveOnTileEdit = cfg.kwin.scripts.polonium.settings.saveOnTileEdit;
+          TilePopups = cfg.kwin.scripts.polonium.settings.tilePopups;
+          TimerDelay = cfg.kwin.scripts.polonium.settings.callbackDelay;
+        };
       })
     ]);
 }
