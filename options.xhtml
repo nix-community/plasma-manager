@@ -7109,6 +7109,168 @@ path or list of path</p>
 </dd>
 <dt>
  <span class="term">
+ <a id="opt-programs.plasma.kscreenlocker.autoLock"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.autoLock"><code class="option">programs.plasma.kscreenlocker.autoLock</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Sets whether the screen will be locked after the specified time.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kscreenlocker.nix" target="_top">
+&lt;plasma-manager/modules/kscreenlocker.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kscreenlocker.lockOnResume"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.lockOnResume"><code class="option">programs.plasma.kscreenlocker.lockOnResume</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to lock the screen when the system resumes from sleep.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kscreenlocker.nix" target="_top">
+&lt;plasma-manager/modules/kscreenlocker.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kscreenlocker.lockOnStartup"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.lockOnStartup"><code class="option">programs.plasma.kscreenlocker.lockOnStartup</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to lock the screen on startup.</p><p>NOTE: This option is not provided in the system settings.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kscreenlocker.nix" target="_top">
+&lt;plasma-manager/modules/kscreenlocker.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kscreenlocker.passwordRequired"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.passwordRequired"><code class="option">programs.plasma.kscreenlocker.passwordRequired</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether the password is required to unlock the screen.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kscreenlocker.nix" target="_top">
+&lt;plasma-manager/modules/kscreenlocker.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kscreenlocker.passwordRequiredDelay"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.passwordRequiredDelay"><code class="option">programs.plasma.kscreenlocker.passwordRequiredDelay</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The time it takes in seconds for the password to be required after the screen is locked.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or (unsigned integer, meaning &gt;=0)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">5</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kscreenlocker.nix" target="_top">
+&lt;plasma-manager/modules/kscreenlocker.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kscreenlocker.timeout"></a><a class="term" href="options.xhtml#opt-programs.plasma.kscreenlocker.timeout"><code class="option">programs.plasma.kscreenlocker.timeout</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Sets the minutes after which the screen is locked.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or (unsigned integer, meaning &gt;=0)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">5</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kscreenlocker.nix" target="_top">
+&lt;plasma-manager/modules/kscreenlocker.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
  <a id="opt-programs.plasma.kwin.borderlessMaximizedWindows"></a><a class="term" href="options.xhtml#opt-programs.plasma.kwin.borderlessMaximizedWindows"><code class="option">programs.plasma.kwin.borderlessMaximizedWindows</code>
   </a>
  </span>
