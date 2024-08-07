@@ -420,49 +420,49 @@ in
     };
   };
 
-  config.assertions = [
-    {
-      assertion =
-        cfg.kwin.virtualDesktops.number == null ||
-        cfg.kwin.virtualDesktops.names == null ||
-        cfg.kwin.virtualDesktops.number == (builtins.length cfg.kwin.virtualDesktops.names);
-      message = "programs.plasma.virtualDesktops.number doesn't match the length of programs.plasma.virtualDesktops.names.";
-    }
-    {
-      assertion =
-        cfg.kwin.virtualDesktops.rows == null ||
-        (cfg.kwin.virtualDesktops.names == null && cfg.kwin.virtualDesktops.number == null) ||
-        (cfg.kwin.virtualDesktops.number != null && cfg.kwin.virtualDesktops.number >= cfg.kwin.virtualDesktops.rows) ||
-        (cfg.kwin.virtualDesktops.names != null && (builtins.length cfg.kwin.virtualDesktops.names) >= cfg.kwin.virtualDesktops.rows);
-      message = "KWin cannot have more rows virtual desktops.";
-    }
-    {
-      assertion = cfg.kwin.effects.minimization.duration == null || cfg.kwin.effects.minimization.animation == "magiclamp";
-      message = "programs.plasma.kwin.effects.minimization.duration is only supported for the magic lamp effect";
-    }
-    {
-      assertion = (cfg.kwin.nightLight.enable == null || cfg.kwin.nightLight.enable == false) || cfg.kwin.nightLight.mode != null;
-      message = "programs.plasma.kwin.nightLight.mode must be set when programs.plasma.kwin.nightLight.enable is true.";
-    }
-    {
-      assertion = cfg.kwin.nightLight.mode != "Times" || (cfg.kwin.nightLight.time.morning != null && cfg.kwin.nightLight.time.evening != null);
-      message = "programs.plasma.kwin.nightLight.time.morning and programs.plasma.kwin.nightLight.time.evening must be set when programs.plasma.kwin.nightLight.mode is set to times.";
-    }
-    {
-      assertion = cfg.kwin.nightLight.mode != "Location" || (cfg.kwin.nightLight.location.latitude != null && cfg.kwin.nightLight.location.longitude != null);
-      message = "programs.plasma.kwin.nightLight.location.latitude and programs.plasma.kwin.nightLight.location.longitude must be set when programs.plasma.kwin.nightLight.mode is set to location.";
-    }
-    {
-      assertion = cfg.kwin.nightLight.time.morning == null || builtins.stringLength cfg.kwin.nightLight.time.morning == 4;
-      message = "programs.plasma.kwin.nightLight.time.morning must have the exact length of 4. If it doesn't have, it means that it doesn't have this time format: HH:MM";
-    }
-    {
-      assertion = cfg.kwin.nightLight.time.evening == null || builtins.stringLength cfg.kwin.nightLight.time.evening == 4;
-      message = "programs.plasma.kwin.nightLight.time.evening must have the exact length of 4. If it doesn't have, it means that it doesn't have this time format: HH:MM";
-    }
-  ];
-
   config = (mkIf cfg.enable {
+    assertions = [
+      {
+        assertion =
+          cfg.kwin.virtualDesktops.number == null ||
+          cfg.kwin.virtualDesktops.names == null ||
+          cfg.kwin.virtualDesktops.number == (builtins.length cfg.kwin.virtualDesktops.names);
+        message = "programs.plasma.virtualDesktops.number doesn't match the length of programs.plasma.virtualDesktops.names.";
+      }
+      {
+        assertion =
+          cfg.kwin.virtualDesktops.rows == null ||
+          (cfg.kwin.virtualDesktops.names == null && cfg.kwin.virtualDesktops.number == null) ||
+          (cfg.kwin.virtualDesktops.number != null && cfg.kwin.virtualDesktops.number >= cfg.kwin.virtualDesktops.rows) ||
+          (cfg.kwin.virtualDesktops.names != null && (builtins.length cfg.kwin.virtualDesktops.names) >= cfg.kwin.virtualDesktops.rows);
+        message = "KWin cannot have more rows virtual desktops.";
+      }
+      {
+        assertion = cfg.kwin.effects.minimization.duration == null || cfg.kwin.effects.minimization.animation == "magiclamp";
+        message = "programs.plasma.kwin.effects.minimization.duration is only supported for the magic lamp effect";
+      }
+      {
+        assertion = (cfg.kwin.nightLight.enable == null || cfg.kwin.nightLight.enable == false) || cfg.kwin.nightLight.mode != null;
+        message = "programs.plasma.kwin.nightLight.mode must be set when programs.plasma.kwin.nightLight.enable is true.";
+      }
+      {
+        assertion = cfg.kwin.nightLight.mode != "Times" || (cfg.kwin.nightLight.time.morning != null && cfg.kwin.nightLight.time.evening != null);
+        message = "programs.plasma.kwin.nightLight.time.morning and programs.plasma.kwin.nightLight.time.evening must be set when programs.plasma.kwin.nightLight.mode is set to times.";
+      }
+      {
+        assertion = cfg.kwin.nightLight.mode != "Location" || (cfg.kwin.nightLight.location.latitude != null && cfg.kwin.nightLight.location.longitude != null);
+        message = "programs.plasma.kwin.nightLight.location.latitude and programs.plasma.kwin.nightLight.location.longitude must be set when programs.plasma.kwin.nightLight.mode is set to location.";
+      }
+      {
+        assertion = cfg.kwin.nightLight.time.morning == null || builtins.stringLength cfg.kwin.nightLight.time.morning == 4;
+        message = "programs.plasma.kwin.nightLight.time.morning must have the exact length of 4. If it doesn't have, it means that it doesn't have this time format: HH:MM";
+      }
+      {
+        assertion = cfg.kwin.nightLight.time.evening == null || builtins.stringLength cfg.kwin.nightLight.time.evening == 4;
+        message = "programs.plasma.kwin.nightLight.time.evening must have the exact length of 4. If it doesn't have, it means that it doesn't have this time format: HH:MM";
+      }
+    ];
+
     home.packages = with pkgs; [ ] ++ optionals (cfg.kwin.scripts.polonium.enable) [ libsForQt5.polonium ];
 
     programs.plasma.configFile."kwinrc" = (mkMerge [
