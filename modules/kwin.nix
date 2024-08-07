@@ -463,7 +463,7 @@ in
       }
     ];
 
-    home.packages = with pkgs; [ ] ++ optionals (cfg.kwin.scripts.polonium.enable != null && cfg.kwin.scripts.polonium.enable) [ libsForQt5.polonium ];
+    home.packages = with pkgs; [ ] ++ optionals (cfg.kwin.scripts.polonium.enable == true) [ libsForQt5.polonium ];
 
     programs.plasma.configFile."kwinrc" = (mkMerge [
       # Titlebar buttons
