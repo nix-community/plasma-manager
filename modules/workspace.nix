@@ -29,7 +29,7 @@ let
     size = 1;
     date = 2;
     type = 6;
-  }.${cfg.workspace.desktop.icons.sorting.mode};
+  };
 
   anyThemeSet = (cfg.workspace.theme != null ||
     cfg.workspace.colorScheme != null ||
@@ -241,13 +241,14 @@ in
 
         sorting = {
           mode = lib.mkOption {
-            type = with lib.types; nullOr (enum [ "manual" "name" "size" "type" "date" ]);
+            type = with lib.types; nullOr (enum (builtins.attrNames desktopIconSortingModeId));
             default = null;
             example = "type";
             description = ''
               Specifies the sort mode for the desktop icons. By default they are
               sorted by name.
             '';
+            apply = sortMode: if (sortMode == null) then null else desktopIconSortingModeId.${sortMode};
           };
 
           descending = lib.mkOption {
@@ -421,7 +422,7 @@ in
             ${stringIfNotNull cfg.workspace.desktop.icons.size ''desktop.writeConfig("iconSize", ${builtins.toString cfg.workspace.desktop.icons.size});''}
             ${lib.optionalString (cfg.workspace.desktop.icons.folderPreviewPopups == false) ''desktop.writeConfig("popups", false);''}
             ${stringIfNotNull cfg.workspace.desktop.icons.previewPlugins ''desktop.writeConfig("previewPlugins", "${lib.strings.concatStringsSep "," cfg.workspace.desktop.icons.previewPlugins}");''}
-            ${stringIfNotNull cfg.workspace.desktop.icons.sorting.mode ''desktop.writeConfig("sortMode", ${builtins.toString desktopIconSortingModeId});''}
+            ${stringIfNotNull cfg.workspace.desktop.icons.sorting.mode ''desktop.writeConfig("sortMode", ${builtins.toString cfg.workspace.desktop.icons.sorting.mode});''}
             ${lib.optionalString (cfg.workspace.desktop.icons.sorting.descending == true) ''desktop.writeConfig("sortDesc", true);''}
             ${lib.optionalString (cfg.workspace.desktop.icons.sorting.foldersFirst == false) ''desktop.writeConfig("sortDirsFirst", false);''}
           }
