@@ -10521,6 +10521,264 @@ null or string</p>
 </dd>
 <dt>
  <span class="term">
+ <a id="opt-programs.plasma.workspace.desktop.icons.alignment"></a><a class="term" href="options.xhtml#opt-programs.plasma.workspace.desktop.icons.alignment"><code class="option">programs.plasma.workspace.desktop.icons.alignment</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to align the icons on the left (the default) or right
+side of the screen.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “left”, “right”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;right&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/workspace.nix" target="_top">
+&lt;plasma-manager/modules/workspace.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.workspace.desktop.icons.arrangement"></a><a class="term" href="options.xhtml#opt-programs.plasma.workspace.desktop.icons.arrangement"><code class="option">programs.plasma.workspace.desktop.icons.arrangement</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The direction, in which desktop icons are to be arranged.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “leftToRight”, “topToBottom”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;topToBottom&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/workspace.nix" target="_top">
+&lt;plasma-manager/modules/workspace.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.workspace.desktop.icons.folderPreviewPopups"></a><a class="term" href="options.xhtml#opt-programs.plasma.workspace.desktop.icons.folderPreviewPopups"><code class="option">programs.plasma.workspace.desktop.icons.folderPreviewPopups</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Enables the arrow button when hovering over a folder on the desktop
+which shows a preview popup of the folder’s contents.
+Is enabled by default.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/workspace.nix" target="_top">
+&lt;plasma-manager/modules/workspace.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.workspace.desktop.icons.lockInPlace"></a><a class="term" href="options.xhtml#opt-programs.plasma.workspace.desktop.icons.lockInPlace"><code class="option">programs.plasma.workspace.desktop.icons.lockInPlace</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Locks the position of all desktop icons to the order and placement
+defined by <code class="literal">arrangement</code>, <code class="literal">alignment</code> and the <code class="literal">sorting</code> options
+so they can’t be manually moved.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/workspace.nix" target="_top">
+&lt;plasma-manager/modules/workspace.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.workspace.desktop.icons.previewPlugins"></a><a class="term" href="options.xhtml#opt-programs.plasma.workspace.desktop.icons.previewPlugins"><code class="option">programs.plasma.workspace.desktop.icons.previewPlugins</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Configures the preview plugins used to preview desktop files and folders.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or (list of string)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting">[
+  &quot;audiothumbnail&quot;
+  &quot;fontthumbnail&quot;
+]
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/workspace.nix" target="_top">
+&lt;plasma-manager/modules/workspace.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.workspace.desktop.icons.size"></a><a class="term" href="options.xhtml#opt-programs.plasma.workspace.desktop.icons.size"><code class="option">programs.plasma.workspace.desktop.icons.size</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The desktop icon size, which is normally configured via a slider
+with seven possible values ranging from small (0) to large (6).
+The fourth position (3) is the default.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or integer between 0 and 6 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">2</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/workspace.nix" target="_top">
+&lt;plasma-manager/modules/workspace.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.workspace.desktop.icons.sorting.descending"></a><a class="term" href="options.xhtml#opt-programs.plasma.workspace.desktop.icons.sorting.descending"><code class="option">programs.plasma.workspace.desktop.icons.sorting.descending</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Reverses the sorting order if enabled. Sorting is ascending by default.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/workspace.nix" target="_top">
+&lt;plasma-manager/modules/workspace.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.workspace.desktop.icons.sorting.foldersFirst"></a><a class="term" href="options.xhtml#opt-programs.plasma.workspace.desktop.icons.sorting.foldersFirst"><code class="option">programs.plasma.workspace.desktop.icons.sorting.foldersFirst</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Folders are sorted separately from files by default. This means
+folders appear first, sorted for example ascending by name,
+followed by files, also sorted ascending by name.
+If this option is disabled, all items are sorted irrespective
+of their type.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/workspace.nix" target="_top">
+&lt;plasma-manager/modules/workspace.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.workspace.desktop.icons.sorting.mode"></a><a class="term" href="options.xhtml#opt-programs.plasma.workspace.desktop.icons.sorting.mode"><code class="option">programs.plasma.workspace.desktop.icons.sorting.mode</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Specifies the sort mode for the desktop icons. By default they are
+sorted by name.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “date”, “manual”, “name”, “size”, “type”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;type&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/workspace.nix" target="_top">
+&lt;plasma-manager/modules/workspace.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
  <a id="opt-programs.plasma.workspace.iconTheme"></a><a class="term" href="options.xhtml#opt-programs.plasma.workspace.iconTheme"><code class="option">programs.plasma.workspace.iconTheme</code>
   </a>
  </span>
