@@ -7969,6 +7969,363 @@ null or (positive integer, meaning &gt;0)</p>
 </dd>
 <dt>
  <span class="term">
+ <a id="opt-programs.plasma.kwin.scripts.polonium.enable"></a><a class="term" href="options.xhtml#opt-programs.plasma.kwin.scripts.polonium.enable"><code class="option">programs.plasma.kwin.scripts.polonium.enable</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to enable Polonium</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kwin.nix" target="_top">
+&lt;plasma-manager/modules/kwin.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kwin.scripts.polonium.settings.enableDebug"></a><a class="term" href="options.xhtml#opt-programs.plasma.kwin.scripts.polonium.settings.enableDebug"><code class="option">programs.plasma.kwin.scripts.polonium.settings.enableDebug</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to enable debug for Polonium</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kwin.nix" target="_top">
+&lt;plasma-manager/modules/kwin.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kwin.scripts.polonium.settings.borderVisibility"></a><a class="term" href="options.xhtml#opt-programs.plasma.kwin.scripts.polonium.settings.borderVisibility"><code class="option">programs.plasma.kwin.scripts.polonium.settings.borderVisibility</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The border visibility setting for Polonium</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “noBorderAll”, “noBorderTiled”, “borderSelected”, “borderAll”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;noBorderAll&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kwin.nix" target="_top">
+&lt;plasma-manager/modules/kwin.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kwin.scripts.polonium.settings.callbackDelay"></a><a class="term" href="options.xhtml#opt-programs.plasma.kwin.scripts.polonium.settings.callbackDelay"><code class="option">programs.plasma.kwin.scripts.polonium.settings.callbackDelay</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The callback delay setting for Polonium</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or integer between 1 and 200 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">100</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kwin.nix" target="_top">
+&lt;plasma-manager/modules/kwin.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kwin.scripts.polonium.settings.filter.processes"></a><a class="term" href="options.xhtml#opt-programs.plasma.kwin.scripts.polonium.settings.filter.processes"><code class="option">programs.plasma.kwin.scripts.polonium.settings.filter.processes</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The processes to filter for Polonium</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or (list of string)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting">[
+  &quot;firefox&quot;
+  &quot;chromium&quot;
+]
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kwin.nix" target="_top">
+&lt;plasma-manager/modules/kwin.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kwin.scripts.polonium.settings.filter.windowTitles"></a><a class="term" href="options.xhtml#opt-programs.plasma.kwin.scripts.polonium.settings.filter.windowTitles"><code class="option">programs.plasma.kwin.scripts.polonium.settings.filter.windowTitles</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The window titles to filter for Polonium</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or (list of string)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting">[
+  &quot;Discord&quot;
+  &quot;Telegram&quot;
+]
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kwin.nix" target="_top">
+&lt;plasma-manager/modules/kwin.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kwin.scripts.polonium.settings.layout.engine"></a><a class="term" href="options.xhtml#opt-programs.plasma.kwin.scripts.polonium.settings.layout.engine"><code class="option">programs.plasma.kwin.scripts.polonium.settings.layout.engine</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The layout engine setting for Polonium</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “binaryTree”, “half”, “threeColumn”, “monocle”, “kwin”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;binaryTree&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kwin.nix" target="_top">
+&lt;plasma-manager/modules/kwin.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kwin.scripts.polonium.settings.layout.insertionPoint"></a><a class="term" href="options.xhtml#opt-programs.plasma.kwin.scripts.polonium.settings.layout.insertionPoint"><code class="option">programs.plasma.kwin.scripts.polonium.settings.layout.insertionPoint</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The insertion point setting for Polonium</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “left”, “right”, “activeWindow”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;top&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kwin.nix" target="_top">
+&lt;plasma-manager/modules/kwin.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kwin.scripts.polonium.settings.layout.rotate"></a><a class="term" href="options.xhtml#opt-programs.plasma.kwin.scripts.polonium.settings.layout.rotate"><code class="option">programs.plasma.kwin.scripts.polonium.settings.layout.rotate</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to rotate layout for Polonium</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kwin.nix" target="_top">
+&lt;plasma-manager/modules/kwin.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kwin.scripts.polonium.settings.maximizeSingleWindow"></a><a class="term" href="options.xhtml#opt-programs.plasma.kwin.scripts.polonium.settings.maximizeSingleWindow"><code class="option">programs.plasma.kwin.scripts.polonium.settings.maximizeSingleWindow</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to maximize single window for Polonium</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kwin.nix" target="_top">
+&lt;plasma-manager/modules/kwin.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kwin.scripts.polonium.settings.resizeAmount"></a><a class="term" href="options.xhtml#opt-programs.plasma.kwin.scripts.polonium.settings.resizeAmount"><code class="option">programs.plasma.kwin.scripts.polonium.settings.resizeAmount</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The resize amount setting for Polonium</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or integer between 1 and 450 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">100</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kwin.nix" target="_top">
+&lt;plasma-manager/modules/kwin.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kwin.scripts.polonium.settings.saveOnTileEdit"></a><a class="term" href="options.xhtml#opt-programs.plasma.kwin.scripts.polonium.settings.saveOnTileEdit"><code class="option">programs.plasma.kwin.scripts.polonium.settings.saveOnTileEdit</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to save on tile edit for Polonium</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kwin.nix" target="_top">
+&lt;plasma-manager/modules/kwin.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kwin.scripts.polonium.settings.tilePopups"></a><a class="term" href="options.xhtml#opt-programs.plasma.kwin.scripts.polonium.settings.tilePopups"><code class="option">programs.plasma.kwin.scripts.polonium.settings.tilePopups</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to tile popups for Polonium</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kwin.nix" target="_top">
+&lt;plasma-manager/modules/kwin.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
  <a id="opt-programs.plasma.kwin.titlebarButtons.left"></a><a class="term" href="options.xhtml#opt-programs.plasma.kwin.titlebarButtons.left"><code class="option">programs.plasma.kwin.titlebarButtons.left</code>
   </a>
  </span>
