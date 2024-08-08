@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 
 with lib;
 
@@ -64,6 +64,20 @@ let
     "${toUpper firstLetter}${rest}";
 
   removeColon = string: builtins.replaceStrings [ ":" ] [ "" ] string;
+
+  getIndexFromEnum = enum: value:
+    if value == null
+    then null
+    else
+      lib.lists.findFirstIndex
+        (x: x == value)
+        (throw "getIndexFromEnum (kwin): Value ${value} isn't present in the enum. This is a bug")
+        enum;
+  
+  convertPoloniumFilter = list:
+    if list == null
+    then null
+    else builtins.concatStringsSep ", " list;
 in
 {
   imports = [
@@ -298,52 +312,160 @@ in
       example = false;
       description = "When enabled, prevents the cursor from crossing at screen-corners.";
     };
+
+    scripts = {
+      polonium = {
+        enable = mkOption {
+          type = with types; nullOr bool;
+          default = null;
+          example = true;
+          description = "Whether to enable Polonium";
+        };
+        settings = {
+          borderVisibility =
+            let enumVals = [ "noBorderAll" "noBorderTiled" "borderSelected" "borderAll" ];
+            in mkOption {
+              type = with types; nullOr (enum enumVals);
+              default = null;
+              example = "noBorderAll";
+              description = "The border visibility setting for Polonium";
+              apply = getIndexFromEnum enumVals;
+            };
+          callbackDelay = mkOption {
+            type = with types; nullOr (ints.between 1 200);
+            default = null;
+            example = 100;
+            description = "The callback delay setting for Polonium";
+          };
+          enableDebug = mkOption {
+            type = with types; nullOr bool;
+            default = null;
+            example = true;
+            description = "Whether to enable debug for Polonium";
+          };
+          filter = {
+            processes = mkOption {
+              type = with types; nullOr (listOf str);
+              default = null;
+              example = [ "firefox" "chromium" ];
+              description = "The processes to filter for Polonium";
+              apply = convertPoloniumFilter;
+            };
+            windowTitles = mkOption {
+              type = with types; nullOr (listOf str);
+              default = null;
+              example = [ "Discord" "Telegram" ];
+              description = "The window titles to filter for Polonium";
+              apply = convertPoloniumFilter;
+            };
+          };
+          layout = {
+            engine =
+              let enumVals = [
+                "binaryTree"
+                "half"
+                "threeColumn"
+                "monocle"
+                "kwin"
+              ];
+              in mkOption {
+                type = with types; nullOr (enum enumVals);
+                default = null;
+                example = "binaryTree";
+                description = "The layout engine setting for Polonium";
+                apply = getIndexFromEnum enumVals;
+              };
+            insertionPoint =
+              let enumVals = [ "left" "right" "activeWindow" ];
+              in mkOption {
+                type = with types; nullOr (enum enumVals);
+                default = null;
+                example = "top";
+                description = "The insertion point setting for Polonium";
+                apply = getIndexFromEnum enumVals;
+              };
+            rotate = mkOption {
+              type = with types; nullOr bool;
+              default = null;
+              example = true;
+              description = "Whether to rotate layout for Polonium";
+            };
+          };
+          maximizeSingleWindow = mkOption {
+            type = with types; nullOr bool;
+            default = null;
+            example = true;
+            description = "Whether to maximize single window for Polonium";
+          };
+          resizeAmount = mkOption {
+            type = with types; nullOr (ints.between 1 450);
+            default = null;
+            example = 100;
+            description = "The resize amount setting for Polonium";
+          };
+          saveOnTileEdit = mkOption {
+            type = with types; nullOr bool;
+            default = null;
+            example = true;
+            description = "Whether to save on tile edit for Polonium";
+          };
+          tilePopups = mkOption {
+            type = with types; nullOr bool;
+            default = null;
+            example = true;
+            description = "Whether to tile popups for Polonium";
+          };
+        };
+      };
+    };
   };
 
-  config.assertions = [
-    {
-      assertion =
-        cfg.kwin.virtualDesktops.number == null ||
-        cfg.kwin.virtualDesktops.names == null ||
-        cfg.kwin.virtualDesktops.number == (builtins.length cfg.kwin.virtualDesktops.names);
-      message = "programs.plasma.virtualDesktops.number doesn't match the length of programs.plasma.virtualDesktops.names.";
-    }
-    {
-      assertion =
-        cfg.kwin.virtualDesktops.rows == null ||
-        (cfg.kwin.virtualDesktops.names == null && cfg.kwin.virtualDesktops.number == null) ||
-        (cfg.kwin.virtualDesktops.number != null && cfg.kwin.virtualDesktops.number >= cfg.kwin.virtualDesktops.rows) ||
-        (cfg.kwin.virtualDesktops.names != null && (builtins.length cfg.kwin.virtualDesktops.names) >= cfg.kwin.virtualDesktops.rows);
-      message = "KWin cannot have more rows virtual desktops.";
-    }
-    {
-      assertion = cfg.kwin.effects.minimization.duration == null || cfg.kwin.effects.minimization.animation == "magiclamp";
-      message = "programs.plasma.kwin.effects.minimization.duration is only supported for the magic lamp effect";
-    }
-    {
-      assertion = (cfg.kwin.nightLight.enable == null || cfg.kwin.nightLight.enable == false) || cfg.kwin.nightLight.mode != null;
-      message = "programs.plasma.kwin.nightLight.mode must be set when programs.plasma.kwin.nightLight.enable is true.";
-    }
-    {
-      assertion = cfg.kwin.nightLight.mode != "Times" || (cfg.kwin.nightLight.time.morning != null && cfg.kwin.nightLight.time.evening != null);
-      message = "programs.plasma.kwin.nightLight.time.morning and programs.plasma.kwin.nightLight.time.evening must be set when programs.plasma.kwin.nightLight.mode is set to times.";
-    }
-    {
-      assertion = cfg.kwin.nightLight.mode != "Location" || (cfg.kwin.nightLight.location.latitude != null && cfg.kwin.nightLight.location.longitude != null);
-      message = "programs.plasma.kwin.nightLight.location.latitude and programs.plasma.kwin.nightLight.location.longitude must be set when programs.plasma.kwin.nightLight.mode is set to location.";
-    }
-    {
-      assertion = cfg.kwin.nightLight.time.morning == null || builtins.stringLength cfg.kwin.nightLight.time.morning == 4;
-      message = "programs.plasma.kwin.nightLight.time.morning must have the exact length of 4. If it doesn't have, it means that it doesn't have this time format: HH:MM";
-    }
-    {
-      assertion = cfg.kwin.nightLight.time.evening == null || builtins.stringLength cfg.kwin.nightLight.time.evening == 4;
-      message = "programs.plasma.kwin.nightLight.time.evening must have the exact length of 4. If it doesn't have, it means that it doesn't have this time format: HH:MM";
-    }
-  ];
+  config = (mkIf cfg.enable {
+    assertions = [
+      {
+        assertion =
+          cfg.kwin.virtualDesktops.number == null ||
+          cfg.kwin.virtualDesktops.names == null ||
+          cfg.kwin.virtualDesktops.number == (builtins.length cfg.kwin.virtualDesktops.names);
+        message = "programs.plasma.virtualDesktops.number doesn't match the length of programs.plasma.virtualDesktops.names.";
+      }
+      {
+        assertion =
+          cfg.kwin.virtualDesktops.rows == null ||
+          (cfg.kwin.virtualDesktops.names == null && cfg.kwin.virtualDesktops.number == null) ||
+          (cfg.kwin.virtualDesktops.number != null && cfg.kwin.virtualDesktops.number >= cfg.kwin.virtualDesktops.rows) ||
+          (cfg.kwin.virtualDesktops.names != null && (builtins.length cfg.kwin.virtualDesktops.names) >= cfg.kwin.virtualDesktops.rows);
+        message = "KWin cannot have more rows virtual desktops.";
+      }
+      {
+        assertion = cfg.kwin.effects.minimization.duration == null || cfg.kwin.effects.minimization.animation == "magiclamp";
+        message = "programs.plasma.kwin.effects.minimization.duration is only supported for the magic lamp effect";
+      }
+      {
+        assertion = (cfg.kwin.nightLight.enable == null || cfg.kwin.nightLight.enable == false) || cfg.kwin.nightLight.mode != null;
+        message = "programs.plasma.kwin.nightLight.mode must be set when programs.plasma.kwin.nightLight.enable is true.";
+      }
+      {
+        assertion = cfg.kwin.nightLight.mode != "Times" || (cfg.kwin.nightLight.time.morning != null && cfg.kwin.nightLight.time.evening != null);
+        message = "programs.plasma.kwin.nightLight.time.morning and programs.plasma.kwin.nightLight.time.evening must be set when programs.plasma.kwin.nightLight.mode is set to times.";
+      }
+      {
+        assertion = cfg.kwin.nightLight.mode != "Location" || (cfg.kwin.nightLight.location.latitude != null && cfg.kwin.nightLight.location.longitude != null);
+        message = "programs.plasma.kwin.nightLight.location.latitude and programs.plasma.kwin.nightLight.location.longitude must be set when programs.plasma.kwin.nightLight.mode is set to location.";
+      }
+      {
+        assertion = cfg.kwin.nightLight.time.morning == null || builtins.stringLength cfg.kwin.nightLight.time.morning == 4;
+        message = "programs.plasma.kwin.nightLight.time.morning must have the exact length of 4. If it doesn't have, it means that it doesn't have this time format: HH:MM";
+      }
+      {
+        assertion = cfg.kwin.nightLight.time.evening == null || builtins.stringLength cfg.kwin.nightLight.time.evening == 4;
+        message = "programs.plasma.kwin.nightLight.time.evening must have the exact length of 4. If it doesn't have, it means that it doesn't have this time format: HH:MM";
+      }
+    ];
 
-  config.programs.plasma.configFile."kwinrc" = mkIf (cfg.enable)
-    (mkMerge [
+    home.packages = with pkgs; [ ] ++ optionals (cfg.kwin.scripts.polonium.enable == true) [ libsForQt5.polonium ];
+
+    programs.plasma.configFile."kwinrc" = (mkMerge [
       # Titlebar buttons
       (
         mkIf (cfg.kwin.titlebarButtons.left != null) {
@@ -455,5 +577,24 @@ in
       (mkIf (cfg.kwin.edgeBarrier != null) {
         EdgeBarrier.EdgeBarrier = cfg.kwin.edgeBarrier;
       })
+
+      (mkIf (cfg.kwin.scripts.polonium.enable != null) {
+        Plugins.poloniumEnabled = cfg.kwin.scripts.polonium.enable;
+        Script-polonium = {
+          Borders = cfg.kwin.scripts.polonium.settings.borderVisibility;
+          Debug = cfg.kwin.scripts.polonium.settings.enableDebug;
+          EngineType = cfg.kwin.scripts.polonium.settings.layout.engine;
+          FilterCaption = cfg.kwin.scripts.polonium.settings.filter.windowTitles;
+          FilterProcess = cfg.kwin.scripts.polonium.settings.filter.processes;
+          InsertionPoint = cfg.kwin.scripts.polonium.settings.layout.insertionPoint;
+          MaximizeSingle = cfg.kwin.scripts.polonium.settings.maximizeSingleWindow;
+          ResizeAmount = cfg.kwin.scripts.polonium.settings.resizeAmount;
+          RotateLayout = cfg.kwin.scripts.polonium.settings.layout.rotate;
+          SaveOnTileEdit = cfg.kwin.scripts.polonium.settings.saveOnTileEdit;
+          TilePopups = cfg.kwin.scripts.polonium.settings.tilePopups;
+          TimerDelay = cfg.kwin.scripts.polonium.settings.callbackDelay;
+        };
+      })
     ]);
+  });
 }
