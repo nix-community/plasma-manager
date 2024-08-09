@@ -353,6 +353,12 @@ in
           (mkIf (any (corner: corner.action == "presentWindowsCurrentApp") hotCorners) {
             Effect-windowview.BorderActivateClass = map (corner: positionIndex corner.position) (filter (corner: corner.action == "presentWindowsCurrentApp") hotCorners);
           })
+          (mkIf (any (corner: corner.action == "presentWindowsCurrentDesktop") hotCorners) {
+            Effect-windowview.BorderActivate = map (corner: positionIndex corner.position) (filter (corner: corner.action == "presentWindowsCurrentDesktop") hotCorners);
+          })
+          (mkIf (any (corner: corner.action == "presentWindowsAllDesktops") hotCorners) {
+            Effect-windowview.BorderActivateAll = map (corner: positionIndex corner.position) (filter (corner: corner.action == "presentWindowsAllDesktops") hotCorners);
+          })
         ]);
     };
 
