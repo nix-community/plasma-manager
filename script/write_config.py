@@ -109,7 +109,7 @@ class ConfigValue:
             else str(value["value"]).lower()
         )
         return cls(
-            value=escape(key_value),
+            value=escape(key_value) if value["escapeValue"] else key_value,
             immutable=value["immutable"],
             shellExpand=value["shellExpand"],
         )

@@ -35,6 +35,15 @@ let
           plasma-manager will leave it unchanged after activation.
         '';
       };
+      escapeValue = lib.mkOption {
+        type = bool;
+        default = true;
+        description = ''
+          Whether to escape the value according to kde's escape-format. See:
+          https://github.com/KDE/kconfig/blob/44f98ff5cb9008436ba5ba385cae03bbd0ab33e6/src/core/kconfigini.cpp#L882
+          for info about this format.
+        '';
+      };
     };
   });
   coercedSettingsType = with lib.types;
