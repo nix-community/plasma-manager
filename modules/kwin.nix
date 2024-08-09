@@ -78,6 +78,50 @@ let
     if list == null
     then null
     else builtins.concatStringsSep ", " list;
+
+  hotCornersPosition = [
+    "top"
+    "topRight"
+    "right"
+    "bottomRight"
+    "bottom"
+    "bottomLeft"
+    "left"
+    "topLeft"
+  ];
+
+  hotCornersActions = [
+    "none"
+    "showDesktop"
+    "lockScreen"
+    "krunner"
+    "activityManager"
+    "applicationLauncher"
+    "presentWindowsAllDesktops"
+    "presentWindowsCurrentDesktop"
+    "presentWindowsCurrentApp"
+    "overview"
+    "grid"
+    "toggleWindowSwitching"
+    "toggleAlternativeWindowSwitching"
+  ];
+
+  hotCornerType = types.submodule {
+    options = {
+      position = mkOption {
+        type = with types; enum hotCornersPosition;
+        default = null;
+        example = "topRight";
+        description = "The position of the hot corner.";
+      };
+      action = mkOption {
+        type = with types; enum hotCornersActions;
+        default = null;
+        example = "showDesktop";
+        description = "The action to be performed when the hot corner is triggered.";
+      };
+    };
+  };  
 in
 {
   imports = [
@@ -294,6 +338,22 @@ in
         example = 30;
         description = "The time in minutes it takes to transition from day to night.";
       };
+    };
+
+    hotCorners = mkOption {
+      type = with types; nullOr (listOf hotCornerType);
+      default = null;
+      description = "Configure hot corners.";
+      apply = hotCorners:
+        let
+          positionIndex = position: getIndexFromEnum position;
+          capitalizedPosition = position: capitalizeWord position;
+        in
+        optionalAttrs (hotCorners != null) (mkMerge [
+          (mkIf (any (corner: corner.action == "presentWindowsCurrentApp") hotCorners) {
+            Effect-windowview.BorderActivateClass = map (corner: positionIndex corner.position) (filter (corner: corner.action == "presentWindowsCurrentApp") hotCorners);
+          })
+        ]);
     };
 
     edgeBarrier = mkOption {
@@ -595,6 +655,10 @@ in
           TimerDelay = cfg.kwin.scripts.polonium.settings.callbackDelay;
         };
       })
-    ]);
+
+      (mkIf (cfg.kwin.hotCorners != null) {
+        cfg.kwin.hotCorners
+      })
+    ])
   });
 }
