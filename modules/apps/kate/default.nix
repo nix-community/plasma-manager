@@ -306,15 +306,17 @@ in
         type = lib.types.bool;
       };
 
-      inputMode = let
-        enumVals = [ "normal" "vi" ];
-      in lib.mkOption {
-        type = lib.types.enum enumVals;
-        description = "The input mode for the editor.";
-        default = "normal";
-        example = "vi";
-        apply = getIndexFromEnum enumVals;
-      };
+      inputMode =
+        let
+          enumVals = [ "normal" "vi" ];
+        in
+        lib.mkOption {
+          type = lib.types.enum enumVals;
+          description = "The input mode for the editor.";
+          default = "normal";
+          example = "vi";
+          apply = getIndexFromEnum enumVals;
+        };
 
       font = lib.mkOption {
         type = fontType;
@@ -476,7 +478,7 @@ in
     };
 
     "KTextEditor View" = {
-      "Chars To Enclose Selection" = cfg.editor.brackets.characters;
+      "Chars To Enclose Selection" = { value = cfg.editor.brackets.characters; escapeValue = false; };
       "Bracket Match Preview" = cfg.editor.brackets.highlightMatching;
       "Auto Brackets" = cfg.editor.brackets.automaticallyAddClosing;
       "Input Mode" = cfg.editor.inputMode;
