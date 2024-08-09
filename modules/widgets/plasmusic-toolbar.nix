@@ -249,6 +249,7 @@ in
           description = "Maximum width of the song text.";
         };
         scrolling = {
+          enable = mkBoolOption "Whether to enable scrolling text or not.";
           behavior =
             let
               enumVals = [ "alwaysScroll" "scrollOnHover" "alwaysScrollExceptOnHover" ];
@@ -266,10 +267,19 @@ in
             example = 3;
             description = "Speed of the scrolling text.";
           };
+          resetOnPause = mkBoolOption "Whether to reset the scrolling text when the song is paused or not.";
         };
         displayInSeparateLines = mkBoolOption "Whether to display song information (title and artist) in separate lines or not.";
       };
-      showPlaybackControls = mkBoolOption "Whether to show playback controls or not.";
+      musicControls = {
+        showPlaybackControls = mkBoolOption "Whether to show playback controls or not.";
+        volumeStep = mkOption {
+          type = types.nullOr (types.ints.between 1 100);
+          default = null;
+          example = 5;
+          description = "Step size for volume control.";
+        };
+      };
       font = mkOption {
         type = types.nullOr fontType;
         default = null;
@@ -300,7 +310,7 @@ in
       { panelIcon
       , preferredSource
       , songText
-      , showPlaybackControls
+      , musicControls
       , font
       , settings
       }: {
@@ -315,11 +325,15 @@ in
               sourceIndex = preferredSource;
 
               maxSongWidthInPanel = songText.maximumWidth;
-              textScrollingSpeed = songText.scrolling.speed;
               separateText = songText.displayInSeparateLines;
-              textScrollingBehaviour = songText.scrolling.behavior;
 
-              commandsInPanel = showPlaybackControls;
+              textScrollingEnabled = songText.scrolling.enable;
+              textScrollingBehaviour = songText.scrolling.behavior;
+              textScrollingSpeed = songText.scrolling.speed;
+              textScrollingResetOnPause = songText.scrolling.resetOnPause;
+
+              commandsInPanel = musicControls.showPlaybackControls;
+              volumeStep = musicControls.volumeStep;
               
               useCustomFont = (font != null);
               customFont = font;

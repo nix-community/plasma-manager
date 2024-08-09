@@ -27,6 +27,7 @@ let
   ##############################################################################
   # Generate a script that will remove all the current config files.
   defaultResetFiles = (if plasmaCfg.overrideConfig then [
+    "auroraerc"
     "baloofilerc"
     "dolphinrc"
     "ffmpegthumbsrc"

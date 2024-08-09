@@ -11,6 +11,7 @@ let
     ./icon-tasks.nix
     ./kickoff.nix
     ./panel-spacer-extended.nix
+    ./plasma-panel-colorizer.nix
     ./plasmusic-toolbar.nix
     ./system-monitor.nix
     ./system-tray.nix
