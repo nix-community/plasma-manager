@@ -655,10 +655,6 @@ in
           TimerDelay = cfg.kwin.scripts.polonium.settings.callbackDelay;
         };
       })
-
-      (mkIf (cfg.kwin.hotCorners != null) {
-        cfg.kwin.hotCorners
-      })
-    ])
+    ]) // cfg.kwin.hotCorners;
   });
 }
