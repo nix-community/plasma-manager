@@ -474,6 +474,10 @@ in
           // differently on two monitors, the UI shows which actions were defined on
           // which monitor, their corresponding settings are all listed under the same
           // section though, in my case [ActionPlugins][0].
+          // Edit: After logout and login the settings in the config file seem to
+          // apply to both monitors and their respective menus represent this config.
+          // So the changes made in one monitor’s desktop settings are kept in memory
+          // and arent’t even read anew when the settings are closed and reopened?
           let configFile = ConfigFile('plasma-org.kde.plasma.desktop-appletsrc');
           configFile.group = 'ActionPlugins';
           // Would return 0 and 1 (unsorted) in case of following sections:
@@ -481,8 +485,12 @@ in
           // [ActionPlugins][1]
           let actionPluginSubSections = configFile.groupList
           // Gets the id of the first [ActionPlugins] section
-          // (as long as no id is grater than 9, that is).
-          // FIXME
+          // FIXME: (as long as no id is grater than 9, that is).
+          // Edit: I don’t know if this is necessary. I have [0] and [1] in my config.
+          // If I move all but one of the actions from [0] to [1] and log in again,
+          // only the actions from [0] are active. If I remove [0] completely, it is
+          // recreated on login with it’s defaults, which then are active. It looks
+          // like one could just hard code [0], but what is the purpose of [1] then?
           let actionPluginSubSectionId = Array.from(actionPluginSubSections).sort()[0]
           let actionPluginSubSection = ConfigFile(configFile, actionPluginSubSectionId)
           ${stringIfNotNull cfg.workspace.desktop.mouseActions.leftClick ''actionPluginSubSection.writeEntry("LeftButton;NoModifier", "${mouseActionNames."${cfg.workspace.desktop.mouseActions.leftClick}"}");''}
