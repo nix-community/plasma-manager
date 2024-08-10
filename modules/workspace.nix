@@ -31,7 +31,7 @@ let
     type = 6;
   };
 
-  mouseActionNames = {
+  mouseActions = {
     applicationLauncher = "org.kde.applauncher";
     contextMenu = "org.kde.contextmenu";
     paste = "org.kde.paste";
@@ -40,7 +40,7 @@ let
     switchWindow = "switchwindow";
   };
 
-  mouseActionValues = lib.types.enum [ "applicationLauncher" "contextMenu" "paste" "switchActivity" "switchVirtualDesktop" "switchWindow" ];
+  mouseActionNames = lib.types.enum (builtins.attrNames mouseActions);
 
   anyThemeSet = (cfg.workspace.theme != null ||
     cfg.workspace.colorScheme != null ||
@@ -319,31 +319,35 @@ in
 
       mouseActions = {
         leftClick = lib.mkOption {
-          type = lib.types.nullOr mouseActionValues;
+          type = lib.types.nullOr mouseActionNames;
           default = null;
           example = "appLauncher";
           description = "Action for a left click on the desktop.";
+          apply = value: if (value == null) then null else mouseActions.${value};
         };
 
         middleClick = lib.mkOption {
-          type = lib.types.nullOr mouseActionValues;
+          type = lib.types.nullOr mouseActionNames;
           default = null;
           example = "switchWindow";
           description = "Action for a click on the desktop with the middle mouse button.";
+          apply = value: if (value == null) then null else mouseActions.${value};
         };
 
         rightClick = lib.mkOption {
-          type = lib.types.nullOr mouseActionValues;
+          type = lib.types.nullOr mouseActionNames;
           default = null;
           example = "contextMenu";
           description = "Action for a right click on the desktop.";
+          apply = value: if (value == null) then null else mouseActions.${value};
         };
 
         verticalScroll = lib.mkOption {
-          type = lib.types.nullOr mouseActionValues;
+          type = lib.types.nullOr mouseActionNames;
           default = null;
           example = "switchVirtualDesktop";
           description = "Action for scrolling (vertically) while hovering over the desktop.";
+          apply = value: if (value == null) then null else mouseActions.${value};
         };
       };
     };
@@ -495,10 +499,10 @@ in
           // like one could just hard code [0], but what is the purpose of [1] then?
           let actionPluginSubSectionId = Array.from(actionPluginSubSections).sort()[0]
           let actionPluginSubSection = ConfigFile(configFile, actionPluginSubSectionId)
-          ${stringIfNotNull cfg.workspace.desktop.mouseActions.leftClick ''actionPluginSubSection.writeEntry("LeftButton;NoModifier", "${mouseActionNames."${cfg.workspace.desktop.mouseActions.leftClick}"}");''}
-          ${stringIfNotNull cfg.workspace.desktop.mouseActions.middleClick ''actionPluginSubSection.writeEntry("MiddleButton;NoModifier", "${mouseActionNames."${cfg.workspace.desktop.mouseActions.middleClick}"}");''}
-          ${stringIfNotNull cfg.workspace.desktop.mouseActions.rightClick ''actionPluginSubSection.writeEntry("RightButton;NoModifier", "${mouseActionNames."${cfg.workspace.desktop.mouseActions.rightClick}"}");''}
-          ${stringIfNotNull cfg.workspace.desktop.mouseActions.verticalScroll ''actionPluginSubSection.writeEntry("wheel:Vertical;NoModifier", "${mouseActionNames."${cfg.workspace.desktop.mouseActions.verticalScroll}"}");''}
+          ${stringIfNotNull cfg.workspace.desktop.mouseActions.leftClick ''actionPluginSubSection.writeEntry("LeftButton;NoModifier", "${cfg.workspace.desktop.mouseActions.leftClick}");''}
+          ${stringIfNotNull cfg.workspace.desktop.mouseActions.middleClick ''actionPluginSubSection.writeEntry("MiddleButton;NoModifier", "${cfg.workspace.desktop.mouseActions.middleClick}");''}
+          ${stringIfNotNull cfg.workspace.desktop.mouseActions.rightClick ''actionPluginSubSection.writeEntry("RightButton;NoModifier", "${cfg.workspace.desktop.mouseActions.rightClick}");''}
+          ${stringIfNotNull cfg.workspace.desktop.mouseActions.verticalScroll ''actionPluginSubSection.writeEntry("wheel:Vertical;NoModifier", "${cfg.workspace.desktop.mouseActions.verticalScroll}");''}
         '';
         priority = 3;
       });
