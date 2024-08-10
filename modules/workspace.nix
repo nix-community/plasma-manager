@@ -32,13 +32,15 @@ let
   };
 
   mouseActionNames = {
+    applicationLauncher = "org.kde.applauncher";
     contextMenu = "org.kde.contextmenu";
-    switchWindow = "switchwindow";
+    paste = "org.kde.paste";
+    switchActivity = "switchactivity";
     switchVirtualDesktop = "org.kde.switchdesktop";
-    appLauncher = "org.kde.applauncher";
+    switchWindow = "switchwindow";
   };
 
-  mouseActionValues = lib.types.enum [ "contextMenu" "switchWindow" "switchVirtualDesktop" "appLauncher" ];
+  mouseActionValues = lib.types.enum [ "applicationLauncher" "contextMenu" "paste" "switchActivity" "switchVirtualDesktop" "switchWindow" ];
 
   anyThemeSet = (cfg.workspace.theme != null ||
     cfg.workspace.colorScheme != null ||
