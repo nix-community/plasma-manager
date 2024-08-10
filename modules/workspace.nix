@@ -31,18 +31,27 @@ let
     type = 6;
   };
 
+  mouseActionNames = {
+    contextMenu = "org.kde.contextmenu";
+    switchWindow = "switchwindow";
+    switchVirtualDesktop = "org.kde.switchdesktop";
+    appLauncher = "org.kde.applauncher";
+  };
+
+  mouseActionValues = lib.types.enum [ "contextMenu" "switchWindow" "switchVirtualDesktop" "appLauncher" ];
+
   anyThemeSet = (cfg.workspace.theme != null ||
     cfg.workspace.colorScheme != null ||
     (cfg.workspace.cursor != null && cfg.workspace.cursor.theme != null) ||
     cfg.workspace.lookAndFeel != null ||
     cfg.workspace.iconTheme != null);
 
-  # Becomes true if any option under "cfg.workspace.desktop.icons" is set to something other than null.
+  # Becomes true if any option under "cfg.workspace.desktop" is set to something other than null.
   anyDesktopFolderSettingsSet =
     let
       recurse = l: lib.any (v: if builtins.isAttrs v then recurse v else v != null) (builtins.attrValues l);
     in
-    recurse cfg.workspace.desktop.icons;
+    recurse cfg.workspace.desktop;
 
   splashScreenEngineDetect = theme: (if (theme == "None") then "none" else "KSplashQML");
 in
@@ -305,6 +314,36 @@ in
           '';
         };
       };
+
+      mouseActions = {
+        leftClick = lib.mkOption {
+          type = lib.types.nullOr mouseActionValues;
+          default = null;
+          example = "appLauncher";
+          description = "Action for a left click on the desktop.";
+        };
+
+        middleClick = lib.mkOption {
+          type = lib.types.nullOr mouseActionValues;
+          default = null;
+          example = "switchWindow";
+          description = "Action for a click on the desktop with the middle mouse button.";
+        };
+
+        rightClick = lib.mkOption {
+          type = lib.types.nullOr mouseActionValues;
+          default = null;
+          example = "contextMenu";
+          description = "Action for a right click on the desktop.";
+        };
+
+        verticalScroll = lib.mkOption {
+          type = lib.types.nullOr mouseActionValues;
+          default = null;
+          example = "switchVirtualDesktop";
+          description = "Action for scrolling (vertically) while hovering over the desktop.";
+        };
+      };
     };
   };
 
@@ -426,6 +465,30 @@ in
             ${lib.optionalString (cfg.workspace.desktop.icons.sorting.descending == true) ''desktop.writeConfig("sortDesc", true);''}
             ${lib.optionalString (cfg.workspace.desktop.icons.sorting.foldersFirst == false) ''desktop.writeConfig("sortDirsFirst", false);''}
           }
+
+          // Mouse actions
+          // This is pretty hacky, there has to be a better way to do this.
+          // I don’t even know if that works in every setup or just in my specific case,
+          // as I don’t understand how the [ActionPlugins] sections are populated and
+          // processed, especially in multi-monitor setups. If you configure the actions
+          // differently on two monitors, the UI shows which actions were defined on
+          // which monitor, their corresponding settings are all listed under the same
+          // section though, in my case [ActionPlugins][0].
+          let configFile = ConfigFile('plasma-org.kde.plasma.desktop-appletsrc');
+          configFile.group = 'ActionPlugins';
+          // Would return 0 and 1 (unsorted) in case of following sections:
+          // [ActionPlugins][0]
+          // [ActionPlugins][1]
+          let actionPluginSubSections = configFile.groupList
+          // Gets the id of the first [ActionPlugins] section
+          // (as long as no id is grater than 9, that is).
+          // FIXME
+          let actionPluginSubSectionId = Array.from(actionPluginSubSections).sort()[0]
+          let actionPluginSubSection = ConfigFile(configFile, actionPluginSubSectionId)
+          ${stringIfNotNull cfg.workspace.desktop.mouseActions.leftClick ''actionPluginSubSection.writeEntry("LeftButton;NoModifier", "${mouseActionNames."${cfg.workspace.desktop.mouseActions.leftClick}"}");''}
+          ${stringIfNotNull cfg.workspace.desktop.mouseActions.middleClick ''actionPluginSubSection.writeEntry("MiddleButton;NoModifier", "${mouseActionNames."${cfg.workspace.desktop.mouseActions.middleClick}"}");''}
+          ${stringIfNotNull cfg.workspace.desktop.mouseActions.rightClick ''actionPluginSubSection.writeEntry("RightButton;NoModifier", "${mouseActionNames."${cfg.workspace.desktop.mouseActions.rightClick}"}");''}
+          ${stringIfNotNull cfg.workspace.desktop.mouseActions.verticalScroll ''actionPluginSubSection.writeEntry("wheel:Vertical;NoModifier", "${mouseActionNames."${cfg.workspace.desktop.mouseActions.verticalScroll}"}");''}
         '';
         priority = 3;
       });
