@@ -48,12 +48,15 @@ let
     cfg.workspace.lookAndFeel != null ||
     cfg.workspace.iconTheme != null);
 
-  # Becomes true if any option under "cfg.workspace.desktop" is set to something other than null.
+  # Becomes true if any option under "cfg.workspace.desktop.icons" is set to something other than null.
   anyDesktopFolderSettingsSet =
     let
       recurse = l: lib.any (v: if builtins.isAttrs v then recurse v else v != null) (builtins.attrValues l);
     in
-    recurse cfg.workspace.desktop;
+    recurse cfg.workspace.desktop.icons;
+
+  # Becomes true if any option under "cfg.workspace.desktop.mouseActions" is set to something other than null.
+  anyDesktopMouseActionsSet = lib.any (v: v != null) (builtins.attrValues cfg.workspace.desktop.mouseActions);
 
   splashScreenEngineDetect = theme: (if (theme == "None") then "none" else "KSplashQML");
 in
@@ -470,8 +473,12 @@ in
             ${stringIfNotNull cfg.workspace.desktop.icons.sorting.mode ''desktop.writeConfig("sortMode", ${builtins.toString cfg.workspace.desktop.icons.sorting.mode});''}
             ${lib.optionalString (cfg.workspace.desktop.icons.sorting.descending == true) ''desktop.writeConfig("sortDesc", true);''}
             ${lib.optionalString (cfg.workspace.desktop.icons.sorting.foldersFirst == false) ''desktop.writeConfig("sortDirsFirst", false);''}
-          }
+          }'';
+        priority = 3;
+      });
 
+      desktopScript."set_desktop_mouse_actions" = (lib.mkIf anyDesktopMouseActionsSet {
+        text = ''
           // Mouse actions
           // This is pretty hacky, there has to be a better way to do this.
           // I don’t even know if that works in every setup or just in my specific case,
@@ -504,7 +511,7 @@ in
           ${stringIfNotNull cfg.workspace.desktop.mouseActions.rightClick ''actionPluginSubSection.writeEntry("RightButton;NoModifier", "${cfg.workspace.desktop.mouseActions.rightClick}");''}
           ${stringIfNotNull cfg.workspace.desktop.mouseActions.verticalScroll ''actionPluginSubSection.writeEntry("wheel:Vertical;NoModifier", "${cfg.workspace.desktop.mouseActions.verticalScroll}");''}
         '';
-        priority = 3;
+        priority = 4;
       });
     };
 
