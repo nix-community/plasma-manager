@@ -5,7 +5,7 @@ with lib;
 let
   cfg = config.programs.plasma;
   numlockSettings = [ "on" "off" "unchanged" ];
-  switchModes = [ "global" "desktop" "winClass" "window" ]
+  switchModes = [ "global" "desktop" "winClass" "window" ];
 
   scrollMethods = {
     twoFingers = 1;
