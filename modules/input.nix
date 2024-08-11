@@ -27,7 +27,6 @@ let
     options = {
       layout = mkOption {
         type = types.str;
-        default = null;
         example = "us";
         description = ''
           Keyboard layout.
