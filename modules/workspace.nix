@@ -480,38 +480,17 @@ in
       desktopScript."set_desktop_mouse_actions" = (lib.mkIf anyDesktopMouseActionsSet {
         text = ''
           // Mouse actions
-          // This is pretty hacky, there has to be a better way to do this.
-          // I don’t even know if that works in every setup or just in my specific case,
-          // as I don’t understand how the [ActionPlugins] sections are populated and
-          // processed, especially in multi-monitor setups. If you configure the actions
-          // differently on two monitors, the UI shows which actions were defined on
-          // which monitor, their corresponding settings are all listed under the same
-          // section though, in my case [ActionPlugins][0].
-          // Edit: After logout and login the settings in the config file seem to
-          // apply to both monitors and their respective menus represent this config.
-          // So the changes made in one monitor’s desktop settings are kept in memory
-          // and arent’t even read anew when the settings are closed and reopened?
           let configFile = ConfigFile('plasma-org.kde.plasma.desktop-appletsrc');
           configFile.group = 'ActionPlugins';
-          // Would return 0 and 1 (unsorted) in case of following sections:
-          // [ActionPlugins][0]
-          // [ActionPlugins][1]
-          let actionPluginSubSections = configFile.groupList
-          // Gets the id of the first [ActionPlugins] section
-          // FIXME: (as long as no id is grater than 9, that is).
-          // Edit: I don’t know if this is necessary. I have [0] and [1] in my config.
-          // If I move all but one of the actions from [0] to [1] and log in again,
-          // only the actions from [0] are active. If I remove [0] completely, it is
-          // recreated on login with it’s defaults, which then are active. It looks
-          // like one could just hard code [0], but what is the purpose of [1] then?
-          let actionPluginSubSectionId = Array.from(actionPluginSubSections).sort()[0]
-          let actionPluginSubSection = ConfigFile(configFile, actionPluginSubSectionId)
+          // References the section [ActionPlugins][0].
+          let actionPluginSubSection = ConfigFile(configFile, 0)
           ${stringIfNotNull cfg.workspace.desktop.mouseActions.leftClick ''actionPluginSubSection.writeEntry("LeftButton;NoModifier", "${cfg.workspace.desktop.mouseActions.leftClick}");''}
           ${stringIfNotNull cfg.workspace.desktop.mouseActions.middleClick ''actionPluginSubSection.writeEntry("MiddleButton;NoModifier", "${cfg.workspace.desktop.mouseActions.middleClick}");''}
           ${stringIfNotNull cfg.workspace.desktop.mouseActions.rightClick ''actionPluginSubSection.writeEntry("RightButton;NoModifier", "${cfg.workspace.desktop.mouseActions.rightClick}");''}
           ${stringIfNotNull cfg.workspace.desktop.mouseActions.verticalScroll ''actionPluginSubSection.writeEntry("wheel:Vertical;NoModifier", "${cfg.workspace.desktop.mouseActions.verticalScroll}");''}
         '';
         priority = 3;
+        restartServices = [ "plasma-plasmashell" ];
       });
     };
 
