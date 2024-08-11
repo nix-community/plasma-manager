@@ -49,7 +49,7 @@ let
     cfg.workspace.iconTheme != null);
 
   # Becomes true if any option under "cfg.workspace.desktop" is set to something other than null.
-  anyDesktopFolderSettingsSet =
+  anyDesktopSettingsSet =
     let
       recurse = l: lib.any (v: if builtins.isAttrs v then recurse v else v != null) (builtins.attrValues l);
     in
@@ -455,7 +455,7 @@ in
         priority = 1;
       });
 
-      desktopScript."set_desktop_folder_settings" = (lib.mkIf anyDesktopFolderSettingsSet {
+      desktopScript."set_desktop_folder_settings" = (lib.mkIf anyDesktopSettingsSet {
         text = ''
           // Desktop folder settings
           let allDesktops = desktops();
