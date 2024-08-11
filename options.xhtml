@@ -6065,16 +6065,99 @@ boolean</p>
 <p>Keyboard layouts to use.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
-null or (list of string)</p>
+null or (list of (submodule))</p>
 
 <p><span class="emphasis"><em>Default:</em></span>
 <code class="literal">null</code></p>
 
 <p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting">[
-  &quot;es&quot;
-  &quot;us&quot;
+  {
+    layout = &quot;us&quot;;
+  }
+  {
+    layout = &quot;ca&quot;;
+    variant = &quot;eng&quot;;
+  }
 ]
 </code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/input.nix" target="_top">
+&lt;plasma-manager/modules/input.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.input.keyboard.layouts._.layout"></a><a class="term" href="options.xhtml#opt-programs.plasma.input.keyboard.layouts._.layout"><code class="option">programs.plasma.input.keyboard.layouts.*.layout</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Keyboard layout.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+string</p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;us&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/input.nix" target="_top">
+&lt;plasma-manager/modules/input.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.input.keyboard.layouts._.variant"></a><a class="term" href="options.xhtml#opt-programs.plasma.input.keyboard.layouts._.variant"><code class="option">programs.plasma.input.keyboard.layouts.*.variant</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Keyboard layout variant.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or string</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;eng&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/input.nix" target="_top">
+&lt;plasma-manager/modules/input.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.input.keyboard.model"></a><a class="term" href="options.xhtml#opt-programs.plasma.input.keyboard.model"><code class="option">programs.plasma.input.keyboard.model</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Keyboard model.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or string</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;pc104&quot;</code></p>
 
 <p><span class="emphasis"><em>Declared by:</em></span></p>
 <table border="0" summary="Simple list" class="simplelist">
@@ -6102,6 +6185,37 @@ null or one of “on”, “off”, “unchanged”</p>
 
 <p><span class="emphasis"><em>Example:</em></span>
 <code class="literal">&quot;on&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/input.nix" target="_top">
+&lt;plasma-manager/modules/input.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.input.keyboard.options"></a><a class="term" href="options.xhtml#opt-programs.plasma.input.keyboard.options"><code class="option">programs.plasma.input.keyboard.options</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Keyboard options.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or (list of string)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting">[
+  &quot;altwin:meta_alt&quot;
+  &quot;caps:shift&quot;
+  &quot;custom:types&quot;
+]
+</code></pre>
 
 <p><span class="emphasis"><em>Declared by:</em></span></p>
 <table border="0" summary="Simple list" class="simplelist">
@@ -6157,6 +6271,33 @@ null or integer or floating point number between 0.2 and 100.0 (both inclusive)<
 
 <p><span class="emphasis"><em>Example:</em></span>
 <code class="literal">50.0</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/input.nix" target="_top">
+&lt;plasma-manager/modules/input.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.input.keyboard.switchingPolicy"></a><a class="term" href="options.xhtml#opt-programs.plasma.input.keyboard.switchingPolicy"><code class="option">programs.plasma.input.keyboard.switchingPolicy</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Switching policy for keyboard layouts.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “global”, “desktop”, “winClass”, “window”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;global&quot;</code></p>
 
 <p><span class="emphasis"><em>Declared by:</em></span></p>
 <table border="0" summary="Simple list" class="simplelist">
