@@ -473,7 +473,8 @@ in
             ${stringIfNotNull cfg.workspace.desktop.icons.sorting.mode ''desktop.writeConfig("sortMode", ${builtins.toString cfg.workspace.desktop.icons.sorting.mode});''}
             ${lib.optionalString (cfg.workspace.desktop.icons.sorting.descending == true) ''desktop.writeConfig("sortDesc", true);''}
             ${lib.optionalString (cfg.workspace.desktop.icons.sorting.foldersFirst == false) ''desktop.writeConfig("sortDirsFirst", false);''}
-          }'';
+          }
+        '';
         priority = 3;
       });
 
