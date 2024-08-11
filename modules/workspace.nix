@@ -40,7 +40,7 @@ let
     switchWindow = "switchwindow";
   };
 
-  mouseActionNames = lib.types.enum (builtins.attrNames mouseActions);
+  mouseActionNamesEnum = lib.types.enum (builtins.attrNames mouseActions);
 
   anyThemeSet = (cfg.workspace.theme != null ||
     cfg.workspace.colorScheme != null ||
@@ -319,7 +319,7 @@ in
 
       mouseActions = {
         leftClick = lib.mkOption {
-          type = lib.types.nullOr mouseActionNames;
+          type = lib.types.nullOr mouseActionNamesEnum;
           default = null;
           example = "appLauncher";
           description = "Action for a left click on the desktop.";
@@ -327,7 +327,7 @@ in
         };
 
         middleClick = lib.mkOption {
-          type = lib.types.nullOr mouseActionNames;
+          type = lib.types.nullOr mouseActionNamesEnum;
           default = null;
           example = "switchWindow";
           description = "Action for a click on the desktop with the middle mouse button.";
@@ -335,7 +335,7 @@ in
         };
 
         rightClick = lib.mkOption {
-          type = lib.types.nullOr mouseActionNames;
+          type = lib.types.nullOr mouseActionNamesEnum;
           default = null;
           example = "contextMenu";
           description = "Action for a right click on the desktop.";
@@ -343,7 +343,7 @@ in
         };
 
         verticalScroll = lib.mkOption {
-          type = lib.types.nullOr mouseActionNames;
+          type = lib.types.nullOr mouseActionNamesEnum;
           default = null;
           example = "switchVirtualDesktop";
           description = "Action for scrolling (vertically) while hovering over the desktop.";
