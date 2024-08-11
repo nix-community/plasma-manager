@@ -5,6 +5,7 @@ with lib;
 let
   cfg = config.programs.plasma;
   numlockSettings = [ "on" "off" "unchanged" ];
+  switchModes = [ "global" "desktop" "winClass" "window" ]
 
   scrollMethods = {
     twoFingers = 1;
@@ -13,6 +14,35 @@ let
   rightClickMethods = {
     bottomRight = 1;
     twoFingers = 2;
+  };
+
+  capitalizeWord = word:
+    let
+      firstLetter = builtins.substring 0 1 word;
+      rest = builtins.substring 1 (builtins.stringLength word - 1) word;
+    in
+    "${toUpper firstLetter}${rest}";
+
+  layoutType = types.submodule {
+    options = {
+      layout = mkOption {
+        type = types.str;
+        default = null;
+        example = "us";
+        description = ''
+          Keyboard layout.
+        '';
+      };
+      variant = mkOption {
+        type = with types; nullOr str;
+        default = null;
+        example = "eng";
+        description = ''
+          Keyboard layout variant.
+        '';
+        apply = builtins.toString;
+      };
+    };
   };
 
   touchPadType = types.submodule {
@@ -305,10 +335,30 @@ in
   ];
   # Keyboard options
   options.programs.plasma.input.keyboard = {
-    layouts = mkOption {
-      type = with types; nullOr (listOf str);
+    model = mkOption {
+      type = with types; nullOr str;
       default = null;
-      example = [ "es" "us" ];
+      example = "pc104";
+      description = ''
+        Keyboard model.
+      '';
+    };
+    switchingPolicy = mkOption {
+      type = with types; nullOr (enum switchModes);
+      default = null;
+      example = "global";
+      description = ''
+        Switching policy for keyboard layouts.
+      '';
+      apply = policy: if policy == null then null else capitalizeWord policy;
+    };
+    layouts = mkOption {
+      type = with types; nullOr (listOf layoutType);
+      default = null;
+      example = [
+        { layout = "us"; }
+        { layout = "ca"; variant = "eng"; }
+      ];
       description = ''
         Keyboard layouts to use.
       '';
@@ -338,6 +388,14 @@ in
         How quick the inputs should be repeated when holding down a key.
       '';
     };
+    options = mkOption {
+      type = with types; nullOr (listOf str);
+      default = null;
+      example = [ "altwin:meta_alt" "caps:shift" "custom:types" ];
+      description = ''
+        Keyboard options.
+      '';
+    };
   };
 
   config.programs.plasma.configFile."kxkbrc" = mkIf (cfg.enable) (
@@ -346,7 +404,30 @@ in
         mkIf (cfg.input.keyboard.layouts != null) {
           Layout = {
             Use.value = true;
-            LayoutList.value = strings.concatStringsSep "," cfg.input.keyboard.layouts;
+            LayoutList.value = strings.concatStringsSep "," (map (l: l.layout) cfg.input.keyboard.layouts);
+            VariantList.value = strings.concatStringsSep "," (map (l: l.variant) cfg.input.keyboard.layouts);
+          };
+        }
+      )
+      (
+        mkIf (cfg.input.keyboard.options != null) {
+          Layout = {
+            ResetOldOptions.value = true;
+            Options.value = strings.concatStringsSep "," cfg.input.keyboard.options;
+          };
+        }
+      )
+      (
+        mkIf (cfg.input.keyboard.model != null) {
+          Layout = {
+            Model.value = cfg.input.keyboard.model;
+          };
+        }
+      )
+      (
+        mkIf (cfg.input.keyboard.switchingPolicy != null) {
+          Layout = {
+            SwitchMode.value = cfg.input.keyboard.switchingPolicy;
           };
         }
       )
