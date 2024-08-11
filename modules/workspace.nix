@@ -511,7 +511,7 @@ in
           ${stringIfNotNull cfg.workspace.desktop.mouseActions.rightClick ''actionPluginSubSection.writeEntry("RightButton;NoModifier", "${cfg.workspace.desktop.mouseActions.rightClick}");''}
           ${stringIfNotNull cfg.workspace.desktop.mouseActions.verticalScroll ''actionPluginSubSection.writeEntry("wheel:Vertical;NoModifier", "${cfg.workspace.desktop.mouseActions.verticalScroll}");''}
         '';
-        priority = 4;
+        priority = 3;
       });
     };
 
