@@ -109,7 +109,7 @@ in
             battery.showPercentage = true;
 
             # Example of raw config for an untyped widget
-            "org.kde.plasma.devicenotifier".config = {
+            "org.kde.plasma.devicenotifier".config.General = {
               removableDevices = false;
               nonRemovableDevices = true;
             };
