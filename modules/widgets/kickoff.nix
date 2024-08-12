@@ -32,7 +32,12 @@ in
         type = types.nullOr types.str;
         default = null;
         example = "start-here-kde-symbolic";
-        description = "The icon to use for the kickoff button.";
+        description = ''
+          The icon to use for the kickoff button.
+
+          This can also be used to specify a custom image for the kickoff button.
+          To do this, set the value to a absolute path to the image file.
+        '';
       };
       label = mkOption {
         type = types.nullOr types.str;
@@ -107,7 +112,8 @@ in
         config = lib.recursiveUpdate {
           General = lib.filterAttrs (_: v: v != null) (
             {
-              icon = icon;
+              inherit icon pin;
+
               menuLabel = label;
               alphaSort = sortAlphabetically;
               compactMode = compactDisplayStyle;
@@ -116,9 +122,6 @@ in
               applicationsDisplay = applicationsDisplayMode;
               primaryActions = showButtonsFor;
               showActionButtonCaptions = showActionButtonCaptions;
-
-              # Other useful options
-              pin = pin;
             }
           );
         } settings;
