@@ -119,6 +119,7 @@ in
 
               showRecentApps = categories.show.recentApplications;
               showRecentDocs = categories.show.recentFiles;
+              recentOrdering = categories.order;
 
               useExtraRunners = search.expandSearchResults;
             }
