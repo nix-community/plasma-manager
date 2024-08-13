@@ -5,10 +5,12 @@ let
     concatMapStringsSep
     concatStringsSep
     mapAttrsToList
+    filterAttrs
     splitString;
 
   configValueTypes = with lib.types; oneOf [ bool float int str ];
-  configValueType = with lib.types; nullOr (attrsOf (attrsOf (either configValueTypes (listOf configValueTypes))));
+  configValueTypeInner = with lib.types; either configValueTypes (listOf configValueTypes);
+  configValueType = with lib.types; nullOr (attrsOf (either configValueTypeInner (attrsOf configValueTypeInner)));
 
   # any value or null -> string -> string 
   # If value is null, returns the empty string, otherwise returns the provided string
@@ -22,7 +24,7 @@ let
 
   setWidgetSettings = var: settings:
     let
-      perConfig = group: key: value: ''${var}.writeConfig("${key}", ${
+      perConfig = key: value: ''${var}.writeConfig("${key}", ${
   if builtins.isList value
   then toJSList value
   else valToJS value
@@ -30,10 +32,17 @@ let
 
       perGroup = group: configs: ''
         ${var}.currentConfigGroup = ${toJSList (splitString "/" group)};
-        ${concatStringsSep "\n" (mapAttrsToList (perConfig group) configs)}
+        ${concatStringsSep "\n" (mapAttrsToList perConfig configs)}
       '';
+
+      groups = (filterAttrs (_: value: builtins.isAttrs value) settings);
+      topLevel = (filterAttrs (_: value: !builtins.isAttrs value) settings);
     in
-    concatStringsSep "\n" (mapAttrsToList perGroup settings);
+    concatStringsSep "\n" (
+      (lib.optional (topLevel != {}) "${var}.currentConfigGroup = [];") ++
+      (mapAttrsToList perConfig topLevel) ++
+
+      (mapAttrsToList perGroup groups));
 
   addWidgetStmts = containment: var: ws:
     let

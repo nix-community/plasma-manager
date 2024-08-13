@@ -1,6 +1,7 @@
 { lib, ... }:
 let
   inherit (lib) mkOption types;
+  inherit (import ./lib.nix { inherit lib; }) configValueType;
 
   mkBoolOption = description: mkOption {
     type = with types; nullOr bool;
@@ -83,13 +84,24 @@ in
         };
       showActionButtonCaptions = mkBoolOption "Whether to display captions ('shut down', 'log out', etc.) for the footer action buttons";
       pin = mkBoolOption "Whether the popup should remain open when another window is activated.";
+      popupHeight = mkOption {
+        type = with types; nullOr ints.positive;
+        default = null;
+        example = 500;
+      };
+      popupWidth = mkOption {
+        type = with types; nullOr ints.positive;
+        default = null;
+        example = 700;
+      };
       settings = mkOption {
-        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        type = types.nullOr configValueType;
         default = null;
         example = {
           General = {
             icon = "nix-snowflake-white";
           };
+          popupHeight = 500;
         };
         description = "Extra configuration options for the widget.";
         apply = settings: if settings == null then {} else settings;
@@ -106,12 +118,17 @@ in
       , showButtonsFor
       , showActionButtonCaptions
       , pin
+      , popupHeight
+      , popupWidth
       , settings
       }: {
         name = "org.kde.plasma.kickoff";
-        config = lib.recursiveUpdate {
-          General = lib.filterAttrs (_: v: v != null) (
-            {
+        config = lib.recursiveUpdate
+          (lib.filterAttrsRecursive (_: v: v != null) {
+            popupHeight = popupHeight;
+            popupWidth = popupWidth;
+
+            General = {
               inherit icon pin;
 
               menuLabel = label;
@@ -122,9 +139,8 @@ in
               applicationsDisplay = applicationsDisplayMode;
               primaryActions = showButtonsFor;
               showActionButtonCaptions = showActionButtonCaptions;
-            }
-          );
-        } settings;
+            };
+        }) settings;
       };
   };
 }

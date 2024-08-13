@@ -1,6 +1,7 @@
 { lib, ... }:
 let
   inherit (lib) mkOption types;
+  inherit (import ./lib.nix { inherit lib; }) configValueType;
 
   # KDE expects a key/value pair like this:
   # ```ini
@@ -137,7 +138,7 @@ in
         };
       };
       settings = mkOption {
-        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        type = types.nullOr configValueType;
         default = null;
         description = "Extra configuration options for the widget.";
         apply = settings: if settings == null then {} else settings;

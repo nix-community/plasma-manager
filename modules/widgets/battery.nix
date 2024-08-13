@@ -1,4 +1,7 @@
-{ lib, ... }: {
+{ lib, ... }:
+let
+  inherit (import ./lib.nix { inherit lib; }) configValueType;
+in {
   battery = {
     description = "The battery indicator widget.";
 
@@ -11,7 +14,7 @@
         description = "Enable to show the battery percentage as a small label over the battery icon.";
       };
       settings = lib.mkOption {
-        type = with lib.types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        type = lib.types.nullOr configValueType;
         default = null;
         example = {
           General = {

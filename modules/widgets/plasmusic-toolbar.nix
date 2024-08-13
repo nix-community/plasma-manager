@@ -1,6 +1,8 @@
 { lib, ... }:
 let
   inherit (lib) mkOption types;
+  inherit (import ./lib.nix { inherit lib; }) configValueType;
+
   qfont = import ../../lib/qfont.nix { inherit lib; };
 
   mkBoolOption = description: lib.mkOption {
@@ -291,7 +293,7 @@ in
         apply = font: if font == null then null else qfont.fontToString font;
       };
       settings = mkOption {
-        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        type = types.nullOr configValueType;
         default = null;
         example = {
           General = {
