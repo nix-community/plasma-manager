@@ -1,5 +1,7 @@
 { lib, ... }:
 let
+  inherit (import ./lib.nix { inherit lib; }) configValueType;
+
   getIndexFromEnum = enum: value:
     if value == null
     then null
@@ -24,7 +26,7 @@ in
           apply = getIndexFromEnum enumVals;
         };
       settings = lib.mkOption {
-        type = with lib.types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        type = configValueType;
         default = null;
         example = {
           General = {
