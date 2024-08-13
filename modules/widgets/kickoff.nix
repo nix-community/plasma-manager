@@ -83,6 +83,16 @@ in
         };
       showActionButtonCaptions = mkBoolOption "Whether to display captions ('shut down', 'log out', etc.) for the footer action buttons";
       pin = mkBoolOption "Whether the popup should remain open when another window is activated.";
+      popupHeight = mkOption {
+        type = with types; ints.positive;
+        default = null;
+        example = 500;
+      };
+      popupWidth = mkOption {
+        type = with types; ints.positive;
+        default = null;
+        example = 700;
+      };
       settings = mkOption {
         type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
         default = null;
@@ -106,10 +116,15 @@ in
       , showButtonsFor
       , showActionButtonCaptions
       , pin
+      , popupHeight
+      , popupWidth
       , settings
       }: {
         name = "org.kde.plasma.kickoff";
         config = lib.recursiveUpdate {
+          popupHeight = popupHeight;
+          popupWidth = popupWidth;
+
           General = lib.filterAttrs (_: v: v != null) (
             {
               inherit icon pin;
