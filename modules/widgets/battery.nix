@@ -14,7 +14,7 @@ in {
         description = "Enable to show the battery percentage as a small label over the battery icon.";
       };
       settings = lib.mkOption {
-        type = types.nullOr configValueType;
+        type = lib.types.nullOr configValueType;
         default = null;
         example = {
           General = {
