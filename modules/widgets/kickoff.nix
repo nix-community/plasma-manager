@@ -84,12 +84,12 @@ in
       showActionButtonCaptions = mkBoolOption "Whether to display captions ('shut down', 'log out', etc.) for the footer action buttons";
       pin = mkBoolOption "Whether the popup should remain open when another window is activated.";
       popupHeight = mkOption {
-        type = with types; ints.positive;
+        type = with types; nullOr ints.positive;
         default = null;
         example = 500;
       };
       popupWidth = mkOption {
-        type = with types; ints.positive;
+        type = with types; nullOr ints.positive;
         default = null;
         example = 700;
       };
