@@ -26,7 +26,7 @@ in
           apply = getIndexFromEnum enumVals;
         };
       settings = lib.mkOption {
-        type = configValueType;
+        type = lib.types.nullOr configValueType;
         default = null;
         example = {
           General = {
