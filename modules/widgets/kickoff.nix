@@ -1,6 +1,7 @@
 { lib, ... }:
 let
   inherit (lib) mkOption types;
+  inherit (import ./lib.nix { inherit lib; }) configValueType;
 
   mkBoolOption = description: mkOption {
     type = with types; nullOr bool;
@@ -94,12 +95,13 @@ in
         example = 700;
       };
       settings = mkOption {
-        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        type = configValueType;
         default = null;
         example = {
           General = {
             icon = "nix-snowflake-white";
           };
+          popupHeight = 500;
         };
         description = "Extra configuration options for the widget.";
         apply = settings: if settings == null then {} else settings;
