@@ -1,6 +1,7 @@
 { lib, ... }:
 let
   inherit (lib) mkOption types;
+  inherit (import ./lib.nix { inherit lib; }) configValueType;
 
   mkBoolOption = description: mkOption {
     type = with types; nullOr bool;
@@ -82,7 +83,7 @@ in
         expandSearchResults = mkBoolOption "Whether to expand the search results to bookmarks, files and emails.";
       };
       settings = mkOption {
-        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        type = configValueType;
         default = null;
         example = {
           General = {

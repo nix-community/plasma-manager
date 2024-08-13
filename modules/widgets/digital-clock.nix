@@ -221,7 +221,7 @@ in
           };
       };
       settings = mkOption {
-        type = types.nullOr configValueType;
+        type = configValueType;
         default = null;
         example = {
           Appearance = {

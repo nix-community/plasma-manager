@@ -293,7 +293,7 @@ in
         apply = font: if font == null then null else qfont.fontToString font;
       };
       settings = mkOption {
-        type = types.nullOr configValueType;
+        type = configValueType;
         default = null;
         example = {
           General = {
