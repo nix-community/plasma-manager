@@ -123,12 +123,12 @@ in
       , settings
       }: {
         name = "org.kde.plasma.kickoff";
-        config = lib.recursiveUpdate {
-          popupHeight = popupHeight;
-          popupWidth = popupWidth;
+        config = lib.recursiveUpdate
+          (lib.filterAttrsRecursive (_: v: v != null) {
+            popupHeight = popupHeight;
+            popupWidth = popupWidth;
 
-          General = lib.filterAttrs (_: v: v != null) (
-            {
+            General = {
               inherit icon pin;
 
               menuLabel = label;
@@ -139,9 +139,8 @@ in
               applicationsDisplay = applicationsDisplayMode;
               primaryActions = showButtonsFor;
               showActionButtonCaptions = showActionButtonCaptions;
-            }
-          );
-        } settings;
+            };
+        }) settings;
       };
   };
 }
