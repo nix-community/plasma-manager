@@ -95,7 +95,7 @@ in
         example = 700;
       };
       settings = mkOption {
-        type = types.nullOr configValueType;
+        type = configValueType;
         default = null;
         example = {
           General = {
