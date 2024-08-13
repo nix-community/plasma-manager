@@ -31,6 +31,17 @@ let
     type = 6;
   };
 
+  mouseActions = {
+    applicationLauncher = "org.kde.applauncher";
+    contextMenu = "org.kde.contextmenu";
+    paste = "org.kde.paste";
+    switchActivity = "switchactivity";
+    switchVirtualDesktop = "org.kde.switchdesktop";
+    switchWindow = "switchwindow";
+  };
+
+  mouseActionNamesEnum = lib.types.enum (builtins.attrNames mouseActions);
+
   anyThemeSet = (cfg.workspace.theme != null ||
     cfg.workspace.colorScheme != null ||
     (cfg.workspace.cursor != null && cfg.workspace.cursor.theme != null) ||
@@ -43,6 +54,9 @@ let
       recurse = l: lib.any (v: if builtins.isAttrs v then recurse v else v != null) (builtins.attrValues l);
     in
     recurse cfg.workspace.desktop.icons;
+
+  # Becomes true if any option under "cfg.workspace.desktop.mouseActions" is set to something other than null.
+  anyDesktopMouseActionsSet = lib.any (v: v != null) (builtins.attrValues cfg.workspace.desktop.mouseActions);
 
   splashScreenEngineDetect = theme: (if (theme == "None") then "none" else "KSplashQML");
 in
@@ -305,6 +319,40 @@ in
           '';
         };
       };
+
+      mouseActions = {
+        leftClick = lib.mkOption {
+          type = lib.types.nullOr mouseActionNamesEnum;
+          default = null;
+          example = "appLauncher";
+          description = "Action for a left click on the desktop.";
+          apply = value: if (value == null) then null else mouseActions.${value};
+        };
+
+        middleClick = lib.mkOption {
+          type = lib.types.nullOr mouseActionNamesEnum;
+          default = null;
+          example = "switchWindow";
+          description = "Action for a click on the desktop with the middle mouse button.";
+          apply = value: if (value == null) then null else mouseActions.${value};
+        };
+
+        rightClick = lib.mkOption {
+          type = lib.types.nullOr mouseActionNamesEnum;
+          default = null;
+          example = "contextMenu";
+          description = "Action for a right click on the desktop.";
+          apply = value: if (value == null) then null else mouseActions.${value};
+        };
+
+        verticalScroll = lib.mkOption {
+          type = lib.types.nullOr mouseActionNamesEnum;
+          default = null;
+          example = "switchVirtualDesktop";
+          description = "Action for scrolling (vertically) while hovering over the desktop.";
+          apply = value: if (value == null) then null else mouseActions.${value};
+        };
+      };
     };
   };
 
@@ -428,6 +476,22 @@ in
           }
         '';
         priority = 3;
+      });
+
+      desktopScript."set_desktop_mouse_actions" = (lib.mkIf anyDesktopMouseActionsSet {
+        text = ''
+          // Mouse actions
+          let configFile = ConfigFile('plasma-org.kde.plasma.desktop-appletsrc');
+          configFile.group = 'ActionPlugins';
+          // References the section [ActionPlugins][0].
+          let actionPluginSubSection = ConfigFile(configFile, 0)
+          ${stringIfNotNull cfg.workspace.desktop.mouseActions.leftClick ''actionPluginSubSection.writeEntry("LeftButton;NoModifier", "${cfg.workspace.desktop.mouseActions.leftClick}");''}
+          ${stringIfNotNull cfg.workspace.desktop.mouseActions.middleClick ''actionPluginSubSection.writeEntry("MiddleButton;NoModifier", "${cfg.workspace.desktop.mouseActions.middleClick}");''}
+          ${stringIfNotNull cfg.workspace.desktop.mouseActions.rightClick ''actionPluginSubSection.writeEntry("RightButton;NoModifier", "${cfg.workspace.desktop.mouseActions.rightClick}");''}
+          ${stringIfNotNull cfg.workspace.desktop.mouseActions.verticalScroll ''actionPluginSubSection.writeEntry("wheel:Vertical;NoModifier", "${cfg.workspace.desktop.mouseActions.verticalScroll}");''}
+        '';
+        priority = 3;
+        restartServices = [ "plasma-plasmashell" ];
       });
     };
 

@@ -136,7 +136,7 @@ let
         description = ''
           The screen the panel should appear on. Can be an int, or a list of ints,
           starting from 0, representing the ID of the screen the panel should
-          appear on. Alternatively it can be set to "any" if the panel should
+          appear on. Alternatively it can be set to "all" if the panel should
           appear on all the screens.
         '';
       };
