@@ -10,6 +10,7 @@ let
     ./digital-clock.nix
     ./icon-tasks.nix
     ./keyboard-layout.nix
+    ./kickerdash.nix
     ./kickoff.nix
     ./plasma-panel-colorizer.nix
     ./plasmusic-toolbar.nix
