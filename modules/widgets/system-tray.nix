@@ -154,7 +154,7 @@ in
         };
       };
       settings = mkOption {
-        type = configValueType;
+        type = types.nullOr configValueType;
         default = null;
         description = "Extra configuration options for the widget.";
         apply = settings: if settings == null then {} else settings;
