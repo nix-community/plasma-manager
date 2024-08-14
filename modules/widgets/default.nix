@@ -9,6 +9,9 @@ let
     ./battery.nix
     ./digital-clock.nix
     ./icon-tasks.nix
+    ./keyboard-layout.nix
+    ./kicker.nix
+    ./kickerdash.nix
     ./kickoff.nix
     ./plasma-panel-colorizer.nix
     ./plasmusic-toolbar.nix

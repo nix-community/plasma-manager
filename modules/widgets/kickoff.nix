@@ -1,6 +1,7 @@
 { lib, ... }:
 let
   inherit (lib) mkOption types;
+  inherit (import ./lib.nix { inherit lib; }) configValueType;
 
   mkBoolOption = description: mkOption {
     type = with types; nullOr bool;
@@ -32,7 +33,12 @@ in
         type = types.nullOr types.str;
         default = null;
         example = "start-here-kde-symbolic";
-        description = "The icon to use for the kickoff button.";
+        description = ''
+          The icon to use for the kickoff button.
+
+          This can also be used to specify a custom image for the kickoff button.
+          To do this, set the value to a absolute path to the image file.
+        '';
       };
       label = mkOption {
         type = types.nullOr types.str;
@@ -78,13 +84,24 @@ in
         };
       showActionButtonCaptions = mkBoolOption "Whether to display captions ('shut down', 'log out', etc.) for the footer action buttons";
       pin = mkBoolOption "Whether the popup should remain open when another window is activated.";
+      popupHeight = mkOption {
+        type = with types; nullOr ints.positive;
+        default = null;
+        example = 500;
+      };
+      popupWidth = mkOption {
+        type = with types; nullOr ints.positive;
+        default = null;
+        example = 700;
+      };
       settings = mkOption {
-        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        type = configValueType;
         default = null;
         example = {
           General = {
             icon = "nix-snowflake-white";
           };
+          popupHeight = 500;
         };
         description = "Extra configuration options for the widget.";
         apply = settings: if settings == null then {} else settings;
@@ -101,13 +118,19 @@ in
       , showButtonsFor
       , showActionButtonCaptions
       , pin
+      , popupHeight
+      , popupWidth
       , settings
       }: {
         name = "org.kde.plasma.kickoff";
-        config = lib.recursiveUpdate {
-          General = lib.filterAttrs (_: v: v != null) (
-            {
-              icon = icon;
+        config = lib.recursiveUpdate
+          (lib.filterAttrsRecursive (_: v: v != null) {
+            popupHeight = popupHeight;
+            popupWidth = popupWidth;
+
+            General = {
+              inherit icon pin;
+
               menuLabel = label;
               alphaSort = sortAlphabetically;
               compactMode = compactDisplayStyle;
@@ -116,12 +139,8 @@ in
               applicationsDisplay = applicationsDisplayMode;
               primaryActions = showButtonsFor;
               showActionButtonCaptions = showActionButtonCaptions;
-
-              # Other useful options
-              pin = pin;
-            }
-          );
-        } settings;
+            };
+        }) settings;
       };
   };
 }
