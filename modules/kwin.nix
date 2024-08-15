@@ -117,7 +117,7 @@ in
       };
       minimization = {
         animation = mkOption {
-          type = with types; nullOr (enum [ "squash" "magiclamp" ]);
+          type = with types; nullOr (enum [ "squash" "magiclamp" "off" ]);
           default = null;
           example = "magiclamp";
           description = "The effect when windows are minimized.";
@@ -148,14 +148,14 @@ in
         description = "Arrange desktops in a virtual cube.";
       };
       desktopSwitching.animation = mkOption {
-        type = with types; nullOr (enum [ "fade" "slide" ]);
+        type = with types; nullOr (enum [ "fade" "slide" "off" ]);
         default = null;
         example = "fade";
         description = "The animation used when switching virtual desktop.";
       };
       windowOpenClose = {
         animation = mkOption {
-          type = with types; nullOr (enum [ "fade" "glide" "scale" ]);
+          type = with types; nullOr (enum [ "fade" "glide" "scale" "off" ]);
           default = null;
           example = "glide";
           description = "The animation used when opening/closing windows.";
