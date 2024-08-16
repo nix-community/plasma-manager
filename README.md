@@ -73,6 +73,8 @@ We provide some examples to help you get started. These are located in the
 - [An example flake.nix for usage with the system configuration](./examples/systemFlake/flake.nix)
 - [An example home.nix showing some of the capabilities of plasma-manager](./examples/home.nix)
 
+See the manual for [Plasma-Manager Options](https://nix-community.github.io/plasma-manager/options.xhtml).
+
 With more to come! These should give you some idea how to get started with
 `plasma-manager`.
 
