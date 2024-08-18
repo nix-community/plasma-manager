@@ -73,7 +73,7 @@ let
         (x: x == value)
         (throw "getIndexFromEnum (kwin): Value ${value} isn't present in the enum. This is a bug")
         enum;
-  
+
   convertPoloniumFilter = list:
     if list == null
     then null
@@ -361,14 +361,16 @@ in
           };
           layout = {
             engine =
-              let enumVals = [
-                "binaryTree"
-                "half"
-                "threeColumn"
-                "monocle"
-                "kwin"
-              ];
-              in mkOption {
+              let
+                enumVals = [
+                  "binaryTree"
+                  "half"
+                  "threeColumn"
+                  "monocle"
+                  "kwin"
+                ];
+              in
+              mkOption {
                 type = with types; nullOr (enum enumVals);
                 default = null;
                 example = "binaryTree";
