@@ -234,11 +234,16 @@ in
             }
           '' else ""
           );
-          desktopWidgets = (if (cfg.workspace.desktop.widgets != null) then ''
-            // Desktop widgets
-            let allDesktops = desktops();
-            for (const desktop of allDesktops) {
-            }
+            desktopWidgets = (if (cfg.workspace.desktop.widgets != null) then ''
+              // Desktop widgets
+              let allDesktops = desktops();
+
+              // Remove all desktop widgets
+              allDesktops.forEach((desktop) => {
+                desktop.widgets().forEach((widget) => {
+                  widget.remove();
+                });
+              });
           '' else "");
         in
         {
