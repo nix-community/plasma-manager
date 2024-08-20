@@ -303,7 +303,7 @@ in
           apply = background:
             if background == null
             then null
-            else builtins.elemtAt [ 1 0 4 ] (
+            else builtins.elemAt [ 1 0 4 ] (
               lib.lists.findFirstIndex
                 (x: x == background)
                 (throw "plasmusic-toolbar: non-existent background ${background}. This is a bug!")
