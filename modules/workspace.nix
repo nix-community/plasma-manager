@@ -6,6 +6,8 @@ let
   inherit (import ../lib/wallpapers.nix { inherit lib; }) wallpaperPictureOfTheDayType wallpaperSlideShowType;
   inherit (import ./widgets/lib.nix { inherit lib; }) stringIfNotNull;
 
+  widgets = import ./widgets { inherit lib; };
+
   cursorType = with lib.types; submodule {
     options = {
       theme = lib.mkOption {
@@ -353,6 +355,18 @@ in
           apply = value: if (value == null) then null else mouseActions.${value};
         };
       };
+
+      widgets = lib.mkOption {
+        type = with lib.types; nullOr (listOf widgets.widgetType);
+        default = null;
+        example = [
+          "org.kde.plasma.digitalclock"
+        ];
+        description = ''
+          A list of widgets to be added to the desktop.
+        '';
+        apply = option: if option == null then null else (map widgets.convertWidget option);
+      };
     };
   };
 
@@ -495,8 +509,8 @@ in
       });
     };
 
-    # The wallpaper configuration can be found in panels.nix due to wallpaper
-    # configuration and panel configuration being stored in the same file, and
+    # The wallpaper and desktop widgets configuration can be found in panels.nix due to desktop widgets configuration,
+    # wallpaper configuration and panel configuration being stored in the same file, and
     # thus should be using the same desktop-script.
   });
 }

@@ -234,10 +234,16 @@ in
             }
           '' else ""
           );
+          desktopWidgets = (if (cfg.workspace.desktop.widgets != null) then ''
+            // Desktop widgets
+            let allDesktops = desktops();
+            for (const desktop of allDesktops) {
+            }
+          '' else "");
         in
         {
           preCommands = panelPreCMD;
-          text = panelLayoutStr + wallpaperDesktopScript + wallpaperSlideShow + wallpaperPOTD + wallpaperPlainColor;
+          text = panelLayoutStr + wallpaperDesktopScript + wallpaperSlideShow + wallpaperPOTD + wallpaperPlainColor + desktopWidgets;
           postCommands = panelPostCMD + wallpaperPostCMD;
           restartServices =
             (lib.unique (if anyNonDefaultScreens then [ "plasma-plasmashell" ] else [ ])
