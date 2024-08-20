@@ -225,6 +225,7 @@ in
           description = "Icon to show in the panel.";
         };
         albumCover = {
+          fallbackToIcon = mkBoolOption "Whether to fallback to icon if cover is not available.";
           useAsIcon = mkBoolOption "Whether to use album cover as icon or not.";
           radius = mkOption {
             type = types.nullOr (types.ints.between 0 25);
@@ -292,6 +293,23 @@ in
         description = "Custom font to use for the widget.";
         apply = font: if font == null then null else qfont.fontToString font;
       };
+      background =
+        let enumVals = [ "standard" "transparent" "transparentShadow" ];
+        in mkOption {
+          type = with types; nullOr (enum enumVals);
+          default = null;
+          example = "transparent";
+          description = "Widget background type (only for desktop widget)";
+          apply = background:
+            if background == null
+            then null
+            else builtins.elemAt [ 1 0 4 ] (
+              lib.lists.findFirstIndex
+                (x: x == background)
+                (throw "plasmusic-toolbar: non-existent background ${background}. This is a bug!")
+                enumVals
+            );
+        };
       settings = mkOption {
         type = configValueType;
         default = null;
@@ -314,6 +332,7 @@ in
       , songText
       , musicControls
       , font
+      , background
       , settings
       }: {
         name = "plasmusic-toolbar";
@@ -323,6 +342,7 @@ in
               panelIcon = panelIcon.icon;
               useAlbumCoverAsPanelIcon = panelIcon.albumCover.useAsIcon;
               albumCoverRadius = panelIcon.albumCover.radius;
+              fallbackToIconWhenArtNotAvailable = panelIcon.albumCover.fallbackToIcon;
 
               sourceIndex = preferredSource;
 
@@ -339,6 +359,8 @@ in
               
               useCustomFont = (font != null);
               customFont = font;
+
+              desktopWidgetBg = background;
             }
           );
         } settings;

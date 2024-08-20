@@ -73,7 +73,7 @@ let
         (x: x == value)
         (throw "getIndexFromEnum (kwin): Value ${value} isn't present in the enum. This is a bug")
         enum;
-  
+
   convertPoloniumFilter = list:
     if list == null
     then null
@@ -161,7 +161,7 @@ in
       };
       minimization = {
         animation = mkOption {
-          type = with types; nullOr (enum [ "squash" "magiclamp" ]);
+          type = with types; nullOr (enum [ "squash" "magiclamp" "off" ]);
           default = null;
           example = "magiclamp";
           description = "The effect when windows are minimized.";
@@ -192,14 +192,14 @@ in
         description = "Arrange desktops in a virtual cube.";
       };
       desktopSwitching.animation = mkOption {
-        type = with types; nullOr (enum [ "fade" "slide" ]);
+        type = with types; nullOr (enum [ "fade" "slide" "off" ]);
         default = null;
         example = "fade";
         description = "The animation used when switching virtual desktop.";
       };
       windowOpenClose = {
         animation = mkOption {
-          type = with types; nullOr (enum [ "fade" "glide" "scale" ]);
+          type = with types; nullOr (enum [ "fade" "glide" "scale" "off" ]);
           default = null;
           example = "glide";
           description = "The animation used when opening/closing windows.";
@@ -427,14 +427,16 @@ in
           };
           layout = {
             engine =
-              let enumVals = [
-                "binaryTree"
-                "half"
-                "threeColumn"
-                "monocle"
-                "kwin"
-              ];
-              in mkOption {
+              let
+                enumVals = [
+                  "binaryTree"
+                  "half"
+                  "threeColumn"
+                  "monocle"
+                  "kwin"
+                ];
+              in
+              mkOption {
                 type = with types; nullOr (enum enumVals);
                 default = null;
                 example = "binaryTree";
@@ -529,7 +531,7 @@ in
       }
     ];
 
-    home.packages = with pkgs; [ ] ++ optionals (cfg.kwin.scripts.polonium.enable == true) [ libsForQt5.polonium ];
+    home.packages = with pkgs; [ ] ++ optionals (cfg.kwin.scripts.polonium.enable == true) [ polonium ];
 
     programs.plasma.configFile."kwinrc" = (mkMerge [
       # Titlebar buttons
