@@ -133,7 +133,7 @@ in
               else
                 if onlyMinimized == true
                 then 1
-                else 0
+                else 0;
           };
         };
         unhideOnAttentionNeeded = mkBoolOption "Whether to unhide if a window wants attention.";
