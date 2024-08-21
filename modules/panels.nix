@@ -6,8 +6,8 @@
 let
   cfg = config.programs.plasma;
   hasWidget = widgetName:
-    builtins.any (panel: builtins.any (widget: widget.name == widgetName) panel.widgets) cfg.panels ||
-    builtins.any (widget: widget.name == widgetName) cfg.workspace.desktop.widgets;
+    (builtins.any (panel: builtins.any (widget: widget.name == widgetName) panel.widgets) cfg.panels) ||
+    (builtins.any (widget: widget.name == widgetName) cfg.workspace.desktop.widgets);
 
   # An attrset keeping track of the packages which should be added when a
   # widget is present in the config.
