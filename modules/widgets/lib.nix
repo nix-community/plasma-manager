@@ -89,5 +89,6 @@ in
     stringIfNotNull
     setWidgetSettings
     addWidgetStmts
+    addDesktopWidgetStmts
     configValueType;
 }
