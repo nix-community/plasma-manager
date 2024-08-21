@@ -338,7 +338,9 @@ in
       };
     };
     convert =
-      { panelIcon
+      { position
+      , size
+      , panelIcon
       , preferredSource
       , songText
       , musicControls
