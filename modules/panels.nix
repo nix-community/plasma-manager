@@ -6,7 +6,7 @@
 let
   cfg = config.programs.plasma;
 
-  desktopWidgets = if cfg.workspace.desktop.widgets != null then cfg.workspace.desktop.widgets else [];
+  desktopWidgets = if cfg.desktop.widgets != null then cfg.desktop.widgets else [];
   
   hasWidget = widgetName:
     builtins.any (panel: builtins.any (widget: widget.name == widgetName) panel.widgets) cfg.panels ||
