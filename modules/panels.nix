@@ -239,26 +239,10 @@ in
             }
           '' else ""
           );
-            desktopWidgets = (if (cfg.workspace.desktop.widgets != null) then ''
-              // Desktop widgets
-              let allDesktops = desktops();
-
-              // Remove all desktop widgets
-              allDesktops.forEach((desktop) => {
-                desktop.widgets().forEach((widget) => {
-                  widget.remove();
-                });
-              });
-
-              for (let i = 0; i < allDesktops.length; i++) {
-                const desktop = allDesktops[i];
-                ${widgets.lib.addDesktopWidgetStmts "desktop" "desktopWidgets" cfg.workspace.desktop.widgets}
-              }
-          '' else "");
         in
         {
           preCommands = panelPreCMD;
-          text = panelLayoutStr + wallpaperDesktopScript + wallpaperSlideShow + wallpaperPOTD + wallpaperPlainColor + desktopWidgets;
+          text = panelLayoutStr + wallpaperDesktopScript + wallpaperSlideShow + wallpaperPOTD + wallpaperPlainColor;
           postCommands = panelPostCMD + wallpaperPostCMD;
           restartServices =
             (lib.unique (if anyNonDefaultScreens then [ "plasma-plasmashell" ] else [ ])
