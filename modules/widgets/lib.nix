@@ -51,7 +51,7 @@ let
         ${setWidgetSettings "w" config}
       '';
 
-      addStmt = { name, position, size, config, extraConfig }@widget: ''
+      addStmt = { name, config, extraConfig }@widget: ''
         ${var}["${name}"] = ${containment}.addWidget("${name}");
         ${stringIfNotNull config (widgetConfigsToStmts widget)}
         ${lib.optionalString (extraConfig != "") ''

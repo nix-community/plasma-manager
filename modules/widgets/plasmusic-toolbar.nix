@@ -219,14 +219,14 @@ in
 
     opts = {
       position = mkOption {
-        type = types.nullOr positionType;
-        default = null;
-        description = "Position of the widget.";
+        type = positionType;
+        example = { horizontal = 250; vertical = 100; };
+        description = "The position of the widget.";
       };
       size = mkOption {
-        type = types.nullOr sizeType;
-        default = null;
-        description = "Size of the widget.";
+        type = sizeType;
+        example = { width = 500; height = 100; };
+        description = "The size of the widget.";
       };
       panelIcon = {
         icon = mkOption {
@@ -338,9 +338,7 @@ in
       };
     };
     convert =
-      { position
-      , size
-      , panelIcon
+      { panelIcon
       , preferredSource
       , songText
       , musicControls
@@ -349,8 +347,6 @@ in
       , settings
       }: {
         name = "plasmusic-toolbar";
-        position = if position == null then null else position;
-        size = if size == null then null else size;
   
         config = lib.recursiveUpdate {
           General = lib.filterAttrs (_: v: v != null) (

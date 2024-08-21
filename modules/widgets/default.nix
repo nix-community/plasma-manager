@@ -99,6 +99,18 @@ let
     };
   };
 
+  compositeDesktopWidgetType = lib.pipe sources [
+    (builtins.mapAttrs
+      (_: s: lib.mkOption {
+        inherit (s) description;
+        type = lib.types.submodule (submoduleArgs: {
+          options = if builtins.isFunction s.opts then s.opts submoduleArgs else s.opts;
+        }) // positionType // sizeType;
+        });
+      }))
+    lib.types.attrTag
+  ];
+
   desktopSimpleWidgetType = lib.types.submodule {
     options = {
       name = lib.mkOption {
@@ -160,7 +172,7 @@ let
     inherit isKnownWidget positionType sizeType;
 
     type = lib.types.oneOf [ lib.types.str compositeWidgetType simpleWidgetType ];
-    desktopType = lib.types.oneOf [ desktopSimpleWidgetType ];
+    desktopType = lib.types.oneOf [ compositeDesktopWidgetType desktopSimpleWidgetType ];
 
     lib = import ./lib.nix (args // { widgets = self; });
 
@@ -177,7 +189,16 @@ let
         converters = mapAttrs (_: s: s.convert) sources;
       in
       if isAttrs widget && length keys == 1 && isKnownWidget type then
-        base // converters.${type} widget.${type}
+        let
+          convertedWidget = converters.${type} widget.${type};
+        in
+        if isAttrs convertedWidget then
+          base // convertedWidget // {
+            position = if hasAttr "position" convertedWidget then convertedWidget.position else null;
+            size = if hasAttr "size" convertedWidget then convertedWidget.size else null;
+          }
+        else
+          base // convertedWidget
       else widget; # not a known composite type
 
     convert = widget:
