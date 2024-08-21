@@ -4,7 +4,6 @@
 let
   cfg = config.programs.plasma;
   inherit (import ../lib/wallpapers.nix { inherit lib; }) wallpaperPictureOfTheDayType wallpaperSlideShowType;
-  inherit (import ./widgets/lib.nix { inherit lib; }) stringIfNotNull;
 
   cursorType = with lib.types; submodule {
     options = {

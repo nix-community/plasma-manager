@@ -218,10 +218,10 @@ in
             ${lib.optionalString (cfg.desktop.icons.arrangement == "topToBottom") ''desktop.writeConfig("arrangement", 1);''}
             ${lib.optionalString (cfg.desktop.icons.alignment == "right") ''desktop.writeConfig("alignment", 1);''}
             ${lib.optionalString (cfg.desktop.icons.lockInPlace == true) ''desktop.writeConfig("locked", true);''}
-            ${stringIfNotNull cfg.desktop.icons.size ''desktop.writeConfig("iconSize", ${builtins.toString cfg.desktop.icons.size});''}
+            ${widgets.lib.stringIfNotNull cfg.desktop.icons.size ''desktop.writeConfig("iconSize", ${builtins.toString cfg.desktop.icons.size});''}
             ${lib.optionalString (cfg.desktop.icons.folderPreviewPopups == false) ''desktop.writeConfig("popups", false);''}
-            ${stringIfNotNull cfg.desktop.icons.previewPlugins ''desktop.writeConfig("previewPlugins", "${lib.strings.concatStringsSep "," cfg.desktop.icons.previewPlugins}");''}
-            ${stringIfNotNull cfg.desktop.icons.sorting.mode ''desktop.writeConfig("sortMode", ${builtins.toString cfg.desktop.icons.sorting.mode});''}
+            ${widgets.lib.stringIfNotNull cfg.desktop.icons.previewPlugins ''desktop.writeConfig("previewPlugins", "${lib.strings.concatStringsSep "," cfg.desktop.icons.previewPlugins}");''}
+            ${widgets.lib.stringIfNotNull cfg.desktop.icons.sorting.mode ''desktop.writeConfig("sortMode", ${builtins.toString cfg.desktop.icons.sorting.mode});''}
             ${lib.optionalString (cfg.desktop.icons.sorting.descending == true) ''desktop.writeConfig("sortDesc", true);''}
             ${lib.optionalString (cfg.desktop.icons.sorting.foldersFirst == false) ''desktop.writeConfig("sortDirsFirst", false);''}
           }
@@ -236,10 +236,10 @@ in
           configFile.group = 'ActionPlugins';
           // References the section [ActionPlugins][0].
           let actionPluginSubSection = ConfigFile(configFile, 0)
-          ${stringIfNotNull cfg.desktop.mouseActions.leftClick ''actionPluginSubSection.writeEntry("LeftButton;NoModifier", "${cfg.desktop.mouseActions.leftClick}");''}
-          ${stringIfNotNull cfg.desktop.mouseActions.middleClick ''actionPluginSubSection.writeEntry("MiddleButton;NoModifier", "${cfg.desktop.mouseActions.middleClick}");''}
-          ${stringIfNotNull cfg.desktop.mouseActions.rightClick ''actionPluginSubSection.writeEntry("RightButton;NoModifier", "${cfg.desktop.mouseActions.rightClick}");''}
-          ${stringIfNotNull cfg.desktop.mouseActions.verticalScroll ''actionPluginSubSection.writeEntry("wheel:Vertical;NoModifier", "${cfg.desktop.mouseActions.verticalScroll}");''}
+          ${widgets.lib.stringIfNotNull cfg.desktop.mouseActions.leftClick ''actionPluginSubSection.writeEntry("LeftButton;NoModifier", "${cfg.desktop.mouseActions.leftClick}");''}
+          ${widgets.lib.stringIfNotNull cfg.desktop.mouseActions.middleClick ''actionPluginSubSection.writeEntry("MiddleButton;NoModifier", "${cfg.desktop.mouseActions.middleClick}");''}
+          ${widgets.lib.stringIfNotNull cfg.desktop.mouseActions.rightClick ''actionPluginSubSection.writeEntry("RightButton;NoModifier", "${cfg.desktop.mouseActions.rightClick}");''}
+          ${widgets.lib.stringIfNotNull cfg.desktop.mouseActions.verticalScroll ''actionPluginSubSection.writeEntry("wheel:Vertical;NoModifier", "${cfg.desktop.mouseActions.verticalScroll}");''}
         '';
         priority = 3;
         restartServices = [ "plasma-plasmashell" ];
