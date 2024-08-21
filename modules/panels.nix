@@ -5,9 +5,12 @@
 } @ args:
 let
   cfg = config.programs.plasma;
+
+  desktopWidgets = if cfg.workspace.desktop.widgets != null then cfg.workspace.desktop.widgets else [];
+  
   hasWidget = widgetName:
-    (builtins.any (panel: builtins.any (widget: widget.name == widgetName) panel.widgets) cfg.panels) ||
-    (builtins.any (widget: widget.name == widgetName) cfg.workspace.desktop.widgets);
+    builtins.any (panel: builtins.any (widget: widget.name == widgetName) panel.widgets) cfg.panels ||
+    builtins.any (widget: widget.name == widgetName) desktopWidgets;
 
   # An attrset keeping track of the packages which should be added when a
   # widget is present in the config.
