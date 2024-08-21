@@ -249,7 +249,9 @@ in
     };
 
     convert =
-      { date
+      { position
+      , size
+      , date
       , time
       , timeZone
       , calendar

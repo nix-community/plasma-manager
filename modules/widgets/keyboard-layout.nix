@@ -48,13 +48,18 @@ in
       };
     };
 
-    convert = { displayStyle, settings }: {
-      name = "org.kde.plasma.keyboardlayout";
-      config = lib.recursiveUpdate {
-        General = lib.filterAttrs (_: v: v != null) {
-          inherit displayStyle;
-        };
-      } settings;
+    convert =
+      { position
+      , size
+      , displayStyle
+      , settings
+      }: {
+        name = "org.kde.plasma.keyboardlayout";
+        config = lib.recursiveUpdate {
+          General = lib.filterAttrs (_: v: v != null) {
+            inherit displayStyle;
+          };
+        } settings;
     };
   };
 }

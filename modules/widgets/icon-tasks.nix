@@ -157,7 +157,9 @@ in
       };
     };
     convert =
-      { appearance
+      { position
+      , size
+      , appearance
       , behavior
       , launchers
       , settings

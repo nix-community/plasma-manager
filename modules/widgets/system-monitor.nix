@@ -157,7 +157,9 @@ in
     };
 
     convert =
-      { title
+      { position
+      , size
+      , title
       , showTitle
       , showLegend
       , displayStyle

@@ -119,7 +119,9 @@ in
       };
     };
     convert =
-      { icon
+      { position
+      , size
+      , icon
       , label
       , sortAlphabetically
       , compactDisplayStyle

@@ -173,7 +173,9 @@ in
     });
 
     convert =
-      { pin
+      { position
+      , size
+      , pin
       , icons
       , items
       , settings

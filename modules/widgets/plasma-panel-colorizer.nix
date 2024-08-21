@@ -728,7 +728,9 @@ in
       };
     };
     convert =
-      { general
+      { position
+      , size
+      , general
       , presetAutoLoading
       , widgetBackground
       , textAndIcons

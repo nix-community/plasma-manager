@@ -99,7 +99,9 @@ in
       };
     };
     convert =
-      { icon
+      { position
+      , size
+      , icon
       , customButtonImage
       , applicationNameFormat
       , behavior

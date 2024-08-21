@@ -36,13 +36,18 @@ in {
       };
     };
 
-    convert = { showPercentage, settings }: {
-      name = "org.kde.plasma.battery";
-      config = lib.recursiveUpdate {
-        General = lib.filterAttrs (_: v: v != null) {
-          inherit showPercentage;
-        };
-      } settings;
+    convert = 
+      { position
+      , size
+      , showPercentage
+      , settings
+      }: {
+        name = "org.kde.plasma.battery";
+        config = lib.recursiveUpdate {
+          General = lib.filterAttrs (_: v: v != null) {
+            inherit showPercentage;
+          };
+        } settings;
     };
   };
 }

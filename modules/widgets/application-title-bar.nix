@@ -466,7 +466,9 @@ in
       };
     };
     convert =
-      { layout
+      { position
+      , size
+      , layout
       , windowControlButtons
       , windowTitle
       , overrideForMaximized
