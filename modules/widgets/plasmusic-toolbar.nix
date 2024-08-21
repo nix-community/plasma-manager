@@ -2,6 +2,7 @@
 let
   inherit (lib) mkOption types;
   inherit (import ./lib.nix { inherit lib; }) configValueType;
+  inherit (import ./default.nix { inherit lib; }) positionType sizeType;
 
   qfont = import ../../lib/qfont.nix { inherit lib; };
 
@@ -217,6 +218,17 @@ in
     description = "KDE Plasma widget that shows currently playing song information and provide playback controls.";
 
     opts = {
+      size = mkOption {
+        type = types.nullOr sizeType;
+        default = { width = 500; height = 500; };
+        description = "The size of the widget.";
+      };
+      position = mkOption {
+        type = types.nullOr positionType;
+        default = { horizontal = 500; vertical = 500; };
+        description = "The position of the widget.";
+      };
+
       panelIcon = {
         icon = mkOption {
           type = types.nullOr types.str;
@@ -327,42 +339,43 @@ in
       };
     };
     convert =
-      { panelIcon
+      { position
+      , size
+      , panelIcon
       , preferredSource
       , songText
       , musicControls
       , font
       , background
       , settings
-      }: {
+      }: (lib.filterAttrsRecursive (_: v: v != null) {
         name = "plasmusic-toolbar";
+        inherit position size;
         config = lib.recursiveUpdate {
-          General = lib.filterAttrs (_: v: v != null) (
-            {
-              panelIcon = panelIcon.icon;
-              useAlbumCoverAsPanelIcon = panelIcon.albumCover.useAsIcon;
-              albumCoverRadius = panelIcon.albumCover.radius;
-              fallbackToIconWhenArtNotAvailable = panelIcon.albumCover.fallbackToIcon;
+          General = {
+            panelIcon = panelIcon.icon;
+            useAlbumCoverAsPanelIcon = panelIcon.albumCover.useAsIcon;
+            albumCoverRadius = panelIcon.albumCover.radius;
+            fallbackToIconWhenArtNotAvailable = panelIcon.albumCover.fallbackToIcon;
 
-              sourceIndex = preferredSource;
+            sourceIndex = preferredSource;
 
-              maxSongWidthInPanel = songText.maximumWidth;
-              separateText = songText.displayInSeparateLines;
+            maxSongWidthInPanel = songText.maximumWidth;
+            separateText = songText.displayInSeparateLines;
 
-              textScrollingEnabled = songText.scrolling.enable;
-              textScrollingBehaviour = songText.scrolling.behavior;
-              textScrollingSpeed = songText.scrolling.speed;
-              textScrollingResetOnPause = songText.scrolling.resetOnPause;
+            textScrollingEnabled = songText.scrolling.enable;
+            textScrollingBehaviour = songText.scrolling.behavior;
+            textScrollingSpeed = songText.scrolling.speed;
+            textScrollingResetOnPause = songText.scrolling.resetOnPause;
 
-              commandsInPanel = musicControls.showPlaybackControls;
-              volumeStep = musicControls.volumeStep;
-              
-              useCustomFont = (font != null);
-              customFont = font;
+            commandsInPanel = musicControls.showPlaybackControls;
+            volumeStep = musicControls.volumeStep;
+            
+            useCustomFont = (font != null);
+            customFont = font;
 
-              desktopWidgetBg = background;
-            }
-          );
+            desktopWidgetBg = background;
+          }
         } settings;
       };
   };

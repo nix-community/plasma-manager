@@ -157,10 +157,10 @@ let
   isKnownWidget = lib.flip builtins.hasAttr sources;
 
   self = {
-    inherit isKnownWidget;
+    inherit isKnownWidget positionType sizeType;
 
     type = lib.types.oneOf [ lib.types.str compositeWidgetType simpleWidgetType ];
-    desktopType = lib.types.oneOf [ desktopSimpleWidgetType ];
+    desktopType = lib.types.oneOf [ compositeWidgetType desktopSimpleWidgetType ];
 
     lib = import ./lib.nix (args // { widgets = self; });
 
