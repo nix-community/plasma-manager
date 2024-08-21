@@ -263,7 +263,6 @@ in
           }
         '';
         priority = 2;
-        restartServices = [ "plasma-plasmashell" ];
       });
     };
   });
