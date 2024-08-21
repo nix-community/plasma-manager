@@ -221,12 +221,12 @@ in
       position = mkOption {
         type = positionType;
         example = { horizontal = 250; vertical = 100; };
-        description = "The position of the widget.";
+        description = "The position of the widget. (Only for desktop widget)";
       };
       size = mkOption {
         type = sizeType;
         example = { width = 500; height = 100; };
-        description = "The size of the widget.";
+        description = "The size of the widget. (Only for desktop widget)";
       };
       panelIcon = {
         icon = mkOption {

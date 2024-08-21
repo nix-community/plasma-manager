@@ -1,6 +1,7 @@
 { lib, ... }:
 let
   inherit (import ./lib.nix { inherit lib; }) configValueType;
+  inherit (import ./default.nix { inherit lib; }) positionType sizeType;
 
   getIndexFromEnum = enum: value:
     if value == null
@@ -16,6 +17,16 @@ in
     description = "The keyboard layout indicator widget.";
 
     opts = {
+      position = lib.mkOption {
+        type = positionType;
+        example = { horizontal = 250; vertical = 50; };
+        description = "The position of the widget. (Only for desktop widget)";
+      };
+      size = lib.mkOption {
+        type = sizeType;
+        example = { width = 500; height = 500; };
+        description = "The size of the widget. (Only for desktop widget)";
+      };
       displayStyle =
         let enumVals = [ "label" "flag" "labelOverFlag" ];
         in lib.mkOption {

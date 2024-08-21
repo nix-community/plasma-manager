@@ -2,6 +2,7 @@
 let
   inherit (lib) mkOption types;
   inherit (import ./lib.nix { inherit lib; }) configValueType;
+  inherit (import ./default.nix { inherit lib; }) positionType sizeType;
 
   mkBoolOption = description:
     mkOption {
@@ -100,6 +101,16 @@ in
     description = "Fully-featured widget to bring Latte-Dock and WM status bar customization features to the default KDE Plasma panel";
 
     opts = {
+      position = mkOption {
+        type = positionType;
+        example = { horizontal = 250; vertical = 50; };
+        description = "The position of the widget. (Only for desktop widget)";
+      };
+      size = mkOption {
+        type = sizeType;
+        example = { width = 500; height = 500; };
+        description = "The size of the widget. (Only for desktop widget)";
+      };
       general = {
         enable = mkBoolOption "Whether to enable the widget";
         hideWidget = mkBoolOption "Whether to hide the widget";
