@@ -2,6 +2,7 @@
 let
   inherit (lib) mkOption types;
   inherit (import ./lib.nix { inherit lib; }) configValueType;
+  inherit (import ./default.nix { inherit lib; }) positionType sizeType;
 
   qfont = import ../../lib/qfont.nix { inherit lib; };
 
@@ -217,6 +218,16 @@ in
     description = "KDE Plasma widget that shows currently playing song information and provide playback controls.";
 
     opts = {
+      position = mkOption {
+        type = types.nullOr positionType;
+        default = null;
+        description = "Position of the widget.";
+      };
+      size = mkOption {
+        type = types.nullOr sizeType;
+        default = null;
+        description = "Size of the widget.";
+      };
       panelIcon = {
         icon = mkOption {
           type = types.nullOr types.str;
