@@ -63,6 +63,26 @@ let
       const ${var} = {};
       ${lib.concatMapStringsSep "\n" addStmt ws}
     '';
+
+    addDesktopWidgetStmts = containment: var: ws:
+    let
+      widgetConfigsToStmts = { name, config, ... }: ''
+        var w = ${var}["${name}"];
+        ${setWidgetSettings "w" config}
+      '';
+
+      addStmt = { name, position, size, config, extraConfig }@widget: ''
+        ${var}["${name}"] = ${containment}.addWidget("${name}", ${position.horizontal}, ${position.vertical}, ${size.width}, ${size.height});
+        ${stringIfNotNull config (widgetConfigsToStmts widget)}
+        ${lib.optionalString (extraConfig != "") ''
+          (${extraConfig})(${var}["${name}"]);
+        ''}
+      '';
+    in
+    ''
+      const ${var} = {};
+      ${lib.concatMapStringsSep "\n" addStmt ws}
+    '';
 in
 {
   inherit

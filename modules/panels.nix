@@ -244,6 +244,11 @@ in
                   widget.remove();
                 });
               });
+
+              for (let i = 0; i < allDesktops.length; i++) {
+                const desktop = allDesktops[i];
+                ${widgets.lib.addDesktopWidgetStmts "desktop" "desktopWidgets" cfg.workspace.desktop.widgets}
+              }
           '' else "");
         in
         {

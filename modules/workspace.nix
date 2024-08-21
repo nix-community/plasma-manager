@@ -357,7 +357,7 @@ in
       };
 
       widgets = lib.mkOption {
-        type = with lib.types; nullOr (listOf widgets.type);
+        type = with lib.types; nullOr (listOf widgets.desktopType);
         default = null;
         example = [
           "org.kde.plasma.digitalclock"
@@ -365,7 +365,7 @@ in
         description = ''
           A list of widgets to be added to the desktop.
         '';
-        apply = option: if option == null then null else (map widgets.convert option);
+        apply = option: if option == null then null else (map widgets.desktopConvert option);
       };
     };
   };
