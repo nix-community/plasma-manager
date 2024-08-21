@@ -192,9 +192,8 @@ let
           convertedWidget = converters.${type} widget.${type};
         in
           base // convertedWidget // {
-            position = if isAttrs widget.position then widget.position else null;
-            size = if isAttrs widget.size then widget.size else null;
-          }
+            position = if isAttrs widget.${type}.position then widget.${type}.position else null;
+            size = if isAttrs widget.${type}.size then widget.${type}.size else null;
       else widget; # not a known composite type
 
     convert = widget:
