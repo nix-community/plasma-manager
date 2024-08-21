@@ -105,7 +105,6 @@ let
         inherit (s) description;
         type = lib.types.submodule (submoduleArgs: {
           options = if builtins.isFunction s.opts then s.opts submoduleArgs else s.opts;
-        }) // positionType // sizeType;
         });
       }))
     lib.types.attrTag
