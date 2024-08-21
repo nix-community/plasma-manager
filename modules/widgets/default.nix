@@ -192,8 +192,8 @@ let
           convertedWidget = converters.${type} widget.${type};
         in
           base // convertedWidget // {
-            position = if builtins.hasAttr "position" convertedWidget then convertedWidget.position else null;
-            size = if builtins.hasAttr "size" convertedWidget then convertedWidget.size else null;
+            position = if isAttrs widget.position then widget.position else null;
+            size = if isAttrs widget.size then widget.size else null;
           }
       else widget; # not a known composite type
 
