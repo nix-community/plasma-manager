@@ -133,7 +133,19 @@ in
           onlyInCurrentScreen = mkBoolOption "Whether to show only window tasks that are on the same screen as the widget.";
           onlyInCurrentDesktop = mkBoolOption "Whether to only show tasks that are on the current virtual desktop.";
           onlyInCurrentActivity = mkBoolOption "Whether to show only tasks that are on the current activity.";
-          onlyMinimized = mkBoolOption "Whether to show only window tasks that are minimized.";
+          onlyMinimized = mkOption {
+            type = types.nullOr types.bool;
+            default = null;
+            example = true;
+            description = "Whether to show only window tasks that are minimized.";
+            apply = onlyMinimized:
+              if onlyMinimized == null
+              then null
+              else
+                if onlyMinimized == true
+                then 1
+                else 0;
+          };
         };
         unhideOnAttentionNeeded = mkBoolOption "Whether to unhide if a window wants attention.";
         newTasksAppearOn = mkOption {
