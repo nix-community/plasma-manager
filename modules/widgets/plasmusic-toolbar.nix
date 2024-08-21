@@ -327,7 +327,9 @@ in
       };
     };
     convert =
-      { panelIcon
+      { position
+      , size
+      , panelIcon
       , preferredSource
       , songText
       , musicControls
@@ -336,6 +338,9 @@ in
       , settings
       }: {
         name = "plasmusic-toolbar";
+        position = if position == null then null else position;
+        size = if size == null then null else size;
+  
         config = lib.recursiveUpdate {
           General = lib.filterAttrs (_: v: v != null) (
             {
