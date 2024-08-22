@@ -172,6 +172,7 @@ in
         Defines how the wallpaper should be displayed on the screen.
         Applies only to wallpaperPictureOfTheDay or wallpaperSlideShow.
       '';
+      apply = value: if value == null then null else (builtins.toString wallpaperFillModeTypes.${value});
     };
 
     soundTheme = lib.mkOption {
