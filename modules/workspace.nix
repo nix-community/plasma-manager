@@ -3,7 +3,7 @@
 
 let
   cfg = config.programs.plasma;
-  inherit (import ../lib/wallpapers.nix { inherit lib; }) wallpaperPictureOfTheDayType wallpaperSlideShowType;
+  inherit (import ../lib/wallpapers.nix { inherit lib; }) wallpaperPictureOfTheDayType wallpaperSlideShowType wallpaperFillModeTypes;
   inherit (import ./widgets/lib.nix { inherit lib; }) stringIfNotNull;
 
   cursorType = with lib.types; submodule {
@@ -162,6 +162,17 @@ in
       description = ''
         Allows you to set wallpaper using a plain color. Color is a comma-seperated R,G,B,A string. Alpha optional (default is 256).
       '';
+    };
+
+    wallpaperFillMode = lib.mkOption {
+      type = with lib.types; nullOr (enum (builtins.attrNames wallpaperFillModeTypes));
+      default = null;
+      example = "stretch";
+      description = ''
+        Defines how the wallpaper should be displayed on the screen.
+        Applies only to wallpaperPictureOfTheDay or wallpaperSlideShow.
+      '';
+      apply = value: if value == null then null else (builtins.toString wallpaperFillModeTypes.${value});
     };
 
     soundTheme = lib.mkOption {
