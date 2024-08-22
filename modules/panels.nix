@@ -213,7 +213,7 @@ in
                   "\"" + (builtins.toString path) + "\"" else
                   "[" + (builtins.concatStringsSep "," (map (s: "\"" + s + "\"") path)) + "]"});
                 desktop.writeConfig("SlideInterval", "${builtins.toString cfg.workspace.wallpaperSlideShow.interval}");
-                desktop.writeConfig("FillMode", "${builtins.toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}}");
+                ${lib.optionalString (cfg.workspace.wallpaperFillMode != null) ''desktop.writeConfig("FillMode", "${builtins.toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}}");''}
             }
           '' else "");
           wallpaperPOTD = (if (cfg.workspace.wallpaperPictureOfTheDay != null) then ''
@@ -224,7 +224,7 @@ in
                 desktop.currentConfigGroup = ["Wallpaper", "org.kde.potd", "General"];
                 desktop.writeConfig("Provider", "${cfg.workspace.wallpaperPictureOfTheDay.provider}");
                 desktop.writeConfig("UpdateOverMeteredConnection", "${if (cfg.workspace.wallpaperPictureOfTheDay.updateOverMeteredConnection) then "1" else "0"}");
-                desktop.writeConfig("FillMode", "${builtins.toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}}");
+                ${lib.optionalString (cfg.workspace.wallpaperFillMode != null) ''desktop.writeConfig("FillMode", "${builtins.toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}}");''}
               }
           '' else "");
           wallpaperPlainColor = (if (cfg.workspace.wallpaperPlainColor != null) then ''

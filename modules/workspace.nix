@@ -164,10 +164,10 @@ in
       '';
     };
 
-    wallpaperFillMode = with lib.types; lib.mkOption {
-      type = enum (lib.attrNames wallpaperFillModeTypes);
-      default = "Stretch";
-      example = "PreserveAspectFit";
+    wallpaperFillMode = lib.mkOption {
+      type = with lib.types; nullOr (enum (builtins.attrNames wallpaperFillModeTypes));
+      default = null;
+      example = "stretch";
       description = ''
         Defines how the wallpaper should be displayed on the screen.
         Applies only to wallpaperPictureOfTheDay or wallpaperSlideShow.
