@@ -307,8 +307,8 @@ in
       });
     };
 
-    # The wallpaper and desktop widgets configuration can be found in panels.nix due to desktop widgets configuration,
-    # wallpaper configuration and panel configuration being stored in the same file, and
+    # The wallpaper configuration can be found in panels.nix due to wallpaper
+    # configuration and panel configuration being stored in the same file, and
     # thus should be using the same desktop-script.
   });
 }
