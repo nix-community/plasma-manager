@@ -4,13 +4,13 @@ import os
 import re
 import sys
 from dataclasses import dataclass
-from typing import Dict, Optional, Self, Set
+from typing import Any, Optional, Self
 
 
 # KDE has a bespoke escape format:
 # https://github.com/KDE/kconfig/blob/44f98ff5cb9008436ba5ba385cae03bbd0ab33e6/src/core/kconfigini.cpp#L882
 def unescape(s: str) -> str:
-    out = []
+    out : list[str] = []
     while s:
         parts = s.split("\\", 1)
         out.append(parts.pop(0))
@@ -56,25 +56,26 @@ def escape_bytes(c: str) -> str:
 def escape(s: str) -> str:
     if not s:
         return s
-    s = list(s)
-    for i, c in enumerate(s):
+    ls : list[str] = list(s)
+    for i, c in enumerate(ls):
         match c:
             case "\n":
-                s[i] = "\\n"
+                ls[i] = "\\n"
             case "\t":
-                s[i] = "\\t"
+                ls[i] = "\\t"
             case "\r":
-                s[i] = "\\r"
+                ls[i] = "\\r"
             case "\\":
-                s[i] = "\\\\"
+                ls[i] = "\\\\"
             case "=" | "[" | "]":
-                s[i] = escape_bytes(c)
+                ls[i] = escape_bytes(c)
             case _ if ord(c) < 32:
-                s[i] = escape_bytes(c)
+                ls[i] = escape_bytes(c)
+            case _: pass
     for i in (0, -1):
-        if s[i] == " ":
-            s[i] = "\\s"
-    return "".join(s)
+        if ls[i] == " ":
+            ls[i] = "\\s"
+    return "".join(ls)
 
 
 @dataclass
@@ -102,7 +103,7 @@ class ConfigValue:
         return key, value
 
     @classmethod
-    def from_json(cls, value: dict) -> Self:
+    def from_json(cls, value: dict[str, Any]) -> Self:
         key_value = (
             str(value["value"])
             if not isinstance(value["value"], bool)
@@ -139,31 +140,30 @@ class ConfigValue:
 
 class KConfManager:
     def __init__(
-        self, filepath: str, json_dict: Dict, reset: bool, immutable_by_default: bool
+        self, filepath: str, json_dict: dict[str, Any], reset: bool, immutable_by_default: bool
     ):
         """
         filepath (str): The full path to the config-file to manage
         json_dict (Dict): The nix-configuration presented in a dictionary (converted from json)
         reset (bool): Whether to reset the file, i.e. remove all the lines not present in the configuration
         """
-        self.data = {}
-        self.json_dict = json_dict
+        self.data : dict[tuple[str, ...], dict[str, ConfigValue]] = {}
         self.filepath = filepath
         self.reset = reset
         self.immutable_by_default = immutable_by_default
-        self._json_value_checks()
+        self._json_value_checks(json_dict)
         # The nix expressions will have / to separate groups, and \/ to escape a /.
         # This parses the groups into tuples of unescaped group names.
-        self.json_dict = {
+        self.json_dict : dict[tuple[str, ...], Any] = {
             tuple(
                 g.replace("\\/", "/")
                 for g in re.findall(r"(/|(?:[^/\\]|\\.)+)", group)[::2]
             ): entry
-            for group, entry in self.json_dict.items()
+            for group, entry in json_dict.items()
         }
 
-    def _json_value_checks(self):
-        for group, entry in self.json_dict.items():
+    def _json_value_checks(self, json_dict: dict[str, Any]):
+        for group, entry in json_dict.items():
             for key, value in entry.items():
                 non_default_immutability = (
                     value["immutable"] != self.immutable_by_default
@@ -193,7 +193,7 @@ class KConfManager:
                             f"{base_msg} with shell-expansion enabled. Persistency with shell-expansion enabled is not supported"
                         )
 
-    def key_is_persistent(self, group, key) -> bool:
+    def key_is_persistent(self, group: tuple[str, ...], key: str) -> bool:
         """
         Checks if a key in a group in the nix config is persistent.
         """
@@ -255,14 +255,14 @@ class KConfManager:
                 if not value["persistent"]:
                     self.set_value(group, key, ConfigValue.from_json(value))
 
-    def set_value(self, group, key, value):
+    def set_value(self, group: tuple[str, ...], key: str, value: ConfigValue):
         """Adds an entry to the config. Creates necessary groups if needed."""
         if not group in self.data:
             self.data[group] = {}
 
         self.data[group][key] = value
 
-    def remove_value(self, group, key):
+    def remove_value(self, group: tuple[str, ...], key: str):
         """Removes an entry from the config. Does nothing if the entry isn't there."""
         if group in self.data and key in self.data[group]:
             del self.data[group][key]
@@ -297,7 +297,7 @@ class KConfManager:
                     f.write(f"{value.to_line(key)}\n")
 
 
-def remove_config_files(d: Dict, reset_files: Set):
+def remove_config_files(d: dict[str, Any], reset_files: set[str]):
     """
     Removes files which doesn't have any configuration entries in d and which is
     in the list of files to be reset by overrideConfig.
@@ -308,7 +308,7 @@ def remove_config_files(d: Dict, reset_files: Set):
                 os.remove(file_to_del)
 
 
-def write_configs(d: Dict, reset_files: Set, immutable_by_default: bool):
+def write_configs(d: dict[str, Any], reset_files: set[str], immutable_by_default: bool):
     for filepath, c in d.items():
         config = KConfManager(
             filepath, c, filepath in reset_files, immutable_by_default
@@ -327,7 +327,7 @@ def main():
     with open(json_path, "r") as f:
         json_str = f.read()
 
-    reset_files = set(sys.argv[2].split(" ")) if sys.argv[2] != "" else set()
+    reset_files : set[str] = set(sys.argv[2].split(" ")) if sys.argv[2] != "" else set()
     immutable_by_default = bool(sys.argv[3])
     d = json.loads(json_str)
     remove_config_files(d, reset_files)
