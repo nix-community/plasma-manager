@@ -2,6 +2,7 @@
 let
   inherit (lib) mkOption types;
   inherit (import ./lib.nix { inherit lib; }) configValueType;
+  inherit (import ./default.nix { inherit lib; }) positionType sizeType;
 
   # KDE expects a key/value pair like this:
   # ```ini
@@ -55,6 +56,16 @@ in
     opts = {
       # See https://invent.kde.org/plasma/plasma-workspace/-/blob/master/applets/systemmonitor/systemmonitor/package/contents/config/main.xml for the accepted raw options 
 
+      position = mkOption {
+        type = positionType;
+        example = { horizontal = 250; vertical = 50; };
+        description = "The position of the widget. (Only for desktop widget)";
+      };
+      size = mkOption {
+        type = sizeType;
+        example = { width = 500; height = 500; };
+        description = "The size of the widget. (Only for desktop widget)";
+      };
       title = mkOption {
         type = with types; nullOr str;
         default = null;
@@ -146,7 +157,9 @@ in
     };
 
     convert =
-      { title
+      { position
+      , size
+      , title
       , showTitle
       , showLegend
       , displayStyle

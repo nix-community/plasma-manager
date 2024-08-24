@@ -3,8 +3,8 @@
 
 let
   cfg = config.programs.plasma;
+
   inherit (import ../lib/wallpapers.nix { inherit lib; }) wallpaperPictureOfTheDayType wallpaperSlideShowType wallpaperFillModeTypes;
-  inherit (import ./widgets/lib.nix { inherit lib; }) stringIfNotNull;
 
   cursorType = with lib.types; submodule {
     options = {
@@ -23,40 +23,11 @@ let
     };
   };
 
-  desktopIconSortingModeId = {
-    manual = -1;
-    name = 0;
-    size = 1;
-    date = 2;
-    type = 6;
-  };
-
-  mouseActions = {
-    applicationLauncher = "org.kde.applauncher";
-    contextMenu = "org.kde.contextmenu";
-    paste = "org.kde.paste";
-    switchActivity = "switchactivity";
-    switchVirtualDesktop = "org.kde.switchdesktop";
-    switchWindow = "switchwindow";
-  };
-
-  mouseActionNamesEnum = lib.types.enum (builtins.attrNames mouseActions);
-
   anyThemeSet = (cfg.workspace.theme != null ||
     cfg.workspace.colorScheme != null ||
     (cfg.workspace.cursor != null && cfg.workspace.cursor.theme != null) ||
     cfg.workspace.lookAndFeel != null ||
     cfg.workspace.iconTheme != null);
-
-  # Becomes true if any option under "cfg.workspace.desktop.icons" is set to something other than null.
-  anyDesktopFolderSettingsSet =
-    let
-      recurse = l: lib.any (v: if builtins.isAttrs v then recurse v else v != null) (builtins.attrValues l);
-    in
-    recurse cfg.workspace.desktop.icons;
-
-  # Becomes true if any option under "cfg.workspace.desktop.mouseActions" is set to something other than null.
-  anyDesktopMouseActionsSet = lib.any (v: v != null) (builtins.attrValues cfg.workspace.desktop.mouseActions);
 
   splashScreenEngineDetect = theme: (if (theme == "None") then "none" else "KSplashQML");
 in
@@ -231,140 +202,6 @@ in
         '';
       };
     };
-
-    desktop = {
-      icons = {
-        arrangement = lib.mkOption {
-          type = with lib.types; nullOr (enum [ "leftToRight" "topToBottom" ]);
-          default = null;
-          example = "topToBottom";
-          description = ''
-            The direction, in which desktop icons are to be arranged.
-          '';
-        };
-
-        alignment = lib.mkOption {
-          type = with lib.types; nullOr (enum [ "left" "right" ]);
-          default = null;
-          example = "right";
-          description = ''
-            Whether to align the icons on the left (the default) or right
-            side of the screen.
-          '';
-        };
-
-        lockInPlace = lib.mkOption {
-          type = with lib.types; nullOr bool;
-          default = null;
-          example = true;
-          description = ''
-            Locks the position of all desktop icons to the order and placement
-            defined by `arrangement`, `alignment` and the `sorting` options
-            so they can’t be manually moved.
-          '';
-        };
-
-        sorting = {
-          mode = lib.mkOption {
-            type = with lib.types; nullOr (enum (builtins.attrNames desktopIconSortingModeId));
-            default = null;
-            example = "type";
-            description = ''
-              Specifies the sort mode for the desktop icons. By default they are
-              sorted by name.
-            '';
-            apply = sortMode: if (sortMode == null) then null else desktopIconSortingModeId.${sortMode};
-          };
-
-          descending = lib.mkOption {
-            type = with lib.types; nullOr bool;
-            default = null;
-            example = true;
-            description = ''
-              Reverses the sorting order if enabled. Sorting is ascending by default.
-            '';
-          };
-
-          foldersFirst = lib.mkOption {
-            type = with lib.types; nullOr bool;
-            default = null;
-            example = false;
-            description = ''
-              Folders are sorted separately from files by default. This means
-              folders appear first, sorted for example ascending by name,
-              followed by files, also sorted ascending by name.
-              If this option is disabled, all items are sorted irrespective
-              of their type.
-            '';
-          };
-        };
-
-        size = lib.mkOption {
-          type = with lib.types; nullOr (ints.between 0 6);
-          default = null;
-          example = 2;
-          description = ''
-            The desktop icon size, which is normally configured via a slider
-            with seven possible values ranging from small (0) to large (6).
-            The fourth position (3) is the default.
-          '';
-        };
-
-        folderPreviewPopups = lib.mkOption {
-          type = with lib.types; nullOr bool;
-          default = null;
-          example = false;
-          description = ''
-            Enables the arrow button when hovering over a folder on the desktop
-            which shows a preview popup of the folder’s contents.
-            Is enabled by default.
-          '';
-        };
-
-        previewPlugins = lib.mkOption {
-          type = with lib.types; nullOr (listOf str);
-          default = null;
-          example = [ "audiothumbnail" "fontthumbnail" ];
-          description = ''
-            Configures the preview plugins used to preview desktop files and folders.
-          '';
-        };
-      };
-
-      mouseActions = {
-        leftClick = lib.mkOption {
-          type = lib.types.nullOr mouseActionNamesEnum;
-          default = null;
-          example = "appLauncher";
-          description = "Action for a left click on the desktop.";
-          apply = value: if (value == null) then null else mouseActions.${value};
-        };
-
-        middleClick = lib.mkOption {
-          type = lib.types.nullOr mouseActionNamesEnum;
-          default = null;
-          example = "switchWindow";
-          description = "Action for a click on the desktop with the middle mouse button.";
-          apply = value: if (value == null) then null else mouseActions.${value};
-        };
-
-        rightClick = lib.mkOption {
-          type = lib.types.nullOr mouseActionNamesEnum;
-          default = null;
-          example = "contextMenu";
-          description = "Action for a right click on the desktop.";
-          apply = value: if (value == null) then null else mouseActions.${value};
-        };
-
-        verticalScroll = lib.mkOption {
-          type = lib.types.nullOr mouseActionNamesEnum;
-          default = null;
-          example = "switchVirtualDesktop";
-          description = "Action for scrolling (vertically) while hovering over the desktop.";
-          apply = value: if (value == null) then null else mouseActions.${value};
-        };
-      };
-    };
   };
 
   config = (lib.mkIf cfg.enable {
@@ -467,42 +304,6 @@ in
           ${if cfg.workspace.iconTheme != null then "${pkgs.kdePackages.plasma-workspace}/libexec/plasma-changeicons ${cfg.workspace.iconTheme}" else ""}
         '';
         priority = 1;
-      });
-
-      desktopScript."set_desktop_folder_settings" = (lib.mkIf anyDesktopFolderSettingsSet {
-        text = ''
-          // Desktop folder settings
-          let allDesktops = desktops();
-          for (const desktop of allDesktops) {
-            desktop.currentConfigGroup = ["General"];
-            ${lib.optionalString (cfg.workspace.desktop.icons.arrangement == "topToBottom") ''desktop.writeConfig("arrangement", 1);''}
-            ${lib.optionalString (cfg.workspace.desktop.icons.alignment == "right") ''desktop.writeConfig("alignment", 1);''}
-            ${lib.optionalString (cfg.workspace.desktop.icons.lockInPlace == true) ''desktop.writeConfig("locked", true);''}
-            ${stringIfNotNull cfg.workspace.desktop.icons.size ''desktop.writeConfig("iconSize", ${builtins.toString cfg.workspace.desktop.icons.size});''}
-            ${lib.optionalString (cfg.workspace.desktop.icons.folderPreviewPopups == false) ''desktop.writeConfig("popups", false);''}
-            ${stringIfNotNull cfg.workspace.desktop.icons.previewPlugins ''desktop.writeConfig("previewPlugins", "${lib.strings.concatStringsSep "," cfg.workspace.desktop.icons.previewPlugins}");''}
-            ${stringIfNotNull cfg.workspace.desktop.icons.sorting.mode ''desktop.writeConfig("sortMode", ${builtins.toString cfg.workspace.desktop.icons.sorting.mode});''}
-            ${lib.optionalString (cfg.workspace.desktop.icons.sorting.descending == true) ''desktop.writeConfig("sortDesc", true);''}
-            ${lib.optionalString (cfg.workspace.desktop.icons.sorting.foldersFirst == false) ''desktop.writeConfig("sortDirsFirst", false);''}
-          }
-        '';
-        priority = 3;
-      });
-
-      desktopScript."set_desktop_mouse_actions" = (lib.mkIf anyDesktopMouseActionsSet {
-        text = ''
-          // Mouse actions
-          let configFile = ConfigFile('plasma-org.kde.plasma.desktop-appletsrc');
-          configFile.group = 'ActionPlugins';
-          // References the section [ActionPlugins][0].
-          let actionPluginSubSection = ConfigFile(configFile, 0)
-          ${stringIfNotNull cfg.workspace.desktop.mouseActions.leftClick ''actionPluginSubSection.writeEntry("LeftButton;NoModifier", "${cfg.workspace.desktop.mouseActions.leftClick}");''}
-          ${stringIfNotNull cfg.workspace.desktop.mouseActions.middleClick ''actionPluginSubSection.writeEntry("MiddleButton;NoModifier", "${cfg.workspace.desktop.mouseActions.middleClick}");''}
-          ${stringIfNotNull cfg.workspace.desktop.mouseActions.rightClick ''actionPluginSubSection.writeEntry("RightButton;NoModifier", "${cfg.workspace.desktop.mouseActions.rightClick}");''}
-          ${stringIfNotNull cfg.workspace.desktop.mouseActions.verticalScroll ''actionPluginSubSection.writeEntry("wheel:Vertical;NoModifier", "${cfg.workspace.desktop.mouseActions.verticalScroll}");''}
-        '';
-        priority = 3;
-        restartServices = [ "plasma-plasmashell" ];
       });
     };
 

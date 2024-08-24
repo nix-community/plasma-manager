@@ -33,6 +33,7 @@ broken when used with plasma 5. If you want the best experience with
 At the moment `plasma-manager` supports configuring the following:
 - KDE configuration files (via the `files` module)
 - Global themes, colorschemes, icons, cursortheme, wallpaper (via the `workspace` module)
+- Desktop icons, widgets, and mouse actions (via the `desktop` module)
 - Configuration of spectacle shortcuts (via the `spectacle` module)
 - Shortcuts (via the `shortcuts` module)
 - Hotkeys (via the `hotkeys` module)

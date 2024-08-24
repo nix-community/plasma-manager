@@ -2,6 +2,7 @@
 let
   inherit (lib) mkOption types;
   inherit (import ./lib.nix { inherit lib; }) configValueType;
+  inherit (import ./default.nix { inherit lib; }) positionType sizeType;
 
   mkBoolOption = description: mkOption {
     type = with types; nullOr bool;
@@ -16,6 +17,16 @@ in
     opts = ({ options, ... }: {
       # See https://invent.kde.org/plasma/plasma-workspace/-/blob/master/applets/systemtray/package/contents/config/main.xml for the accepted raw options.
 
+      position = mkOption {
+        type = positionType;
+        example = { horizontal = 250; vertical = 50; };
+        description = "The position of the widget. (Only for desktop widget)";
+      };
+      size = mkOption {
+        type = sizeType;
+        example = { width = 500; height = 500; };
+        description = "The size of the widget. (Only for desktop widget)";
+      };
       pin = mkBoolOption "Whether the popup should remain open when another window is activated.";
 
       icons = {
@@ -162,7 +173,9 @@ in
     });
 
     convert =
-      { pin
+      { position
+      , size
+      , pin
       , icons
       , items
       , settings

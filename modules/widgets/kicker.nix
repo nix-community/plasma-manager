@@ -2,6 +2,7 @@
 let
   inherit (lib) mkOption types;
   inherit (import ./lib.nix { inherit lib; }) configValueType;
+  inherit (import ./default.nix { inherit lib; }) positionType sizeType;
 
   mkBoolOption = description: mkOption {
     type = with types; nullOr bool;
@@ -36,6 +37,16 @@ in
     '';
 
     opts = {
+      position = mkOption {
+        type = positionType;
+        example = { horizontal = 250; vertical = 50; };
+        description = "The position of the widget. (Only for desktop widget)";
+      };
+      size = mkOption {
+        type = sizeType;
+        example = { width = 500; height = 500; };
+        description = "The size of the widget. (Only for desktop widget)";
+      };
       icon = mkOption {
         type = types.nullOr types.str;
         default = null;
@@ -95,7 +106,9 @@ in
       };
     };
     convert =
-      { icon
+      { position
+      , size
+      , icon
       , customButtonImage
       , applicationNameFormat
       , behavior

@@ -2,6 +2,7 @@
 let
   inherit (lib) mkOption types;
   inherit (import ./lib.nix { inherit lib; }) configValueType;
+  inherit (import ./default.nix { inherit lib; }) positionType sizeType;
 
   qfont = import ../../lib/qfont.nix { inherit lib; };
 
@@ -217,6 +218,16 @@ in
     description = "KDE Plasma widget that shows currently playing song information and provide playback controls.";
 
     opts = {
+      position = mkOption {
+        type = positionType;
+        example = { horizontal = 250; vertical = 100; };
+        description = "The position of the widget. (Only for desktop widget)";
+      };
+      size = mkOption {
+        type = sizeType;
+        example = { width = 500; height = 100; };
+        description = "The size of the widget. (Only for desktop widget)";
+      };
       panelIcon = {
         icon = mkOption {
           type = types.nullOr types.str;
@@ -327,7 +338,9 @@ in
       };
     };
     convert =
-      { panelIcon
+      { position
+      , size
+      , panelIcon
       , preferredSource
       , songText
       , musicControls
@@ -336,6 +349,7 @@ in
       , settings
       }: {
         name = "plasmusic-toolbar";
+  
         config = lib.recursiveUpdate {
           General = lib.filterAttrs (_: v: v != null) (
             {
