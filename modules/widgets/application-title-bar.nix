@@ -19,7 +19,9 @@ let
         justify = 8;
       };
     in
-      mappings.${horizontalAlignment} or (throw "Invalid enum value: ${horizontalAlignment}");
+      if horizontalAlignment == null
+      then null
+      else mappings.${horizontalAlignment} or (throw "Invalid enum value: ${horizontalAlignment}");
 
   convertVerticalAlignment = verticalAlignment:
     let
@@ -30,7 +32,9 @@ let
         baseline = 256;
       };
     in
-      mappings.${verticalAlignment} or (throw "Invalid enum value: ${verticalAlignment}");
+      if verticalAlignment == null
+      then null
+      else mappings.${verticalAlignment} or (throw "Invalid enum value: ${verticalAlignment}");
 
   getIndexFromEnum = enum: value:
     if value == null
@@ -137,14 +141,16 @@ in
           description = "The spacing between elements.";
         };
         horizontalAlignment = mkOption {
-          type = types.enum [ "left" "right" "center" "justify" ];
-          default = "left";
+          type = types.nullOr (types.enum [ "left" "right" "center" "justify" ]);
+          default = null;
+          example = "left";
           description = "The horizontal alignment of the widget.";
           apply = convertHorizontalAlignment;
         };
         verticalAlignment = mkOption {
-          type = types.enum [ "top" "center" "bottom" "baseline" ];
-          default = "center";
+          type = types.nullOr (types.enum [ "top" "center" "bottom" "baseline" ]);
+          default = null;
+          example = "center";
           description = "The vertical alignment of the widget.";
           apply = convertVerticalAlignment;
         };
