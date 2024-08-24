@@ -18,8 +18,12 @@ let
         large = 3;
       };
     in
-      mappings.${spacing} or (throw "Invalid spacing: ${spacing}");
-
+      if spacing == null
+      then null
+      else
+        if builtins.isString spacing
+        then mappings.${spacing} or (throw "Invalid spacing: ${spacing}")
+        else spacing;
 
   getIndexFromEnum = enum: value:
     if value == null
@@ -34,7 +38,9 @@ let
     let
       mappings = { left = true; right = false; };
     in
-      mappings.${position} or (throw "Invalid position: ${position}");
+      if position == null
+      then null
+      else mappings.${position} or (throw "Invalid position: ${position}");
 in
 {
   iconTasks = {
@@ -78,8 +84,8 @@ in
           };
         };
         iconSpacing = mkOption {
-          type = types.enum [ "small" "medium" "large" ];
-          default = "medium";
+          type = types.nullOr (types.oneOf [ (types.enum [ "small" "medium" "large" ]) types.ints.positive ]);
+          default = null;
           example = "small";
           description = "The spacing between icons.";
           apply = convertSpacing;
@@ -149,9 +155,9 @@ in
         };
         unhideOnAttentionNeeded = mkBoolOption "Whether to unhide if a window wants attention.";
         newTasksAppearOn = mkOption {
-          type = types.enum [ "left" "right" ];
-          default = "right";
-          example = "left";
+          type = types.nullOr (types.enum [ "left" "right" ]);
+          default = null;
+          example = "right";
           description = "Whether new tasks should appear in the left or right.";
           apply = positionToReverse;
         };

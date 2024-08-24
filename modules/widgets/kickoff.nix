@@ -23,7 +23,9 @@ let
     let
       mappings = { left = false; right = true; };
     in
-      mappings.${sidebarPosition} or (throw "Invalid sidebar position: ${sidebarPosition}");
+      if sidebarPosition == null
+      then null
+      else mappings.${sidebarPosition} or (throw "Invalid sidebar position: ${sidebarPosition}");
 in
 {
   kickoff = {
@@ -60,9 +62,9 @@ in
       sortAlphabetically = mkBoolOption "Whether to sort menu contents alphabetically or use manual/system sort order.";
       compactDisplayStyle = mkBoolOption "Whether to use a compact display style for list items.";
       sidebarPosition = mkOption {
-        type = types.enum [ "left" "right" ];
-        default = "left";
-        example = "right";
+        type = types.nullOr (types.enum [ "left" "right" ]);
+        default = null;
+        example = "left";
         description = "The position of the sidebar.";
         apply = convertSidebarPosition;
       };
