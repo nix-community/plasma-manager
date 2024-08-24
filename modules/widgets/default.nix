@@ -192,8 +192,8 @@ let
           convertedWidget = converters.${type} widget.${type};
         in
           base // convertedWidget // {
-            position = if isAttrs widget.${type}.position then widget.${type}.position else null;
-            size = if isAttrs widget.${type}.size then widget.${type}.size else null;
+            position = if isAttrs widget.${type}.position then widget.${type}.position else (throw "Desktop widget requires a position");
+            size = if isAttrs widget.${type}.size then widget.${type}.size else (throw "Desktop widget requires a size");
           }
       else widget; # not a known composite type
 
