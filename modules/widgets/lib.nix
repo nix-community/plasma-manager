@@ -72,7 +72,7 @@ let
       '';
 
       addStmt = { name, position, size, config, extraConfig }@widget: ''
-        ${var}["${name}"] = ${containment}.addWidget("${name}", ${toString position.horizontal}, ${toString position.vertical}, ${toString size.width}, ${toString size.height});
+        ${var}["${name}"] = ${containment}.addWidget("${name}", ${position.horizontal}, ${position.vertical}, ${size.width}, ${size.height});
         ${stringIfNotNull config (widgetConfigsToStmts widget)}
         ${lib.optionalString (extraConfig != "") ''
           (${extraConfig})(${var}["${name}"]);

@@ -113,6 +113,7 @@ let
           vertical = 500;
         };
         description = "The position of the widget.";
+        apply = builtins.toString;
       };
       size = lib.mkOption {
         type = sizeType;
@@ -121,6 +122,7 @@ let
           height = 500;
         };
         description = "The size of the widget.";
+        apply = builtins.toString;
       };
       config = lib.mkOption {
         type = (import ./lib.nix (args // { widgets = self; })).configValueType;
