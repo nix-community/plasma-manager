@@ -22,12 +22,12 @@ let
   positionType = lib.types.submodule {
     options = {
       horizontal = lib.mkOption {
-        type = lib.types.ints.positive;
+        type = lib.types.ints.unsigned;
         example = 500;
         description = "The horizontal position of the widget.";
       };
       vertical = lib.mkOption {
-        type = lib.types.ints.positive;
+        type = lib.types.ints.unsigned;
         example = 500;
         description = "The vertical position of the widget.";
       };
@@ -37,12 +37,12 @@ let
   sizeType = lib.types.submodule {
     options = {
       width = lib.mkOption {
-        type = lib.types.ints.positive;
+        type = lib.types.ints.unsigned;
         example = 500;
         description = "The width of the widget.";
       };
       height = lib.mkOption {
-        type = lib.types.ints.positive;
+        type = lib.types.ints.unsigned;
         example = 500;
         description = "The height of the widget.";
       };
