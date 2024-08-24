@@ -99,17 +99,6 @@ let
     };
   };
 
-  compositeDesktopWidgetType = lib.pipe sources [
-    (builtins.mapAttrs
-      (_: s: lib.mkOption {
-        inherit (s) description;
-        type = lib.types.submodule (submoduleArgs: {
-          options = if builtins.isFunction s.opts then s.opts submoduleArgs else s.opts;
-        });
-      }))
-    lib.types.attrTag
-  ];
-
   desktopSimpleWidgetType = lib.types.submodule {
     options = {
       name = lib.mkOption {
@@ -171,7 +160,7 @@ let
     inherit isKnownWidget positionType sizeType;
 
     type = lib.types.oneOf [ lib.types.str compositeWidgetType simpleWidgetType ];
-    desktopType = lib.types.oneOf [ compositeDesktopWidgetType desktopSimpleWidgetType ];
+    desktopType = lib.types.oneOf [ compositeWidgetType desktopSimpleWidgetType ];
 
     lib = import ./lib.nix (args // { widgets = self; });
 
