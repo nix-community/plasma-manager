@@ -3,7 +3,7 @@ let
   cfg = config.programs.ghostwriter;
 
   createThemes = lib.attrsets.mapAttrs' (name: value: lib.attrsets.nameValuePair
-    ("ghostwriter/${name}.json")
+    ("ghostwriter/themes/${name}.json")
     ({ enable = true; source = value; })
   );
 in
