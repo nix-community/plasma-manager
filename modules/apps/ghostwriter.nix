@@ -283,7 +283,7 @@ in
     home.packages = [ cfg.package ];
 
     programs.plasma.configFile = {
-      "ghostwriter.conf" = (lib.mkMerge [
+      "kde.org/ghostwriter.conf" = (lib.mkMerge [
         # Preview options
         (lib.mkIf (cfg.preview.codeFont != null) {
           Preview.codeFont = cfg.preview.codeFont.apply;
