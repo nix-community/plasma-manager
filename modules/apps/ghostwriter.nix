@@ -223,7 +223,7 @@ in
         description = ''
           The code font to use for the preview.
         '';
-        apply = font: if font == null then null else (qfont.fontToString font);
+        apply = font: if font == null then null else ''"${qfont.fontToString font}"'';
       };
       commandLineOptions = lib.mkOption {
         type = with lib.types; nullOr str;
@@ -255,7 +255,7 @@ in
         description = ''
           The text font to use for the preview.
         '';
-        apply = font: if font == null then null else (qfont.fontToString font);
+        apply = font: if font == null then null else ''"${qfont.fontToString font}"'';
       };
     };
 
