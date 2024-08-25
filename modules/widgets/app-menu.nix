@@ -9,7 +9,8 @@ let
     example = true;
     inherit description;
   };
-in {
+in
+{
   appMenu = {
     opts = {
       position = lib.mkOption {
