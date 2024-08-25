@@ -207,6 +207,14 @@ in
       Enable configuration management for Ghostwriter.
     '';
 
+    locale = lib.mkOption {
+      type = lib.types.str;
+      default = "en_US";
+      description = ''
+        The locale to use for Ghostwriter.
+      '';
+    };
+
     package = lib.mkPackageOption pkgs [ "kdePackages" "ghostwriter" ] {
       example = "pkgs.kdePackages.ghostwriter";
       extraDescription = ''
@@ -284,6 +292,11 @@ in
 
     programs.plasma.configFile = {
       "kde.org/ghostwriter.conf" = (lib.mkMerge [
+        # Locale
+        (lib.mkIf (cfg.locale != null) {
+          Application.locale = cfg.locale;
+        })
+
         # Preview options
         (lib.mkIf (cfg.preview.codeFont != null) {
           Preview.codeFont = cfg.preview.codeFont;
