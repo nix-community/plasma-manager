@@ -25,7 +25,8 @@ in
       };
       expanding = mkBoolOption "Whether the spacer should expand to fill the available space.";
       length = lib.mkOption {
-        type = lib.types.ints.unsigned;
+        type = lib.types.nullOr lib.types.int;
+        default = null;
         example = 50;
         description = ''
           The length of the spacer.
