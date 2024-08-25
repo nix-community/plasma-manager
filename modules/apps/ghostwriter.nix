@@ -286,7 +286,7 @@ in
       "kde.org/ghostwriter.conf" = (lib.mkMerge [
         # Preview options
         (lib.mkIf (cfg.preview.codeFont != null) {
-          Preview.codeFont = cfg.preview.codeFont.apply;
+          Preview.codeFont = cfg.preview.codeFont;
         })
         (lib.mkIf (cfg.preview.commandLineOptions != null) {
           Preview.lastUsedExporterParams = cfg.preview.commandLineOptions;
@@ -298,7 +298,7 @@ in
           Preview.htmlPreviewOpen = cfg.preview.openByDefault;
         })
         (lib.mkIf (cfg.preview.textFont != null) {
-          Preview.textFont = cfg.preview.textFont.apply;
+          Preview.textFont = cfg.preview.textFont;
         })
 
         # Theme
