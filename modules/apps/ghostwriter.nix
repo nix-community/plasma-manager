@@ -235,8 +235,9 @@ in
     };
 
     locale = lib.mkOption {
-      type = lib.types.str;
-      default = "en_US";
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      example = "en_US";
       description = ''
         The locale to use for Ghostwriter.
       '';
