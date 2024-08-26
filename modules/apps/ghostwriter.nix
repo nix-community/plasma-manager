@@ -457,6 +457,46 @@ in
       };
     };
 
+    spelling = {
+      autoDetectLanguage = lib.mkOption {
+        type = lib.types.nullOr lib.types.bool;
+        default = null;
+        example = true;
+        description = "Whether to auto-detect the language.";
+      };
+      checkerEnabledByDefault = lib.mkOption {
+        type = lib.types.nullOr lib.types.bool;
+        default = null;
+        example = true;
+        description = "Whether the checker is enabled by default.";
+      };
+      ignoreUppercase = lib.mkOption {
+        type = lib.types.nullOr lib.types.bool;
+        default = null;
+        example = true;
+        description = "Whether to ignore uppercase words.";
+      };
+      ignoredWords = lib.mkOption {
+        type = lib.types.nullOr (lib.types.listOf lib.types.str);
+        default = null;
+        example = [ "Amarok" "KHTML" "NixOS" ];
+        description = "Words to ignore in the spell checker.";
+        apply = ignoredWords: if ignoredWords == null then null else builtins.concatStringsSep ", " ignoredWords;
+      };
+      liveSpellCheck = lib.mkOption {
+        type = lib.types.nullOr lib.types.bool;
+        default = null;
+        example = true;
+        description = "Whether to enable live spell checking.";
+      };
+      skipRunTogether = lib.mkOption {
+        type = lib.types.nullOr lib.types.bool;
+        default = null;
+        example = true;
+        description = "Whether to skip run-together words.";
+      };
+    };
+
     theme = {
       name = lib.mkOption {
         type = with lib.types; nullOr str;
@@ -475,9 +515,23 @@ in
         '';
       };
     };
+
+    window.sidebarOpen = lib.mkOption {
+      type = lib.types.nullOr lib.types.bool;
+      default = null;
+      example = true;
+      description = "Whether the sidebar is open by default.";
+    };
   };
 
   config = (lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = cfg.spelling.ignoredWords == null || cfg.locale != null;
+        message = "ghostwriter: Ignored words can only be set if a locale is set.";
+      }
+    ];
+
     home.packages = [ cfg.package ];
 
     programs.plasma.configFile = {
@@ -564,6 +618,13 @@ in
           Session.rememberFileHistory = cfg.general.session.rememberRecentFiles;
         })
 
+        # Spelling
+        (lib.mkIf (cfg.spelling.liveSpellCheck != null) {
+          Spelling = {
+            liveSpellCheck = cfg.spelling.liveSpellCheck;
+          };
+        })
+
         # Preview options
         (lib.mkIf (cfg.preview.codeFont != null) {
           Preview.codeFont = cfg.preview.codeFont;
@@ -584,6 +645,29 @@ in
         # Theme
         (lib.mkIf (cfg.theme.name != null) {
           Style.theme = cfg.theme.name;
+        })
+
+        # Window
+        (lib.mkIf (cfg.window.sidebarOpen != null) {
+          Window.sidebarOpen = cfg.window.sidebarOpen;
+        })
+      ]);
+
+      "KDE/Sonnet.conf".General = (lib.mkMerge [
+        (lib.mkIf (cfg.spelling.autoDetectLanguage != null) {
+          autodetectLanguage = cfg.spelling.autoDetectLanguage;
+        })
+        (lib.mkIf (cfg.spelling.checkerEnabledByDefault != null) {
+          checkerEnabledByDefault = cfg.spelling.checkerEnabledByDefault;
+        })
+        (lib.mkIf (cfg.spelling.ignoreUppercase != null) {
+          checkUppercase = !cfg.spelling.ignoreUppercase;
+        })
+        (lib.mkIf (cfg.spelling.ignoredWords != null && cfg.locale != null) {
+          "ignore_${cfg.locale}" = cfg.spelling.ignoredWords;
+        })
+        (lib.mkIf (cfg.locale != null) {
+          defaultLanguage = cfg.locale;
         })
       ]);
     };
