@@ -9,6 +9,23 @@ let
     ({ enable = true; source = value; })
   );
 
+  getIndexFromEnum = enum: value:
+    if value == null
+    then null
+    else
+      lib.lists.findFirstIndex
+        (x: x == value)
+        (throw "getIndexFromEnum (ghostwriter): Value ${value} isn't present in the enum. This is a bug")
+        enum;
+  
+  getBoolFromEnum = enum: value:
+    if value == null
+    then null
+    else
+      if (getIndexFromEnum enum value) == 0
+      then false
+      else true;
+
   styleStrategyType = lib.types.submodule {
     options = with qfont.styleStrategy; {
       prefer = lib.mkOption {
@@ -207,6 +224,16 @@ in
       Enable configuration management for Ghostwriter.
     '';
 
+    font = lib.mkOption {
+      type = lib.types.nullOr fontType;
+      default = null;
+      example = { family = "Noto Sans"; pointSize = 12; };
+      description = ''
+        The font to use for Ghostwriter.
+      '';
+      apply = font: if font == null then null else ''"${qfont.fontToString font}"'';
+    };
+
     locale = lib.mkOption {
       type = lib.types.str;
       default = "en_US";
@@ -221,6 +248,99 @@ in
         Use `pkgs.libsForQt5.ghostwriter` in Plasma5 and
         `pkgs.kdePackages.ghostwriter` in Plasma6.
       '';
+    };
+
+    editor = {
+      styling = {
+        blockquoteStyle =
+          let enumVals = [ "simple" "italic" ];
+          in lib.mkOption {
+            type = lib.types.nullOr (lib.types.enum enumVals);
+            default = null;
+            example = "simple";
+            description = "The style of blockquotes.";
+            apply = getBoolFromEnum enumVals;
+          };
+        editorWidth =
+          let enumVals = [ "narrow" "medium" "wide" "full" ];
+          in lib.mkOption {
+            type = lib.types.nullOr (lib.types.enum enumVals);
+            default = null;
+            example = "medium";
+            description = "The width of the editor.";
+            apply = getIndexFromEnum enumVals;
+          };
+        emphasisStyle =
+          let enumVals = [ "italic" "underline" ];
+          in lib.mkOption {
+            type = lib.types.nullOr (lib.types.enum enumVals);
+            default = null;
+            example = "bold";
+            description = "The style of emphasis.";
+            apply = getBoolFromEnum enumVals;
+          };
+        focusMode =
+          let enumVals = [ "sentence" "currentLine" "threeLines" "paragraph" "typewriter" ];
+          in lib.mkOption {
+            type = lib.types.nullOr (lib.types.enum enumVals);
+            default = null;
+            example = "sentence";
+            description = "The focus mode to use.";
+            apply = focusMode:
+              if focusMode == null
+              then null
+              else builtins.elemAt [ 1 2 3 4 5 ] (
+                lib.lists.findFirstIndex
+                  (x: x == focusMode)
+                  (throw "editor.styling.focusMode: Value ${focusMode} isn't present in the enum. This is a bug")
+                  enumVals
+              );
+          };
+        useLargeHeadings = lib.mkOption {
+          type = lib.types.nullOr lib.types.bool;
+          default = null;
+          example = true;
+          description = "Whether to use large headings.";
+        };
+      };
+      tabulation = {
+        insertSpacesForTabs = lib.mkOption {
+          type = lib.types.nullOr lib.types.bool;
+          default = null;
+          description = ''
+            Whether to insert spaces for tabs.
+          '';
+        };
+        tabWidth = lib.mkOption {
+          type = lib.types.nullOr lib.types.ints.positive;
+          default = null;
+          description = ''
+            The width of a tab.
+          '';
+        };
+      };
+      typing = {
+        automaticallyMatchCharacters = {
+          enable = lib.mkOption {
+            type = lib.types.nullOr lib.types.bool;
+            default = null;
+            example = true;
+            description = "Whether to automatically match characters.";
+          };
+          characters = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+            example = "\"'([{*_`<";
+            description = "The characters to automatically match.";
+          };
+        };
+        bulletPointCycling = lib.mkOption {
+          type = lib.types.nullOr lib.types.bool;
+          default = null;
+          example = true;
+          description = "Whether to cycle through bullet points.";
+        };
+      };
     };
 
     preview = {
@@ -292,9 +412,53 @@ in
 
     programs.plasma.configFile = {
       "kde.org/ghostwriter.conf" = (lib.mkMerge [
+        # Font
+        (lib.mkIf (cfg.font != null) {
+          Style.editorFont = cfg.font;
+        })
+
         # Locale
         (lib.mkIf (cfg.locale != null) {
           Application.locale = cfg.locale;
+        })
+
+        # Editor > Styling
+        (lib.mkIf (cfg.editor.styling.blockquoteStyle != null) {
+          Style.blockquoteStyle = cfg.editor.styling.blockquoteStyle;
+        })
+        (lib.mkIf (cfg.editor.styling.emphasisStyle != null) {
+          Style.underlineInsteadOfItalics = cfg.editor.styling.emphasisStyle;
+        })
+        (lib.mkIf (cfg.editor.styling.editorWidth != null) {
+          Style.editorWidth = cfg.editor.styling.editorWidth;
+        })
+        (lib.mkIf (cfg.editor.styling.focusMode != null) {
+          Style.focusMode = cfg.editor.styling.focusMode;
+        })
+        (lib.mkIf (cfg.editor.styling.useLargeHeadings != null) {
+          Style.largeHeadings = cfg.editor.styling.useLargeHeadings;
+        })
+
+        # Editor > Tabulation
+        (lib.mkIf (cfg.editor.tabulation.insertSpacesForTabs != null) {
+          Tabs.insertSpacesForTabs = cfg.editor.tabulation.insertSpacesForTabs;
+        })
+        (lib.mkIf (cfg.editor.tabulation.tabWidth != null) {
+          Tabs.tabWidth = cfg.editor.tabulation.tabWidth;
+        })
+
+        # Editor > Typing
+        (lib.mkIf (cfg.editor.typing.automaticallyMatchCharacters.enable != null) {
+          Typing.autoMatchEnabled = cfg.editor.typing.automaticallyMatchCharacters.enable;
+        })
+        (lib.mkIf (cfg.editor.typing.automaticallyMatchCharacters.characters != null) {
+          Typing.autoMatchFilter = {
+            value = cfg.editor.typing.automaticallyMatchCharacters.characters;
+            escapeValue = false;
+          };
+        })
+        (lib.mkIf (cfg.editor.typing.bulletPointCycling != null) {
+          Typing.bulletPointCyclingEnabled = cfg.editor.typing.bulletPointCycling;
         })
 
         # Preview options
