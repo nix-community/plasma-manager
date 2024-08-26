@@ -42,4 +42,5 @@ let
 in
 {
   html = plasma-manager-options;
+  json = pmOptionsDoc.optionsJSON;
 }

@@ -1,6 +1,8 @@
 { lib, ... }:
 let
   inherit (lib) mkOption types;
+  inherit (import ./lib.nix { inherit lib; }) configValueType;
+  inherit (import ./default.nix { inherit lib; }) positionType sizeType;
 
   mkBoolOption = description: lib.mkOption {
     type = with lib.types; nullOr bool;
@@ -17,7 +19,9 @@ let
         justify = 8;
       };
     in
-      mappings.${horizontalAlignment} or (throw "Invalid enum value: ${horizontalAlignment}");
+      if horizontalAlignment == null
+      then null
+      else mappings.${horizontalAlignment} or (throw "Invalid enum value: ${horizontalAlignment}");
 
   convertVerticalAlignment = verticalAlignment:
     let
@@ -28,7 +32,9 @@ let
         baseline = 256;
       };
     in
-      mappings.${verticalAlignment} or (throw "Invalid enum value: ${verticalAlignment}");
+      if verticalAlignment == null
+      then null
+      else mappings.${verticalAlignment} or (throw "Invalid enum value: ${verticalAlignment}");
 
   getIndexFromEnum = enum: value:
     if value == null
@@ -113,6 +119,16 @@ in
     description = "KDE plasmoid with window title and buttons";
 
     opts = {
+      position = mkOption {
+        type = positionType;
+        example = { horizontal = 100; vertical = 300; };
+        description = "The position of the widget. (Only for desktop widget)";
+      };
+      size = mkOption {
+        type = sizeType;
+        example = { width = 500; height = 50; };
+        description = "The size of the widget. (Only for desktop widget)";
+      };
       layout = {
         widgetMargins = mkOption {
           type = types.nullOr types.ints.unsigned;
@@ -125,14 +141,16 @@ in
           description = "The spacing between elements.";
         };
         horizontalAlignment = mkOption {
-          type = types.enum [ "left" "right" "center" "justify" ];
-          default = "left";
+          type = types.nullOr (types.enum [ "left" "right" "center" "justify" ]);
+          default = null;
+          example = "left";
           description = "The horizontal alignment of the widget.";
           apply = convertHorizontalAlignment;
         };
         verticalAlignment = mkOption {
-          type = types.enum [ "top" "center" "bottom" "baseline" ];
-          default = "center";
+          type = types.nullOr (types.enum [ "top" "center" "bottom" "baseline" ]);
+          default = null;
+          example = "center";
           description = "The vertical alignment of the widget.";
           apply = convertVerticalAlignment;
         };
@@ -438,7 +456,7 @@ in
         };
       };
       settings = mkOption {
-        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        type = configValueType;
         default = null;
         example = {
           Appearance = {
@@ -454,7 +472,9 @@ in
       };
     };
     convert =
-      { layout
+      { position
+      , size
+      , layout
       , windowControlButtons
       , windowTitle
       , overrideForMaximized

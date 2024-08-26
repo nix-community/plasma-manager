@@ -1,6 +1,8 @@
 { lib, ... }:
 let
   inherit (lib) mkOption types;
+  inherit (import ./lib.nix { inherit lib; }) configValueType;
+  inherit (import ./default.nix { inherit lib; }) positionType sizeType;
 
   mkBoolOption = description: mkOption {
     type = with types; nullOr bool;
@@ -21,18 +23,35 @@ let
     let
       mappings = { left = false; right = true; };
     in
-      mappings.${sidebarPosition} or (throw "Invalid sidebar position: ${sidebarPosition}");
+      if sidebarPosition == null
+      then null
+      else mappings.${sidebarPosition} or (throw "Invalid sidebar position: ${sidebarPosition}");
 in
 {
   kickoff = {
     description = "Kickoff is the default application launcher of the Plasma desktop.";
 
     opts = {
+      position = mkOption {
+        type = positionType;
+        example = { horizontal = 250; vertical = 50; };
+        description = "The position of the widget. (Only for desktop widget)";
+      };
+      size = mkOption {
+        type = sizeType;
+        example = { width = 500; height = 500; };
+        description = "The size of the widget. (Only for desktop widget)";
+      };
       icon = mkOption {
         type = types.nullOr types.str;
         default = null;
         example = "start-here-kde-symbolic";
-        description = "The icon to use for the kickoff button.";
+        description = ''
+          The icon to use for the kickoff button.
+
+          This can also be used to specify a custom image for the kickoff button.
+          To do this, set the value to a absolute path to the image file.
+        '';
       };
       label = mkOption {
         type = types.nullOr types.str;
@@ -43,9 +62,9 @@ in
       sortAlphabetically = mkBoolOption "Whether to sort menu contents alphabetically or use manual/system sort order.";
       compactDisplayStyle = mkBoolOption "Whether to use a compact display style for list items.";
       sidebarPosition = mkOption {
-        type = types.enum [ "left" "right" ];
-        default = "left";
-        example = "right";
+        type = types.nullOr (types.enum [ "left" "right" ]);
+        default = null;
+        example = "left";
         description = "The position of the sidebar.";
         apply = convertSidebarPosition;
       };
@@ -78,20 +97,33 @@ in
         };
       showActionButtonCaptions = mkBoolOption "Whether to display captions ('shut down', 'log out', etc.) for the footer action buttons";
       pin = mkBoolOption "Whether the popup should remain open when another window is activated.";
+      popupHeight = mkOption {
+        type = with types; nullOr ints.positive;
+        default = null;
+        example = 500;
+      };
+      popupWidth = mkOption {
+        type = with types; nullOr ints.positive;
+        default = null;
+        example = 700;
+      };
       settings = mkOption {
-        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        type = configValueType;
         default = null;
         example = {
           General = {
             icon = "nix-snowflake-white";
           };
+          popupHeight = 500;
         };
         description = "Extra configuration options for the widget.";
         apply = settings: if settings == null then {} else settings;
       };
     };
     convert =
-      { icon
+      { position
+      , size
+      , icon
       , label
       , sortAlphabetically
       , compactDisplayStyle
@@ -101,13 +133,19 @@ in
       , showButtonsFor
       , showActionButtonCaptions
       , pin
+      , popupHeight
+      , popupWidth
       , settings
       }: {
         name = "org.kde.plasma.kickoff";
-        config = lib.recursiveUpdate {
-          General = lib.filterAttrs (_: v: v != null) (
-            {
-              icon = icon;
+        config = lib.recursiveUpdate
+          (lib.filterAttrsRecursive (_: v: v != null) {
+            popupHeight = popupHeight;
+            popupWidth = popupWidth;
+
+            General = {
+              inherit icon pin;
+
               menuLabel = label;
               alphaSort = sortAlphabetically;
               compactMode = compactDisplayStyle;
@@ -116,12 +154,8 @@ in
               applicationsDisplay = applicationsDisplayMode;
               primaryActions = showButtonsFor;
               showActionButtonCaptions = showActionButtonCaptions;
-
-              # Other useful options
-              pin = pin;
-            }
-          );
-        } settings;
+            };
+        }) settings;
       };
   };
 }

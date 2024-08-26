@@ -1,6 +1,8 @@
 { lib, ... }:
 let
   inherit (lib) mkOption types;
+  inherit (import ./lib.nix { inherit lib; }) configValueType;
+  inherit (import ./default.nix { inherit lib; }) positionType sizeType;
 
   mkBoolOption = description: mkOption {
     type = with types; nullOr bool;
@@ -16,8 +18,12 @@ let
         large = 3;
       };
     in
-      mappings.${spacing} or (throw "Invalid spacing: ${spacing}");
-
+      if spacing == null
+      then null
+      else
+        if builtins.isString spacing
+        then mappings.${spacing} or (throw "Invalid spacing: ${spacing}")
+        else spacing;
 
   getIndexFromEnum = enum: value:
     if value == null
@@ -32,13 +38,25 @@ let
     let
       mappings = { left = true; right = false; };
     in
-      mappings.${position} or (throw "Invalid position: ${position}");
+      if position == null
+      then null
+      else mappings.${position} or (throw "Invalid position: ${position}");
 in
 {
   iconTasks = {
     description = "Icons Only Task Manager shows tasks only by their icon and not by icon and title of the window opened.";
 
     opts = {
+      position = mkOption {
+        type = positionType;
+        example = { horizontal = 250; vertical = 50; };
+        description = "The position of the widget. (Only for desktop widget)";
+      };
+      size = mkOption {
+        type = sizeType;
+        example = { width = 500; height = 500; };
+        description = "The size of the widget. (Only for desktop widget)";
+      };
       launchers = mkOption {
         type = types.nullOr (types.listOf types.str);
         default = null;
@@ -66,8 +84,8 @@ in
           };
         };
         iconSpacing = mkOption {
-          type = types.enum [ "small" "medium" "large" ];
-          default = "medium";
+          type = types.nullOr (types.oneOf [ (types.enum [ "small" "medium" "large" ]) types.ints.positive ]);
+          default = null;
           example = "small";
           description = "The spacing between icons.";
           apply = convertSpacing;
@@ -121,19 +139,31 @@ in
           onlyInCurrentScreen = mkBoolOption "Whether to show only window tasks that are on the same screen as the widget.";
           onlyInCurrentDesktop = mkBoolOption "Whether to only show tasks that are on the current virtual desktop.";
           onlyInCurrentActivity = mkBoolOption "Whether to show only tasks that are on the current activity.";
-          onlyMinimized = mkBoolOption "Whether to show only window tasks that are minimized.";
+          onlyMinimized = mkOption {
+            type = types.nullOr types.bool;
+            default = null;
+            example = true;
+            description = "Whether to show only window tasks that are minimized.";
+            apply = onlyMinimized:
+              if onlyMinimized == null
+              then null
+              else
+                if onlyMinimized == true
+                then 1
+                else 0;
+          };
         };
         unhideOnAttentionNeeded = mkBoolOption "Whether to unhide if a window wants attention.";
         newTasksAppearOn = mkOption {
-          type = types.enum [ "left" "right" ];
-          default = "right";
-          example = "left";
+          type = types.nullOr (types.enum [ "left" "right" ]);
+          default = null;
+          example = "right";
           description = "Whether new tasks should appear in the left or right.";
           apply = positionToReverse;
         };
       };
       settings = mkOption {
-        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        type = configValueType;
         default = null;
         example = {
           General = {
@@ -145,7 +175,9 @@ in
       };
     };
     convert =
-      { appearance
+      { position
+      , size
+      , appearance
       , behavior
       , launchers
       , settings

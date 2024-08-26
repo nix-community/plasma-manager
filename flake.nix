@@ -30,8 +30,13 @@
       };
 
       packages = forAllSystems (system:
-        let pkgs = nixpkgsFor.${system}; in
-        {
+        let
+          pkgs = nixpkgsFor.${system};
+          docs = import ./docs {
+            inherit pkgs;
+            lib = pkgs.lib;
+          };
+        in {
           default = self.packages.${system}.rc2nix;
 
           demo = (inputs.nixpkgs.lib.nixosSystem {
@@ -44,6 +49,9 @@
               (_: { environment.systemPackages = [ self.packages.${system}.rc2nix ]; })
             ];
           }).config.system.build.vm;
+
+          docs-html = docs.html;
+          docs-json = docs.json;
 
           rc2nix = pkgs.writeShellApplication {
             name = "rc2nix";

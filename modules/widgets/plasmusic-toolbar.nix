@@ -1,6 +1,9 @@
 { lib, ... }:
 let
   inherit (lib) mkOption types;
+  inherit (import ./lib.nix { inherit lib; }) configValueType;
+  inherit (import ./default.nix { inherit lib; }) positionType sizeType;
+
   qfont = import ../../lib/qfont.nix { inherit lib; };
 
   mkBoolOption = description: lib.mkOption {
@@ -215,6 +218,16 @@ in
     description = "KDE Plasma widget that shows currently playing song information and provide playback controls.";
 
     opts = {
+      position = mkOption {
+        type = positionType;
+        example = { horizontal = 250; vertical = 100; };
+        description = "The position of the widget. (Only for desktop widget)";
+      };
+      size = mkOption {
+        type = sizeType;
+        example = { width = 500; height = 100; };
+        description = "The size of the widget. (Only for desktop widget)";
+      };
       panelIcon = {
         icon = mkOption {
           type = types.nullOr types.str;
@@ -223,6 +236,7 @@ in
           description = "Icon to show in the panel.";
         };
         albumCover = {
+          fallbackToIcon = mkBoolOption "Whether to fallback to icon if cover is not available.";
           useAsIcon = mkBoolOption "Whether to use album cover as icon or not.";
           radius = mkOption {
             type = types.nullOr (types.ints.between 0 25);
@@ -290,8 +304,25 @@ in
         description = "Custom font to use for the widget.";
         apply = font: if font == null then null else qfont.fontToString font;
       };
+      background =
+        let enumVals = [ "standard" "transparent" "transparentShadow" ];
+        in mkOption {
+          type = with types; nullOr (enum enumVals);
+          default = null;
+          example = "transparent";
+          description = "Widget background type (only for desktop widget)";
+          apply = background:
+            if background == null
+            then null
+            else builtins.elemAt [ 1 0 4 ] (
+              lib.lists.findFirstIndex
+                (x: x == background)
+                (throw "plasmusic-toolbar: non-existent background ${background}. This is a bug!")
+                enumVals
+            );
+        };
       settings = mkOption {
-        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        type = configValueType;
         default = null;
         example = {
           General = {
@@ -307,20 +338,25 @@ in
       };
     };
     convert =
-      { panelIcon
+      { position
+      , size
+      , panelIcon
       , preferredSource
       , songText
       , musicControls
       , font
+      , background
       , settings
       }: {
         name = "plasmusic-toolbar";
+  
         config = lib.recursiveUpdate {
           General = lib.filterAttrs (_: v: v != null) (
             {
               panelIcon = panelIcon.icon;
               useAlbumCoverAsPanelIcon = panelIcon.albumCover.useAsIcon;
               albumCoverRadius = panelIcon.albumCover.radius;
+              fallbackToIconWhenArtNotAvailable = panelIcon.albumCover.fallbackToIcon;
 
               sourceIndex = preferredSource;
 
@@ -337,6 +373,8 @@ in
               
               useCustomFont = (font != null);
               customFont = font;
+
+              desktopWidgetBg = background;
             }
           );
         } settings;

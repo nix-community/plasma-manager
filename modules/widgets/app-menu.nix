@@ -2,36 +2,39 @@
 let
   inherit (import ./lib.nix { inherit lib; }) configValueType;
   inherit (import ./default.nix { inherit lib; }) positionType sizeType;
-in {
-  battery = {
-    description = "The battery indicator widget.";
 
-    # See https://invent.kde.org/plasma/plasma-workspace/-/blob/master/applets/batterymonitor/package/contents/config/main.xml for the accepted raw options
+  mkBoolOption = description: lib.mkOption {
+    type = with lib.types; nullOr bool;
+    default = null;
+    example = true;
+    inherit description;
+  };
+in
+{
+  appMenu = {
     opts = {
       position = lib.mkOption {
         type = positionType;
-        example = { horizontal = 250; vertical = 50; };
+        example = { horizontal = 100; vertical = 300; };
         description = "The position of the widget. (Only for desktop widget)";
       };
       size = lib.mkOption {
         type = sizeType;
-        example = { width = 500; height = 500; };
+        example = { width = 500; height = 50; };
         description = "The size of the widget. (Only for desktop widget)";
       };
-      showPercentage = lib.mkOption {
-        type = with lib.types; nullOr bool;
-        default = null;
-        example = true;
-        description = "Enable to show the battery percentage as a small label over the battery icon.";
-      };
+      compactView = mkBoolOption "Whether to show the app menu in a compact view";
       settings = lib.mkOption {
         type = configValueType;
         default = null;
         example = {
-          General = {
-            showPercentage = true;
+          Appearance = {
+            compactView = true;
           };
         };
+        description = ''
+          Extra configuration for the widget
+        '';
         apply = settings: if settings == null then {} else settings;
       };
     };
@@ -39,13 +42,13 @@ in {
     convert = 
       { position
       , size
-      , showPercentage
+      , compactView
       , settings
       }: {
-        name = "org.kde.plasma.battery";
+        name = "org.kde.plasma.appmenu";
         config = lib.recursiveUpdate {
           General = lib.filterAttrs (_: v: v != null) {
-            inherit showPercentage;
+            inherit compactView;
           };
         } settings;
     };

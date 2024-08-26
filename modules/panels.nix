@@ -5,7 +5,13 @@
 } @ args:
 let
   cfg = config.programs.plasma;
-  hasWidget = widgetName: builtins.any (panel: builtins.any (widget: widget.name == widgetName) panel.widgets) cfg.panels;
+  inherit (import ../lib/wallpapers.nix { inherit lib; }) wallpaperFillModeTypes;
+
+  desktopWidgets = if cfg.desktop.widgets != null then cfg.desktop.widgets else [];
+  
+  hasWidget = widgetName:
+    builtins.any (panel: builtins.any (widget: widget.name == widgetName) panel.widgets) cfg.panels ||
+    builtins.any (widget: widget.name == widgetName) desktopWidgets;
 
   # An attrset keeping track of the packages which should be added when a
   # widget is present in the config.
@@ -136,7 +142,7 @@ let
         description = ''
           The screen the panel should appear on. Can be an int, or a list of ints,
           starting from 0, representing the ID of the screen the panel should
-          appear on. Alternatively it can be set to "any" if the panel should
+          appear on. Alternatively it can be set to "all" if the panel should
           appear on all the screens.
         '';
       };
@@ -211,6 +217,7 @@ in
                   "\"" + (builtins.toString path) + "\"" else
                   "[" + (builtins.concatStringsSep "," (map (s: "\"" + s + "\"") path)) + "]"});
                 desktop.writeConfig("SlideInterval", "${builtins.toString cfg.workspace.wallpaperSlideShow.interval}");
+                ${lib.optionalString (cfg.workspace.wallpaperFillMode != null) ''desktop.writeConfig("FillMode", "${cfg.workspace.wallpaperFillMode}");''}
             }
           '' else "");
           wallpaperPOTD = (if (cfg.workspace.wallpaperPictureOfTheDay != null) then ''
@@ -221,6 +228,7 @@ in
                 desktop.currentConfigGroup = ["Wallpaper", "org.kde.potd", "General"];
                 desktop.writeConfig("Provider", "${cfg.workspace.wallpaperPictureOfTheDay.provider}");
                 desktop.writeConfig("UpdateOverMeteredConnection", "${if (cfg.workspace.wallpaperPictureOfTheDay.updateOverMeteredConnection) then "1" else "0"}");
+                ${lib.optionalString (cfg.workspace.wallpaperFillMode != null) ''desktop.writeConfig("FillMode", "${cfg.workspace.wallpaperFillMode}");''}
               }
           '' else "");
           wallpaperPlainColor = (if (cfg.workspace.wallpaperPlainColor != null) then ''

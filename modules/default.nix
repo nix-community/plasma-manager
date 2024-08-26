@@ -3,6 +3,7 @@
 {
   imports = [
     ./apps
+    ./desktop.nix
     ./files.nix
     ./fonts.nix
     ./hotkeys.nix
