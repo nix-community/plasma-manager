@@ -331,7 +331,7 @@ in
           characters = lib.mkOption {
             type = lib.types.nullOr lib.types.str;
             default = null;
-            example = "\"'([{*_`<";
+            example = ''\"'([{*_`<'';
             description = "The characters to automatically match.";
             apply = chars: if chars == null then null else ''"${chars}"'';
           };
@@ -341,6 +341,74 @@ in
           default = null;
           example = true;
           description = "Whether to cycle through bullet points.";
+        };
+      };
+    };
+
+    general = {
+      display = {
+        hideMenubarInFullscreen = lib.mkOption {
+          type = lib.types.nullOr lib.types.bool;
+          default = null;
+          example = true;
+          description = "Whether to hide the menubar in fullscreen mode.";
+        };
+        interfaceStyle =
+          let enumVals = [ "rounded" "square" ];
+          in lib.mkOption {
+            type = lib.types.nullOr (lib.types.enum enumVals);
+            default = null;
+            example = "rounded";
+            description = "The interface style to use for Ghostwriter.";
+            apply = getIndexFromEnum enumVals;
+          };
+        showCurrentTimeInFullscreen = lib.mkOption {
+          type = lib.types.nullOr lib.types.bool;
+          default = null;
+          example = true;
+          description = "Whether to show the current time in fullscreen mode.";
+        };
+        showUnbreakableSpace = lib.mkOption {
+          type = lib.types.nullOr lib.types.bool;
+          default = null;
+          example = true;
+          description = "Whether to show unbreakable space.";
+        };
+      };
+      fileSaving = {
+        autoSave = lib.mkOption {
+          type = lib.types.nullOr lib.types.bool;
+          default = null;
+          example = true;
+          description = "Whether to enable auto-save.";
+        };
+        backupFileOnSave = lib.mkOption {
+          type = lib.types.nullOr lib.types.bool;
+          default = null;
+          example = true;
+          description = "Whether to backup the file on save.";
+        };
+        backupLocation = lib.mkOption {
+          type = lib.types.nullOr lib.types.path;
+          default = null;
+          example = "/home/user/.local/share/ghostwriter/backups";
+          description = ''
+            The location to store backups of the Ghostwriter configuration.
+          '';
+        };
+      };
+      session = {
+        openLastFileOnStartup = lib.mkOption {
+          type = lib.types.nullOr lib.types.bool;
+          default = null;
+          example = true;
+          description = "Whether to open the last file on startup.";
+        };
+        rememberRecentFiles = lib.mkOption {
+          type = lib.types.nullOr lib.types.bool;
+          default = null;
+          example = true;
+          description = "Whether to remember recent files.";
         };
       };
     };
@@ -461,6 +529,39 @@ in
         })
         (lib.mkIf (cfg.editor.typing.bulletPointCycling != null) {
           Typing.bulletPointCyclingEnabled = cfg.editor.typing.bulletPointCycling;
+        })
+
+        # General > Display
+        (lib.mkIf (cfg.general.display.hideMenubarInFullscreen != null) {
+          Style.hideMenuBarInFullscreen = cfg.general.display.hideMenubarInFullscreen;
+        })
+        (lib.mkIf (cfg.general.display.interfaceStyle != null) {
+          Style.interfaceStyle = cfg.general.display.interfaceStyle;
+        })
+        (lib.mkIf (cfg.general.display.showCurrentTimeInFullscreen != null) {
+          Style.displayTimeInFullScreen = cfg.general.display.showCurrentTimeInFullscreen;
+        })
+        (lib.mkIf (cfg.general.display.showUnbreakableSpace != null) {
+          style.showUnbreakableSpace = cfg.general.display.showUnbreakableSpace;
+        })
+
+        # General > File Saving
+        (lib.mkIf (cfg.general.fileSaving.autoSave != null) {
+          Save.autoSave = cfg.general.fileSaving.autoSave;
+        })
+        (lib.mkIf (cfg.general.fileSaving.backupFileOnSave != null) {
+          Save.backupFile = cfg.general.fileSaving.backupFileOnSave;
+        })
+        (lib.mkIf (cfg.general.fileSaving.backupLocation != null) {
+          Backup.location = cfg.general.fileSaving.backupLocation;
+        })
+
+        # General > Session
+        (lib.mkIf (cfg.general.session.openLastFileOnStartup != null) {
+          Session.restoreSession = cfg.general.session.openLastFileOnStartup;
+        })
+        (lib.mkIf (cfg.general.session.rememberRecentFiles != null) {
+          Session.rememberFileHistory = cfg.general.session.rememberRecentFiles;
         })
 
         # Preview options
