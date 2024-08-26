@@ -332,6 +332,7 @@ in
             default = null;
             example = "\"'([{*_`<";
             description = "The characters to automatically match.";
+            apply = chars: if chars == null then null else ''"${chars}"'';
           };
         };
         bulletPointCycling = lib.mkOption {
