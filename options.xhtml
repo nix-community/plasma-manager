@@ -29,6 +29,2617 @@
  <dl class="variablelist">
 <dt>
  <span class="term">
+ <a id="opt-programs.ghostwriter.enable"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.enable"><code class="option">programs.ghostwriter.enable</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to enable Enable configuration management for Ghostwriter.
+.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.package"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.package"><code class="option">programs.ghostwriter.package</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The ghostwriter package to use. Use <code class="literal">pkgs.libsForQt5.ghostwriter</code> in Plasma5 and
+<code class="literal">pkgs.kdePackages.ghostwriter</code> in Plasma6.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+package</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">pkgs.kdePackages.ghostwriter</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">pkgs.kdePackages.ghostwriter</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.editor.styling.blockquoteStyle"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.editor.styling.blockquoteStyle"><code class="option">programs.ghostwriter.editor.styling.blockquoteStyle</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The style of blockquotes.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “simple”, “italic”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;simple&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.editor.styling.editorWidth"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.editor.styling.editorWidth"><code class="option">programs.ghostwriter.editor.styling.editorWidth</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The width of the editor.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “narrow”, “medium”, “wide”, “full”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;medium&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.editor.styling.emphasisStyle"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.editor.styling.emphasisStyle"><code class="option">programs.ghostwriter.editor.styling.emphasisStyle</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The style of emphasis.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “italic”, “underline”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;bold&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.editor.styling.focusMode"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.editor.styling.focusMode"><code class="option">programs.ghostwriter.editor.styling.focusMode</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The focus mode to use.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “sentence”, “currentLine”, “threeLines”, “paragraph”, “typewriter”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;sentence&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.editor.styling.useLargeHeadings"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.editor.styling.useLargeHeadings"><code class="option">programs.ghostwriter.editor.styling.useLargeHeadings</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to use large headings.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.editor.tabulation.insertSpacesForTabs"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.editor.tabulation.insertSpacesForTabs"><code class="option">programs.ghostwriter.editor.tabulation.insertSpacesForTabs</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to insert spaces for tabs.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.editor.tabulation.tabWidth"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.editor.tabulation.tabWidth"><code class="option">programs.ghostwriter.editor.tabulation.tabWidth</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The width of a tab.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or (positive integer, meaning &gt;0)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.editor.typing.automaticallyMatchCharacters.enable"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.editor.typing.automaticallyMatchCharacters.enable"><code class="option">programs.ghostwriter.editor.typing.automaticallyMatchCharacters.enable</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to automatically match characters.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.editor.typing.automaticallyMatchCharacters.characters"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.editor.typing.automaticallyMatchCharacters.characters"><code class="option">programs.ghostwriter.editor.typing.automaticallyMatchCharacters.characters</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The characters to automatically match.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or string</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;\\\&quot;&#x27;([{*_`&lt;&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.editor.typing.bulletPointCycling"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.editor.typing.bulletPointCycling"><code class="option">programs.ghostwriter.editor.typing.bulletPointCycling</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to cycle through bullet points.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font"><code class="option">programs.ghostwriter.font</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The font to use for Ghostwriter.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or (submodule)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting">{
+  family = &quot;Noto Sans&quot;;
+  pointSize = 12;
+}
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.capitalization"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.capitalization"><code class="option">programs.ghostwriter.font.capitalization</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The capitalization settings for this font.</p><p>See https://doc.qt.io/qt-6/qfont.html#Capitalization-enum for more.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+one of “allLowercase”, “allUppercase”, “capitalize”, “mixedCase”, “smallCaps”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;mixedCase&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.family"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.family"><code class="option">programs.ghostwriter.font.family</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The font family of this font.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+string</p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;Noto Sans&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.fixedPitch"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.fixedPitch"><code class="option">programs.ghostwriter.font.fixedPitch</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether the font has a fixed pitch.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.letterSpacing"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.letterSpacing"><code class="option">programs.ghostwriter.font.letterSpacing</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The amount of letter spacing for this font.</p><p>Could be a percentage or an absolute spacing change (positive increases spacing, negative decreases spacing),
+based on the selected <code class="literal">letterSpacingType</code>.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+signed integer or floating point number</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">0</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.letterSpacingType"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.letterSpacingType"><code class="option">programs.ghostwriter.font.letterSpacingType</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to use percentage or absolute spacing for this font.</p><p>See https://doc.qt.io/qt-6/qfont.html#SpacingType-enum for more.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+one of “absolute”, “percentage”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;percentage&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.pixelSize"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.pixelSize"><code class="option">programs.ghostwriter.font.pixelSize</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The pixel size of this font.</p><p>Mutually exclusive with point size.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.pointSize"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.pointSize"><code class="option">programs.ghostwriter.font.pointSize</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The point size of this font.</p><p>Could be a decimal, but usually an integer. Mutually exclusive with pixel size.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or (positive integer or floating point number, meaning &gt;0)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.stretch"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.stretch"><code class="option">programs.ghostwriter.font.stretch</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The stretch factor for this font, as an integral percentage (i.e. 150 means a 150% stretch),
+or as a pre-defined stretch factor string.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+integer between 1 and 4000 (both inclusive) or one of “anyStretch”, “condensed”, “expanded”, “extraCondensed”, “extraExpanded”, “semiCondensed”, “semiExpanded”, “ultraCondensed”, “ultraExpanded”, “unstretched”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;anyStretch&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.strikeOut"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.strikeOut"><code class="option">programs.ghostwriter.font.strikeOut</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether the font is struck out.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.style"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.style"><code class="option">programs.ghostwriter.font.style</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The style of the font.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+one of “italic”, “normal”, “oblique”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;normal&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.styleHint"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.styleHint"><code class="option">programs.ghostwriter.font.styleHint</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The style hint of this font.</p><p>See https://doc.qt.io/qt-6/qfont.html#StyleHint-enum for more.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+one of “anyStyle”, “courier”, “cursive”, “decorative”, “fantasy”, “helvetica”, “monospace”, “oldEnglish”, “sansSerif”, “serif”, “system”, “times”, “typewriter”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;anyStyle&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.styleName"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.styleName"><code class="option">programs.ghostwriter.font.styleName</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The style name of this font, overriding the <code class="literal">style</code> and <code class="literal">weight</code> parameters when set.
+Used for special fonts that have styles beyond traditional settings.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or string</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.styleStrategy"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.styleStrategy"><code class="option">programs.ghostwriter.font.styleStrategy</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The strategy for matching similar fonts to this font.</p><p>See https://doc.qt.io/qt-6/qfont.html#StyleStrategy-enum for more.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+submodule</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">{ }</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.styleStrategy.antialiasing"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.styleStrategy.antialiasing"><code class="option">programs.ghostwriter.font.styleStrategy.antialiasing</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether antialiasing is preferred for this font.</p><p><code class="literal">default</code> corresponds to not setting any enum flag, and <code class="literal">prefer</code> and <code class="literal">disable</code>
+correspond to <code class="literal">PreferAntialias</code> and <code class="literal">NoAntialias</code> enum flags respectively.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+one of “default”, “disable”, “prefer”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;default&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.styleStrategy.matchingPrefer"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.styleStrategy.matchingPrefer"><code class="option">programs.ghostwriter.font.styleStrategy.matchingPrefer</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether the font matching process prefers exact matches, of best quality matches.</p><p><code class="literal">default</code> corresponds to not setting any enum flag, and <code class="literal">exact</code> and <code class="literal">quality</code>
+correspond to <code class="literal">PreferMatch</code> and <code class="literal">PreferQuality</code> enum flags respectively.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+one of “default”, “exact”, “quality”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;default&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.styleStrategy.noFontMerging"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.styleStrategy.noFontMerging"><code class="option">programs.ghostwriter.font.styleStrategy.noFontMerging</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>If set to true, this font will not try to find a substitute font when encountering missing glyphs.</p><p>Corresponds to the <code class="literal">NoFontMerging</code> enum flag.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.styleStrategy.noSubpixelAntialias"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.styleStrategy.noSubpixelAntialias"><code class="option">programs.ghostwriter.font.styleStrategy.noSubpixelAntialias</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>If set to true, this font will try to avoid subpixel antialiasing.</p><p>Corresponds to the <code class="literal">NoSubpixelAntialias</code> enum flag.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.styleStrategy.prefer"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.styleStrategy.prefer"><code class="option">programs.ghostwriter.font.styleStrategy.prefer</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Which type of font is preferred by the font when finding an appropriate default family.</p><p><code class="literal">default</code>, <code class="literal">bitmap</code>, <code class="literal">device</code>, <code class="literal">outline</code>, <code class="literal">forceOutline</code> correspond to the
+<code class="literal">PreferDefault</code>, <code class="literal">PreferBitmap</code>, <code class="literal">PreferDevice</code>, <code class="literal">PreferOutline</code>, <code class="literal">ForceOutline</code> enum flags
+respectively.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+one of “bitmap”, “default”, “device”, “forceOutline”, “outline”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;default&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.styleStrategy.preferNoShaping"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.styleStrategy.preferNoShaping"><code class="option">programs.ghostwriter.font.styleStrategy.preferNoShaping</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>If set to true, this font will not try to apply shaping rules that may be required for some scripts
+(e.g. Indic scripts), increasing performance if these rules are not required.</p><p>Corresponds to the <code class="literal">PreferNoShaping</code> enum flag.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.underline"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.underline"><code class="option">programs.ghostwriter.font.underline</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether the font is underlined.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.weight"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.weight"><code class="option">programs.ghostwriter.font.weight</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The weight of the font, either as a number between 1 to 1000 or as a pre-defined weight string.</p><p>See https://doc.qt.io/qt-6/qfont.html#Weight-enum for more.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+integer between 1 and 1000 (both inclusive) or one of “black”, “bold”, “demiBold”, “extraBold”, “extraLight”, “light”, “medium”, “normal”, “thin”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;normal&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.font.wordSpacing"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.font.wordSpacing"><code class="option">programs.ghostwriter.font.wordSpacing</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The amount of word spacing for this font, in pixels.</p><p>Positive values increase spacing while negative ones decrease spacing.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+signed integer or floating point number</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">0</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.general.display.hideMenubarInFullscreen"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.general.display.hideMenubarInFullscreen"><code class="option">programs.ghostwriter.general.display.hideMenubarInFullscreen</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to hide the menubar in fullscreen mode.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.general.display.interfaceStyle"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.general.display.interfaceStyle"><code class="option">programs.ghostwriter.general.display.interfaceStyle</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The interface style to use for Ghostwriter.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “rounded”, “square”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;rounded&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.general.display.showCurrentTimeInFullscreen"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.general.display.showCurrentTimeInFullscreen"><code class="option">programs.ghostwriter.general.display.showCurrentTimeInFullscreen</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to show the current time in fullscreen mode.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.general.display.showUnbreakableSpace"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.general.display.showUnbreakableSpace"><code class="option">programs.ghostwriter.general.display.showUnbreakableSpace</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to show unbreakable space.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.general.fileSaving.autoSave"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.general.fileSaving.autoSave"><code class="option">programs.ghostwriter.general.fileSaving.autoSave</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to enable auto-save.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.general.fileSaving.backupFileOnSave"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.general.fileSaving.backupFileOnSave"><code class="option">programs.ghostwriter.general.fileSaving.backupFileOnSave</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to backup the file on save.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.general.fileSaving.backupLocation"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.general.fileSaving.backupLocation"><code class="option">programs.ghostwriter.general.fileSaving.backupLocation</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The location to store backups of the Ghostwriter configuration.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or path</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;/home/user/.local/share/ghostwriter/backups&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.general.session.openLastFileOnStartup"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.general.session.openLastFileOnStartup"><code class="option">programs.ghostwriter.general.session.openLastFileOnStartup</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to open the last file on startup.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.general.session.rememberRecentFiles"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.general.session.rememberRecentFiles"><code class="option">programs.ghostwriter.general.session.rememberRecentFiles</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to remember recent files.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.locale"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.locale"><code class="option">programs.ghostwriter.locale</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The locale to use for Ghostwriter.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or string</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;en_US&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont"><code class="option">programs.ghostwriter.preview.codeFont</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The code font to use for the preview.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or (submodule)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting">{
+  family = &quot;Hack&quot;;
+  pointSize = 12;
+}
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.capitalization"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.capitalization"><code class="option">programs.ghostwriter.preview.codeFont.capitalization</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The capitalization settings for this font.</p><p>See https://doc.qt.io/qt-6/qfont.html#Capitalization-enum for more.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+one of “allLowercase”, “allUppercase”, “capitalize”, “mixedCase”, “smallCaps”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;mixedCase&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.family"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.family"><code class="option">programs.ghostwriter.preview.codeFont.family</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The font family of this font.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+string</p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;Noto Sans&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.fixedPitch"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.fixedPitch"><code class="option">programs.ghostwriter.preview.codeFont.fixedPitch</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether the font has a fixed pitch.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.letterSpacing"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.letterSpacing"><code class="option">programs.ghostwriter.preview.codeFont.letterSpacing</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The amount of letter spacing for this font.</p><p>Could be a percentage or an absolute spacing change (positive increases spacing, negative decreases spacing),
+based on the selected <code class="literal">letterSpacingType</code>.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+signed integer or floating point number</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">0</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.letterSpacingType"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.letterSpacingType"><code class="option">programs.ghostwriter.preview.codeFont.letterSpacingType</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to use percentage or absolute spacing for this font.</p><p>See https://doc.qt.io/qt-6/qfont.html#SpacingType-enum for more.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+one of “absolute”, “percentage”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;percentage&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.pixelSize"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.pixelSize"><code class="option">programs.ghostwriter.preview.codeFont.pixelSize</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The pixel size of this font.</p><p>Mutually exclusive with point size.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.pointSize"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.pointSize"><code class="option">programs.ghostwriter.preview.codeFont.pointSize</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The point size of this font.</p><p>Could be a decimal, but usually an integer. Mutually exclusive with pixel size.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or (positive integer or floating point number, meaning &gt;0)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.stretch"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.stretch"><code class="option">programs.ghostwriter.preview.codeFont.stretch</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The stretch factor for this font, as an integral percentage (i.e. 150 means a 150% stretch),
+or as a pre-defined stretch factor string.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+integer between 1 and 4000 (both inclusive) or one of “anyStretch”, “condensed”, “expanded”, “extraCondensed”, “extraExpanded”, “semiCondensed”, “semiExpanded”, “ultraCondensed”, “ultraExpanded”, “unstretched”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;anyStretch&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.strikeOut"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.strikeOut"><code class="option">programs.ghostwriter.preview.codeFont.strikeOut</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether the font is struck out.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.style"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.style"><code class="option">programs.ghostwriter.preview.codeFont.style</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The style of the font.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+one of “italic”, “normal”, “oblique”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;normal&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.styleHint"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.styleHint"><code class="option">programs.ghostwriter.preview.codeFont.styleHint</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The style hint of this font.</p><p>See https://doc.qt.io/qt-6/qfont.html#StyleHint-enum for more.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+one of “anyStyle”, “courier”, “cursive”, “decorative”, “fantasy”, “helvetica”, “monospace”, “oldEnglish”, “sansSerif”, “serif”, “system”, “times”, “typewriter”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;anyStyle&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.styleName"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.styleName"><code class="option">programs.ghostwriter.preview.codeFont.styleName</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The style name of this font, overriding the <code class="literal">style</code> and <code class="literal">weight</code> parameters when set.
+Used for special fonts that have styles beyond traditional settings.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or string</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.styleStrategy"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.styleStrategy"><code class="option">programs.ghostwriter.preview.codeFont.styleStrategy</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The strategy for matching similar fonts to this font.</p><p>See https://doc.qt.io/qt-6/qfont.html#StyleStrategy-enum for more.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+submodule</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">{ }</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.styleStrategy.antialiasing"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.styleStrategy.antialiasing"><code class="option">programs.ghostwriter.preview.codeFont.styleStrategy.antialiasing</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether antialiasing is preferred for this font.</p><p><code class="literal">default</code> corresponds to not setting any enum flag, and <code class="literal">prefer</code> and <code class="literal">disable</code>
+correspond to <code class="literal">PreferAntialias</code> and <code class="literal">NoAntialias</code> enum flags respectively.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+one of “default”, “disable”, “prefer”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;default&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.styleStrategy.matchingPrefer"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.styleStrategy.matchingPrefer"><code class="option">programs.ghostwriter.preview.codeFont.styleStrategy.matchingPrefer</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether the font matching process prefers exact matches, of best quality matches.</p><p><code class="literal">default</code> corresponds to not setting any enum flag, and <code class="literal">exact</code> and <code class="literal">quality</code>
+correspond to <code class="literal">PreferMatch</code> and <code class="literal">PreferQuality</code> enum flags respectively.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+one of “default”, “exact”, “quality”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;default&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.styleStrategy.noFontMerging"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.styleStrategy.noFontMerging"><code class="option">programs.ghostwriter.preview.codeFont.styleStrategy.noFontMerging</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>If set to true, this font will not try to find a substitute font when encountering missing glyphs.</p><p>Corresponds to the <code class="literal">NoFontMerging</code> enum flag.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.styleStrategy.noSubpixelAntialias"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.styleStrategy.noSubpixelAntialias"><code class="option">programs.ghostwriter.preview.codeFont.styleStrategy.noSubpixelAntialias</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>If set to true, this font will try to avoid subpixel antialiasing.</p><p>Corresponds to the <code class="literal">NoSubpixelAntialias</code> enum flag.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.styleStrategy.prefer"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.styleStrategy.prefer"><code class="option">programs.ghostwriter.preview.codeFont.styleStrategy.prefer</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Which type of font is preferred by the font when finding an appropriate default family.</p><p><code class="literal">default</code>, <code class="literal">bitmap</code>, <code class="literal">device</code>, <code class="literal">outline</code>, <code class="literal">forceOutline</code> correspond to the
+<code class="literal">PreferDefault</code>, <code class="literal">PreferBitmap</code>, <code class="literal">PreferDevice</code>, <code class="literal">PreferOutline</code>, <code class="literal">ForceOutline</code> enum flags
+respectively.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+one of “bitmap”, “default”, “device”, “forceOutline”, “outline”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;default&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.styleStrategy.preferNoShaping"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.styleStrategy.preferNoShaping"><code class="option">programs.ghostwriter.preview.codeFont.styleStrategy.preferNoShaping</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>If set to true, this font will not try to apply shaping rules that may be required for some scripts
+(e.g. Indic scripts), increasing performance if these rules are not required.</p><p>Corresponds to the <code class="literal">PreferNoShaping</code> enum flag.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.underline"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.underline"><code class="option">programs.ghostwriter.preview.codeFont.underline</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether the font is underlined.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.weight"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.weight"><code class="option">programs.ghostwriter.preview.codeFont.weight</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The weight of the font, either as a number between 1 to 1000 or as a pre-defined weight string.</p><p>See https://doc.qt.io/qt-6/qfont.html#Weight-enum for more.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+integer between 1 and 1000 (both inclusive) or one of “black”, “bold”, “demiBold”, “extraBold”, “extraLight”, “light”, “medium”, “normal”, “thin”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;normal&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.codeFont.wordSpacing"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.codeFont.wordSpacing"><code class="option">programs.ghostwriter.preview.codeFont.wordSpacing</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The amount of word spacing for this font, in pixels.</p><p>Positive values increase spacing while negative ones decrease spacing.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+signed integer or floating point number</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">0</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.commandLineOptions"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.commandLineOptions"><code class="option">programs.ghostwriter.preview.commandLineOptions</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Additional command line options to pass to the preview command.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or string</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.markdownVariant"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.markdownVariant"><code class="option">programs.ghostwriter.preview.markdownVariant</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The markdown variant to use for the preview.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or string</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;cmark-gfm&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.openByDefault"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.openByDefault"><code class="option">programs.ghostwriter.preview.openByDefault</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to open the preview by default.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont"><code class="option">programs.ghostwriter.preview.textFont</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The text font to use for the preview.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or (submodule)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting">{
+  family = &quot;Inter&quot;;
+  pointSize = 12;
+}
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.capitalization"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.capitalization"><code class="option">programs.ghostwriter.preview.textFont.capitalization</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The capitalization settings for this font.</p><p>See https://doc.qt.io/qt-6/qfont.html#Capitalization-enum for more.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+one of “allLowercase”, “allUppercase”, “capitalize”, “mixedCase”, “smallCaps”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;mixedCase&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.family"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.family"><code class="option">programs.ghostwriter.preview.textFont.family</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The font family of this font.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+string</p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;Noto Sans&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.fixedPitch"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.fixedPitch"><code class="option">programs.ghostwriter.preview.textFont.fixedPitch</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether the font has a fixed pitch.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.letterSpacing"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.letterSpacing"><code class="option">programs.ghostwriter.preview.textFont.letterSpacing</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The amount of letter spacing for this font.</p><p>Could be a percentage or an absolute spacing change (positive increases spacing, negative decreases spacing),
+based on the selected <code class="literal">letterSpacingType</code>.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+signed integer or floating point number</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">0</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.letterSpacingType"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.letterSpacingType"><code class="option">programs.ghostwriter.preview.textFont.letterSpacingType</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to use percentage or absolute spacing for this font.</p><p>See https://doc.qt.io/qt-6/qfont.html#SpacingType-enum for more.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+one of “absolute”, “percentage”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;percentage&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.pixelSize"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.pixelSize"><code class="option">programs.ghostwriter.preview.textFont.pixelSize</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The pixel size of this font.</p><p>Mutually exclusive with point size.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.pointSize"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.pointSize"><code class="option">programs.ghostwriter.preview.textFont.pointSize</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The point size of this font.</p><p>Could be a decimal, but usually an integer. Mutually exclusive with pixel size.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or (positive integer or floating point number, meaning &gt;0)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.stretch"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.stretch"><code class="option">programs.ghostwriter.preview.textFont.stretch</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The stretch factor for this font, as an integral percentage (i.e. 150 means a 150% stretch),
+or as a pre-defined stretch factor string.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+integer between 1 and 4000 (both inclusive) or one of “anyStretch”, “condensed”, “expanded”, “extraCondensed”, “extraExpanded”, “semiCondensed”, “semiExpanded”, “ultraCondensed”, “ultraExpanded”, “unstretched”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;anyStretch&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.strikeOut"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.strikeOut"><code class="option">programs.ghostwriter.preview.textFont.strikeOut</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether the font is struck out.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.style"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.style"><code class="option">programs.ghostwriter.preview.textFont.style</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The style of the font.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+one of “italic”, “normal”, “oblique”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;normal&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.styleHint"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.styleHint"><code class="option">programs.ghostwriter.preview.textFont.styleHint</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The style hint of this font.</p><p>See https://doc.qt.io/qt-6/qfont.html#StyleHint-enum for more.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+one of “anyStyle”, “courier”, “cursive”, “decorative”, “fantasy”, “helvetica”, “monospace”, “oldEnglish”, “sansSerif”, “serif”, “system”, “times”, “typewriter”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;anyStyle&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.styleName"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.styleName"><code class="option">programs.ghostwriter.preview.textFont.styleName</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The style name of this font, overriding the <code class="literal">style</code> and <code class="literal">weight</code> parameters when set.
+Used for special fonts that have styles beyond traditional settings.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or string</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.styleStrategy"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.styleStrategy"><code class="option">programs.ghostwriter.preview.textFont.styleStrategy</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The strategy for matching similar fonts to this font.</p><p>See https://doc.qt.io/qt-6/qfont.html#StyleStrategy-enum for more.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+submodule</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">{ }</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.styleStrategy.antialiasing"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.styleStrategy.antialiasing"><code class="option">programs.ghostwriter.preview.textFont.styleStrategy.antialiasing</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether antialiasing is preferred for this font.</p><p><code class="literal">default</code> corresponds to not setting any enum flag, and <code class="literal">prefer</code> and <code class="literal">disable</code>
+correspond to <code class="literal">PreferAntialias</code> and <code class="literal">NoAntialias</code> enum flags respectively.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+one of “default”, “disable”, “prefer”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;default&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.styleStrategy.matchingPrefer"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.styleStrategy.matchingPrefer"><code class="option">programs.ghostwriter.preview.textFont.styleStrategy.matchingPrefer</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether the font matching process prefers exact matches, of best quality matches.</p><p><code class="literal">default</code> corresponds to not setting any enum flag, and <code class="literal">exact</code> and <code class="literal">quality</code>
+correspond to <code class="literal">PreferMatch</code> and <code class="literal">PreferQuality</code> enum flags respectively.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+one of “default”, “exact”, “quality”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;default&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.styleStrategy.noFontMerging"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.styleStrategy.noFontMerging"><code class="option">programs.ghostwriter.preview.textFont.styleStrategy.noFontMerging</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>If set to true, this font will not try to find a substitute font when encountering missing glyphs.</p><p>Corresponds to the <code class="literal">NoFontMerging</code> enum flag.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.styleStrategy.noSubpixelAntialias"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.styleStrategy.noSubpixelAntialias"><code class="option">programs.ghostwriter.preview.textFont.styleStrategy.noSubpixelAntialias</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>If set to true, this font will try to avoid subpixel antialiasing.</p><p>Corresponds to the <code class="literal">NoSubpixelAntialias</code> enum flag.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.styleStrategy.prefer"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.styleStrategy.prefer"><code class="option">programs.ghostwriter.preview.textFont.styleStrategy.prefer</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Which type of font is preferred by the font when finding an appropriate default family.</p><p><code class="literal">default</code>, <code class="literal">bitmap</code>, <code class="literal">device</code>, <code class="literal">outline</code>, <code class="literal">forceOutline</code> correspond to the
+<code class="literal">PreferDefault</code>, <code class="literal">PreferBitmap</code>, <code class="literal">PreferDevice</code>, <code class="literal">PreferOutline</code>, <code class="literal">ForceOutline</code> enum flags
+respectively.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+one of “bitmap”, “default”, “device”, “forceOutline”, “outline”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;default&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.styleStrategy.preferNoShaping"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.styleStrategy.preferNoShaping"><code class="option">programs.ghostwriter.preview.textFont.styleStrategy.preferNoShaping</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>If set to true, this font will not try to apply shaping rules that may be required for some scripts
+(e.g. Indic scripts), increasing performance if these rules are not required.</p><p>Corresponds to the <code class="literal">PreferNoShaping</code> enum flag.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.underline"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.underline"><code class="option">programs.ghostwriter.preview.textFont.underline</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether the font is underlined.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.weight"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.weight"><code class="option">programs.ghostwriter.preview.textFont.weight</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The weight of the font, either as a number between 1 to 1000 or as a pre-defined weight string.</p><p>See https://doc.qt.io/qt-6/qfont.html#Weight-enum for more.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+integer between 1 and 1000 (both inclusive) or one of “black”, “bold”, “demiBold”, “extraBold”, “extraLight”, “light”, “medium”, “normal”, “thin”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">&quot;normal&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.preview.textFont.wordSpacing"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.preview.textFont.wordSpacing"><code class="option">programs.ghostwriter.preview.textFont.wordSpacing</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The amount of word spacing for this font, in pixels.</p><p>Positive values increase spacing while negative ones decrease spacing.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+signed integer or floating point number</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">0</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.spelling.autoDetectLanguage"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.spelling.autoDetectLanguage"><code class="option">programs.ghostwriter.spelling.autoDetectLanguage</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to auto-detect the language.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.spelling.checkerEnabledByDefault"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.spelling.checkerEnabledByDefault"><code class="option">programs.ghostwriter.spelling.checkerEnabledByDefault</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether the checker is enabled by default.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.spelling.ignoreUppercase"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.spelling.ignoreUppercase"><code class="option">programs.ghostwriter.spelling.ignoreUppercase</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to ignore uppercase words.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.spelling.ignoredWords"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.spelling.ignoredWords"><code class="option">programs.ghostwriter.spelling.ignoredWords</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Words to ignore in the spell checker.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or (list of string)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting">[
+  &quot;Amarok&quot;
+  &quot;KHTML&quot;
+  &quot;NixOS&quot;
+]
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.spelling.liveSpellCheck"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.spelling.liveSpellCheck"><code class="option">programs.ghostwriter.spelling.liveSpellCheck</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to enable live spell checking.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.spelling.skipRunTogether"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.spelling.skipRunTogether"><code class="option">programs.ghostwriter.spelling.skipRunTogether</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to skip run-together words.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.theme.customThemes"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.theme.customThemes"><code class="option">programs.ghostwriter.theme.customThemes</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Custom themes to be added to the installation. The key is their name.
+Choose them in <code class="literal">programs.ghostwriter.theme.name</code>.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+attribute set of path</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">{ }</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.theme.name"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.theme.name"><code class="option">programs.ghostwriter.theme.name</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The name of the theme to use.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or string</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;Ghostwriter&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.ghostwriter.window.sidebarOpen"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.window.sidebarOpen"><code class="option">programs.ghostwriter.window.sidebarOpen</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether the sidebar is open by default.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/ghostwriter.nix" target="_top">
+&lt;plasma-manager/modules/apps/ghostwriter.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
  <a id="opt-programs.kate.enable"></a><a class="term" href="options.xhtml#opt-programs.kate.enable"><code class="option">programs.kate.enable</code>
   </a>
  </span>
