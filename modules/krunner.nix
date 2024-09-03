@@ -8,13 +8,13 @@ in {
       example = "center";
       description = "Position of KRunner on screen.";
     };
-    activateWhenTypingOnDesktop = mkOption {
+    activateWhenTypingOnDesktop = lib.mkOption {
       type = with lib.types; nullOr bool;
       default = null;
       example = true;
       description = "Activate KRunner when typing on the desktop.";
     };
-    historyBehavior = mkOption {
+    historyBehavior = lib.mkOption {
       type = with lib.types;
         nullOr (enum [ "disabled" "enableSuggestions" "enableAutoComplete" ]);
       default = null;
