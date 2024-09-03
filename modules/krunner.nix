@@ -1,43 +1,44 @@
 { config, lib, ... }:
 let cfg = config.programs.plasma;
-in with lib; {
+in {
   options.programs.plasma.krunner = {
-    position = mkOption {
-      type = with types; nullOr (enum [ "Top" "Center" ]);
+    position = lib.mkOption {
+      type = with lib.types; nullOr (enum [ "top" "center" ]);
       default = null;
-      example = "Center";
+      example = "center";
       description = "Position of KRunner on screen.";
     };
     activateWhenTypingOnDesktop = mkOption {
-      type = with types; nullOr bool;
+      type = with lib.types; nullOr bool;
       default = null;
+      example = true;
       description = "Activate KRunner when typing on the desktop.";
     };
     historyBehavior = mkOption {
-      type = with types;
-        nullOr (enum [ "Disabled" "EnableSuggestions" "EnableAutoComplete" ]);
+      type = with lib.types;
+        nullOr (enum [ "disabled" "enableSuggestions" "enableAutoComplete" ]);
       default = null;
-      example = "Disabled";
+      example = "disabled";
       description = "Behavior of KRunner’s history.";
     };
   };
 
-  config.programs.plasma.configFile."krunnerrc" = (mkMerge [
-    (mkIf (cfg.krunner.position != null) {
-      General.FreeFloating = cfg.krunner.position == "Center";
+  config.programs.plasma.configFile."krunnerrc" = (lib.mkMerge [
+    (lib.mkIf (cfg.krunner.position != null) {
+      General.FreeFloating = cfg.krunner.position == "center";
     })
-    (mkIf (cfg.krunner.activateWhenTypingOnDesktop != null) {
+    (lib.mkIf (cfg.krunner.activateWhenTypingOnDesktop != null) {
       General.ActivateWhenTypingOnDesktop =
         cfg.krunner.activateWhenTypingOnDesktop;
     })
-    (mkIf (cfg.krunner.historyBehavior != null) {
+    (lib.mkIf (cfg.krunner.historyBehavior != null) {
       General.historyBehavior =
-        (if cfg.krunner.historyBehavior == "EnableSuggestions" then
+        (if cfg.krunner.historyBehavior == "enableSuggestions" then
           "CompletionSuggestion"
-        else if cfg.krunner.historyBehavior == "EnableAutoComplete" then
+        else if cfg.krunner.historyBehavior == "enableAutoComplete" then
           "ImmediateCompletion"
         else
-          cfg.krunner.historyBehavior);
+          "Disabled");
     })
   ]);
 }
