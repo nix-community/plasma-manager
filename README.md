@@ -39,11 +39,13 @@ At the moment `plasma-manager` supports configuring the following:
 - Hotkeys (via the `hotkeys` module)
 - Panels and Extra Widgets (via the `panels` module)
 - Keyboards, Touchpads and Mice (via the `input` module)
+- KRunner (via the `krunner` module)
 - Screen locker (via the `kscreenlocker` module)
 - Fonts (via the `fonts` module)
 - Window Rules (via the `window-rules` module)
 - KDE apps (via the `apps` module). In particular the following kde apps have
   modules in `plasma-manager`:
+  - ghostwriter
   - kate
   - konsole
   - okular
