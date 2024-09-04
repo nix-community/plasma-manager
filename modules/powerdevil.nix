@@ -207,10 +207,5 @@ in
         (lib.filterAttrsRecursive (k: v: v != null) (createPowerDevilConfig "LowBattery" "lowBattery"))
       )
     ]);
-
-
-      /*lib.filterAttrsRecursive (k: v: v != null) ((createPowerDevilConfig "AC" "AC")
-      // (createPowerDevilConfig "Battery" "battery")
-      // (createPowerDevilConfig "LowBattery" "lowBattery"));*/
   };
 }
