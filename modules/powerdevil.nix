@@ -194,8 +194,23 @@ in
   };
 
   config.programs.plasma.configFile = lib.mkIf cfg.enable {
-    powerdevilrc = lib.filterAttrs (k: v: v != null) ((createPowerDevilConfig "AC" "AC")
+    powerdevilrc = let
+      anyValueSet = key: builtins.length (builtins.attrValues key) > 0;
+    in (lib.mkMerge [
+      (lib.mkIf (anyValueSet cfg.powerdevil.AC)
+        (lib.filterAttrsRecursive (k: v: v != null) (createPowerDevilConfig "AC" "AC"))
+      )
+      (lib.mkIf (anyValueSet cfg.powerdevil.battery)
+        (lib.filterAttrsRecursive (k: v: v != null) (createPowerDevilConfig "Battery" "battery"))
+      )
+      (lib.mkIf (anyValueSet cfg.powerdevil.lowBattery)
+        (lib.filterAttrsRecursive (k: v: v != null) (createPowerDevilConfig "LowBattery" "lowBattery"))
+      )
+    ]);
+
+
+      /*lib.filterAttrsRecursive (k: v: v != null) ((createPowerDevilConfig "AC" "AC")
       // (createPowerDevilConfig "Battery" "battery")
-      // (createPowerDevilConfig "LowBattery" "lowBattery"));
+      // (createPowerDevilConfig "LowBattery" "lowBattery"));*/
   };
 }
