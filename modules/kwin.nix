@@ -78,6 +78,40 @@ let
     if list == null
     then null
     else builtins.concatStringsSep ", " list;
+
+  tilingLayoutType = types.submodule {
+    options = {
+      id = mkOption {
+        type = with types; nullOr str;
+        default = null;
+        description = "The id of the layout.";
+      };
+      tiles = mkOption {
+        type = with types; nullOr (attrsOf anything);
+        default = null;
+        example = {
+          layoutDirection = "horizontal";
+          tiles = [
+            {
+              width = 0.5;
+            }
+            {
+              layoutDirection = "vertical";
+              tiles = [
+                {
+                  height = 0.5;
+                }
+                {
+                  height = 0.5;
+                }
+              ];
+              width = 0.5;
+            }
+          ];
+        };
+      };
+    };
+  };
 in
 {
   imports = [
@@ -311,6 +345,42 @@ in
       default = null;
       example = false;
       description = "When enabled, prevents the cursor from crossing at screen-corners.";
+    };
+
+    tiling = {
+      padding = mkOption {
+        type = with types; nullOr ints.positive;
+        default = null;
+        example = 10;
+        description = "The padding between windows in tiling.";
+      };
+      layout = mkOption {
+        type = with types; nullOr tilingLayoutType;
+        default = null;
+        example = {
+          id = "cf5c25c2-4217-4193-add6-b5971cb543f2";
+          tiles = {
+            layoutDirection = "horizontal";
+            tiles = [
+              {
+                width = 0.5;
+              }
+              {
+                layoutDirection = "vertical";
+                tiles = [
+                  {
+                    height = 0.5;
+                  }
+                  {
+                    height = 0.5;
+                  }
+                ];
+                width = 0.5;
+              }
+            ];
+          };
+        };
+      };
     };
 
     scripts = {
@@ -595,6 +665,21 @@ in
           SaveOnTileEdit = cfg.kwin.scripts.polonium.settings.saveOnTileEdit;
           TilePopups = cfg.kwin.scripts.polonium.settings.tilePopups;
           TimerDelay = cfg.kwin.scripts.polonium.settings.callbackDelay;
+        };
+      })
+
+      (mkIf (cfg.kwin.tiling.padding != null) {
+        Tiling = {
+          padding = cfg.kwin.tiling.padding;
+        };
+      })
+
+      (mkIf (cfg.kwin.tiling.layout != null) {
+        "Tiling/${cfg.kwin.tiling.layout.id}" = {
+          tiles =  {
+            escapeValue = false;
+            value = builtins.toJSON cfg.kwin.tiling.layout.tiles;
+          };
         };
       })
     ]);
