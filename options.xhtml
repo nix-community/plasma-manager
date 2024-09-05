@@ -11660,6 +11660,152 @@ null or boolean</p>
 </dd>
 <dt>
  <span class="term">
+ <a id="opt-programs.plasma.kwin.tiling.layout"></a><a class="term" href="options.xhtml#opt-programs.plasma.kwin.tiling.layout"><code class="option">programs.plasma.kwin.tiling.layout</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>This option has no description.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or (submodule)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting">{
+  id = &quot;cf5c25c2-4217-4193-add6-b5971cb543f2&quot;;
+  tiles = {
+    layoutDirection = &quot;horizontal&quot;;
+    tiles = [
+      {
+        width = 0.5;
+      }
+      {
+        layoutDirection = &quot;vertical&quot;;
+        tiles = [
+          {
+            height = 0.5;
+          }
+          {
+            height = 0.5;
+          }
+        ];
+        width = 0.5;
+      }
+    ];
+  };
+}
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kwin.nix" target="_top">
+&lt;plasma-manager/modules/kwin.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kwin.tiling.layout.id"></a><a class="term" href="options.xhtml#opt-programs.plasma.kwin.tiling.layout.id"><code class="option">programs.plasma.kwin.tiling.layout.id</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The id of the layout.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or string</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kwin.nix" target="_top">
+&lt;plasma-manager/modules/kwin.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kwin.tiling.layout.tiles"></a><a class="term" href="options.xhtml#opt-programs.plasma.kwin.tiling.layout.tiles"><code class="option">programs.plasma.kwin.tiling.layout.tiles</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>This option has no description.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or (attribute set of anything)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting">{
+  layoutDirection = &quot;horizontal&quot;;
+  tiles = [
+    {
+      width = 0.5;
+    }
+    {
+      layoutDirection = &quot;vertical&quot;;
+      tiles = [
+        {
+          height = 0.5;
+        }
+        {
+          height = 0.5;
+        }
+      ];
+      width = 0.5;
+    }
+  ];
+}
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kwin.nix" target="_top">
+&lt;plasma-manager/modules/kwin.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.kwin.tiling.padding"></a><a class="term" href="options.xhtml#opt-programs.plasma.kwin.tiling.padding"><code class="option">programs.plasma.kwin.tiling.padding</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The padding between windows in tiling.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or (positive integer, meaning &gt;0)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">10</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/kwin.nix" target="_top">
+&lt;plasma-manager/modules/kwin.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
  <a id="opt-programs.plasma.kwin.titlebarButtons.left"></a><a class="term" href="options.xhtml#opt-programs.plasma.kwin.titlebarButtons.left"><code class="option">programs.plasma.kwin.titlebarButtons.left</code>
   </a>
  </span>
