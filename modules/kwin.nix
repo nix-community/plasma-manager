@@ -109,6 +109,7 @@ let
             }
           ];
         };
+        apply = builtins.toJSON;
       };
     };
   };
@@ -678,7 +679,7 @@ in
         "Tiling/${cfg.kwin.tiling.layout.id}" = {
           tiles =  {
             escapeValue = false;
-            value = builtins.toJSON cfg.kwin.tiling.layout.tiles;
+            value = cfg.kwin.tiling.layout.tiles;
           };
         };
       })
