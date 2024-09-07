@@ -82,13 +82,12 @@ let
   tilingLayoutType = types.submodule {
     options = {
       id = mkOption {
-        type = with types; nullOr str;
-        default = null;
+        type = types.str;
         description = "The id of the layout.";
+        example = "cf5c25c2-4217-4193-add6-b5971cb543f2";
       };
       tiles = mkOption {
-        type = with types; nullOr (attrsOf anything);
-        default = null;
+        type = with types; attrsOf anything;
         example = {
           layoutDirection = "horizontal";
           tiles = [
