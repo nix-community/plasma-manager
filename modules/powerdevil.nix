@@ -194,7 +194,7 @@ in
   };
 
   config.programs.plasma.configFile = lib.mkIf cfg.enable {
-    powerdevilrc = lib.filterAttrs (k: v: v != null) ((createPowerDevilConfig "AC" "AC")
+    powerdevilrc = lib.filterAttrsRecursive (k: v: v != null) ((createPowerDevilConfig "AC" "AC")
       // (createPowerDevilConfig "Battery" "battery")
       // (createPowerDevilConfig "LowBattery" "lowBattery"));
   };

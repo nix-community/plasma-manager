@@ -321,6 +321,14 @@ in
                 enumVals
             );
         };
+      albumCover = {
+        albumPlaceholder = mkOption {
+          type = types.nullOr types.str;
+          default = null;
+          example = "file:///home/user/placeholder.png";
+          description = "Path to the album placeholder image.";
+        };
+      };
       settings = mkOption {
         type = configValueType;
         default = null;
@@ -331,7 +339,7 @@ in
         };
         description = ''
           Extra configuration for the widget options.
-          
+
           See available options at https://github.com/ccatterina/plasmusic-toolbar/blob/main/src/contents/config/main.xml
         '';
         apply = settings: if settings == null then {} else settings;
@@ -346,37 +354,38 @@ in
       , musicControls
       , font
       , background
+      , albumCover
       , settings
       }: {
         name = "plasmusic-toolbar";
-  
+
         config = lib.recursiveUpdate {
-          General = lib.filterAttrs (_: v: v != null) (
-            {
-              panelIcon = panelIcon.icon;
-              useAlbumCoverAsPanelIcon = panelIcon.albumCover.useAsIcon;
-              albumCoverRadius = panelIcon.albumCover.radius;
-              fallbackToIconWhenArtNotAvailable = panelIcon.albumCover.fallbackToIcon;
+          General = lib.filterAttrs (_: v: v != null) {
+            panelIcon = panelIcon.icon;
+            useAlbumCoverAsPanelIcon = panelIcon.albumCover.useAsIcon;
+            albumCoverRadius = panelIcon.albumCover.radius;
+            fallbackToIconWhenArtNotAvailable = panelIcon.albumCover.fallbackToIcon;
 
-              sourceIndex = preferredSource;
+            sourceIndex = preferredSource;
 
-              maxSongWidthInPanel = songText.maximumWidth;
-              separateText = songText.displayInSeparateLines;
+            maxSongWidthInPanel = songText.maximumWidth;
+            separateText = songText.displayInSeparateLines;
 
-              textScrollingEnabled = songText.scrolling.enable;
-              textScrollingBehaviour = songText.scrolling.behavior;
-              textScrollingSpeed = songText.scrolling.speed;
-              textScrollingResetOnPause = songText.scrolling.resetOnPause;
+            textScrollingEnabled = songText.scrolling.enable;
+            textScrollingBehaviour = songText.scrolling.behavior;
+            textScrollingSpeed = songText.scrolling.speed;
+            textScrollingResetOnPause = songText.scrolling.resetOnPause;
 
-              commandsInPanel = musicControls.showPlaybackControls;
-              volumeStep = musicControls.volumeStep;
-              
-              useCustomFont = (font != null);
-              customFont = font;
+            commandsInPanel = musicControls.showPlaybackControls;
+            volumeStep = musicControls.volumeStep;
 
-              desktopWidgetBg = background;
-            }
-          );
+            useCustomFont = (font != null);
+            customFont = font;
+
+            desktopWidgetBg = background;
+
+            albumPlaceholder = albumCover.albumPlaceholder;
+          };
         } settings;
       };
   };
