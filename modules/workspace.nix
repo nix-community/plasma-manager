@@ -305,10 +305,66 @@ in
         '';
         priority = 1;
       });
-    };
 
-    # The wallpaper configuration can be found in panels.nix due to wallpaper
-    # configuration and panel configuration being stored in the same file, and
-    # thus should be using the same desktop-script.
+      desktopScript."wallpaper_picture" = (lib.mkIf (cfg.workspace.wallpaper != null) {
+        # We just put this here as we need this script to be a desktop-script in
+        # order to link it together with the other desktop-script (namely
+        # panels). Adding a comment with the wallpaper makes it so that when the
+        # wallpaper changes, the sha256sum also changes for the js file, which
+        # gives us the correct behavior with last_run files.
+        text = "// Wallpaper to set later: ${cfg.workspace.wallpaper}";
+        postCMD = ''
+          plasma-apply-wallpaperimage ${cfg.workspace.wallpaper}
+        '';
+        priority = 2;
+      });
+
+      desktopScript."wallpaper_potd" = (lib.mkIf (cfg.workspace.wallpaperPictureOfTheDay != null) {
+        text = ''
+          // Wallpaper POTD
+          let allDesktops = desktops();
+          for (const desktop of allDesktops) {
+              desktop.wallpaperPlugin = "org.kde.potd";
+              desktop.currentConfigGroup = ["Wallpaper", "org.kde.potd", "General"];
+              desktop.writeConfig("Provider", "${cfg.workspace.wallpaperPictureOfTheDay.provider}");
+              desktop.writeConfig("UpdateOverMeteredConnection", "${if (cfg.workspace.wallpaperPictureOfTheDay.updateOverMeteredConnection) then "1" else "0"}");
+              ${lib.optionalString (cfg.workspace.wallpaperFillMode != null) ''desktop.writeConfig("FillMode", "${cfg.workspace.wallpaperFillMode}");''}
+          }
+        '';
+        priority = 2;
+      });
+
+      desktopScript."wallpaper_plaincolor" = (lib.mkIf (cfg.workspace.wallpaperPlainColor != null) {
+        text = ''
+          // Wallpaper plain color
+          let allDesktops = desktops();
+          for (var desktopIndex = 0; desktopIndex < allDesktops.length; desktopIndex++) {
+              var desktop = allDesktops[desktopIndex];
+              desktop.wallpaperPlugin = "org.kde.color";
+              desktop.currentConfigGroup = Array("Wallpaper", "org.kde.color", "General");
+              desktop.writeConfig("Color", "${cfg.workspace.wallpaperPlainColor}");
+          }
+        '';
+        priority = 2;
+      });
+
+      desktopScript."wallpaper_slideshow" = (lib.mkIf (cfg.workspace.wallpaperSlideShow != null) {
+        text = ''
+          // Wallpaper slideshow
+          let allDesktops = desktops();
+          for (var desktopIndex = 0; desktopIndex < allDesktops.length; desktopIndex++) {
+              var desktop = allDesktops[desktopIndex];
+              desktop.wallpaperPlugin = "org.kde.slideshow";
+              desktop.currentConfigGroup = Array("Wallpaper", "org.kde.slideshow", "General");
+              desktop.writeConfig("SlidePaths", ${with cfg.workspace.wallpaperSlideShow; if ((builtins.isPath path) || (builtins.isString path)) then
+                "\"" + (builtins.toString path) + "\"" else
+                "[" + (builtins.concatStringsSep "," (map (s: "\"" + s + "\"") path)) + "]"});
+              desktop.writeConfig("SlideInterval", "${builtins.toString cfg.workspace.wallpaperSlideShow.interval}");
+              ${lib.optionalString (cfg.workspace.wallpaperFillMode != null) ''desktop.writeConfig("FillMode", "${cfg.workspace.wallpaperFillMode}");''}
+          }
+        '';
+        priority = 2;
+      });
+    };
   });
 }
