@@ -313,7 +313,7 @@ in
         # wallpaper changes, the sha256sum also changes for the js file, which
         # gives us the correct behavior with last_run files.
         text = "// Wallpaper to set later: ${cfg.workspace.wallpaper}";
-        postCMD = ''
+        postCommands = ''
           plasma-apply-wallpaperimage ${cfg.workspace.wallpaper}
         '';
         priority = 2;
