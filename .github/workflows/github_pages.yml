@@ -5,8 +5,8 @@ on:
     - trunk
     paths:
     - 'flake.nix'
-    - 'modules/'
-    - 'docs/'
+    - 'modules/**'
+    - 'docs/**'
     
 jobs:
   publish:
