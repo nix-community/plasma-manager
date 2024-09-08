@@ -399,8 +399,8 @@ in
   # ==================================
   #     LSP Servers
   options.programs.kate.lsp.customServers = lib.mkOption {
-    default = { };
-    type = lib.types.attrs;
+    default = null;
+    type = lib.types.nullOr lib.types.attrs;
     description = ''
       Add more lsp server settings here. Check out the format on the
       [KDE page](https://docs.kde.org/stable5/en/kate/kate/kate-application-plugin-lspclient.html).
@@ -408,7 +408,7 @@ in
     '';
   };
 
-  config.xdg.configFile."kate/lspclient/settings.json" = {
+  config.xdg.configFile."kate/lspclient/settings.json" = lib.mkIf (cfg.lsp.customServers != null) {
     text = builtins.toJSON { servers = cfg.lsp.customServers; };
   };
 
