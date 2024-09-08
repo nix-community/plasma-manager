@@ -5,6 +5,7 @@ on:
     - trunk
     paths:
     - 'flake.nix'
+    - 'flake.lock'
     - 'modules/**'
     - 'docs/**'
     
