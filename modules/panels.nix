@@ -154,7 +154,7 @@ let
     };
   });
 
-  anyPanelSet = ((builtins.length cfg.panels) > 0);
+  anyPanelSet = (builtins.length cfg.panels) > 0;
 in
 {
   imports = [
