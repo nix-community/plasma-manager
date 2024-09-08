@@ -4,7 +4,7 @@ on:
     paths:
     - '**/*.nix'
     - 'flake.lock'
-    - 'script/'
+    - 'script/**'
 
 # cancel previous runs when pushing new changes
 concurrency:
