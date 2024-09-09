@@ -223,7 +223,7 @@ in
         fi
       done
 
-      [ should_reset = 1 ] && rm ${config.xdg.dataHome}/plasma-manager/last_run_desktop_script_*
+      [ $should_reset = 1 ] && rm ${config.xdg.dataHome}/plasma-manager/last_run_desktop_script_*
     '';
     runAlways = true;
   };
