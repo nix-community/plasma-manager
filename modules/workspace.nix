@@ -316,7 +316,7 @@ in
         postCommands = ''
           plasma-apply-wallpaperimage ${cfg.workspace.wallpaper}
         '';
-        priority = 2;
+        priority = 3;
       });
 
       desktopScript."wallpaper_potd" = (lib.mkIf (cfg.workspace.wallpaperPictureOfTheDay != null) {
@@ -331,7 +331,7 @@ in
               ${lib.optionalString (cfg.workspace.wallpaperFillMode != null) ''desktop.writeConfig("FillMode", "${cfg.workspace.wallpaperFillMode}");''}
           }
         '';
-        priority = 2;
+        priority = 3;
       });
 
       desktopScript."wallpaper_plaincolor" = (lib.mkIf (cfg.workspace.wallpaperPlainColor != null) {
@@ -345,7 +345,7 @@ in
               desktop.writeConfig("Color", "${cfg.workspace.wallpaperPlainColor}");
           }
         '';
-        priority = 2;
+        priority = 3;
       });
 
       desktopScript."wallpaper_slideshow" = (lib.mkIf (cfg.workspace.wallpaperSlideShow != null) {
@@ -363,7 +363,7 @@ in
               ${lib.optionalString (cfg.workspace.wallpaperFillMode != null) ''desktop.writeConfig("FillMode", "${cfg.workspace.wallpaperFillMode}");''}
           }
         '';
-        priority = 2;
+        priority = 3;
       });
     };
   });
