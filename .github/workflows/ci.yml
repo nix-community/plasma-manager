@@ -1,10 +1,16 @@
-name: "Check"
+name: "Nix Checks"
 on:
   pull_request:
+    paths:
+    - '**/*.nix'
+    - 'flake.lock'
+    - 'script/**'
+
 # cancel previous runs when pushing new changes
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+
 jobs:
   checks:
     runs-on: ubuntu-latest

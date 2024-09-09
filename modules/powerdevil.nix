@@ -85,6 +85,14 @@ let
       '';
       apply = action: if (action == null) then null else whenLaptopLidClosedActions."${action}";
     };
+    inhibitLidActionWhenExternalMonitorConnected = lib.mkOption {
+      type = with lib.types; nullOr bool;
+      default = null;
+      example = true;
+      description = ''
+        If enabled, the lid action will be inhibited when an external monitor is connected.
+      '';
+    };
     turnOffDisplay = {
       idleTimeout = lib.mkOption {
         type = with lib.types; nullOr (either (enum [ "never" ]) (ints.between 30 600000));
@@ -144,6 +152,7 @@ let
       AutoSuspendIdleTimeoutSec = cfg.powerdevil.${optionsName}.autoSuspend.idleTimeout;
       SleepMode = cfg.powerdevil.${optionsName}.whenSleepingEnter;
       LidAction = cfg.powerdevil.${optionsName}.whenLaptopLidClosed;
+      InhibitLidActionWhenExternalMonitorPresent = cfg.powerdevil.${optionsName}.inhibitLidActionWhenExternalMonitorConnected;
     };
     "${cfgSectName}/Display" = {
       TurnOffDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.turnOffDisplay.idleTimeout;
@@ -194,7 +203,7 @@ in
   };
 
   config.programs.plasma.configFile = lib.mkIf cfg.enable {
-    powerdevilrc = lib.filterAttrs (k: v: v != null) ((createPowerDevilConfig "AC" "AC")
+    powerdevilrc = lib.filterAttrsRecursive (k: v: v != null) ((createPowerDevilConfig "AC" "AC")
       // (createPowerDevilConfig "Battery" "battery")
       // (createPowerDevilConfig "LowBattery" "lowBattery"));
   };

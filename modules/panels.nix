@@ -5,10 +5,7 @@
 } @ args:
 let
   cfg = config.programs.plasma;
-  inherit (import ../lib/wallpapers.nix { inherit lib; }) wallpaperFillModeTypes;
-
   desktopWidgets = if cfg.desktop.widgets != null then cfg.desktop.widgets else [ ];
-
   hasWidget = widgetName:
     builtins.any (panel: builtins.any (widget: widget.name == widgetName) panel.widgets) cfg.panels ||
     builtins.any (widget: widget.name == widgetName) desktopWidgets;
@@ -157,7 +154,7 @@ let
     };
   });
 
-  anyPanelSet = ((builtins.length cfg.panels) > 0);
+  anyPanelSet = (builtins.length cfg.panels) > 0;
 in
 {
   imports = [
