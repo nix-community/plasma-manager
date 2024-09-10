@@ -303,7 +303,7 @@ def remove_config_files(d: dict[str, Any], reset_files: set[str]):
     in the list of files to be reset by overrideConfig.
     """
     for del_path in reset_files - set(d.keys()):
-        for file_to_del in glob.glob(del_path):
+        for file_to_del in glob.glob(del_path, recursive=True):
             if os.path.isfile(file_to_del):
                 os.remove(file_to_del)
 

@@ -34,6 +34,8 @@ let
     "kactivitymanagerdrc"
     "katerc"
     "kcminputrc"
+    "KDE/Sonnet.conf"
+    "kde.org/ghostwriter.conf"
     "kded5rc"
     "kded6rc"
     "kdeglobals"
