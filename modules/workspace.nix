@@ -313,7 +313,7 @@ in
         # gives us the correct behavior with last_run files.
         text = "// Wallpaper to set later: ${cfg.workspace.wallpaper}";
         postCommands = ''
-          plasma-apply-wallpaperimage ${cfg.workspace.wallpaper}
+          plasma-apply-wallpaperimage ${cfg.workspace.wallpaper} ${lib.optionalString (cfg.workspace.wallpaperFillMode != null) "--fill-mode ${cfg.workspace.wallpaperFillMode}"}
         '';
         priority = 3;
       });
@@ -327,7 +327,7 @@ in
               desktop.currentConfigGroup = ["Wallpaper", "org.kde.potd", "General"];
               desktop.writeConfig("Provider", "${cfg.workspace.wallpaperPictureOfTheDay.provider}");
               desktop.writeConfig("UpdateOverMeteredConnection", "${if (cfg.workspace.wallpaperPictureOfTheDay.updateOverMeteredConnection) then "1" else "0"}");
-              ${lib.optionalString (cfg.workspace.wallpaperFillMode != null) ''desktop.writeConfig("FillMode", "${cfg.workspace.wallpaperFillMode}");''}
+              ${lib.optionalString (cfg.workspace.wallpaperFillMode != null) ''desktop.writeConfig("FillMode", "${toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}}");''}
           }
         '';
         priority = 3;
@@ -359,7 +359,7 @@ in
                 "\"" + (builtins.toString path) + "\"" else
                 "[" + (builtins.concatStringsSep "," (map (s: "\"" + s + "\"") path)) + "]"});
               desktop.writeConfig("SlideInterval", "${builtins.toString cfg.workspace.wallpaperSlideShow.interval}");
-              ${lib.optionalString (cfg.workspace.wallpaperFillMode != null) ''desktop.writeConfig("FillMode", "${cfg.workspace.wallpaperFillMode}");''}
+              ${lib.optionalString (cfg.workspace.wallpaperFillMode != null) ''desktop.writeConfig("FillMode", "${toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}}");''}
           }
         '';
         priority = 3;
