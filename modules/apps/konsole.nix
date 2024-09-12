@@ -229,6 +229,8 @@ in
             cfg.toolbar.konsole.toolbar
             cfg.toolbar.konsole.actionProperties
         );
+      })
+      (lib.mkIf (cfg.toolbar.session != null) {
         "kxmlgui5/konsole/sessionui.rc".text = (
           generateKXMLGUI cfg.toolbar.session.name cfg.toolbar.session.version
             cfg.toolbar.session.translationDomain
