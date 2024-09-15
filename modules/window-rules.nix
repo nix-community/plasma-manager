@@ -35,6 +35,7 @@ with lib.types; let
   matchNameMap = {
     "window-class" = "wmclass";
     "window-types" = "types";
+    "window-role" = "windowrole";
   };
   matchOptionType = hasMatchWhole:
     submodule {
