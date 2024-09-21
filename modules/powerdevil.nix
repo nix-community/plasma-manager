@@ -129,7 +129,7 @@ let
         example = false;
         description = "Enable or disable screen dimming.";
       };
-      idleTimeOut = lib.mkOption {
+      idleTimeout = lib.mkOption {
         type = with lib.types; nullOr (ints.between 20 600000);
         default = null;
         example = 300;
@@ -160,11 +160,11 @@ let
       DimDisplayWhenIdle =
         if (cfg.powerdevil.${optionsName}.dimDisplay.enable != null) then
           cfg.powerdevil.${optionsName}.dimDisplay.enable
-        else if (cfg.powerdevil.${optionsName}.dimDisplay.idleTimeOut != null) then
+        else if (cfg.powerdevil.${optionsName}.dimDisplay.idleTimeout != null) then
           true
         else
           null;
-      DimDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.dimDisplay.idleTimeOut;
+      DimDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.dimDisplay.idleTimeout;
     };
   };
 in
@@ -187,8 +187,8 @@ in
           message = "Setting programs.plasma.powerdevil.${type}.turnOffDisplay.idleTimeoutWhenLocked for idleTimeout \"never\" is not supported.";
         }
         {
-          assertion = (cfg.powerdevil.${type}.dimDisplay.enable != false || cfg.powerdevil.${type}.dimDisplay.idleTimeOut == null);
-          message = "Cannot set programs.plasma.powerdevil.${type}.dimDisplay.idleTimeOut when programs.plasma.powerdevil.${type}.dimDisplay.enable is disabled.";
+          assertion = (cfg.powerdevil.${type}.dimDisplay.enable != false || cfg.powerdevil.${type}.dimDisplay.idleTimeout == null);
+          message = "Cannot set programs.plasma.powerdevil.${type}.dimDisplay.idleTimeout when programs.plasma.powerdevil.${type}.dimDisplay.enable is disabled.";
         }
       ];
     in
