@@ -201,12 +201,27 @@ in
       AC = (createPowerDevilOptions "AC");
       battery = (createPowerDevilOptions "battery");
       lowBattery = (createPowerDevilOptions "lowBattery");
+      General = {
+        pausePlayersOnSuspend = lib.mkOption {
+          type = with lib.types; nullOr bool;
+          default = null;
+          example = false;
+          description = ''
+            If enabled, pause media players when the system is suspended.
+          '';
+        };
+      };
     };
   };
 
   config.programs.plasma.configFile = lib.mkIf cfg.enable {
     powerdevilrc = lib.filterAttrsRecursive (k: v: v != null) ((createPowerDevilConfig "AC" "AC")
       // (createPowerDevilConfig "Battery" "battery")
-      // (createPowerDevilConfig "LowBattery" "lowBattery"));
+      // (createPowerDevilConfig "LowBattery" "lowBattery")
+      // {
+        General = {
+          pausePlayersOnSuspend = cfg.powerdevil.General.pausePlayersOnSuspend;
+        };
+      });
   };
 }
