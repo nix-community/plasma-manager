@@ -219,7 +219,7 @@ in
       // (createPowerDevilConfig "Battery" "battery")
       // (createPowerDevilConfig "LowBattery" "lowBattery")
       // {
-        general = {
+        General = {
           pausePlayersOnSuspend = cfg.powerdevil.general.pausePlayersOnSuspend;
         };
       });
