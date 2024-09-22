@@ -2,26 +2,36 @@
 let
   inherit (lib) mkOption types;
   inherit (import ./lib.nix { inherit lib; }) configValueType;
+  inherit (import ./default.nix { inherit lib; }) positionType sizeType;
 
-  mkBoolOption = description: mkOption {
-    type = with types; nullOr bool;
-    default = null;
-    inherit description;
-  };
+  mkBoolOption =
+    description:
+    mkOption {
+      type = with types; nullOr bool;
+      default = null;
+      inherit description;
+    };
 
-  getIndexFromEnum = enum: value:
-    if value == null
-    then null
+  getIndexFromEnum =
+    enum: value:
+    if value == null then
+      null
     else
-      lib.lists.findFirstIndex
-        (x: x == value)
+      lib.lists.findFirstIndex (x: x == value)
         (throw "getIndexFromEnum (kickoff widget): Value ${value} isn't present in the enum. This is a bug")
         enum;
 
-  convertSidebarPosition = sidebarPosition:
+  convertSidebarPosition =
+    sidebarPosition:
     let
-      mappings = { left = false; right = true; };
+      mappings = {
+        left = false;
+        right = true;
+      };
     in
+    if sidebarPosition == null then
+      null
+    else
       mappings.${sidebarPosition} or (throw "Invalid sidebar position: ${sidebarPosition}");
 in
 {
@@ -29,6 +39,22 @@ in
     description = "Kickoff is the default application launcher of the Plasma desktop.";
 
     opts = {
+      position = mkOption {
+        type = positionType;
+        example = {
+          horizontal = 250;
+          vertical = 50;
+        };
+        description = "The position of the widget. (Only for desktop widget)";
+      };
+      size = mkOption {
+        type = sizeType;
+        example = {
+          width = 500;
+          height = 500;
+        };
+        description = "The size of the widget. (Only for desktop widget)";
+      };
       icon = mkOption {
         type = types.nullOr types.str;
         default = null;
@@ -49,15 +75,25 @@ in
       sortAlphabetically = mkBoolOption "Whether to sort menu contents alphabetically or use manual/system sort order.";
       compactDisplayStyle = mkBoolOption "Whether to use a compact display style for list items.";
       sidebarPosition = mkOption {
-        type = types.enum [ "left" "right" ];
-        default = "left";
-        example = "right";
+        type = types.nullOr (
+          types.enum [
+            "left"
+            "right"
+          ]
+        );
+        default = null;
+        example = "left";
         description = "The position of the sidebar.";
         apply = convertSidebarPosition;
       };
       favoritesDisplayMode =
-        let enumVals = [ "grid" "list" ];
-        in mkOption {
+        let
+          enumVals = [
+            "grid"
+            "list"
+          ];
+        in
+        mkOption {
           type = with types; nullOr (enum enumVals);
           default = null;
           example = "list";
@@ -65,8 +101,13 @@ in
           apply = getIndexFromEnum enumVals;
         };
       applicationsDisplayMode =
-        let enumVals = [ "grid" "list" ];
-        in mkOption {
+        let
+          enumVals = [
+            "grid"
+            "list"
+          ];
+        in
+        mkOption {
           type = with types; nullOr (enum enumVals);
           default = null;
           example = "grid";
@@ -74,8 +115,15 @@ in
           apply = getIndexFromEnum enumVals;
         };
       showButtonsFor =
-        let enumVals = [ "power" "session" "custom" "powerAndSession" ];
-        in mkOption {
+        let
+          enumVals = [
+            "power"
+            "session"
+            "custom"
+            "powerAndSession"
+          ];
+        in
+        mkOption {
           type = with types; nullOr (enum enumVals);
           default = null;
           example = "powerAndSession";
@@ -104,42 +152,45 @@ in
           popupHeight = 500;
         };
         description = "Extra configuration options for the widget.";
-        apply = settings: if settings == null then {} else settings;
+        apply = settings: if settings == null then { } else settings;
       };
     };
     convert =
-      { icon
-      , label
-      , sortAlphabetically
-      , compactDisplayStyle
-      , sidebarPosition
-      , favoritesDisplayMode
-      , applicationsDisplayMode
-      , showButtonsFor
-      , showActionButtonCaptions
-      , pin
-      , popupHeight
-      , popupWidth
-      , settings
-      }: {
+      {
+        position,
+        size,
+        icon,
+        label,
+        sortAlphabetically,
+        compactDisplayStyle,
+        sidebarPosition,
+        favoritesDisplayMode,
+        applicationsDisplayMode,
+        showButtonsFor,
+        showActionButtonCaptions,
+        pin,
+        popupHeight,
+        popupWidth,
+        settings,
+      }:
+      {
         name = "org.kde.plasma.kickoff";
-        config = lib.recursiveUpdate
-          (lib.filterAttrsRecursive (_: v: v != null) {
-            popupHeight = popupHeight;
-            popupWidth = popupWidth;
+        config = lib.recursiveUpdate (lib.filterAttrsRecursive (_: v: v != null) {
+          popupHeight = popupHeight;
+          popupWidth = popupWidth;
 
-            General = {
-              inherit icon pin;
+          General = {
+            inherit icon pin;
 
-              menuLabel = label;
-              alphaSort = sortAlphabetically;
-              compactMode = compactDisplayStyle;
-              paneSwap = sidebarPosition;
-              favoritesDisplay = favoritesDisplayMode;
-              applicationsDisplay = applicationsDisplayMode;
-              primaryActions = showButtonsFor;
-              showActionButtonCaptions = showActionButtonCaptions;
-            };
+            menuLabel = label;
+            alphaSort = sortAlphabetically;
+            compactMode = compactDisplayStyle;
+            paneSwap = sidebarPosition;
+            favoritesDisplay = favoritesDisplayMode;
+            applicationsDisplay = applicationsDisplayMode;
+            primaryActions = showButtonsFor;
+            showActionButtonCaptions = showActionButtonCaptions;
+          };
         }) settings;
       };
   };

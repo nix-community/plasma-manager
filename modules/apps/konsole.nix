@@ -1,12 +1,26 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
-  inherit (import ../../lib/types.nix { inherit lib; inherit config; }) basicSettingsType;
+  inherit
+    (import ../../lib/types.nix {
+      inherit lib;
+      inherit config;
+    })
+    basicSettingsType
+    ;
 
   # used as shown in the example in the library docs:
   # https://ryantm.github.io/nixpkgs/functions/library/attrsets/#function-library-lib.attrsets.mapAttrs-prime
-  createColorSchemes = lib.attrsets.mapAttrs' (name: value: lib.attrsets.nameValuePair
-    ("konsole/${name}.colorscheme")
-    ({ enable = true; source = value; })
+  createColorSchemes = lib.attrsets.mapAttrs' (
+    name: value:
+    lib.attrsets.nameValuePair ("konsole/${name}.colorscheme") ({
+      enable = true;
+      source = value;
+    })
   );
 
   cfg = config.programs.konsole;
@@ -42,11 +56,11 @@ let
         name = lib.mkOption {
           type = lib.types.str;
           /*
-          TODO: Set default to null after adding an assertion
-          Konsole needs to have a font set to be able to change font size
-          Since I couldn't get that to work I'll just set a default font
-          Not ideal since IMO we should only write things that are set explicitly
-          by the user but ehh it is what it is
+            TODO: Set default to null after adding an assertion
+            Konsole needs to have a font set to be able to change font size
+            Since I couldn't get that to work I'll just set a default font
+            Not ideal since IMO we should only write things that are set explicitly
+            by the user but ehh it is what it is
           */
           default = "Hack";
           example = "Hack";
@@ -131,17 +145,14 @@ in
 
   config = lib.mkIf (cfg.enable) {
     programs.plasma.configFile."konsolerc" = lib.mkMerge [
-      (
-        lib.mkIf (cfg.defaultProfile != null) {
-          "Desktop Entry"."DefaultProfile" = "${cfg.defaultProfile}.profile";
-        }
-      )
-      (
-        lib.mkIf (cfg.extraConfig != null) (lib.mapAttrs
-          (groupName: groupAttrs:
-            (lib.mapAttrs (keyName: keyAttrs: { value = keyAttrs; }) groupAttrs))
-          cfg.extraConfig)
-      )
+      (lib.mkIf (cfg.defaultProfile != null) {
+        "Desktop Entry"."DefaultProfile" = "${cfg.defaultProfile}.profile";
+      })
+      (lib.mkIf (cfg.extraConfig != null) (
+        lib.mapAttrs (
+          groupName: groupAttrs: (lib.mapAttrs (keyName: keyAttrs: { value = keyAttrs; }) groupAttrs)
+        ) cfg.extraConfig
+      ))
       {
         "UiSettings"."ColorScheme" = lib.mkIf (cfg.ui.colorScheme != null) {
           value = cfg.ui.colorScheme;
@@ -153,50 +164,44 @@ in
     ];
 
     xdg.dataFile = lib.mkMerge [
-      (lib.mkIf (cfg.profiles != { })
-        (
-          lib.mkMerge ([
-            (
-              lib.mkMerge (
-                lib.mapAttrsToList
-                  (
-                    attrName: profile:
-                      let
-                        # Use the name from the name option if it's set
-                        profileName = if builtins.isString profile.name then profile.name else attrName;
-                        fontString = lib.mkIf (profile.font.name != null) "${profile.font.name},${builtins.toString profile.font.size}";
-                      in
+      (lib.mkIf (cfg.profiles != { }) (
+        lib.mkMerge ([
+          (lib.mkMerge (
+            lib.mapAttrsToList (
+              attrName: profile:
+              let
+                # Use the name from the name option if it's set
+                profileName = if builtins.isString profile.name then profile.name else attrName;
+                fontString = lib.mkIf (
+                  profile.font.name != null
+                ) "${profile.font.name},${builtins.toString profile.font.size}";
+              in
+              {
+                "konsole/${profileName}.profile".text = lib.generators.toINI { } (
+                  lib.recursiveUpdate {
+                    "General" = (
                       {
-                        "konsole/${profileName}.profile".text = lib.generators.toINI { }
-                          (lib.recursiveUpdate
-                            {
-                              "General" = (
-                                {
-                                  "Name" = profileName;
-                                  # Konsole generated profiles seem to always have this
-                                  "Parent" = "FALLBACK/";
-                                } //
-                                (lib.optionalAttrs (profile.command != null) { "Command" = profile.command; })
-                              );
-                              "Appearance" = (
-                                {
-                                  # If the font size is not set we leave a comma at the end after the name
-                                  # We should fix this probs but konsole doesn't seem to care ¯\_(ツ)_/¯
-                                  "Font" = fontString.content;
-                                } //
-                                (lib.optionalAttrs (profile.colorScheme != null) { "ColorScheme" = profile.colorScheme; })
-                              );
-                            }
-                            profile.extraConfig
-                          );
+                        "Name" = profileName;
+                        # Konsole generated profiles seem to always have this
+                        "Parent" = "FALLBACK/";
                       }
-                  )
-                  cfg.profiles
-              )
-            )
-          ])
-        )
-      )
+                      // (lib.optionalAttrs (profile.command != null) { "Command" = profile.command; })
+                    );
+                    "Appearance" = (
+                      {
+                        # If the font size is not set we leave a comma at the end after the name
+                        # We should fix this probs but konsole doesn't seem to care ¯\_(ツ)_/¯
+                        "Font" = fontString.content;
+                      }
+                      // (lib.optionalAttrs (profile.colorScheme != null) { "ColorScheme" = profile.colorScheme; })
+                    );
+                  } profile.extraConfig
+                );
+              }
+            ) cfg.profiles
+          ))
+        ])
+      ))
       (createColorSchemes cfg.customColorSchemes)
     ];
   };

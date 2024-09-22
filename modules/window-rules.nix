@@ -1,9 +1,17 @@
-{ lib
-, config
-, ...
-}:
-with lib.types; let
-  inherit (builtins) length listToAttrs foldl' toString attrNames getAttr concatStringsSep add isAttrs;
+{ lib, config, ... }:
+with lib.types;
+let
+  inherit (builtins)
+    length
+    listToAttrs
+    foldl'
+    toString
+    attrNames
+    getAttr
+    concatStringsSep
+    add
+    isAttrs
+    ;
   inherit (lib) mkOption mkIf;
   inherit (lib.trivial) mergeAttrs;
   inherit (lib.lists) imap0;
@@ -35,8 +43,10 @@ with lib.types; let
   matchNameMap = {
     "window-class" = "wmclass";
     "window-types" = "types";
+    "window-role" = "windowrole";
   };
-  matchOptionType = hasMatchWhole:
+  matchOptionType =
+    hasMatchWhole:
     submodule {
       options =
         {
@@ -58,7 +68,12 @@ with lib.types; let
           };
         };
     };
-  basicValueType = oneOf [ bool float int str ];
+  basicValueType = oneOf [
+    bool
+    float
+    int
+    str
+  ];
   applyOptionType = submodule {
     options = {
       value = mkOption {
@@ -72,25 +87,29 @@ with lib.types; let
       };
     };
   };
-  mkMatchOption = name: hasMatchWhole:
+  mkMatchOption =
+    name: hasMatchWhole:
     mkOption {
       type = nullOr (coercedTo str (value: { inherit value; }) (matchOptionType hasMatchWhole));
       default = null;
       description = "${name} matching";
     };
   fixMatchName = name: matchNameMap.${name} or name;
-  buildMatchRule = name: rule: ({
-    "${fixMatchName name}" = rule.value;
-    "${fixMatchName name}match" = getAttr rule.type matchRules;
-  }
-  // optionalAttrs (rule ? match-whole) {
-    "${fixMatchName name}complete" = rule.match-whole;
-  });
+  buildMatchRule =
+    name: rule:
+    (
+      {
+        "${fixMatchName name}" = rule.value;
+        "${fixMatchName name}match" = getAttr rule.type matchRules;
+      }
+      // optionalAttrs (rule ? match-whole) { "${fixMatchName name}complete" = rule.match-whole; }
+    );
   buildApplyRule = name: rule: {
     "${name}" = rule.value;
     "${name}rule" = getAttr rule.apply applyRules;
   };
-  buildWindowRule = rule:
+  buildWindowRule =
+    rule:
     let
       matchOptions = filterAttrs (_name: isAttrs) rule.match;
       matchRules = mapAttrsToList buildMatchRule matchOptions;
@@ -100,16 +119,14 @@ with lib.types; let
     {
       Description = rule.description;
     }
-    // optionalAttrs (rule.match.window-types != 0) {
-      types = rule.match.window-types;
-    }
+    // optionalAttrs (rule.match.window-types != 0) { types = rule.match.window-types; }
     // combinedRules;
-  windowRules = listToAttrs (imap0
-    (i: rule: {
+  windowRules = listToAttrs (
+    imap0 (i: rule: {
       name = toString (i + 1);
       value = buildWindowRule rule;
-    })
-    cfg.window-rules);
+    }) cfg.window-rules
+  );
 in
 {
   options.programs.plasma = {
@@ -150,14 +167,12 @@ in
 
   config = mkIf (length cfg.window-rules > 0) {
     programs.plasma.configFile = {
-      kwinrulesrc =
-        {
-          General = {
-            count = length cfg.window-rules;
-            rules = concatStringsSep "," (attrNames windowRules);
-          };
-        }
-        // windowRules;
+      kwinrulesrc = {
+        General = {
+          count = length cfg.window-rules;
+          rules = concatStringsSep "," (attrNames windowRules);
+        };
+      } // windowRules;
     };
   };
 }

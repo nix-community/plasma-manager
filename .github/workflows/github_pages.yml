@@ -1,8 +1,14 @@
-name: GitHub Pages
+name: GitHub Pages Docs Generation
 on:
   push:
     branches:
-      - trunk
+    - trunk
+    paths:
+    - 'flake.nix'
+    - 'flake.lock'
+    - 'modules/**'
+    - 'docs/**'
+    
 jobs:
   publish:
     strategy:

@@ -1,6 +1,4 @@
-{ home-manager-module
-, plasma-module
-}:
+{ home-manager-module, plasma-module }:
 
 { modulesPath, ... }:
 {
@@ -28,11 +26,13 @@
       ];
     };
 
-    virtualisation.forwardPorts = [{
-      from = "host";
-      host.port = 2222;
-      guest.port = 22;
-    }];
+    virtualisation.forwardPorts = [
+      {
+        from = "host";
+        host.port = 2222;
+        guest.port = 22;
+      }
+    ];
 
     services.xserver.enable = true;
     services.displayManager = {

@@ -1,9 +1,7 @@
 { pkgs, ... }:
 
 {
-  imports = [
-    <plasma-manager/modules>
-  ];
+  imports = [ <plasma-manager/modules> ];
 
   programs.plasma = {
     enable = true;
@@ -41,19 +39,19 @@
       {
         location = "top";
         height = 26;
-        widgets = [
-          "org.kde.plasma.appmenu"
-        ];
+        widgets = [ "org.kde.plasma.appmenu" ];
       }
     ];
-
 
     #
     # Some mid-level settings:
     #
     shortcuts = {
       ksmserver = {
-        "Lock Session" = [ "Screensaver" "Meta+Ctrl+Alt+L" ];
+        "Lock Session" = [
+          "Screensaver"
+          "Meta+Ctrl+Alt+L"
+        ];
       };
 
       kwin = {
@@ -64,7 +62,6 @@
         "Switch Window Up" = "Meta+K";
       };
     };
-
 
     #
     # Some low-level settings:

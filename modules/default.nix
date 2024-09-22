@@ -3,10 +3,12 @@
 {
   imports = [
     ./apps
+    ./desktop.nix
     ./files.nix
     ./fonts.nix
     ./hotkeys.nix
     ./input.nix
+    ./krunner.nix
     ./kscreenlocker.nix
     ./kwin.nix
     ./panels.nix
