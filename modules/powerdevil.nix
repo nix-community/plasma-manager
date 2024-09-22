@@ -2,32 +2,34 @@
 let
   cfg = config.programs.plasma;
 
+  # Values can be found at:
+  # https://github.com/KDE/powerdevil/blob/master/daemon/powerdevilenums.h
   powerButtonActions = {
     nothing = 0;
     sleep = 1;
     hibernate = 2;
     shutDown = 8;
     lockScreen = 32;
-    showLogoutScreen = null;
+    showLogoutScreen = 16;
     turnOffScreen = 64;
   };
 
   autoSuspendActions = {
     nothing = 0;
     hibernate = 2;
-    sleep = null;
+    sleep = 1;
     shutDown = 8;
   };
 
   whenSleepingEnterActions = {
-    standby = null;
+    standby = 1;
     hybridSleep = 2;
     standbyThenHibernate = 3;
   };
 
   whenLaptopLidClosedActions = {
     doNothing = 0;
-    sleep = null;
+    sleep = 1;
     hibernate = 2;
     shutdown = 8;
     lockScreen = 32;
