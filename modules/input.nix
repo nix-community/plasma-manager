@@ -4,8 +4,17 @@ with lib;
 
 let
   cfg = config.programs.plasma;
-  numlockSettings = [ "on" "off" "unchanged" ];
-  switchModes = [ "global" "desktop" "winClass" "window" ];
+  numlockSettings = [
+    "on"
+    "off"
+    "unchanged"
+  ];
+  switchModes = [
+    "global"
+    "desktop"
+    "winClass"
+    "window"
+  ];
 
   scrollMethods = {
     twoFingers = 1;
@@ -16,7 +25,8 @@ let
     twoFingers = 2;
   };
 
-  capitalizeWord = word:
+  capitalizeWord =
+    word:
     let
       firstLetter = builtins.substring 0 1 word;
       rest = builtins.substring 1 (builtins.stringLength word - 1) word;
@@ -171,7 +181,12 @@ let
         apply = method: if (method == null) then null else rightClickMethods."${method}";
       };
       twoFingerTap = mkOption {
-        type = with types; nullOr (enum [ "rightClick" "middleClick" ]);
+        type =
+          with types;
+          nullOr (enum [
+            "rightClick"
+            "middleClick"
+          ]);
         default = null;
         example = "twoFingers";
         description = ''
@@ -181,14 +196,15 @@ let
       };
     };
   };
-  touchPadToConfig = touchpad:
+  touchPadToConfig =
+    touchpad:
     let
       touchName = touchpad.name;
       touchVendor = builtins.toString (lib.fromHexString touchpad.vendorId);
       touchProduct = builtins.toString (lib.fromHexString touchpad.productId);
     in
     {
-      "Libinput/${touchVendor}/${touchProduct}/${lib.escape ["/"] touchName}" = {
+      "Libinput/${touchVendor}/${touchProduct}/${lib.escape [ "/" ] touchName}" = {
         Enabled = touchpad.enable;
         DisableWhileTyping = touchpad.disableWhileTyping;
         LeftHanded = touchpad.leftHanded;
@@ -273,11 +289,23 @@ let
         '';
       };
       accelerationProfile = mkOption {
-        type = with types; nullOr (enum [ "none" "default" ]);
+        type =
+          with types;
+          nullOr (enum [
+            "none"
+            "default"
+          ]);
         default = null;
         example = "none";
         description = "Mouse acceleration profile.";
-        apply = profile: if profile == "none" then 1 else if profile == "default" then 2 else null;
+        apply =
+          profile:
+          if profile == "none" then
+            1
+          else if profile == "default" then
+            2
+          else
+            null;
       };
       naturalScroll = mkOption {
         type = with types; nullOr bool;
@@ -298,7 +326,8 @@ let
     };
   };
 
-  mouseToConfig = mouse:
+  mouseToConfig =
+    mouse:
     let
       mouseName = mouse.name;
       mouseVendor = builtins.toString (lib.fromHexString mouse.vendorId);
@@ -320,10 +349,35 @@ in
   config.assertions = [
     (
       let
-        validChars = [ "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e" "f" ];
+        validChars = [
+          "0"
+          "1"
+          "2"
+          "3"
+          "4"
+          "5"
+          "6"
+          "7"
+          "8"
+          "9"
+          "a"
+          "b"
+          "c"
+          "d"
+          "e"
+          "f"
+        ];
         hexChars = hexStr: builtins.tail (lib.reverseList (builtins.tail (lib.splitString "" hexStr)));
-        hexCodeInvalid = hex: !(lib.all (c: builtins.elem (lib.toLower c) validChars) (hexChars hex)) && (builtins.stringLength hex) > 0;
-        allHexCodes = lib.flatten ((map (t: [ t.vendorId t.productId ]) (cfg.input.touchpads ++ cfg.input.mice)));
+        hexCodeInvalid =
+          hex:
+          !(lib.all (c: builtins.elem (lib.toLower c) validChars) (hexChars hex))
+          && (builtins.stringLength hex) > 0;
+        allHexCodes = lib.flatten (
+          (map (t: [
+            t.vendorId
+            t.productId
+          ]) (cfg.input.touchpads ++ cfg.input.mice))
+        );
         invalidHexCodes = builtins.filter hexCodeInvalid allHexCodes;
       in
       {
@@ -356,7 +410,10 @@ in
       default = null;
       example = [
         { layout = "us"; }
-        { layout = "ca"; variant = "eng"; }
+        {
+          layout = "ca";
+          variant = "eng";
+        }
       ];
       description = ''
         Keyboard layouts to use.
@@ -380,7 +437,7 @@ in
       '';
     };
     repeatRate = mkOption {
-      type = with types; nullOr (numbers.between 0.20 100.0);
+      type = with types; nullOr (numbers.between 0.2 100.0);
       default = null;
       example = 50.0;
       description = ''
@@ -390,48 +447,42 @@ in
     options = mkOption {
       type = with types; nullOr (listOf str);
       default = null;
-      example = [ "altwin:meta_alt" "caps:shift" "custom:types" ];
+      example = [
+        "altwin:meta_alt"
+        "caps:shift"
+        "custom:types"
+      ];
       description = ''
         Keyboard options.
       '';
     };
   };
 
-  config.programs.plasma.configFile."kxkbrc" = mkIf (cfg.enable) (
-    mkMerge [
-      (
-        mkIf (cfg.input.keyboard.layouts != null) {
-          Layout = {
-            Use.value = true;
-            LayoutList.value = strings.concatStringsSep "," (map (l: l.layout) cfg.input.keyboard.layouts);
-            VariantList.value = strings.concatStringsSep "," (map (l: l.variant) cfg.input.keyboard.layouts);
-          };
-        }
-      )
-      (
-        mkIf (cfg.input.keyboard.options != null) {
-          Layout = {
-            ResetOldOptions.value = true;
-            Options.value = strings.concatStringsSep "," cfg.input.keyboard.options;
-          };
-        }
-      )
-      (
-        mkIf (cfg.input.keyboard.model != null) {
-          Layout = {
-            Model.value = cfg.input.keyboard.model;
-          };
-        }
-      )
-      (
-        mkIf (cfg.input.keyboard.switchingPolicy != null) {
-          Layout = {
-            SwitchMode.value = cfg.input.keyboard.switchingPolicy;
-          };
-        }
-      )
-    ]
-  );
+  config.programs.plasma.configFile."kxkbrc" = mkIf (cfg.enable) (mkMerge [
+    (mkIf (cfg.input.keyboard.layouts != null) {
+      Layout = {
+        Use.value = true;
+        LayoutList.value = strings.concatStringsSep "," (map (l: l.layout) cfg.input.keyboard.layouts);
+        VariantList.value = strings.concatStringsSep "," (map (l: l.variant) cfg.input.keyboard.layouts);
+      };
+    })
+    (mkIf (cfg.input.keyboard.options != null) {
+      Layout = {
+        ResetOldOptions.value = true;
+        Options.value = strings.concatStringsSep "," cfg.input.keyboard.options;
+      };
+    })
+    (mkIf (cfg.input.keyboard.model != null) {
+      Layout = {
+        Model.value = cfg.input.keyboard.model;
+      };
+    })
+    (mkIf (cfg.input.keyboard.switchingPolicy != null) {
+      Layout = {
+        SwitchMode.value = cfg.input.keyboard.switchingPolicy;
+      };
+    })
+  ]);
 
   # Touchpads options
   options.programs.plasma.input.touchpads = mkOption {
@@ -480,14 +531,15 @@ in
 
   config.programs.plasma.configFile."kcminputrc" = mkIf (cfg.enable) (mkMerge [
     {
-      Keyboard = (lib.filterAttrs (k: v: v != null) {
-        NumLock = (lists.findFirstIndex (x: x == cfg.input.keyboard.numlockOnStartup) null numlockSettings);
-        RepeatDelay = cfg.input.keyboard.repeatDelay;
-        RepeatRate = cfg.input.keyboard.repeatRate;
-      });
+      Keyboard = (
+        lib.filterAttrs (k: v: v != null) {
+          NumLock = (lists.findFirstIndex (x: x == cfg.input.keyboard.numlockOnStartup) null numlockSettings);
+          RepeatDelay = cfg.input.keyboard.repeatDelay;
+          RepeatRate = cfg.input.keyboard.repeatRate;
+        }
+      );
     }
     (mkMerge (map touchPadToConfig cfg.input.touchpads))
     (mkMerge (map mouseToConfig cfg.input.mice))
-  ]
-  );
+  ]);
 }

@@ -1,9 +1,10 @@
-{ stdenv
-, nixos-render-docs
-, plasma-manager-options
-, revision
-, lib
-, documentation-highlighter
+{
+  stdenv,
+  nixos-render-docs,
+  plasma-manager-options,
+  revision,
+  lib,
+  documentation-highlighter,
 }:
 let
   outputPath = "share/doc/plasma-manager";
