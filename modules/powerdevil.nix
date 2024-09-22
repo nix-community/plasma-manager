@@ -104,24 +104,40 @@ let
           The duration (in seconds), when on ${type}, the computer must be idle
           (when unlocked) until the display turns off.
         '';
-        apply = timeout:
-          if (timeout == null) then null else
-          if (timeout == "never") then -1
-          else timeout;
+        apply =
+          timeout:
+          if (timeout == null) then
+            null
+          else if (timeout == "never") then
+            -1
+          else
+            timeout;
       };
       idleTimeoutWhenLocked = lib.mkOption {
-        type = with lib.types; nullOr (either (enum [ "whenLockedAndUnlocked" "immediately" ]) (ints.between 20 600000));
+        type =
+          with lib.types;
+          nullOr (
+            either (enum [
+              "whenLockedAndUnlocked"
+              "immediately"
+            ]) (ints.between 20 600000)
+          );
         default = null;
         example = 60;
         description = ''
           The duration (in seconds), when on ${type}, the computer must be idle
           (when locked) until the display turns off.
         '';
-        apply = timeout:
-          if (timeout == null) then null else
-          if (timeout == "whenLockedAndUnlocked") then -2 else
-          if (timeout == "immediately") then 0
-          else timeout;
+        apply =
+          timeout:
+          if (timeout == null) then
+            null
+          else if (timeout == "whenLockedAndUnlocked") then
+            -2
+          else if (timeout == "immediately") then
+            0
+          else
+            timeout;
       };
     };
     dimDisplay = {
@@ -154,11 +170,13 @@ let
       AutoSuspendIdleTimeoutSec = cfg.powerdevil.${optionsName}.autoSuspend.idleTimeout;
       SleepMode = cfg.powerdevil.${optionsName}.whenSleepingEnter;
       LidAction = cfg.powerdevil.${optionsName}.whenLaptopLidClosed;
-      InhibitLidActionWhenExternalMonitorPresent = cfg.powerdevil.${optionsName}.inhibitLidActionWhenExternalMonitorConnected;
+      InhibitLidActionWhenExternalMonitorPresent =
+        cfg.powerdevil.${optionsName}.inhibitLidActionWhenExternalMonitorConnected;
     };
     "${cfgSectName}/Display" = {
       TurnOffDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.turnOffDisplay.idleTimeout;
-      TurnOffDisplayIdleTimeoutWhenLockedSec = cfg.powerdevil.${optionsName}.turnOffDisplay.idleTimeoutWhenLocked;
+      TurnOffDisplayIdleTimeoutWhenLockedSec =
+        cfg.powerdevil.${optionsName}.turnOffDisplay.idleTimeoutWhenLocked;
       DimDisplayWhenIdle =
         if (cfg.powerdevil.${optionsName}.dimDisplay.enable != null) then
           cfg.powerdevil.${optionsName}.dimDisplay.enable
@@ -172,24 +190,75 @@ let
 in
 {
   imports = [
-    (lib.mkRenamedOptionModule [ "programs" "plasma" "powerdevil" "powerButtonAction" ] [ "programs" "plasma" "powerdevil" "AC" "powerButtonAction" ])
-    (lib.mkRenamedOptionModule [ "programs" "plasma" "powerdevil" "autoSuspend" ] [ "programs" "plasma" "powerdevil" "AC" "autoSuspend" ])
-    (lib.mkRenamedOptionModule [ "programs" "plasma" "powerdevil" "turnOffDisplay" ] [ "programs" "plasma" "powerdevil" "AC" "turnOffDisplay" ])
+    (lib.mkRenamedOptionModule
+      [
+        "programs"
+        "plasma"
+        "powerdevil"
+        "powerButtonAction"
+      ]
+      [
+        "programs"
+        "plasma"
+        "powerdevil"
+        "AC"
+        "powerButtonAction"
+      ]
+    )
+    (lib.mkRenamedOptionModule
+      [
+        "programs"
+        "plasma"
+        "powerdevil"
+        "autoSuspend"
+      ]
+      [
+        "programs"
+        "plasma"
+        "powerdevil"
+        "AC"
+        "autoSuspend"
+      ]
+    )
+    (lib.mkRenamedOptionModule
+      [
+        "programs"
+        "plasma"
+        "powerdevil"
+        "turnOffDisplay"
+      ]
+      [
+        "programs"
+        "plasma"
+        "powerdevil"
+        "AC"
+        "turnOffDisplay"
+      ]
+    )
   ];
 
   config.assertions =
     let
       createAssertions = type: [
         {
-          assertion = (cfg.powerdevil.${type}.autoSuspend.action != autoSuspendActions.nothing || cfg.powerdevil.${type}.autoSuspend.idleTimeout == null);
+          assertion = (
+            cfg.powerdevil.${type}.autoSuspend.action != autoSuspendActions.nothing
+            || cfg.powerdevil.${type}.autoSuspend.idleTimeout == null
+          );
           message = "Setting programs.plasma.powerdevil.${type}.autoSuspend.idleTimeout for autosuspend-action \"nothing\" is not supported.";
         }
         {
-          assertion = (cfg.powerdevil.${type}.turnOffDisplay.idleTimeout != -1 || cfg.powerdevil.${type}.turnOffDisplay.idleTimeoutWhenLocked == null);
+          assertion = (
+            cfg.powerdevil.${type}.turnOffDisplay.idleTimeout != -1
+            || cfg.powerdevil.${type}.turnOffDisplay.idleTimeoutWhenLocked == null
+          );
           message = "Setting programs.plasma.powerdevil.${type}.turnOffDisplay.idleTimeoutWhenLocked for idleTimeout \"never\" is not supported.";
         }
         {
-          assertion = (cfg.powerdevil.${type}.dimDisplay.enable != false || cfg.powerdevil.${type}.dimDisplay.idleTimeout == null);
+          assertion = (
+            cfg.powerdevil.${type}.dimDisplay.enable != false
+            || cfg.powerdevil.${type}.dimDisplay.idleTimeout == null
+          );
           message = "Cannot set programs.plasma.powerdevil.${type}.dimDisplay.idleTimeout when programs.plasma.powerdevil.${type}.dimDisplay.enable is disabled.";
         }
       ];
@@ -215,13 +284,15 @@ in
   };
 
   config.programs.plasma.configFile = lib.mkIf cfg.enable {
-    powerdevilrc = lib.filterAttrsRecursive (k: v: v != null) ((createPowerDevilConfig "AC" "AC")
+    powerdevilrc = lib.filterAttrsRecursive (k: v: v != null) (
+      (createPowerDevilConfig "AC" "AC")
       // (createPowerDevilConfig "Battery" "battery")
       // (createPowerDevilConfig "LowBattery" "lowBattery")
       // {
         General = {
           pausePlayersOnSuspend = cfg.powerdevil.general.pausePlayersOnSuspend;
         };
-      });
+      }
+    );
   };
 }

@@ -1,25 +1,27 @@
-{ lib, ... } @ args:
+{ lib, ... }@args:
 let
   args' = args // {
     widgets = self;
   };
 
-  sources = lib.attrsets.mergeAttrsList (map (s: import s args') [
-    ./app-menu.nix
-    ./application-title-bar.nix
-    ./battery.nix
-    ./digital-clock.nix
-    ./icon-tasks.nix
-    ./keyboard-layout.nix
-    ./kicker.nix
-    ./kickerdash.nix
-    ./kickoff.nix
-    ./panel-spacer.nix
-    ./plasma-panel-colorizer.nix
-    ./plasmusic-toolbar.nix
-    ./system-monitor.nix
-    ./system-tray.nix
-  ]);
+  sources = lib.attrsets.mergeAttrsList (
+    map (s: import s args') [
+      ./app-menu.nix
+      ./application-title-bar.nix
+      ./battery.nix
+      ./digital-clock.nix
+      ./icon-tasks.nix
+      ./keyboard-layout.nix
+      ./kicker.nix
+      ./kickerdash.nix
+      ./kickoff.nix
+      ./panel-spacer.nix
+      ./plasma-panel-colorizer.nix
+      ./plasmusic-toolbar.nix
+      ./system-monitor.nix
+      ./system-tray.nix
+    ]
+  );
 
   positionType = lib.types.submodule {
     options = {
@@ -52,13 +54,15 @@ let
   };
 
   compositeWidgetType = lib.pipe sources [
-    (builtins.mapAttrs
-      (_: s: lib.mkOption {
+    (builtins.mapAttrs (
+      _: s:
+      lib.mkOption {
         inherit (s) description;
         type = lib.types.submodule (submoduleArgs: {
           options = if builtins.isFunction s.opts then s.opts submoduleArgs else s.opts;
         });
-      }))
+      }
+    ))
     lib.types.attrTag
   ];
 
@@ -75,7 +79,7 @@ let
         example = {
           General.icon = "nix-snowflake-white";
         };
-        description = '' 
+        description = ''
           Configuration options for the widget.
 
           See https://develop.kde.org/docs/plasma/scripting/keys/ for an (incomplete) list of options
@@ -130,7 +134,7 @@ let
         example = {
           General.icon = "nix-snowflake-white";
         };
-        description = '' 
+        description = ''
           Configuration options for the widget.
 
           See https://develop.kde.org/docs/plasma/scripting/keys/ for an (incomplete) list of options
@@ -161,14 +165,29 @@ let
   self = {
     inherit isKnownWidget positionType sizeType;
 
-    type = lib.types.oneOf [ lib.types.str compositeWidgetType simpleWidgetType ];
-    desktopType = lib.types.oneOf [ compositeWidgetType desktopSimpleWidgetType ];
+    type = lib.types.oneOf [
+      lib.types.str
+      compositeWidgetType
+      simpleWidgetType
+    ];
+    desktopType = lib.types.oneOf [
+      compositeWidgetType
+      desktopSimpleWidgetType
+    ];
 
     lib = import ./lib.nix (args // { widgets = self; });
 
-    desktopConvert = widget:
+    desktopConvert =
+      widget:
       let
-        inherit (builtins) length head attrNames mapAttrs isAttrs isString;
+        inherit (builtins)
+          length
+          head
+          attrNames
+          mapAttrs
+          isAttrs
+          isString
+          ;
         keys = attrNames widget;
         type = head keys;
 
@@ -182,15 +201,34 @@ let
         let
           convertedWidget = converters.${type} widget.${type};
         in
-          base // convertedWidget // {
-            position = if isAttrs widget.${type}.position then widget.${type}.position else (throw "Desktop widget requires a position");
-            size = if isAttrs widget.${type}.size then widget.${type}.size else (throw "Desktop widget requires a size");
-          }
-      else widget; # not a known composite type
+        base
+        // convertedWidget
+        // {
+          position =
+            if isAttrs widget.${type}.position then
+              widget.${type}.position
+            else
+              (throw "Desktop widget requires a position");
+          size =
+            if isAttrs widget.${type}.size then
+              widget.${type}.size
+            else
+              (throw "Desktop widget requires a size");
+        }
+      else
+        widget; # not a known composite type
 
-    convert = widget:
+    convert =
+      widget:
       let
-        inherit (builtins) length head attrNames mapAttrs isAttrs isString;
+        inherit (builtins)
+          length
+          head
+          attrNames
+          mapAttrs
+          isAttrs
+          isString
+          ;
         keys = attrNames widget;
         type = head keys;
 
@@ -204,7 +242,8 @@ let
         base // { name = widget; }
       else if isAttrs widget && length keys == 1 && isKnownWidget type then
         base // converters.${type} widget.${type}
-      else widget; # not a known composite type
+      else
+        widget; # not a known composite type
   };
 in
 self

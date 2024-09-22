@@ -18,43 +18,47 @@ import os
 import re
 import sys
 from pathlib import Path
-from typing import List, Dict, Callable, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
 
 # The root directory where configuration files are stored.
 XDG_CONFIG_HOME: str = os.path.expanduser(os.getenv("XDG_CONFIG_HOME", "~/.config"))
 
+
 class Rc2Nix:
     # Files that we'll scan by default.
-    KNOWN_FILES: List[str] = [os.path.join(XDG_CONFIG_HOME, f) for f in [
-        "kcminputrc",
-        "kglobalshortcutsrc",
-        "kactivitymanagerdrc",
-        "ksplashrc",
-        "kwin_rules_dialogrc",
-        "kmixrc",
-        "kwalletrc",
-        "kgammarc",
-        "krunnerrc",
-        "klaunchrc",
-        "plasmanotifyrc",
-        "systemsettingsrc",
-        "kscreenlockerrc",
-        "kwinrulesrc",
-        "khotkeysrc",
-        "ksmserverrc",
-        "kded5rc",
-        "plasmarc",
-        "kwinrc",
-        "kdeglobals",
-        "baloofilerc",
-        "dolphinrc",
-        "klipperrc",
-        "plasma-localerc",
-        "kxkbrc",
-        "ffmpegthumbsrc",
-        "kservicemenurc",
-        "kiorc",
-    ]]
+    KNOWN_FILES: List[str] = [
+        os.path.join(XDG_CONFIG_HOME, f)
+        for f in [
+            "kcminputrc",
+            "kglobalshortcutsrc",
+            "kactivitymanagerdrc",
+            "ksplashrc",
+            "kwin_rules_dialogrc",
+            "kmixrc",
+            "kwalletrc",
+            "kgammarc",
+            "krunnerrc",
+            "klaunchrc",
+            "plasmanotifyrc",
+            "systemsettingsrc",
+            "kscreenlockerrc",
+            "kwinrulesrc",
+            "khotkeysrc",
+            "ksmserverrc",
+            "kded5rc",
+            "plasmarc",
+            "kwinrc",
+            "kdeglobals",
+            "baloofilerc",
+            "dolphinrc",
+            "klipperrc",
+            "plasma-localerc",
+            "kxkbrc",
+            "ffmpegthumbsrc",
+            "kservicemenurc",
+            "kiorc",
+        ]
+    ]
 
     class RcFile:
         # Any group that matches a listed regular expression is blocked
@@ -97,21 +101,23 @@ class Rc2Nix:
         def parse(self):
 
             def is_group_line(line: str) -> bool:
-                return re.match(r'^\s*(\[[^\]]+\]){1,}\s*$', line) is not None
+                return re.match(r"^\s*(\[[^\]]+\]){1,}\s*$", line) is not None
 
             def is_setting_line(line: str) -> bool:
-                return re.match(r'^\s*([^=]+)=?(.*)\s*$', line) is not None
+                return re.match(r"^\s*([^=]+)=?(.*)\s*$", line) is not None
 
             def parse_group(line: str) -> str:
-                return re.sub(r'\s*\[([^\]]+)\]\s*', r'\1/', line.replace("/", "\\\\/")).rstrip("/")
+                return re.sub(
+                    r"\s*\[([^\]]+)\]\s*", r"\1/", line.replace("/", "\\\\/")
+                ).rstrip("/")
 
             def parse_setting(line: str) -> Tuple[str, str]:
-                match = re.match(r'^\s*([^=]+)=?(.*)\s*$', line)
+                match = re.match(r"^\s*([^=]+)=?(.*)\s*$", line)
                 if match:
-                    return match.groups() #type: ignore
+                    return match.groups()  # type: ignore
                 raise Exception(f"{self.file_name}: can't parse setting line: {line}")
 
-            with open(self.file_name, 'r') as file:
+            with open(self.file_name, "r") as file:
                 for line in file:
                     line = line.strip()
                     if not line:
@@ -139,9 +145,15 @@ class Rc2Nix:
             val = val.strip()
 
             if self.last_group is None:
-                raise Exception(f"{self.file_name}: setting outside of group: {key}={val}")
+                raise Exception(
+                    f"{self.file_name}: setting outside of group: {key}={val}"
+                )
 
-            if should_skip_group(self.last_group) or should_skip_key(key) or should_skip_by_lambda(self.last_group, key):
+            if (
+                should_skip_group(self.last_group)
+                or should_skip_key(key)
+                or should_skip_by_lambda(self.last_group, key)
+            ):
                 return
 
             if self.last_group not in self.settings:
@@ -180,45 +192,65 @@ class Rc2Nix:
             print("  };")
             print("}")
 
-        def pp_settings(self, settings: Dict[str, Dict[str, Dict[str, str]]], indent: int) -> str:
-            result : List[str] = []
+        def pp_settings(
+            self, settings: Dict[str, Dict[str, Dict[str, str]]], indent: int
+        ) -> str:
+            result: List[str] = []
             for file in sorted(settings.keys()):
                 if file != "kglobalshortcutsrc":
                     for group in sorted(settings[file].keys()):
                         for key in sorted(settings[file][group].keys()):
                             if key != "_k_friendly_name":
-                                result.append(f"{' ' * indent}\"{file}\".\"{group}\".\"{key}\" = {nix_val(settings[file][group][key])};")
+                                result.append(
+                                    f"{' ' * indent}\"{file}\".\"{group}\".\"{key}\" = {nix_val(settings[file][group][key])};"
+                                )
             return "\n".join(result)
 
         def pp_shortcuts(self, groups: Dict[str, Dict[str, str]], indent: int) -> str:
             if not groups:
                 return ""
 
-            result : List[str] = []
+            result: List[str] = []
             for group in sorted(groups.keys()):
                 for action in sorted(groups[group].keys()):
                     if action != "_k_friendly_name":
-                        keys = groups[group][action].split(r'(?<!\\),')[0].replace(r'\?', ',').replace(r'\t', '\t').split('\t')
+                        keys = (
+                            groups[group][action]
+                            .split(r"(?<!\\),")[0]
+                            .replace(r"\?", ",")
+                            .replace(r"\t", "\t")
+                            .split("\t")
+                        )
 
                         if not keys or keys[0] == "none":
                             keys_str = "[ ]"
                         elif len(keys) > 1:
-                            keys_str = f"[{' '.join(nix_val(k.rstrip(',')) for k in keys)}]"
+                            keys_str = (
+                                f"[{' '.join(nix_val(k.rstrip(',')) for k in keys)}]"
+                            )
                         else:
                             ks = keys[0].split(",")
                             k = ks[0] if len(ks) == 3 and ks[0] == ks[1] else keys[0]
-                            keys_str = "[ ]" if k == "" or k == "none" else nix_val(k.rstrip(","))
+                            keys_str = (
+                                "[ ]"
+                                if k == "" or k == "none"
+                                else nix_val(k.rstrip(","))
+                            )
 
-                        result.append(f"{' ' * indent}\"{group}\".\"{action}\" = {keys_str};")
+                        result.append(
+                            f"{' ' * indent}\"{group}\".\"{action}\" = {keys_str};"
+                        )
             return "\n".join(result)
+
 
 def nix_val(s: Optional[str]) -> str:
     if s is None:
         return "null"
-    if re.match(r'^true|false$', s, re.IGNORECASE):
+    if re.match(r"^true|false$", s, re.IGNORECASE):
         return s.lower()
-    if re.match(r'^[0-9]+(\.[0-9]+)?$', s):
+    if re.match(r"^[0-9]+(\.[0-9]+)?$", s):
         return s
     return '"' + re.sub(r'(?<!\\)"', r'\\"', s) + '"'
+
 
 Rc2Nix.App(sys.argv[1:]).run()
