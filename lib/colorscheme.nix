@@ -35,13 +35,10 @@ let
     "Colors:Window" = colorUIKeys;
   };
 in
-(lib.mkMerge
-  (lib.mapAttrsToList
-    (group: keys: {
-      "kdeglobals"."${group}" = (lib.mkMerge
-        (map
-          (key:
-            { "${key}"."persistent" = (lib.mkDefault true); })
-          keys));
-    })
-    ignoreKeys))
+(lib.mkMerge (
+  lib.mapAttrsToList (group: keys: {
+    "kdeglobals"."${group}" = (
+      lib.mkMerge (map (key: { "${key}"."persistent" = (lib.mkDefault true); }) keys)
+    );
+  }) ignoreKeys
+))

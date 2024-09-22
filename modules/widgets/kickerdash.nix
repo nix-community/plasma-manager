@@ -4,29 +4,32 @@ let
   inherit (import ./lib.nix { inherit lib; }) configValueType;
   inherit (import ./default.nix { inherit lib; }) positionType sizeType;
 
-  mkBoolOption = description: mkOption {
-    type = with types; nullOr bool;
-    default = null;
-    example = true;
-    inherit description;
-  };
+  mkBoolOption =
+    description:
+    mkOption {
+      type = with types; nullOr bool;
+      default = null;
+      example = true;
+      inherit description;
+    };
 
-  getIndexFromEnum = enum: value:
-    if value == null
-    then null
+  getIndexFromEnum =
+    enum: value:
+    if value == null then
+      null
     else
-      lib.lists.findFirstIndex
-        (x: x == value)
+      lib.lists.findFirstIndex (x: x == value)
         (throw "getIndexFromEnum (kickerdash widget): Value ${value} isn't present in the enum. This is a bug")
         enum;
 
-  checkPath = path:
-    if path == null
-    then null
+  checkPath =
+    path:
+    if path == null then
+      null
+    else if lib.strings.hasPrefix "/" path then
+      path
     else
-      if lib.strings.hasPrefix "/" path
-      then path
-      else throw "checkPath (kickerdash widget): Path ${path} is not an absolute path.";
+      throw "checkPath (kickerdash widget): Path ${path} is not an absolute path.";
 in
 {
   kickerdash = {
@@ -35,12 +38,18 @@ in
     opts = {
       position = mkOption {
         type = positionType;
-        example = { horizontal = 250; vertical = 50; };
+        example = {
+          horizontal = 250;
+          vertical = 50;
+        };
         description = "The position of the widget. (Only for desktop widget)";
       };
       size = mkOption {
         type = sizeType;
-        example = { width = 500; height = 500; };
+        example = {
+          width = 500;
+          height = 500;
+        };
         description = "The size of the widget. (Only for desktop widget)";
       };
       icon = mkOption {
@@ -57,8 +66,15 @@ in
         apply = checkPath;
       };
       applicationNameFormat =
-        let enumVals = [ "nameOnly" "genericNameOnly" "nameAndGenericName" "genericNameAndName" ];
-        in mkOption {
+        let
+          enumVals = [
+            "nameOnly"
+            "genericNameOnly"
+            "nameAndGenericName"
+            "genericNameAndName"
+          ];
+        in
+        mkOption {
           type = with types; nullOr (enum enumVals);
           default = null;
           example = "nameOnly";
@@ -74,8 +90,13 @@ in
           recentFiles = mkBoolOption "Whether to show recent files.";
         };
         order =
-          let enumVals = [ "recentFirst" "popularFirst" ];
-          in mkOption {
+          let
+            enumVals = [
+              "recentFirst"
+              "popularFirst"
+            ];
+          in
+          mkOption {
             type = with types; nullOr (enum enumVals);
             default = null;
             example = "recentFirst";
@@ -95,38 +116,38 @@ in
           };
         };
         description = "Extra configuration options for the widget.";
-        apply = settings: if settings == null then {} else settings;
+        apply = settings: if settings == null then { } else settings;
       };
     };
     convert =
-      { position
-      , size
-      , icon
-      , customButtonImage
-      , applicationNameFormat
-      , behavior
-      , categories
-      , search
-      , settings
-      }: {
+      {
+        position,
+        size,
+        icon,
+        customButtonImage,
+        applicationNameFormat,
+        behavior,
+        categories,
+        search,
+        settings,
+      }:
+      {
         name = "org.kde.plasma.kickerdash";
         config = lib.recursiveUpdate {
-          General = lib.filterAttrs (_: v: v != null) (
-            {
-              inherit icon customButtonImage;
-              useCustomButtonImage = (customButtonImage != null);
+          General = lib.filterAttrs (_: v: v != null) ({
+            inherit icon customButtonImage;
+            useCustomButtonImage = (customButtonImage != null);
 
-              appNameFormat = applicationNameFormat;
+            appNameFormat = applicationNameFormat;
 
-              alphaSort = behavior.sortAlphabetically;
+            alphaSort = behavior.sortAlphabetically;
 
-              showRecentApps = categories.show.recentApplications;
-              showRecentDocs = categories.show.recentFiles;
-              recentOrdering = categories.order;
+            showRecentApps = categories.show.recentApplications;
+            showRecentDocs = categories.show.recentFiles;
+            recentOrdering = categories.order;
 
-              useExtraRunners = search.expandSearchResults;
-            }
-          );
+            useExtraRunners = search.expandSearchResults;
+          });
         } settings;
       };
   };

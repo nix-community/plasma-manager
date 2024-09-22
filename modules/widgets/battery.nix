@@ -2,7 +2,8 @@
 let
   inherit (import ./lib.nix { inherit lib; }) configValueType;
   inherit (import ./default.nix { inherit lib; }) positionType sizeType;
-in {
+in
+{
   battery = {
     description = "The battery indicator widget.";
 
@@ -10,12 +11,18 @@ in {
     opts = {
       position = lib.mkOption {
         type = positionType;
-        example = { horizontal = 250; vertical = 50; };
+        example = {
+          horizontal = 250;
+          vertical = 50;
+        };
         description = "The position of the widget. (Only for desktop widget)";
       };
       size = lib.mkOption {
         type = sizeType;
-        example = { width = 500; height = 500; };
+        example = {
+          width = 500;
+          height = 500;
+        };
         description = "The size of the widget. (Only for desktop widget)";
       };
       showPercentage = lib.mkOption {
@@ -32,22 +39,22 @@ in {
             showPercentage = true;
           };
         };
-        apply = settings: if settings == null then {} else settings;
+        apply = settings: if settings == null then { } else settings;
       };
     };
 
-    convert = 
-      { position
-      , size
-      , showPercentage
-      , settings
-      }: {
+    convert =
+      {
+        position,
+        size,
+        showPercentage,
+        settings,
+      }:
+      {
         name = "org.kde.plasma.battery";
         config = lib.recursiveUpdate {
-          General = lib.filterAttrs (_: v: v != null) {
-            inherit showPercentage;
-          };
+          General = lib.filterAttrs (_: v: v != null) { inherit showPercentage; };
         } settings;
-    };
+      };
   };
 }

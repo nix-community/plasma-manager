@@ -1,4 +1,8 @@
-{ pkgs, lib, config }:
+{
+  pkgs,
+  lib,
+  config,
+}:
 
 let
   writeConfigScript = pkgs.writeShellApplication {
@@ -12,17 +16,19 @@ let
   # attribute-set as json. Here a is the attribute-set.
   #
   # Type: AttrSet -> string
-  writeConfig = json: overrideConfig: resetFilesList:
+  writeConfig =
+    json: overrideConfig: resetFilesList:
     let
       jsonStr = builtins.toJSON json;
       # Writing to file handles special characters better than passing it in as
       # an argument to the script.
       jsonFile = pkgs.writeText "data.json" jsonStr;
-      resetFilesStr = builtins.toString
-        (if overrideConfig then
+      resetFilesStr = builtins.toString (
+        if overrideConfig then
           resetFilesList ++ [ "${config.xdg.dataHome}/plasma-manager/last_run_*" ]
         else
-          resetFilesList);
+          resetFilesList
+      );
       immutableByDefault = (builtins.toString config.programs.plasma.immutableByDefault);
     in
     ''

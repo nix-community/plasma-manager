@@ -4,7 +4,8 @@ let
   inherit (import ./lib.nix { inherit lib; }) configValueType;
   inherit (import ./default.nix { inherit lib; }) positionType sizeType;
 
-  mkBoolOption = description:
+  mkBoolOption =
+    description:
     mkOption {
       type = types.nullOr types.bool;
       default = null;
@@ -45,35 +46,32 @@ let
     "header"
   ];
 
-  getIndexFromEnum = enum: value:
-    if value == null
-    then null
+  getIndexFromEnum =
+    enum: value:
+    if value == null then
+      null
     else
-      lib.lists.findFirstIndex
-        (x: x == value)
+      lib.lists.findFirstIndex (x: x == value)
         (throw "getIndexFromEnum (plasma-panel-colorizer widget): Value ${value} isn't present in the enum. This is a bug")
         enum;
 
-  convertColorList = colors:
-    if colors == null
-    then null
-    else builtins.concatStringsSep " " colors;
+  convertColorList = colors: if colors == null then null else builtins.concatStringsSep " " colors;
 
-  convertWidgets = widgets:
-    if widgets == null
-    then null
-    else "|" + builtins.concatStringsSep "|" widgets;
+  convertWidgets =
+    widgets: if widgets == null then null else "|" + builtins.concatStringsSep "|" widgets;
 
-  convertWidgetMarginRules = rules:
-    if rules == null
-    then null
+  convertWidgetMarginRules =
+    rules:
+    if rules == null then
+      null
     else
       let
-        widgetToString = widget:
+        widgetToString =
+          widget:
           "${widget.widgetId},${toString widget.margin.vertical},${toString widget.margin.horizontal}";
       in
-        builtins.concatStringsSep "|" (map widgetToString rules);
-  
+      builtins.concatStringsSep "|" (map widgetToString rules);
+
   widgetMarginRuleType = types.submodule {
     options = {
       widgetId = mkOption {
@@ -103,12 +101,18 @@ in
     opts = {
       position = mkOption {
         type = positionType;
-        example = { horizontal = 250; vertical = 50; };
+        example = {
+          horizontal = 250;
+          vertical = 50;
+        };
         description = "The position of the widget. (Only for desktop widget)";
       };
       size = mkOption {
         type = sizeType;
-        example = { width = 500; height = 500; };
+        example = {
+          width = 500;
+          height = 500;
+        };
         description = "The size of the widget. (Only for desktop widget)";
       };
       general = {
@@ -146,7 +150,10 @@ in
         colorMode = {
           mode =
             let
-              enumVals = [ "static" "animated" ];
+              enumVals = [
+                "static"
+                "animated"
+              ];
             in
             mkOption {
               type = types.nullOr (types.enum enumVals);
@@ -192,27 +199,29 @@ in
             description = "The custom color to use for the widget background";
           };
           system = {
-            color =
-              mkOption {
-                type = types.nullOr (types.enum systemColors);
-                default = null;
-                example = "text";
-                description = "The system color to use for the widget background";
-                apply = getIndexFromEnum systemColors;
-              };
-            colorSet =
-              mkOption {
-                type = types.nullOr (types.enum systemColorSets);
-                default = null;
-                example = "view";
-                description = "The system color variant to use for the widget background";
-                apply = getIndexFromEnum systemColorSets;
-              };
+            color = mkOption {
+              type = types.nullOr (types.enum systemColors);
+              default = null;
+              example = "text";
+              description = "The system color to use for the widget background";
+              apply = getIndexFromEnum systemColors;
+            };
+            colorSet = mkOption {
+              type = types.nullOr (types.enum systemColorSets);
+              default = null;
+              example = "view";
+              description = "The system color variant to use for the widget background";
+              apply = getIndexFromEnum systemColorSets;
+            };
           };
           customColorList = mkOption {
             type = types.nullOr (types.listOf types.str);
             default = null;
-            example = [ "#ff0000" "#00ff00" "#0000ff" ];
+            example = [
+              "#ff0000"
+              "#00ff00"
+              "#0000ff"
+            ];
             description = "The list of custom colors to use for the widget background";
             apply = convertColorList;
           };
@@ -251,8 +260,15 @@ in
           line = {
             enable = mkBoolOption "Whether to enable the line for the widget background";
             position =
-              let enumVals = [ "top" "bottom" "left" "right" ];
-              in mkOption {
+              let
+                enumVals = [
+                  "top"
+                  "bottom"
+                  "left"
+                  "right"
+                ];
+              in
+              mkOption {
                 type = types.nullOr (types.enum enumVals);
                 default = null;
                 example = "top";
@@ -300,22 +316,20 @@ in
               description = "The custom color to use for the outline of the widget background";
             };
             system = {
-              color =
-                mkOption {
-                  type = types.nullOr (types.enum systemColors);
-                  default = null;
-                  example = "text";
-                  description = "The system color to use for the outline of the widget background";
-                  apply = getIndexFromEnum systemColors;
-                };
-              colorSet =
-                mkOption {
-                  type = types.nullOr (types.enum systemColorSets);
-                  default = null;
-                  example = "view";
-                  description = "The system color variant to use for the outline of the widget background";
-                  apply = getIndexFromEnum systemColorSets;
-                };
+              color = mkOption {
+                type = types.nullOr (types.enum systemColors);
+                default = null;
+                example = "text";
+                description = "The system color to use for the outline of the widget background";
+                apply = getIndexFromEnum systemColors;
+              };
+              colorSet = mkOption {
+                type = types.nullOr (types.enum systemColorSets);
+                default = null;
+                example = "view";
+                description = "The system color variant to use for the outline of the widget background";
+                apply = getIndexFromEnum systemColorSets;
+              };
             };
             opacity = mkOption {
               type = types.nullOr (types.numbers.between 0 1);
@@ -362,8 +376,13 @@ in
         enable = mkBoolOption "Whether to enable the text and icons configuration";
         colorMode = {
           mode =
-            let enumVals = [ "static" "interval" ];
-            in mkOption {
+            let
+              enumVals = [
+                "static"
+                "interval"
+              ];
+            in
+            mkOption {
               type = types.nullOr (types.enum enumVals);
               default = null;
               example = "static";
@@ -379,8 +398,16 @@ in
         };
         colors = {
           source =
-            let enumVals = [ "custom" "system" "widgetBackground" "customList" "random" ];
-            in mkOption {
+            let
+              enumVals = [
+                "custom"
+                "system"
+                "widgetBackground"
+                "customList"
+                "random"
+              ];
+            in
+            mkOption {
               type = types.nullOr (types.enum enumVals);
               default = null;
               example = "custom";
@@ -412,7 +439,11 @@ in
           customColorList = mkOption {
             type = types.nullOr (types.listOf types.str);
             default = null;
-            example = [ "#ff0000" "#00ff00" "#0000ff" ];
+            example = [
+              "#ff0000"
+              "#00ff00"
+              "#0000ff"
+            ];
             description = "The list of custom colors to use for the text and icons";
             apply = convertColorList;
           };
@@ -503,8 +534,13 @@ in
         customBackground = {
           enable = mkBoolOption "Whether to enable the custom panel background";
           colorSource =
-            let enumVals = [ "custom" "system" ];
-            in mkOption {
+            let
+              enumVals = [
+                "custom"
+                "system"
+              ];
+            in
+            mkOption {
               type = types.nullOr (types.enum enumVals);
               default = null;
               example = "custom";
@@ -546,9 +582,14 @@ in
             description = "The radius to use for the custom panel background";
           };
           outline = {
-            colorSource = 
-              let enumVals = [ "custom" "system" ];
-              in mkOption {
+            colorSource =
+              let
+                enumVals = [
+                  "custom"
+                  "system"
+                ];
+              in
+              mkOption {
                 type = types.nullOr (types.enum enumVals);
                 default = null;
                 example = "custom";
@@ -621,8 +662,13 @@ in
       blacklist = {
         enable = mkBoolOption "Whether to enable the blacklist";
         colorSource =
-          let enumVals = [ "custom" "system" ];
-          in mkOption {
+          let
+            enumVals = [
+              "custom"
+              "system"
+            ];
+          in
+          mkOption {
             type = types.nullOr (types.enum enumVals);
             default = null;
             example = "custom";
@@ -721,163 +767,159 @@ in
 
           See available options at https://github.com/luisbocanegra/plasma-panel-colorizer/blob/main/package/contents/config/main.xml
         '';
-        apply = settings:
-          if settings == null
-          then { }
-          else settings;
+        apply = settings: if settings == null then { } else settings;
       };
     };
     convert =
-      { position
-      , size
-      , general
-      , presetAutoLoading
-      , widgetBackground
-      , textAndIcons
-      , panelBackground
-      , blacklist
-      , layout
-      , settings
-      }: {
+      {
+        position,
+        size,
+        general,
+        presetAutoLoading,
+        widgetBackground,
+        textAndIcons,
+        panelBackground,
+        blacklist,
+        layout,
+        settings,
+      }:
+      {
         name = "luisbocanegra.panel.colorizer";
-        config =
-          lib.recursiveUpdate
-            {
-              General = lib.filterAttrs (_: v: v != null) {
-                # General options
-                isEnabled = general.enable;
-                hideWidget = general.hideWidget;
+        config = lib.recursiveUpdate {
+          General = lib.filterAttrs (_: v: v != null) {
+            # General options
+            isEnabled = general.enable;
+            hideWidget = general.hideWidget;
 
-                # Preset autoloading
-                normalPreset = presetAutoLoading.normal;
-                floatingPreset = presetAutoLoading.floating;
-                touchingWindowPreset = presetAutoLoading.touchingWindow;
-                maximizedPreset = presetAutoLoading.maximized;
+            # Preset autoloading
+            normalPreset = presetAutoLoading.normal;
+            floatingPreset = presetAutoLoading.floating;
+            touchingWindowPreset = presetAutoLoading.touchingWindow;
+            maximizedPreset = presetAutoLoading.maximized;
 
-                # Widget background options
-                widgetBgEnabled = widgetBackground.enable;
+            # Widget background options
+            widgetBgEnabled = widgetBackground.enable;
 
-                # Widget background options > Color mode
-                mode = widgetBackground.colorMode.mode; # Color mode
-                rainbowInterval = widgetBackground.colorMode.animationInterval;
-                rainbowTransition = widgetBackground.colorMode.animationSmoothing;
+            # Widget background options > Color mode
+            mode = widgetBackground.colorMode.mode; # Color mode
+            rainbowInterval = widgetBackground.colorMode.animationInterval;
+            rainbowTransition = widgetBackground.colorMode.animationSmoothing;
 
-                # Widget background options > Colors
-                colorMode = widgetBackground.colors.source;
-                singleColor = widgetBackground.colors.customColor; # Custom
-                colorModeTheme = widgetBackground.colors.system.color; # System
-                colorModeThemeVariant = widgetBackground.colors.system.colorSet; # System variant
-                customColors = widgetBackground.colors.customColorList; # Custom list
-                bgContrastFixEnabled = widgetBackground.colors.contrastCorrection.enable;
-                bgSaturationEnabled = widgetBackground.colors.contrastCorrection.saturation.enable;
-                bgSaturation = widgetBackground.colors.contrastCorrection.saturation.value;
-                bgLightness = widgetBackground.colors.contrastCorrection.lightness;
+            # Widget background options > Colors
+            colorMode = widgetBackground.colors.source;
+            singleColor = widgetBackground.colors.customColor; # Custom
+            colorModeTheme = widgetBackground.colors.system.color; # System
+            colorModeThemeVariant = widgetBackground.colors.system.colorSet; # System variant
+            customColors = widgetBackground.colors.customColorList; # Custom list
+            bgContrastFixEnabled = widgetBackground.colors.contrastCorrection.enable;
+            bgSaturationEnabled = widgetBackground.colors.contrastCorrection.saturation.enable;
+            bgSaturation = widgetBackground.colors.contrastCorrection.saturation.value;
+            bgLightness = widgetBackground.colors.contrastCorrection.lightness;
 
-                # Widget background options > Shape
-                opacity = widgetBackground.shape.opacity;
-                radius = widgetBackground.shape.radius;
-                bgLineModeEnabled = widgetBackground.shape.line.enable;
-                bgLinePosition = widgetBackground.shape.line.position;
-                bgLineWidth = widgetBackground.shape.line.width;
-                bgLineXOffset = widgetBackground.shape.line.horizontalOffset;
-                bgLineYOffset = widgetBackground.shape.line.verticalOffset;
+            # Widget background options > Shape
+            opacity = widgetBackground.shape.opacity;
+            radius = widgetBackground.shape.radius;
+            bgLineModeEnabled = widgetBackground.shape.line.enable;
+            bgLinePosition = widgetBackground.shape.line.position;
+            bgLineWidth = widgetBackground.shape.line.width;
+            bgLineXOffset = widgetBackground.shape.line.horizontalOffset;
+            bgLineYOffset = widgetBackground.shape.line.verticalOffset;
 
-                # Widget background options > Shape > Outline
-                widgetOutlineColorMode = widgetBackground.shape.outline.colorSource;
-                widgetOutlineColor = widgetBackground.shape.outline.customColor;
-                widgetOutlineColorModeTheme = widgetBackground.shape.outline.system.color;
-                widgetOutlineColorModeThemeVariant = widgetBackground.shape.outline.system.colorSet;
-                widgetOutlineOpacity = widgetBackground.shape.outline.opacity;
-                widgetOutlineWidth = widgetBackground.shape.outline.width;
+            # Widget background options > Shape > Outline
+            widgetOutlineColorMode = widgetBackground.shape.outline.colorSource;
+            widgetOutlineColor = widgetBackground.shape.outline.customColor;
+            widgetOutlineColorModeTheme = widgetBackground.shape.outline.system.color;
+            widgetOutlineColorModeThemeVariant = widgetBackground.shape.outline.system.colorSet;
+            widgetOutlineOpacity = widgetBackground.shape.outline.opacity;
+            widgetOutlineWidth = widgetBackground.shape.outline.width;
 
-                # Widget background options > Shape > Shadow
-                widgetShadowColor = widgetBackground.shape.shadow.color;
-                widgetShadowSize = widgetBackground.shape.shadow.size;
-                widgetShadowX = widgetBackground.shape.shadow.horizontalOffset;
-                widgetShadowY = widgetBackground.shape.shadow.verticalOffset;
+            # Widget background options > Shape > Shadow
+            widgetShadowColor = widgetBackground.shape.shadow.color;
+            widgetShadowSize = widgetBackground.shape.shadow.size;
+            widgetShadowX = widgetBackground.shape.shadow.horizontalOffset;
+            widgetShadowY = widgetBackground.shape.shadow.verticalOffset;
 
-                # Text and icons options
-                fgColorEnabled = textAndIcons.enable;
+            # Text and icons options
+            fgColorEnabled = textAndIcons.enable;
 
-                # Text and icons options > Color mode
-                fgMode = textAndIcons.colorMode.mode;
-                fgRainbowInterval = textAndIcons.colorMode.interval;
+            # Text and icons options > Color mode
+            fgMode = textAndIcons.colorMode.mode;
+            fgRainbowInterval = textAndIcons.colorMode.interval;
 
-                # Text and icons options > Colors
-                fgColorMode = textAndIcons.colors.source;
-                fgSingleColor = textAndIcons.colors.customColor;
-                fgColorModeTheme = textAndIcons.colors.system.color;
-                fgColorModeThemeVariant = textAndIcons.colors.system.colorSet;
-                fgCustomColors = textAndIcons.colors.customColorList;
-                fgOpacity = textAndIcons.colors.opacity;
-                fgContrastFixEnabled = textAndIcons.colors.contrastCorrection.enable;
-                fgSaturationEnabled = textAndIcons.colors.contrastCorrection.saturation.enable;
-                fgSaturation = textAndIcons.colors.contrastCorrection.saturation.value;
-                fgLightness = textAndIcons.colors.contrastCorrection.lightness;
+            # Text and icons options > Colors
+            fgColorMode = textAndIcons.colors.source;
+            fgSingleColor = textAndIcons.colors.customColor;
+            fgColorModeTheme = textAndIcons.colors.system.color;
+            fgColorModeThemeVariant = textAndIcons.colors.system.colorSet;
+            fgCustomColors = textAndIcons.colors.customColorList;
+            fgOpacity = textAndIcons.colors.opacity;
+            fgContrastFixEnabled = textAndIcons.colors.contrastCorrection.enable;
+            fgSaturationEnabled = textAndIcons.colors.contrastCorrection.saturation.enable;
+            fgSaturation = textAndIcons.colors.contrastCorrection.saturation.value;
+            fgLightness = textAndIcons.colors.contrastCorrection.lightness;
 
-                # Text and icons options > Shadow
-                fgShadowEnabled = textAndIcons.shadow.enable;
-                fgShadowColor = textAndIcons.shadow.color;
-                fgShadowRadius = textAndIcons.shadow.strength;
-                fgShadowX = textAndIcons.shadow.horizontalOffset;
-                fgShadowY = textAndIcons.shadow.verticalOffset;
+            # Text and icons options > Shadow
+            fgShadowEnabled = textAndIcons.shadow.enable;
+            fgShadowColor = textAndIcons.shadow.color;
+            fgShadowRadius = textAndIcons.shadow.strength;
+            fgShadowX = textAndIcons.shadow.horizontalOffset;
+            fgShadowY = textAndIcons.shadow.verticalOffset;
 
-                # Text and icons options > Custom badges
-                fixCustomBadges = textAndIcons.customBadges.fixCustomBadges;
+            # Text and icons options > Custom badges
+            fixCustomBadges = textAndIcons.customBadges.fixCustomBadges;
 
-                # Text and icons options > Force icon color
-                forceRecolor = textAndIcons.forceIconColor.widgets;
+            # Text and icons options > Force icon color
+            forceRecolor = textAndIcons.forceIconColor.widgets;
 
-                # Panel background options > Original background
-                hideRealPanelBg = panelBackground.originalBackground.hide;
-                panelRealBgOpacity = panelBackground.originalBackground.opacity;
-                enableCustomPadding = panelBackground.originalBackground.fixedSizePadding.enable;
-                panelPadding = panelBackground.originalBackground.fixedSizePadding.value;
+            # Panel background options > Original background
+            hideRealPanelBg = panelBackground.originalBackground.hide;
+            panelRealBgOpacity = panelBackground.originalBackground.opacity;
+            enableCustomPadding = panelBackground.originalBackground.fixedSizePadding.enable;
+            panelPadding = panelBackground.originalBackground.fixedSizePadding.value;
 
-                # Panel background options > Custom background
-                panelBgEnabled = panelBackground.customBackground.enable;
-                panelBgColorMode = panelBackground.customBackground.colorSource;
-                panelBgColor = panelBackground.customBackground.customColor;
-                panelBgColorModeTheme = panelBackground.customBackground.system.color;
-                panelBgColorModeThemeVariant = panelBackground.customBackground.system.colorSet;
-                panelBgOpacity = panelBackground.customBackground.opacity;
-                panelBgRadius = panelBackground.customBackground.radius;
+            # Panel background options > Custom background
+            panelBgEnabled = panelBackground.customBackground.enable;
+            panelBgColorMode = panelBackground.customBackground.colorSource;
+            panelBgColor = panelBackground.customBackground.customColor;
+            panelBgColorModeTheme = panelBackground.customBackground.system.color;
+            panelBgColorModeThemeVariant = panelBackground.customBackground.system.colorSet;
+            panelBgOpacity = panelBackground.customBackground.opacity;
+            panelBgRadius = panelBackground.customBackground.radius;
 
-                # Panel background options > Custom background > Outline
-                panelOutlineColorMode = panelBackground.customBackground.outline.colorSource;
-                panelOutlineColor = panelBackground.customBackground.outline.customColor;
-                panelOutlineColorModeTheme = panelBackground.customBackground.outline.system.color;
-                panelOutlineColorModeThemeVariant = panelBackground.customBackground.outline.system.colorSet;
-                panelOutlineOpacity = panelBackground.customBackground.outline.opacity;
-                panelOutlineWidth = panelBackground.customBackground.outline.width;
+            # Panel background options > Custom background > Outline
+            panelOutlineColorMode = panelBackground.customBackground.outline.colorSource;
+            panelOutlineColor = panelBackground.customBackground.outline.customColor;
+            panelOutlineColorModeTheme = panelBackground.customBackground.outline.system.color;
+            panelOutlineColorModeThemeVariant = panelBackground.customBackground.outline.system.colorSet;
+            panelOutlineOpacity = panelBackground.customBackground.outline.opacity;
+            panelOutlineWidth = panelBackground.customBackground.outline.width;
 
-                # Panel background options > Custom background > Shadow
-                panelShadowColor = panelBackground.customBackground.shadow.color;
-                panelShadowSize = panelBackground.customBackground.shadow.size;
-                panelShadowX = panelBackground.customBackground.shadow.horizontalOffset;
-                panelShadowY = panelBackground.customBackground.shadow.verticalOffset;
+            # Panel background options > Custom background > Shadow
+            panelShadowColor = panelBackground.customBackground.shadow.color;
+            panelShadowSize = panelBackground.customBackground.shadow.size;
+            panelShadowX = panelBackground.customBackground.shadow.horizontalOffset;
+            panelShadowY = panelBackground.customBackground.shadow.verticalOffset;
 
-                # Blacklist options
-                fgBlacklistedColorEnabled = blacklist.enable;
-                fgBlacklistedColorMode = blacklist.colorSource;
-                blacklistedFgColor = blacklist.customColor;
-                fgBlacklistedColorModeTheme = blacklist.system.color;
-                fgBlacklistedColorModeThemeVariant = blacklist.system.colorSet;
-                blacklist = blacklist.widgets;
+            # Blacklist options
+            fgBlacklistedColorEnabled = blacklist.enable;
+            fgBlacklistedColorMode = blacklist.colorSource;
+            blacklistedFgColor = blacklist.customColor;
+            fgBlacklistedColorModeTheme = blacklist.system.color;
+            fgBlacklistedColorModeThemeVariant = blacklist.system.colorSet;
+            blacklist = blacklist.widgets;
 
-                # Layout options
-                layoutEnabled = layout.enable;
+            # Layout options
+            layoutEnabled = layout.enable;
 
-                # Layout options > Background margin
-                panelSpacing = layout.backgroundMargin.spacing;
-                widgetBgHMargin = layout.backgroundMargin.horizontal;
-                widgetBgVMargin = layout.backgroundMargin.vertical;
+            # Layout options > Background margin
+            panelSpacing = layout.backgroundMargin.spacing;
+            widgetBgHMargin = layout.backgroundMargin.horizontal;
+            widgetBgVMargin = layout.backgroundMargin.vertical;
 
-                # Layout options > Widget margin rules
-                marginRules = layout.widgetMarginRules;
-              };
-            }
-            settings;
+            # Layout options > Widget margin rules
+            marginRules = layout.widgetMarginRules;
+          };
+        } settings;
       };
   };
 }

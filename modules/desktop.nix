@@ -1,4 +1,5 @@
-{ config, lib, ... }: let
+{ config, lib, ... }:
+let
   cfg = config.programs.plasma;
 
   widgets = import ./widgets { inherit lib; };
@@ -25,7 +26,8 @@
   # Becomes true if any option under "cfg.desktop.icons" is set to something other than null.
   anyDesktopFolderSettingsSet =
     let
-      recurse = l: lib.any (v: if builtins.isAttrs v then recurse v else v != null) (builtins.attrValues l);
+      recurse =
+        l: lib.any (v: if builtins.isAttrs v then recurse v else v != null) (builtins.attrValues l);
     in
     recurse cfg.desktop.icons;
 
@@ -34,25 +36,244 @@
 in
 {
   imports = [
-    (lib.mkRenamedOptionModule ["programs" "plasma" "workspace" "desktop" "icons" "arrangement" ] ["programs" "plasma" "desktop" "icons" "arrangement"])
-    (lib.mkRenamedOptionModule ["programs" "plasma" "workspace" "desktop" "icons" "alignment" ] ["programs" "plasma" "desktop" "icons" "alignment"])
-    (lib.mkRenamedOptionModule ["programs" "plasma" "workspace" "desktop" "icons" "lockInPlace" ] ["programs" "plasma" "desktop" "icons" "lockInPlace"])
-    (lib.mkRenamedOptionModule ["programs" "plasma" "workspace" "desktop" "icons" "sorting" "mode" ] ["programs" "plasma" "desktop" "icons" "sorting" "mode"])
-    (lib.mkRenamedOptionModule ["programs" "plasma" "workspace" "desktop" "icons" "sorting" "descending" ] ["programs" "plasma" "desktop" "icons" "sorting" "descending"])
-    (lib.mkRenamedOptionModule ["programs" "plasma" "workspace" "desktop" "icons" "sorting" "foldersFirst" ] ["programs" "plasma" "desktop" "icons" "sorting" "foldersFirst"])
-    (lib.mkRenamedOptionModule ["programs" "plasma" "workspace" "desktop" "icons" "size" ] ["programs" "plasma" "desktop" "icons" "size"])
-    (lib.mkRenamedOptionModule ["programs" "plasma" "workspace" "desktop" "icons" "folderPreviewPopups" ] ["programs" "plasma" "desktop" "icons" "folderPreviewPopups"])
-    (lib.mkRenamedOptionModule ["programs" "plasma" "workspace" "desktop" "icons" "previewPlugins" ] ["programs" "plasma" "desktop" "icons" "previewPlugins"])
-    (lib.mkRenamedOptionModule ["programs" "plasma" "workspace" "desktop" "mouseActions" "leftClick" ] ["programs" "plasma" "desktop" "mouseActions" "leftClick"])
-    (lib.mkRenamedOptionModule ["programs" "plasma" "workspace" "desktop" "mouseActions" "middleClick" ] ["programs" "plasma" "desktop" "mouseActions" "middleClick"])
-    (lib.mkRenamedOptionModule ["programs" "plasma" "workspace" "desktop" "mouseActions" "rightClick" ] ["programs" "plasma" "desktop" "mouseActions" "rightClick"])
-    (lib.mkRenamedOptionModule ["programs" "plasma" "workspace" "desktop" "mouseActions" "verticalScroll" ] ["programs" "plasma" "desktop" "mouseActions" "verticalScroll"])
+    (lib.mkRenamedOptionModule
+      [
+        "programs"
+        "plasma"
+        "workspace"
+        "desktop"
+        "icons"
+        "arrangement"
+      ]
+      [
+        "programs"
+        "plasma"
+        "desktop"
+        "icons"
+        "arrangement"
+      ]
+    )
+    (lib.mkRenamedOptionModule
+      [
+        "programs"
+        "plasma"
+        "workspace"
+        "desktop"
+        "icons"
+        "alignment"
+      ]
+      [
+        "programs"
+        "plasma"
+        "desktop"
+        "icons"
+        "alignment"
+      ]
+    )
+    (lib.mkRenamedOptionModule
+      [
+        "programs"
+        "plasma"
+        "workspace"
+        "desktop"
+        "icons"
+        "lockInPlace"
+      ]
+      [
+        "programs"
+        "plasma"
+        "desktop"
+        "icons"
+        "lockInPlace"
+      ]
+    )
+    (lib.mkRenamedOptionModule
+      [
+        "programs"
+        "plasma"
+        "workspace"
+        "desktop"
+        "icons"
+        "sorting"
+        "mode"
+      ]
+      [
+        "programs"
+        "plasma"
+        "desktop"
+        "icons"
+        "sorting"
+        "mode"
+      ]
+    )
+    (lib.mkRenamedOptionModule
+      [
+        "programs"
+        "plasma"
+        "workspace"
+        "desktop"
+        "icons"
+        "sorting"
+        "descending"
+      ]
+      [
+        "programs"
+        "plasma"
+        "desktop"
+        "icons"
+        "sorting"
+        "descending"
+      ]
+    )
+    (lib.mkRenamedOptionModule
+      [
+        "programs"
+        "plasma"
+        "workspace"
+        "desktop"
+        "icons"
+        "sorting"
+        "foldersFirst"
+      ]
+      [
+        "programs"
+        "plasma"
+        "desktop"
+        "icons"
+        "sorting"
+        "foldersFirst"
+      ]
+    )
+    (lib.mkRenamedOptionModule
+      [
+        "programs"
+        "plasma"
+        "workspace"
+        "desktop"
+        "icons"
+        "size"
+      ]
+      [
+        "programs"
+        "plasma"
+        "desktop"
+        "icons"
+        "size"
+      ]
+    )
+    (lib.mkRenamedOptionModule
+      [
+        "programs"
+        "plasma"
+        "workspace"
+        "desktop"
+        "icons"
+        "folderPreviewPopups"
+      ]
+      [
+        "programs"
+        "plasma"
+        "desktop"
+        "icons"
+        "folderPreviewPopups"
+      ]
+    )
+    (lib.mkRenamedOptionModule
+      [
+        "programs"
+        "plasma"
+        "workspace"
+        "desktop"
+        "icons"
+        "previewPlugins"
+      ]
+      [
+        "programs"
+        "plasma"
+        "desktop"
+        "icons"
+        "previewPlugins"
+      ]
+    )
+    (lib.mkRenamedOptionModule
+      [
+        "programs"
+        "plasma"
+        "workspace"
+        "desktop"
+        "mouseActions"
+        "leftClick"
+      ]
+      [
+        "programs"
+        "plasma"
+        "desktop"
+        "mouseActions"
+        "leftClick"
+      ]
+    )
+    (lib.mkRenamedOptionModule
+      [
+        "programs"
+        "plasma"
+        "workspace"
+        "desktop"
+        "mouseActions"
+        "middleClick"
+      ]
+      [
+        "programs"
+        "plasma"
+        "desktop"
+        "mouseActions"
+        "middleClick"
+      ]
+    )
+    (lib.mkRenamedOptionModule
+      [
+        "programs"
+        "plasma"
+        "workspace"
+        "desktop"
+        "mouseActions"
+        "rightClick"
+      ]
+      [
+        "programs"
+        "plasma"
+        "desktop"
+        "mouseActions"
+        "rightClick"
+      ]
+    )
+    (lib.mkRenamedOptionModule
+      [
+        "programs"
+        "plasma"
+        "workspace"
+        "desktop"
+        "mouseActions"
+        "verticalScroll"
+      ]
+      [
+        "programs"
+        "plasma"
+        "desktop"
+        "mouseActions"
+        "verticalScroll"
+      ]
+    )
   ];
 
   options.programs.plasma.desktop = {
     icons = {
       arrangement = lib.mkOption {
-        type = with lib.types; nullOr (enum [ "leftToRight" "topToBottom" ]);
+        type =
+          with lib.types;
+          nullOr (enum [
+            "leftToRight"
+            "topToBottom"
+          ]);
         default = null;
         example = "topToBottom";
         description = ''
@@ -61,7 +282,12 @@ in
       };
 
       alignment = lib.mkOption {
-        type = with lib.types; nullOr (enum [ "left" "right" ]);
+        type =
+          with lib.types;
+          nullOr (enum [
+            "left"
+            "right"
+          ]);
         default = null;
         example = "right";
         description = ''
@@ -141,7 +367,10 @@ in
       previewPlugins = lib.mkOption {
         type = with lib.types; nullOr (listOf str);
         default = null;
-        example = [ "audiothumbnail" "fontthumbnail" ];
+        example = [
+          "audiothumbnail"
+          "fontthumbnail"
+        ];
         description = ''
           Configures the preview plugins used to preview desktop files and folders.
         '';
@@ -188,14 +417,26 @@ in
       example = [
         {
           name = "org.kde.plasma.digitalclock";
-          position = { horizontal = 51; vertical = 100; };
-          size = { width = 250; height = 250; };
+          position = {
+            horizontal = 51;
+            vertical = 100;
+          };
+          size = {
+            width = 250;
+            height = 250;
+          };
           config.Appearance.showDate = false;
         }
         {
           plasmusicToolbar = {
-            position = { horizontal = 51; vertical = 300; };
-            size = { width = 250; height = 400; };
+            position = {
+              horizontal = 51;
+              vertical = 300;
+            };
+            size = {
+              width = 250;
+              height = 400;
+            };
             background = "transparentShadow";
           };
         }
@@ -207,63 +448,91 @@ in
     };
   };
 
-  config = (lib.mkIf cfg.enable {
-    programs.plasma.startup = {
-      desktopScript."set_desktop_folder_settings" = (lib.mkIf anyDesktopFolderSettingsSet {
-        text = ''
-          // Desktop folder settings
-          let allDesktops = desktops();
-          for (const desktop of allDesktops) {
-            desktop.currentConfigGroup = ["General"];
-            ${lib.optionalString (cfg.desktop.icons.arrangement == "topToBottom") ''desktop.writeConfig("arrangement", 1);''}
-            ${lib.optionalString (cfg.desktop.icons.alignment == "right") ''desktop.writeConfig("alignment", 1);''}
-            ${lib.optionalString (cfg.desktop.icons.lockInPlace == true) ''desktop.writeConfig("locked", true);''}
-            ${widgets.lib.stringIfNotNull cfg.desktop.icons.size ''desktop.writeConfig("iconSize", ${builtins.toString cfg.desktop.icons.size});''}
-            ${lib.optionalString (cfg.desktop.icons.folderPreviewPopups == false) ''desktop.writeConfig("popups", false);''}
-            ${widgets.lib.stringIfNotNull cfg.desktop.icons.previewPlugins ''desktop.writeConfig("previewPlugins", "${lib.strings.concatStringsSep "," cfg.desktop.icons.previewPlugins}");''}
-            ${widgets.lib.stringIfNotNull cfg.desktop.icons.sorting.mode ''desktop.writeConfig("sortMode", ${builtins.toString cfg.desktop.icons.sorting.mode});''}
-            ${lib.optionalString (cfg.desktop.icons.sorting.descending == true) ''desktop.writeConfig("sortDesc", true);''}
-            ${lib.optionalString (cfg.desktop.icons.sorting.foldersFirst == false) ''desktop.writeConfig("sortDirsFirst", false);''}
+  config = (
+    lib.mkIf cfg.enable {
+      programs.plasma.startup = {
+        desktopScript."set_desktop_folder_settings" = (
+          lib.mkIf anyDesktopFolderSettingsSet {
+            text = ''
+              // Desktop folder settings
+              let allDesktops = desktops();
+              for (const desktop of allDesktops) {
+                desktop.currentConfigGroup = ["General"];
+                ${
+                  lib.optionalString (
+                    cfg.desktop.icons.arrangement == "topToBottom"
+                  ) ''desktop.writeConfig("arrangement", 1);''
+                }
+                ${
+                  lib.optionalString (cfg.desktop.icons.alignment == "right") ''desktop.writeConfig("alignment", 1);''
+                }
+                ${
+                  lib.optionalString (cfg.desktop.icons.lockInPlace == true) ''desktop.writeConfig("locked", true);''
+                }
+                ${widgets.lib.stringIfNotNull cfg.desktop.icons.size ''desktop.writeConfig("iconSize", ${builtins.toString cfg.desktop.icons.size});''}
+                ${
+                  lib.optionalString (
+                    cfg.desktop.icons.folderPreviewPopups == false
+                  ) ''desktop.writeConfig("popups", false);''
+                }
+                ${widgets.lib.stringIfNotNull cfg.desktop.icons.previewPlugins ''desktop.writeConfig("previewPlugins", "${lib.strings.concatStringsSep "," cfg.desktop.icons.previewPlugins}");''}
+                ${widgets.lib.stringIfNotNull cfg.desktop.icons.sorting.mode ''desktop.writeConfig("sortMode", ${builtins.toString cfg.desktop.icons.sorting.mode});''}
+                ${
+                  lib.optionalString (
+                    cfg.desktop.icons.sorting.descending == true
+                  ) ''desktop.writeConfig("sortDesc", true);''
+                }
+                ${
+                  lib.optionalString (
+                    cfg.desktop.icons.sorting.foldersFirst == false
+                  ) ''desktop.writeConfig("sortDirsFirst", false);''
+                }
+              }
+            '';
+            priority = 3;
           }
-        '';
-        priority = 3;
-      });
+        );
 
-      desktopScript."set_desktop_mouse_actions" = (lib.mkIf anyDesktopMouseActionsSet {
-        text = ''
-          // Mouse actions
-          let configFile = ConfigFile('plasma-org.kde.plasma.desktop-appletsrc');
-          configFile.group = 'ActionPlugins';
-          // References the section [ActionPlugins][0].
-          let actionPluginSubSection = ConfigFile(configFile, 0)
-          ${widgets.lib.stringIfNotNull cfg.desktop.mouseActions.leftClick ''actionPluginSubSection.writeEntry("LeftButton;NoModifier", "${cfg.desktop.mouseActions.leftClick}");''}
-          ${widgets.lib.stringIfNotNull cfg.desktop.mouseActions.middleClick ''actionPluginSubSection.writeEntry("MiddleButton;NoModifier", "${cfg.desktop.mouseActions.middleClick}");''}
-          ${widgets.lib.stringIfNotNull cfg.desktop.mouseActions.rightClick ''actionPluginSubSection.writeEntry("RightButton;NoModifier", "${cfg.desktop.mouseActions.rightClick}");''}
-          ${widgets.lib.stringIfNotNull cfg.desktop.mouseActions.verticalScroll ''actionPluginSubSection.writeEntry("wheel:Vertical;NoModifier", "${cfg.desktop.mouseActions.verticalScroll}");''}
-        '';
-        priority = 3;
-        restartServices = [ "plasma-plasmashell" ];
-      });
-
-      desktopScript."set_desktop_widgets" = (lib.mkIf (cfg.desktop.widgets != null) {
-        text = ''
-          // Desktop widgets
-          let allDesktops = desktops();
-
-          // Remove all desktop widgets
-          allDesktops.forEach((desktop) => {
-            desktop.widgets().forEach((widget) => {
-              widget.remove();
-            });
-          });
-
-          for (let i = 0; i < allDesktops.length; i++) {
-            const desktop = allDesktops[i];
-            ${widgets.lib.addDesktopWidgetStmts "desktop" "desktopWidgets" cfg.desktop.widgets}
+        desktopScript."set_desktop_mouse_actions" = (
+          lib.mkIf anyDesktopMouseActionsSet {
+            text = ''
+              // Mouse actions
+              let configFile = ConfigFile('plasma-org.kde.plasma.desktop-appletsrc');
+              configFile.group = 'ActionPlugins';
+              // References the section [ActionPlugins][0].
+              let actionPluginSubSection = ConfigFile(configFile, 0)
+              ${widgets.lib.stringIfNotNull cfg.desktop.mouseActions.leftClick ''actionPluginSubSection.writeEntry("LeftButton;NoModifier", "${cfg.desktop.mouseActions.leftClick}");''}
+              ${widgets.lib.stringIfNotNull cfg.desktop.mouseActions.middleClick ''actionPluginSubSection.writeEntry("MiddleButton;NoModifier", "${cfg.desktop.mouseActions.middleClick}");''}
+              ${widgets.lib.stringIfNotNull cfg.desktop.mouseActions.rightClick ''actionPluginSubSection.writeEntry("RightButton;NoModifier", "${cfg.desktop.mouseActions.rightClick}");''}
+              ${widgets.lib.stringIfNotNull cfg.desktop.mouseActions.verticalScroll ''actionPluginSubSection.writeEntry("wheel:Vertical;NoModifier", "${cfg.desktop.mouseActions.verticalScroll}");''}
+            '';
+            priority = 3;
+            restartServices = [ "plasma-plasmashell" ];
           }
-        '';
-        priority = 2;
-      });
-    };
-  });
+        );
+
+        desktopScript."set_desktop_widgets" = (
+          lib.mkIf (cfg.desktop.widgets != null) {
+            text = ''
+              // Desktop widgets
+              let allDesktops = desktops();
+
+              // Remove all desktop widgets
+              allDesktops.forEach((desktop) => {
+                desktop.widgets().forEach((widget) => {
+                  widget.remove();
+                });
+              });
+
+              for (let i = 0; i < allDesktops.length; i++) {
+                const desktop = allDesktops[i];
+                ${widgets.lib.addDesktopWidgetStmts "desktop" "desktopWidgets" cfg.desktop.widgets}
+              }
+            '';
+            priority = 2;
+          }
+        );
+      };
+    }
+  );
 }
