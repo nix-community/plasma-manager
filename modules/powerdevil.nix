@@ -201,7 +201,7 @@ in
       AC = (createPowerDevilOptions "AC");
       battery = (createPowerDevilOptions "battery");
       lowBattery = (createPowerDevilOptions "lowBattery");
-      General = {
+      general = {
         pausePlayersOnSuspend = lib.mkOption {
           type = with lib.types; nullOr bool;
           default = null;
@@ -219,8 +219,8 @@ in
       // (createPowerDevilConfig "Battery" "battery")
       // (createPowerDevilConfig "LowBattery" "lowBattery")
       // {
-        General = {
-          pausePlayersOnSuspend = cfg.powerdevil.General.pausePlayersOnSuspend;
+        general = {
+          pausePlayersOnSuspend = cfg.powerdevil.general.pausePlayersOnSuspend;
         };
       });
   };
