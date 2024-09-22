@@ -1,4 +1,5 @@
-{lib, ...}: let
+{ lib, ... }:
+let
   #=== ENUMS ===
   enums = {
     # QFont::StyleHint
@@ -93,18 +94,24 @@
     };
   };
 
-  inherit (builtins) attrNames mapAttrs removeAttrs isAttrs;
+  inherit (builtins)
+    attrNames
+    mapAttrs
+    removeAttrs
+    isAttrs
+    ;
   inherit (lib) filterAttrs;
 
   toEnums = v: lib.types.enum (attrNames v);
 in
-  mapAttrs (_: toEnums) (removeAttrs enums ["styleStrategy"])
-  // {
-    styleStrategy = mapAttrs (_: toEnums) (filterAttrs (_: isAttrs) enums.styleStrategy);
+mapAttrs (_: toEnums) (removeAttrs enums [ "styleStrategy" ])
+// {
+  styleStrategy = mapAttrs (_: toEnums) (filterAttrs (_: isAttrs) enums.styleStrategy);
 
-    # Converts a font specified by the given attrset to a string representation compatible with
-    # QFont::fromString and QFont::toString.
-    fontToString = {
+  # Converts a font specified by the given attrset to a string representation compatible with
+  # QFont::fromString and QFont::toString.
+  fontToString =
+    {
       family,
       pointSize ? null,
       pixelSize ? null,
@@ -119,18 +126,22 @@ in
       letterSpacing ? 0,
       wordSpacing ? 0,
       stretch ? "anyStretch",
-      styleStrategy ? {},
+      styleStrategy ? { },
       styleName ? null,
-    }: let
-      inherit (builtins) isString toString foldl' bitOr;
+    }:
+    let
+      inherit (builtins)
+        isString
+        toString
+        foldl'
+        bitOr
+        ;
 
-      styleStrategy' = let
-        match = s: enums.styleStrategy.${s}.${styleStrategy.${s} or "default"};
-        ifSet = k:
-          if styleStrategy.${k} or false
-          then enums.styleStrategy.${k}
-          else 0;
-      in
+      styleStrategy' =
+        let
+          match = s: enums.styleStrategy.${s}.${styleStrategy.${s} or "default"};
+          ifSet = k: if styleStrategy.${k} or false then enums.styleStrategy.${k} else 0;
+        in
         foldl' bitOr 0 [
           (match "prefer")
           (match "matchingPrefer")
@@ -140,40 +151,34 @@ in
           (ifSet "noFontMerging")
         ];
 
-      sizeToString = s:
-        if s == null
-        then "-1"
-        else toString s;
+      sizeToString = s: if s == null then "-1" else toString s;
 
-      numOrEnum = attrs: s:
-        if isString s
-        then toString attrs.${s}
-        else toString s;
+      numOrEnum = attrs: s: if isString s then toString attrs.${s} else toString s;
 
-      zeroOrOne = b:
-        if b
-        then "1"
-        else "0";
+      zeroOrOne = b: if b then "1" else "0";
     in
-      assert lib.assertMsg (lib.xor (pointSize != null) (pixelSize != null))
-      "Exactly one of `pointSize` and `pixelSize` has to be set.";
-        builtins.concatStringsSep "," ([
-            family
-            (sizeToString pointSize)
-            (sizeToString pixelSize)
-            (toString enums.styleHint.${styleHint})
-            (numOrEnum enums.weight weight)
-            (numOrEnum enums.style style)
-            (zeroOrOne underline)
-            (zeroOrOne strikeOut)
-            (zeroOrOne fixedPitch)
-            "0"
-            (toString enums.capitalization.${capitalization})
-            (toString enums.spacingType.${letterSpacingType})
-            (toString letterSpacing)
-            (toString wordSpacing)
-            (numOrEnum enums.stretch stretch)
-            (toString styleStrategy')
-          ]
-          ++ lib.optional (styleName != null) styleName);
-  }
+    assert lib.assertMsg (lib.xor (pointSize != null) (
+      pixelSize != null
+    )) "Exactly one of `pointSize` and `pixelSize` has to be set.";
+    builtins.concatStringsSep "," (
+      [
+        family
+        (sizeToString pointSize)
+        (sizeToString pixelSize)
+        (toString enums.styleHint.${styleHint})
+        (numOrEnum enums.weight weight)
+        (numOrEnum enums.style style)
+        (zeroOrOne underline)
+        (zeroOrOne strikeOut)
+        (zeroOrOne fixedPitch)
+        "0"
+        (toString enums.capitalization.${capitalization})
+        (toString enums.spacingType.${letterSpacingType})
+        (toString letterSpacing)
+        (toString wordSpacing)
+        (numOrEnum enums.stretch stretch)
+        (toString styleStrategy')
+      ]
+      ++ lib.optional (styleName != null) styleName
+    );
+}

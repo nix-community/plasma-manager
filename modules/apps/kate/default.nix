@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.programs.kate;
@@ -7,12 +12,12 @@ let
   # 0 is not tab & not undoByShiftTab
   # 1 is tab & undoByShiftTab
   # 2 is not tab & undoByShiftTab
-  tabHandlingMode = indentSettings:
-    if (!indentSettings.undoByShiftTab && !indentSettings.tabFromEverywhere) then 0 else
-    (
-      if (indentSettings.undoByShiftTab && indentSettings.tabFromEverywhere) then 1 else
-      2
-    );
+  tabHandlingMode =
+    indentSettings:
+    if (!indentSettings.undoByShiftTab && !indentSettings.tabFromEverywhere) then
+      0
+    else
+      (if (indentSettings.undoByShiftTab && indentSettings.tabFromEverywhere) then 1 else 2);
 
   checkThemeNameScript = pkgs.writeShellApplication {
     name = "checkThemeName";
@@ -20,22 +25,20 @@ let
     text = builtins.readFile ./check-theme-name-free.sh;
   };
 
-  checkThemeName = name:
-    ''
-      ${checkThemeNameScript}/bin/checkThemeName ${name}
-    '';
+  checkThemeName = name: ''
+    ${checkThemeNameScript}/bin/checkThemeName ${name}
+  '';
 
   script = pkgs.writeScript "kate-check" (checkThemeName cfg.editor.theme.name);
 
-
-  getIndexFromEnum = enum: value:
-    if value == null
-    then null
+  getIndexFromEnum =
+    enum: value:
+    if value == null then
+      null
     else
-      lib.lists.findFirstIndex
-        (x: x == value)
-        (throw "getIndexFromEnum (kate): Value ${value} isn't present in the enum. This is a bug")
-        enum;
+      lib.lists.findFirstIndex (
+        x: x == value
+      ) (throw "getIndexFromEnum (kate): Value ${value} isn't present in the enum. This is a bug") enum;
 
   qfont = import ../../../lib/qfont.nix { inherit lib; };
 
@@ -237,15 +240,21 @@ in
       Enable configuration management for kate.
     '';
 
-    package = lib.mkPackageOption pkgs [ "kdePackages" "kate" ] {
-      example = "pkgs.libsForQt5.kate";
-      extraDescription = ''
-        Which kate package to install. Use `pkgs.libsForQt5.kate` in Plasma5 and
-        `pkgs.kdePackages.kate` in Plasma6. Use `null` if home-manager should not install kate
-        (use this if you want to manage the settings of this user of a system-wide kate
-        installation).
-      '';
-    };
+    package =
+      lib.mkPackageOption pkgs
+        [
+          "kdePackages"
+          "kate"
+        ]
+        {
+          example = "pkgs.libsForQt5.kate";
+          extraDescription = ''
+            Which kate package to install. Use `pkgs.libsForQt5.kate` in Plasma5 and
+            `pkgs.kdePackages.kate` in Plasma6. Use `null` if home-manager should not install kate
+            (use this if you want to manage the settings of this user of a system-wide kate
+            installation).
+          '';
+        };
 
     # ==================================
     #     INDENTATION
@@ -308,7 +317,10 @@ in
 
       inputMode =
         let
-          enumVals = [ "normal" "vi" ];
+          enumVals = [
+            "normal"
+            "vi"
+          ];
         in
         lib.mkOption {
           type = lib.types.enum enumVals;
@@ -369,25 +381,30 @@ in
   config.programs.kate.editor.theme = {
     # kate's naming scheme is ${themename}.theme
     # which is why we use the same naming scheme here
-    name = lib.mkIf (cfg.enable && null != cfg.editor.theme.src) (lib.mkForce (builtins.fromJSON (builtins.readFile cfg.editor.theme.src))."metadata"."name");
+    name = lib.mkIf (cfg.enable && null != cfg.editor.theme.src) (
+      lib.mkForce (builtins.fromJSON (builtins.readFile cfg.editor.theme.src))."metadata"."name"
+    );
   };
 
   # This won't override existing files since the home-manager activation fails in that case
-  config.xdg.dataFile."${cfg.editor.theme.name}.theme" = lib.mkIf (cfg.enable && null != cfg.editor.theme.src)
-    {
-      source = cfg.editor.theme.src;
-      target = "org.kde.syntax-highlighting/themes/${cfg.editor.theme.name}.theme";
-    };
+  config.xdg.dataFile."${cfg.editor.theme.name}.theme" =
+    lib.mkIf (cfg.enable && null != cfg.editor.theme.src)
+      {
+        source = cfg.editor.theme.src;
+        target = "org.kde.syntax-highlighting/themes/${cfg.editor.theme.name}.theme";
+      };
 
   config = {
     home.packages = lib.mkIf (cfg.enable && cfg.package != null) [ cfg.package ];
 
     # In case of using a custom theme, check that there is no name collision
-    home.activation.checkKateTheme = lib.mkIf (cfg.enable && cfg.editor.theme.src != null) (lib.hm.dag.entryBefore [ "writeBoundary" ]
-      # No `$DRY_RUN_CMD`, since even a dryrun should fail if checks fail
-      ''
-        ${script}
-      '');
+    home.activation.checkKateTheme = lib.mkIf (cfg.enable && cfg.editor.theme.src != null) (
+      lib.hm.dag.entryBefore [ "writeBoundary" ]
+        # No `$DRY_RUN_CMD`, since even a dryrun should fail if checks fail
+        ''
+          ${script}
+        ''
+    );
 
     # In case of using a system theme, there should be a check that there exists such a theme
     # but I could not figure out where to find them
@@ -395,12 +412,11 @@ in
     # See also [the original PR](https://github.com/nix-community/plasma-manager/pull/95#issue-2206192839)
   };
 
-
   # ==================================
   #     LSP Servers
   options.programs.kate.lsp.customServers = lib.mkOption {
-    default = { };
-    type = lib.types.attrs;
+    default = null;
+    type = lib.types.nullOr lib.types.attrs;
     description = ''
       Add more lsp server settings here. Check out the format on the
       [KDE page](https://docs.kde.org/stable5/en/kate/kate/kate-application-plugin-lspclient.html).
@@ -408,7 +424,7 @@ in
     '';
   };
 
-  config.xdg.configFile."kate/lspclient/settings.json" = {
+  config.xdg.configFile."kate/lspclient/settings.json" = lib.mkIf (cfg.lsp.customServers != null) {
     text = builtins.toJSON { servers = cfg.lsp.customServers; };
   };
 
@@ -478,7 +494,10 @@ in
     };
 
     "KTextEditor View" = {
-      "Chars To Enclose Selection" = { value = cfg.editor.brackets.characters; escapeValue = false; };
+      "Chars To Enclose Selection" = {
+        value = cfg.editor.brackets.characters;
+        escapeValue = false;
+      };
       "Bracket Match Preview" = cfg.editor.brackets.highlightMatching;
       "Auto Brackets" = cfg.editor.brackets.automaticallyAddClosing;
       "Input Mode" = cfg.editor.inputMode;

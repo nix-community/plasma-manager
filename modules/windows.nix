@@ -16,12 +16,13 @@ in
     };
   };
 
-  config = (lib.mkIf (cfg.enable && cfg.windows.allowWindowsToRememberPositions != null) {
-    programs.plasma.configFile = {
-      kdeglobals = {
-        General.AllowKDEAppsToRememberWindowPositions = cfg.windows.allowWindowsToRememberPositions;
+  config = (
+    lib.mkIf (cfg.enable && cfg.windows.allowWindowsToRememberPositions != null) {
+      programs.plasma.configFile = {
+        kdeglobals = {
+          General.AllowKDEAppsToRememberWindowPositions = cfg.windows.allowWindowsToRememberPositions;
+        };
       };
-    };
-  });
+    }
+  );
 }
-

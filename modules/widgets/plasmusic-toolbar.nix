@@ -6,18 +6,20 @@ let
 
   qfont = import ../../lib/qfont.nix { inherit lib; };
 
-  mkBoolOption = description: lib.mkOption {
-    type = with lib.types; nullOr bool;
-    default = null;
-    inherit description;
-  };
+  mkBoolOption =
+    description:
+    lib.mkOption {
+      type = with lib.types; nullOr bool;
+      default = null;
+      inherit description;
+    };
 
-  getIndexFromEnum = enum: value:
-    if value == null
-    then null
+  getIndexFromEnum =
+    enum: value:
+    if value == null then
+      null
     else
-      lib.lists.findFirstIndex
-        (x: x == value)
+      lib.lists.findFirstIndex (x: x == value)
         (throw "getIndexFromEnum (plasmusic-toolbar widget): Value ${value} isn't present in the enum. This is a bug")
         enum;
 
@@ -220,12 +222,18 @@ in
     opts = {
       position = mkOption {
         type = positionType;
-        example = { horizontal = 250; vertical = 100; };
+        example = {
+          horizontal = 250;
+          vertical = 100;
+        };
         description = "The position of the widget. (Only for desktop widget)";
       };
       size = mkOption {
         type = sizeType;
-        example = { width = 500; height = 100; };
+        example = {
+          width = 500;
+          height = 100;
+        };
         description = "The size of the widget. (Only for desktop widget)";
       };
       panelIcon = {
@@ -247,8 +255,14 @@ in
         };
       };
       preferredSource =
-        let enumVals = [ "any" "spotify" "vlc" ];
-        in mkOption {
+        let
+          enumVals = [
+            "any"
+            "spotify"
+            "vlc"
+          ];
+        in
+        mkOption {
           type = with types; nullOr (enum enumVals);
           default = null;
           example = "any";
@@ -266,7 +280,11 @@ in
           enable = mkBoolOption "Whether to enable scrolling text or not.";
           behavior =
             let
-              enumVals = [ "alwaysScroll" "scrollOnHover" "alwaysScrollExceptOnHover" ];
+              enumVals = [
+                "alwaysScroll"
+                "scrollOnHover"
+                "alwaysScrollExceptOnHover"
+              ];
             in
             mkOption {
               type = with types; nullOr (enum enumVals);
@@ -305,22 +323,43 @@ in
         apply = font: if font == null then null else qfont.fontToString font;
       };
       background =
-        let enumVals = [ "standard" "transparent" "transparentShadow" ];
-        in mkOption {
+        let
+          enumVals = [
+            "standard"
+            "transparent"
+            "transparentShadow"
+          ];
+        in
+        mkOption {
           type = with types; nullOr (enum enumVals);
           default = null;
           example = "transparent";
           description = "Widget background type (only for desktop widget)";
-          apply = background:
-            if background == null
-            then null
-            else builtins.elemAt [ 1 0 4 ] (
-              lib.lists.findFirstIndex
-                (x: x == background)
-                (throw "plasmusic-toolbar: non-existent background ${background}. This is a bug!")
-                enumVals
-            );
+          apply =
+            background:
+            if background == null then
+              null
+            else
+              builtins.elemAt
+                [
+                  1
+                  0
+                  4
+                ]
+                (
+                  lib.lists.findFirstIndex (
+                    x: x == background
+                  ) (throw "plasmusic-toolbar: non-existent background ${background}. This is a bug!") enumVals
+                );
         };
+      albumCover = {
+        albumPlaceholder = mkOption {
+          type = types.nullOr types.str;
+          default = null;
+          example = "file:///home/user/placeholder.png";
+          description = "Path to the album placeholder image.";
+        };
+      };
       settings = mkOption {
         type = configValueType;
         default = null;
@@ -331,52 +370,55 @@ in
         };
         description = ''
           Extra configuration for the widget options.
-          
+
           See available options at https://github.com/ccatterina/plasmusic-toolbar/blob/main/src/contents/config/main.xml
         '';
-        apply = settings: if settings == null then {} else settings;
+        apply = settings: if settings == null then { } else settings;
       };
     };
     convert =
-      { position
-      , size
-      , panelIcon
-      , preferredSource
-      , songText
-      , musicControls
-      , font
-      , background
-      , settings
-      }: {
+      {
+        position,
+        size,
+        panelIcon,
+        preferredSource,
+        songText,
+        musicControls,
+        font,
+        background,
+        albumCover,
+        settings,
+      }:
+      {
         name = "plasmusic-toolbar";
-  
+
         config = lib.recursiveUpdate {
-          General = lib.filterAttrs (_: v: v != null) (
-            {
-              panelIcon = panelIcon.icon;
-              useAlbumCoverAsPanelIcon = panelIcon.albumCover.useAsIcon;
-              albumCoverRadius = panelIcon.albumCover.radius;
-              fallbackToIconWhenArtNotAvailable = panelIcon.albumCover.fallbackToIcon;
+          General = lib.filterAttrs (_: v: v != null) {
+            panelIcon = panelIcon.icon;
+            useAlbumCoverAsPanelIcon = panelIcon.albumCover.useAsIcon;
+            albumCoverRadius = panelIcon.albumCover.radius;
+            fallbackToIconWhenArtNotAvailable = panelIcon.albumCover.fallbackToIcon;
 
-              sourceIndex = preferredSource;
+            sourceIndex = preferredSource;
 
-              maxSongWidthInPanel = songText.maximumWidth;
-              separateText = songText.displayInSeparateLines;
+            maxSongWidthInPanel = songText.maximumWidth;
+            separateText = songText.displayInSeparateLines;
 
-              textScrollingEnabled = songText.scrolling.enable;
-              textScrollingBehaviour = songText.scrolling.behavior;
-              textScrollingSpeed = songText.scrolling.speed;
-              textScrollingResetOnPause = songText.scrolling.resetOnPause;
+            textScrollingEnabled = songText.scrolling.enable;
+            textScrollingBehaviour = songText.scrolling.behavior;
+            textScrollingSpeed = songText.scrolling.speed;
+            textScrollingResetOnPause = songText.scrolling.resetOnPause;
 
-              commandsInPanel = musicControls.showPlaybackControls;
-              volumeStep = musicControls.volumeStep;
-              
-              useCustomFont = (font != null);
-              customFont = font;
+            commandsInPanel = musicControls.showPlaybackControls;
+            volumeStep = musicControls.volumeStep;
 
-              desktopWidgetBg = background;
-            }
-          );
+            useCustomFont = (font != null);
+            customFont = font;
+
+            desktopWidgetBg = background;
+
+            albumPlaceholder = albumCover.albumPlaceholder;
+          };
         } settings;
       };
   };

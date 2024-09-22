@@ -8,7 +8,8 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, ... }:
+  outputs =
+    inputs@{ self, ... }:
     let
       # Systems that can run tests:
       supportedSystems = [
@@ -21,34 +22,38 @@
       forAllSystems = inputs.nixpkgs.lib.genAttrs supportedSystems;
 
       # Attribute set of nixpkgs for each system:
-      nixpkgsFor = forAllSystems (system:
-        import inputs.nixpkgs { inherit system; });
+      nixpkgsFor = forAllSystems (system: import inputs.nixpkgs { inherit system; });
     in
     {
-      homeManagerModules.plasma-manager = { ... }: {
-        imports = [ ./modules ];
-      };
+      homeManagerModules.plasma-manager =
+        { ... }:
+        {
+          imports = [ ./modules ];
+        };
 
-      packages = forAllSystems (system:
+      packages = forAllSystems (
+        system:
         let
           pkgs = nixpkgsFor.${system};
           docs = import ./docs {
             inherit pkgs;
             lib = pkgs.lib;
           };
-        in {
+        in
+        {
           default = self.packages.${system}.rc2nix;
 
-          demo = (inputs.nixpkgs.lib.nixosSystem {
-            inherit system;
-            modules = [
-              (import test/demo.nix {
-                home-manager-module = inputs.home-manager.nixosModules.home-manager;
-                plasma-module = self.homeManagerModules.plasma-manager;
-              })
-              (_: { environment.systemPackages = [ self.packages.${system}.rc2nix ]; })
-            ];
-          }).config.system.build.vm;
+          demo =
+            (inputs.nixpkgs.lib.nixosSystem {
+              inherit system;
+              modules = [
+                (import test/demo.nix {
+                  home-manager-module = inputs.home-manager.nixosModules.home-manager;
+                  plasma-module = self.homeManagerModules.plasma-manager;
+                })
+                (_: { environment.systemPackages = [ self.packages.${system}.rc2nix ]; })
+              ];
+            }).config.system.build.vm;
 
           docs-html = docs.html;
           docs-json = docs.json;
@@ -58,7 +63,8 @@
             runtimeInputs = with pkgs; [ python3 ];
             text = ''python3 ${script/rc2nix.py} "$@"'';
           };
-        });
+        }
+      );
 
       apps = forAllSystems (system: {
         default = self.apps.${system}.rc2nix;
@@ -74,28 +80,26 @@
         };
       });
 
-      checks = forAllSystems (system:
-        {
-          default = nixpkgsFor.${system}.callPackage ./test/basic.nix {
-            home-manager-module = inputs.home-manager.nixosModules.home-manager;
-            plasma-module = self.homeManagerModules.plasma-manager;
-          };
-        });
+      checks = forAllSystems (system: {
+        default = nixpkgsFor.${system}.callPackage ./test/basic.nix {
+          home-manager-module = inputs.home-manager.nixosModules.home-manager;
+          plasma-module = self.homeManagerModules.plasma-manager;
+        };
+      });
+
+      formatter = forAllSystems (system: nixpkgsFor.${system}.treefmt);
 
       devShells = forAllSystems (system: {
         default = nixpkgsFor.${system}.mkShell {
           buildInputs = with nixpkgsFor.${system}; [
+            nixfmt-rfc-style
             ruby
             ruby.devdoc
-            (
-              python3.withPackages (
-                pyPkgs: [
-                  pyPkgs.python-lsp-server
-                  pyPkgs.black
-                  pyPkgs.isort
-                ]
-              )
-            )
+            (python3.withPackages (pyPkgs: [
+              pyPkgs.python-lsp-server
+              pyPkgs.black
+              pyPkgs.isort
+            ]))
           ];
         };
       });

@@ -1,0 +1,11 @@
+[formatter.nixfmt-rfc-style]
+command = "nixfmt"
+includes = ["*.nix"]
+
+[formatter.black]
+command = "black"
+includes = ["*.py", "*.pyi"]
+
+[formatter.isort]
+command = "isort"
+includes = ["*.py", "*.pyi"]

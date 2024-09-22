@@ -14,7 +14,13 @@
     };
   };
 
-  outputs = inputs@ { nixpkgs, home-manager, plasma-manager, ... }:
+  outputs =
+    inputs@{
+      nixpkgs,
+      home-manager,
+      plasma-manager,
+      ...
+    }:
     let
       # Replace with your username
       username = "jdoe";

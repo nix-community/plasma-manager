@@ -17,10 +17,8 @@ let
   # So, to satisfy the expected format we must quote the ENTIRE string as a valid JS string,
   # which means constructing a string that looks like this in the source code:
   # "[\"cpu/all/usage\", \"cpu/all/averageTemperature\"]"
-  toEscapedList = ids:
-    if ids != null
-    then "[${lib.concatMapStringsSep ", " (x: ''\"${x}\"'') ids}]"
-    else null;
+  toEscapedList =
+    ids: if ids != null then "[${lib.concatMapStringsSep ", " (x: ''\"${x}\"'') ids}]" else null;
 
   mkListOption = mkOption {
     type = with types; nullOr (listOf str);
@@ -31,20 +29,22 @@ let
   # {name, color} -> {name, value}
   # Convert the sensor attrset into a name-value pair expected by listToAttrs
   toColorKV =
-    { name
-    , color
-    , label
-    ,
-    }: {
+    {
+      name,
+      color,
+      label,
+    }:
+    {
       inherit name;
       value = color;
     };
   toLabelKV =
-    { name
-    , color
-    , label
-    ,
-    }: {
+    {
+      name,
+      color,
+      label,
+    }:
+    {
       inherit name;
       value = label;
     };
@@ -58,12 +58,18 @@ in
 
       position = mkOption {
         type = positionType;
-        example = { horizontal = 250; vertical = 50; };
+        example = {
+          horizontal = 250;
+          vertical = 50;
+        };
         description = "The position of the widget. (Only for desktop widget)";
       };
       size = mkOption {
         type = sizeType;
-        example = { width = 500; height = 500; };
+        example = {
+          width = 500;
+          height = 500;
+        };
         description = "The size of the widget. (Only for desktop widget)";
       };
       title = mkOption {
@@ -88,40 +94,47 @@ in
         description = "The display style of the chart. Uses the internal plugin name.";
       };
       sensors = mkOption {
-        type = with types;
-          nullOr (listOf (submodule {
-            options = {
-              name = mkOption {
-                type = str;
-                example = "cpu/all/usage";
-                description = "The name of the sensor.";
+        type =
+          with types;
+          nullOr (
+            listOf (submodule {
+              options = {
+                name = mkOption {
+                  type = str;
+                  example = "cpu/all/usage";
+                  description = "The name of the sensor.";
+                };
+                color = mkOption {
+                  type = str; # TODO maybe use a better type
+                  example = "255,255,255";
+                  description = "The color of the sensor, as a string containing 8-bit integral RGB values separated by commas";
+                };
+                label = mkOption {
+                  type = str;
+                  example = "CPU %";
+                  description = "The label of the sensor.";
+                };
               };
-              color = mkOption {
-                type = str; # TODO maybe use a better type
-                example = "255,255,255";
-                description = "The color of the sensor, as a string containing 8-bit integral RGB values separated by commas";
-              };
-              label = mkOption {
-                type = str;
-                example = "CPU %";
-                description = "The label of the sensor.";
-              };
-            };
-          }));
+            })
+          );
         default = null;
-        example = [{
-          name = "gpu/gpu1/usage";
-          color = "180,190,254";
-          label = "GPU %";
-        }];
+        example = [
+          {
+            name = "gpu/gpu1/usage";
+            color = "180,190,254";
+            label = "GPU %";
+          }
+        ];
         description = ''
           The list of sensors displayed as a part of the graph/chart.
         '';
-        apply = sensors: lib.optionalAttrs (sensors != null) {
-          SensorColors = builtins.listToAttrs (map toColorKV sensors);
-          SensorLabels = builtins.listToAttrs (map toLabelKV sensors);
-          Sensors.highPrioritySensorIds = toEscapedList (map (s: s.name) sensors);
-        };
+        apply =
+          sensors:
+          lib.optionalAttrs (sensors != null) {
+            SensorColors = builtins.listToAttrs (map toColorKV sensors);
+            SensorLabels = builtins.listToAttrs (map toLabelKV sensors);
+            Sensors.highPrioritySensorIds = toEscapedList (map (s: s.name) sensors);
+          };
       };
 
       totalSensors = mkListOption // {
@@ -131,7 +144,10 @@ in
         '';
       };
       textOnlySensors = mkListOption // {
-        example = [ "cpu/all/averageTemperature" "cpu/all/averageFrequency" ];
+        example = [
+          "cpu/all/averageTemperature"
+          "cpu/all/averageFrequency"
+        ];
         description = ''
           The list of text-only sensors, displayed in the pop-up upon clicking the widget.
         '';
@@ -152,44 +168,45 @@ in
         type = configValueType;
         default = null;
         description = "Extra configuration options for the widget.";
-        apply = settings: if settings == null then {} else settings;
+        apply = settings: if settings == null then { } else settings;
       };
     };
 
     convert =
-      { position
-      , size
-      , title
-      , showTitle
-      , showLegend
-      , displayStyle
-      , totalSensors
-      , sensors
-      , textOnlySensors
-      , range
-      , settings
-      }: {
+      {
+        position,
+        size,
+        title,
+        showTitle,
+        showLegend,
+        displayStyle,
+        totalSensors,
+        sensors,
+        textOnlySensors,
+        range,
+        settings,
+      }:
+      {
         name = "org.kde.plasma.systemmonitor";
-        config = lib.filterAttrsRecursive (_: v: v != null)
-          (lib.recursiveUpdate
-            ({
-              Appearance = {
-                inherit title;
-                inherit showTitle;
-                chartFace = displayStyle;
-              };
-              Sensors = {
-                lowPrioritySensorIds = textOnlySensors;
-                totalSensors = totalSensors;
-              };
-              "org.kde.ksysguard.piechart/General" = {
-                inherit showLegend;
-                rangeAuto = (range.from == null && range.to == null);
-                rangeFrom = range.from;
-                rangeTo = range.to;
-              };
-            })
-            (lib.recursiveUpdate sensors settings));
+        config = lib.filterAttrsRecursive (_: v: v != null) (
+          lib.recursiveUpdate ({
+            Appearance = {
+              inherit title;
+              inherit showTitle;
+              chartFace = displayStyle;
+            };
+            Sensors = {
+              lowPrioritySensorIds = textOnlySensors;
+              totalSensors = totalSensors;
+            };
+            "org.kde.ksysguard.piechart/General" = {
+              inherit showLegend;
+              rangeAuto = (range.from == null && range.to == null);
+              rangeFrom = range.from;
+              rangeTo = range.to;
+            };
+          }) (lib.recursiveUpdate sensors settings)
+        );
       };
   };
 }

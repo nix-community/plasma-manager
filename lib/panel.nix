@@ -1,7 +1,8 @@
 { lib, config, ... }:
 let
   widgets = (import ../modules/widgets { inherit lib; });
-  panelToLayout = panel:
+  panelToLayout =
+    panel:
     let
       inherit (widgets.lib) addWidgetStmts stringIfNotNull;
       inherit (lib) boolToString;
@@ -14,9 +15,14 @@ let
       '';
     in
     ''
-      ${if (panel.screen == "all") then "for (screenID = 0; screenID < screenCount; screenID++)"
-        else if (builtins.isList panel.screen) then "for (var screenID in [${builtins.concatStringsSep "," (map builtins.toString panel.screen)}])"
-        else ""}
+      ${
+        if (panel.screen == "all") then
+          "for (screenID = 0; screenID < screenCount; screenID++)"
+        else if (builtins.isList panel.screen) then
+          "for (var screenID in [${builtins.concatStringsSep "," (map builtins.toString panel.screen)}])"
+        else
+          ""
+      }
       {
         const panel = new Panel();
         panel.height = ${toString panel.height};
