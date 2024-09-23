@@ -115,7 +115,11 @@ class Rc2Nix:
         def parse(self):
 
             def is_group_line(line: str) -> bool:
+<<<<<<< HEAD
                 return re.match(r"^\s*(\[[^\]]+\])+\s*$", line) is not None
+=======
+                return re.match(r'^\s*(\[[^\]]+\])+\s*$', line) is not None
+>>>>>>> 670eb4a1fa1c4931685c854f6c47ed9a485152cc
 
             def is_setting_line(line: str) -> bool:
                 return re.match(r"^\s*([^=]+)=?(.*)\s*$", line) is not None
@@ -209,9 +213,13 @@ class Rc2Nix:
             print("  programs.plasma = {")
             print("    enable = true;")
             print("    shortcuts = {")
+<<<<<<< HEAD
             print(
                 self.pp_shortcuts(self.config_settings.get("kglobalshortcutsrc", {}), 6)
             )
+=======
+            print(self.pp_shortcuts(self.config_settings.get("kglobalshortcutsrc", {}), 6))
+>>>>>>> 670eb4a1fa1c4931685c854f6c47ed9a485152cc
             print("    };")
             print("    configFile = {")
             print(self.pp_settings(self.config_settings, 6))
