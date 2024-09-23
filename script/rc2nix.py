@@ -62,6 +62,7 @@ class Rc2Nix:
             "kuriikwsfilterrc",
             "plasmaparc",
             "spectaclerc",
+            "katerc",
         ]
     ]
     KNOWN_DATA_FILES: List[str] = [
