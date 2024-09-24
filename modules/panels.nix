@@ -19,6 +19,7 @@ let
     plasmusic-toolbar = [ plasmusic-toolbar ];
     "luisbocanegra.panel.colorizer" = [ plasma-panel-colorizer ];
     "org.kde.windowbuttons" = [ kdePackages.applet-window-buttons6 ];
+    "org.dhruv8sh.kara" = [ kara ];
   };
   # An attrset of service-names and widgets/conditions. If any of the
   # conditions (given in cond) evaluate to true for any of the widgets with the
