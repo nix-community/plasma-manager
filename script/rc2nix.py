@@ -276,7 +276,7 @@ class Rc2Nix:
 def nix_val(s: Optional[str]) -> str:
     if s is None:
         return "null"
-    if re.match(r"^true|false$", s, re.IGNORECASE):
+    if re.match(r"^(true|false)$", s, re.IGNORECASE):
         return s.lower()
     if re.match(r"^[0-9]+(\.[0-9]+)?$", s):
         return s
