@@ -22,11 +22,12 @@ from typing import Callable, Dict, List, Optional, Tuple
 
 # The root directory where configuration files are stored.
 XDG_CONFIG_HOME: str = os.path.expanduser(os.getenv("XDG_CONFIG_HOME", "~/.config"))
+XDG_DATA_HOME: str = os.path.expanduser(os.getenv("XDG_DATA_HOME", "~/.local/share"))
 
 
 class Rc2Nix:
     # Files that we'll scan by default.
-    KNOWN_FILES: List[str] = [
+    KNOWN_CONFIG_FILES: List[str] = [
         os.path.join(XDG_CONFIG_HOME, f)
         for f in [
             "kcminputrc",
@@ -57,6 +58,18 @@ class Rc2Nix:
             "ffmpegthumbsrc",
             "kservicemenurc",
             "kiorc",
+            "ktrashrc",
+            "kuriikwsfilterrc",
+            "plasmaparc",
+            "spectaclerc",
+            "katerc",
+        ]
+    ]
+    KNOWN_DATA_FILES: List[str] = [
+        os.path.join(XDG_DATA_HOME, f)
+        for f in [
+            "kate/anonymous.katesession",
+            "dolphin/view_properties/global/.directory",
         ]
     ]
 
@@ -73,6 +86,7 @@ class Rc2Nix:
             r"^PlasmaViews",
             r"^ScreenConnectors$",
             r"^Session:",
+            r"^Recent (Files|URLs)",
         ]
 
         # Similar to the GROUP_BLOCK_LIST but for setting keys.
@@ -101,7 +115,7 @@ class Rc2Nix:
         def parse(self):
 
             def is_group_line(line: str) -> bool:
-                return re.match(r"^\s*(\[[^\]]+\]){1,}\s*$", line) is not None
+                return re.match(r"^\s*(\[[^\]]+\])+\s*$", line) is not None
 
             def is_setting_line(line: str) -> bool:
                 return re.match(r"^\s*([^=]+)=?(.*)\s*$", line) is not None
@@ -162,12 +176,13 @@ class Rc2Nix:
 
     class App:
         def __init__(self, args: List[str]):
-            self.files: List[str] = Rc2Nix.KNOWN_FILES.copy()
+            self.config_files: List[str] = Rc2Nix.KNOWN_CONFIG_FILES.copy()
+            self.data_files: List[str] = Rc2Nix.KNOWN_DATA_FILES.copy()
+            self.config_settings: Dict[str, Dict[str, Dict[str, str]]] = {}
+            self.data_settings: Dict[str, Dict[str, Dict[str, str]]] = {}
 
         def run(self):
-            settings: Dict[str, Dict[str, Dict[str, str]]] = {}
-
-            for file in self.files:
+            for file in self.config_files:
                 if not os.path.exists(file):
                     continue
 
@@ -175,19 +190,34 @@ class Rc2Nix:
                 rc.parse()
 
                 path = Path(file).relative_to(XDG_CONFIG_HOME)
-                settings[str(path)] = rc.settings
+                self.config_settings[str(path)] = rc.settings
 
-            self.print_output(settings)
+            for file in self.data_files:
+                if not os.path.exists(file):
+                    continue
 
-        def print_output(self, settings: Dict[str, Dict[str, Dict[str, str]]]):
+                rc = Rc2Nix.RcFile(file)
+                rc.parse()
+
+                path = Path(file).relative_to(XDG_DATA_HOME)
+                self.data_settings[str(path)] = rc.settings
+
+            self.print_output()
+
+        def print_output(self):
             print("{")
             print("  programs.plasma = {")
             print("    enable = true;")
             print("    shortcuts = {")
-            print(self.pp_shortcuts(settings.get("kglobalshortcutsrc", {}), 6))
+            print(
+                self.pp_shortcuts(self.config_settings.get("kglobalshortcutsrc", {}), 6)
+            )
             print("    };")
             print("    configFile = {")
-            print(self.pp_settings(settings, 6))
+            print(self.pp_settings(self.config_settings, 6))
+            print("    };")
+            print("    dataFile = {")
+            print(self.pp_settings(self.data_settings, 6))
             print("    };")
             print("  };")
             print("}")
