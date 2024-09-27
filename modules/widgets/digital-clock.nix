@@ -1,19 +1,23 @@
 { lib, ... }:
 let
   inherit (lib) mkOption types;
+  inherit (import ./lib.nix { inherit lib; }) configValueType;
+  inherit (import ./default.nix { inherit lib; }) positionType sizeType;
 
-  mkBoolOption = description: mkOption {
-    type = with types; nullOr bool;
-    default = null;
-    inherit description;
-  };
+  mkBoolOption =
+    description:
+    mkOption {
+      type = with types; nullOr bool;
+      default = null;
+      inherit description;
+    };
 
-  getIndexFromEnum = enum: value:
-    if value == null
-    then null
+  getIndexFromEnum =
+    enum: value:
+    if value == null then
+      null
     else
-      lib.lists.findFirstIndex
-        (x: x == value)
+      lib.lists.findFirstIndex (x: x == value)
         (throw "getIndexFromEnum (digital-clock widget): Value ${value} isn't present in the enum. This is a bug")
         enum;
 
@@ -51,30 +55,57 @@ in
     opts = {
       # See https://invent.kde.org/plasma/plasma-workspace/-/blob/master/applets/digital-clock/package/contents/config/main.xml for the accepted raw options
 
+      position = mkOption {
+        type = positionType;
+        example = {
+          horizontal = 250;
+          vertical = 50;
+        };
+        description = "The position of the widget. (Only for desktop widget)";
+      };
+      size = mkOption {
+        type = sizeType;
+        example = {
+          width = 500;
+          height = 500;
+        };
+        description = "The size of the widget. (Only for desktop widget)";
+      };
       date = {
         enable = mkBoolOption "Enable showing the current date.";
 
         format =
           let
-            enumVals = [ "shortDate" "longDate" "isoDate" ];
+            enumVals = [
+              "shortDate"
+              "longDate"
+              "isoDate"
+            ];
           in
           mkOption {
-            type = with types; nullOr (either (enum enumVals) (submodule {
-              options.custom = mkOption {
-                type = str;
-                example = "ddd d";
-                description = "The custom date format to use.";
-              };
-            }));
+            type =
+              with types;
+              nullOr (
+                either (enum enumVals) (submodule {
+                  options.custom = mkOption {
+                    type = str;
+                    example = "ddd d";
+                    description = "The custom date format to use.";
+                  };
+                })
+              );
             default = null;
-            example = { custom = "d.MM.yyyy"; };
+            example = {
+              custom = "d.MM.yyyy";
+            };
             description = ''
               The date format used for this clock.
 
               Could be as a short date, long date, a ISO 8601 date (yyyy-mm-dd), or a custom date format.
               Short and long date formats are locale-dependent.
             '';
-            apply = f:
+            apply =
+              f:
               if f == null then
                 { }
               else if f ? custom then
@@ -84,12 +115,17 @@ in
                 }
               else
                 { dateFormat = f; };
-
           };
 
         position =
-          let enumVals = [ "adaptive" "besideTime" "belowTime" ];
-          in mkOption {
+          let
+            enumVals = [
+              "adaptive"
+              "besideTime"
+              "belowTime"
+            ];
+          in
+          mkOption {
             type = with types; nullOr (enum enumVals);
             default = null;
             example = "belowTime";
@@ -104,8 +140,14 @@ in
 
       time = {
         showSeconds =
-          let enumVals = [ "never" "onlyInTooltip" "always" ];
-          in mkOption {
+          let
+            enumVals = [
+              "never"
+              "onlyInTooltip"
+              "always"
+            ];
+          in
+          mkOption {
             type = with types; nullOr (enum enumVals);
             default = null;
             example = "always";
@@ -117,8 +159,14 @@ in
             apply = getIndexFromEnum enumVals;
           };
         format =
-          let enumVals = [ "12h" "default" "24h" ];
-          in mkOption {
+          let
+            enumVals = [
+              "12h"
+              "default"
+              "24h"
+            ];
+          in
+          mkOption {
             type = with types; nullOr (enum enumVals);
             default = null;
             example = "24h";
@@ -135,7 +183,10 @@ in
         selected = mkOption {
           type = with types; nullOr (listOf str);
           default = null;
-          example = [ "Europe/Berlin" "Asia/Shanghai" ];
+          example = [
+            "Europe/Berlin"
+            "Asia/Shanghai"
+          ];
           description = ''
             The timezones that are configured for this clock.
 
@@ -153,8 +204,14 @@ in
         };
         changeOnScroll = mkBoolOption "Allow changing the displayed timezone by scrolling on the widget with the mouse wheel.";
         format =
-          let enumVals = [ "code" "city" "offset" ];
-          in mkOption {
+          let
+            enumVals = [
+              "code"
+              "city"
+              "offset"
+            ];
+          in
+          mkOption {
             type = with types; nullOr (enum enumVals);
             default = null;
             example = "code";
@@ -173,8 +230,18 @@ in
 
       calendar = {
         firstDayOfWeek =
-          let enumVals = [ "sunday" "monday" "tuesday" "wednesday" "thursday" "friday" "saturday" ];
-          in mkOption {
+          let
+            enumVals = [
+              "sunday"
+              "monday"
+              "tuesday"
+              "wednesday"
+              "thursday"
+              "friday"
+              "saturday"
+            ];
+          in
+          mkOption {
             type = with types; nullOr (enum enumVals);
             default = null;
             example = "monday";
@@ -206,7 +273,8 @@ in
 
           If null, then it will use the system font and automatically expand to fill available space.
         '';
-        apply = font:
+        apply =
+          font:
           {
             autoFontAndSize = (font == null);
           }
@@ -220,7 +288,7 @@ in
           };
       };
       settings = mkOption {
-        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        type = configValueType;
         default = null;
         example = {
           Appearance = {
@@ -232,18 +300,22 @@ in
 
           See https://develop.kde.org/docs/plasma/scripting/keys/ for an list of options
         '';
-        apply = settings: if settings == null then {} else settings;
+        apply = settings: if settings == null then { } else settings;
       };
     };
 
     convert =
-      { date
-      , time
-      , timeZone
-      , calendar
-      , font
-      , settings
-      }: {
+      {
+        position,
+        size,
+        date,
+        time,
+        timeZone,
+        calendar,
+        font,
+        settings,
+      }:
+      {
         name = "org.kde.plasma.digitalclock";
         config = lib.recursiveUpdate {
           Appearance = lib.filterAttrs (_: v: v != null) (

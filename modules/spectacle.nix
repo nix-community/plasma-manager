@@ -6,7 +6,12 @@ in
 {
   options.programs.plasma.spectacle.shortcuts = {
     captureActiveWindow = lib.mkOption {
-      type = with lib.types; nullOr (oneOf [ (listOf str) str ]);
+      type =
+        with lib.types;
+        nullOr (oneOf [
+          (listOf str)
+          str
+        ]);
       default = null;
       example = "Meta+Print";
       description = ''
@@ -15,7 +20,12 @@ in
     };
 
     captureCurrentMonitor = lib.mkOption {
-      type = with lib.types; nullOr (oneOf [ (listOf str) str ]);
+      type =
+        with lib.types;
+        nullOr (oneOf [
+          (listOf str)
+          str
+        ]);
       default = null;
       example = "Print";
       description = ''
@@ -24,7 +34,12 @@ in
     };
 
     captureEntireDesktop = lib.mkOption {
-      type = with lib.types; nullOr (oneOf [ (listOf str) str ]);
+      type =
+        with lib.types;
+        nullOr (oneOf [
+          (listOf str)
+          str
+        ]);
       default = null;
       example = "Shift+Print";
       description = ''
@@ -33,7 +48,12 @@ in
     };
 
     captureRectangularRegion = lib.mkOption {
-      type = with lib.types; nullOr (oneOf [ (listOf str) str ]);
+      type =
+        with lib.types;
+        nullOr (oneOf [
+          (listOf str)
+          str
+        ]);
       default = null;
       example = "Meta+Shift+S";
       description = ''
@@ -42,7 +62,12 @@ in
     };
 
     captureWindowUnderCursor = lib.mkOption {
-      type = with lib.types; nullOr (oneOf [ (listOf str) str ]);
+      type =
+        with lib.types;
+        nullOr (oneOf [
+          (listOf str)
+          str
+        ]);
       default = null;
       example = "Meta+Ctrl+Print";
       description = ''
@@ -51,7 +76,12 @@ in
     };
 
     launch = lib.mkOption {
-      type = with lib.types; nullOr (oneOf [ (listOf str) str ]);
+      type =
+        with lib.types;
+        nullOr (oneOf [
+          (listOf str)
+          str
+        ]);
       default = null;
       example = "Meta+S";
       description = ''
@@ -60,7 +90,12 @@ in
     };
 
     launchWithoutCapturing = lib.mkOption {
-      type = with lib.types; nullOr (oneOf [ (listOf str) str ]);
+      type =
+        with lib.types;
+        nullOr (oneOf [
+          (listOf str)
+          str
+        ]);
       default = null;
       example = "Meta+Alt+S";
       description = ''
@@ -69,7 +104,12 @@ in
     };
 
     recordRegion = lib.mkOption {
-      type = with lib.types; nullOr (oneOf [ (listOf str) str ]);
+      type =
+        with lib.types;
+        nullOr (oneOf [
+          (listOf str)
+          str
+        ]);
       default = null;
       example = "Meta+Shift+R";
       description = ''
@@ -78,7 +118,12 @@ in
     };
 
     recordScreen = lib.mkOption {
-      type = with lib.types; nullOr (oneOf [ (listOf str) str ]);
+      type =
+        with lib.types;
+        nullOr (oneOf [
+          (listOf str)
+          str
+        ]);
       default = null;
       example = "Meta+Alt+R";
       description = ''
@@ -87,7 +132,12 @@ in
     };
 
     recordWindow = lib.mkOption {
-      type = with lib.types; nullOr (oneOf [ (listOf str) str ]);
+      type =
+        with lib.types;
+        nullOr (oneOf [
+          (listOf str)
+          str
+        ]);
       default = null;
       example = "Meta+Ctrl+R";
       description = ''
@@ -98,56 +148,34 @@ in
 
   config = lib.mkIf cfg.enable {
     programs.plasma.shortcuts."org.kde.spectacle.desktop" = lib.mkMerge [
-      (
-        lib.mkIf (cfg.spectacle.shortcuts.captureActiveWindow != null) {
-          ActiveWindowScreenShot = cfg.spectacle.shortcuts.captureActiveWindow;
-        }
-      )
-      (
-        lib.mkIf (cfg.spectacle.shortcuts.captureCurrentMonitor != null) {
-          CurrentMonitorScreenShot = cfg.spectacle.shortcuts.captureCurrentMonitor;
-        }
-      )
-      (
-        lib.mkIf (cfg.spectacle.shortcuts.captureEntireDesktop != null) {
-          FullScreenScreenShot = cfg.spectacle.shortcuts.captureEntireDesktop;
-        }
-      )
-      (
-        lib.mkIf (cfg.spectacle.shortcuts.captureRectangularRegion != null) {
-          RectangularRegionScreenShot = cfg.spectacle.shortcuts.captureRectangularRegion;
-        }
-      )
-      (
-        lib.mkIf (cfg.spectacle.shortcuts.captureWindowUnderCursor != null) {
-          WindowUnderCursorScreenShot = cfg.spectacle.shortcuts.captureWindowUnderCursor;
-        }
-      )
-      (
-        lib.mkIf (cfg.spectacle.shortcuts.launch != null) {
-          _launch = cfg.spectacle.shortcuts.launch;
-        }
-      )
-      (
-        lib.mkIf (cfg.spectacle.shortcuts.launchWithoutCapturing != null) {
-          OpenWithoutScreenshot = cfg.spectacle.shortcuts.launchWithoutCapturing;
-        }
-      )
-      (
-        lib.mkIf (cfg.spectacle.shortcuts.recordRegion != null) {
-          RecordRegion = cfg.spectacle.shortcuts.recordRegion;
-        }
-      )
-      (
-        lib.mkIf (cfg.spectacle.shortcuts.recordScreen != null) {
-          RecordScreen = cfg.spectacle.shortcuts.recordScreen;
-        }
-      )
-      (
-        lib.mkIf (cfg.spectacle.shortcuts.recordWindow != null) {
-          RecordWindow = cfg.spectacle.shortcuts.recordWindow;
-        }
-      )
+      (lib.mkIf (cfg.spectacle.shortcuts.captureActiveWindow != null) {
+        ActiveWindowScreenShot = cfg.spectacle.shortcuts.captureActiveWindow;
+      })
+      (lib.mkIf (cfg.spectacle.shortcuts.captureCurrentMonitor != null) {
+        CurrentMonitorScreenShot = cfg.spectacle.shortcuts.captureCurrentMonitor;
+      })
+      (lib.mkIf (cfg.spectacle.shortcuts.captureEntireDesktop != null) {
+        FullScreenScreenShot = cfg.spectacle.shortcuts.captureEntireDesktop;
+      })
+      (lib.mkIf (cfg.spectacle.shortcuts.captureRectangularRegion != null) {
+        RectangularRegionScreenShot = cfg.spectacle.shortcuts.captureRectangularRegion;
+      })
+      (lib.mkIf (cfg.spectacle.shortcuts.captureWindowUnderCursor != null) {
+        WindowUnderCursorScreenShot = cfg.spectacle.shortcuts.captureWindowUnderCursor;
+      })
+      (lib.mkIf (cfg.spectacle.shortcuts.launch != null) { _launch = cfg.spectacle.shortcuts.launch; })
+      (lib.mkIf (cfg.spectacle.shortcuts.launchWithoutCapturing != null) {
+        OpenWithoutScreenshot = cfg.spectacle.shortcuts.launchWithoutCapturing;
+      })
+      (lib.mkIf (cfg.spectacle.shortcuts.recordRegion != null) {
+        RecordRegion = cfg.spectacle.shortcuts.recordRegion;
+      })
+      (lib.mkIf (cfg.spectacle.shortcuts.recordScreen != null) {
+        RecordScreen = cfg.spectacle.shortcuts.recordScreen;
+      })
+      (lib.mkIf (cfg.spectacle.shortcuts.recordWindow != null) {
+        RecordWindow = cfg.spectacle.shortcuts.recordWindow;
+      })
     ];
   };
 }

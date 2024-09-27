@@ -1,4 +1,10 @@
-{ testers, home-manager-module, plasma-module, writeShellScriptBin, kdePackages }:
+{
+  testers,
+  home-manager-module,
+  plasma-module,
+  writeShellScriptBin,
+  kdePackages,
+}:
 let
   script = writeShellScriptBin "plasma-basic-test" ''
     set -eu
@@ -48,39 +54,41 @@ testers.nixosTest {
       isNormalUser = true;
     };
 
-    home-manager.users.fake = { lib, ... }: {
-      home.stateVersion = "23.11";
-      imports = [ plasma-module ];
-      programs.plasma = {
-        enable = true;
-        workspace.clickItemTo = "select";
-        # Test a variety of weird keys and groups
-        configFile.kdeglobals = {
-          group = {
-            " leading space" = " leading space";
-            key1 = 1;
-            key2 = {
-              value = 2;
-              immutable = true;
+    home-manager.users.fake =
+      { lib, ... }:
+      {
+        home.stateVersion = "23.11";
+        imports = [ plasma-module ];
+        programs.plasma = {
+          enable = true;
+          workspace.clickItemTo = "select";
+          # Test a variety of weird keys and groups
+          configFile.kdeglobals = {
+            group = {
+              " leading space" = " leading space";
+              key1 = 1;
+              key2 = {
+                value = 2;
+                immutable = true;
+              };
+              "escaped[$i]" = {
+                value = "\${HOME}";
+                shellExpand = true;
+              };
             };
-            "escaped[$i]" = {
-              value = "\${HOME}";
-              shellExpand = true;
+            "escaped\\/nested/group" = {
+              key3 = 3;
             };
-          };
-          "escaped\\/nested/group" = {
-            key3 = 3;
           };
         };
+        home.activation.preseed = lib.hm.dag.entryBefore [ "configure-plasma" ] ''
+          mkdir -p ~/.config
+          cat <<EOF >> ~/.config/kdeglobals
+          [escaped/nested][group]
+          untouched = \svalue
+          EOF
+        '';
       };
-      home.activation.preseed = lib.hm.dag.entryBefore [ "configure-plasma" ] ''
-        mkdir -p ~/.config
-        cat <<EOF >> ~/.config/kdeglobals
-        [escaped/nested][group]
-        untouched = \svalue
-        EOF
-      '';
-    };
   };
 
   testScript = ''

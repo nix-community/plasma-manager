@@ -175,7 +175,7 @@
                 icon = "view-media-track";
               };
               preferredSource = "spotify";
-              showPlaybackControls = true;
+              musicControls.showPlaybackControls = true;
               songText = {
                 displayInSeparateLines = true;
                 maximumWidth = 640;
@@ -213,29 +213,47 @@
     ];
 
     powerdevil = {
-      powerButtonAction = "lockScreen";
-      autoSuspend = {
-        action = "shutDown";
-        idleTimeout = 1000;
+      AC = {
+        powerButtonAction = "lockScreen";
+        autoSuspend = {
+          action = "shutDown";
+          idleTimeout = 1000;
+        };
+        turnOffDisplay = {
+          idleTimeout = 1000;
+          idleTimeoutWhenLocked = "immediately";
+        };
       };
-      turnOffDisplay = {
-        idleTimeout = 1000;
-        idleTimeoutWhenLocked = "immediately";
+      battery = {
+        powerButtonAction = "sleep";
+        whenSleepingEnter = "standbyThenHibernate";
+      };
+      lowBattery = {
+        whenLaptopLidClosed = "hibernate";
       };
     };
 
     kwin = {
       edgeBarrier = 0; # Disables the edge-barriers introduced in plasma 6.1
       cornerBarrier = false;
+
+      scripts.polonium.enable = true;
     };
 
+    kscreenlocker = {
+      lockOnResume = true;
+      timeout = 10;
+    };
 
     #
     # Some mid-level settings:
     #
     shortcuts = {
       ksmserver = {
-        "Lock Session" = [ "Screensaver" "Meta+Ctrl+Alt+L" ];
+        "Lock Session" = [
+          "Screensaver"
+          "Meta+Ctrl+Alt+L"
+        ];
       };
 
       kwin = {
@@ -246,7 +264,6 @@
         "Switch Window Up" = "Meta+K";
       };
     };
-
 
     #
     # Some low-level settings:

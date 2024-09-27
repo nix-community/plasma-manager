@@ -2,12 +2,20 @@
 let
   inherit (import ./lib.nix { inherit lib; }) configValueType;
   inherit (import ./default.nix { inherit lib; }) positionType sizeType;
+
+  getIndexFromEnum =
+    enum: value:
+    if value == null then
+      null
+    else
+      lib.lists.findFirstIndex (x: x == value)
+        (throw "getIndexFromEnum (keyboard-layout widget): Value ${value} isn't present in the enum. This is a bug")
+        enum;
 in
 {
-  battery = {
-    description = "The battery indicator widget.";
+  keyboardLayout = {
+    description = "The keyboard layout indicator widget.";
 
-    # See https://invent.kde.org/plasma/plasma-workspace/-/blob/master/applets/batterymonitor/package/contents/config/main.xml for the accepted raw options
     opts = {
       position = lib.mkOption {
         type = positionType;
@@ -25,18 +33,27 @@ in
         };
         description = "The size of the widget. (Only for desktop widget)";
       };
-      showPercentage = lib.mkOption {
-        type = with lib.types; nullOr bool;
-        default = null;
-        example = true;
-        description = "Enable to show the battery percentage as a small label over the battery icon.";
-      };
+      displayStyle =
+        let
+          enumVals = [
+            "label"
+            "flag"
+            "labelOverFlag"
+          ];
+        in
+        lib.mkOption {
+          type = with lib.types; nullOr (enum enumVals);
+          default = null;
+          example = "labelOverFlag";
+          description = "Keyboard layout indicator display style.";
+          apply = getIndexFromEnum enumVals;
+        };
       settings = lib.mkOption {
         type = configValueType;
         default = null;
         example = {
           General = {
-            showPercentage = true;
+            displayStyle = 1;
           };
         };
         apply = settings: if settings == null then { } else settings;
@@ -47,13 +64,13 @@ in
       {
         position,
         size,
-        showPercentage,
+        displayStyle,
         settings,
       }:
       {
-        name = "org.kde.plasma.battery";
+        name = "org.kde.plasma.keyboardlayout";
         config = lib.recursiveUpdate {
-          General = lib.filterAttrs (_: v: v != null) { inherit showPercentage; };
+          General = lib.filterAttrs (_: v: v != null) { inherit displayStyle; };
         } settings;
       };
   };

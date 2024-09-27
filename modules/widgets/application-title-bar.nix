@@ -1,14 +1,19 @@
 { lib, ... }:
 let
   inherit (lib) mkOption types;
+  inherit (import ./lib.nix { inherit lib; }) configValueType;
+  inherit (import ./default.nix { inherit lib; }) positionType sizeType;
 
-  mkBoolOption = description: lib.mkOption {
-    type = with lib.types; nullOr bool;
-    default = null;
-    inherit description;
-  };
+  mkBoolOption =
+    description:
+    lib.mkOption {
+      type = with lib.types; nullOr bool;
+      default = null;
+      inherit description;
+    };
 
-  convertHorizontalAlignment = horizontalAlignment:
+  convertHorizontalAlignment =
+    horizontalAlignment:
     let
       mappings = {
         left = 1;
@@ -17,9 +22,13 @@ let
         justify = 8;
       };
     in
+    if horizontalAlignment == null then
+      null
+    else
       mappings.${horizontalAlignment} or (throw "Invalid enum value: ${horizontalAlignment}");
 
-  convertVerticalAlignment = verticalAlignment:
+  convertVerticalAlignment =
+    verticalAlignment:
     let
       mappings = {
         top = 1;
@@ -28,14 +37,17 @@ let
         baseline = 256;
       };
     in
+    if verticalAlignment == null then
+      null
+    else
       mappings.${verticalAlignment} or (throw "Invalid enum value: ${verticalAlignment}");
 
-  getIndexFromEnum = enum: value:
-    if value == null
-    then null
+  getIndexFromEnum =
+    enum: value:
+    if value == null then
+      null
     else
-      lib.lists.findFirstIndex
-        (x: x == value)
+      lib.lists.findFirstIndex (x: x == value)
         (throw "getIndexFromEnum (application-title-bar widget): Value ${value} isn't present in the enum. This is a bug")
         enum;
 
@@ -43,8 +55,15 @@ let
     options = {
       bold = mkBoolOption "Enable bold text.";
       fit =
-        let enumVals = [ "fixedSize" "horizontalFit" "verticalFit" "fit" ];
-        in mkOption {
+        let
+          enumVals = [
+            "fixedSize"
+            "horizontalFit"
+            "verticalFit"
+            "fit"
+          ];
+        in
+        mkOption {
           type = with types; nullOr (enum enumVals);
           default = null;
           example = "fixedSize";
@@ -86,9 +105,14 @@ let
 
   titleReplacementType = types.submodule {
     options = {
-      type = 
-        let enumVals = [ "string" "regexp" ];
-        in mkOption {
+      type =
+        let
+          enumVals = [
+            "string"
+            "regexp"
+          ];
+        in
+        mkOption {
           type = types.enum enumVals;
           default = null;
           example = "string";
@@ -113,6 +137,22 @@ in
     description = "KDE plasmoid with window title and buttons";
 
     opts = {
+      position = mkOption {
+        type = positionType;
+        example = {
+          horizontal = 100;
+          vertical = 300;
+        };
+        description = "The position of the widget. (Only for desktop widget)";
+      };
+      size = mkOption {
+        type = sizeType;
+        example = {
+          width = 500;
+          height = 50;
+        };
+        description = "The size of the widget. (Only for desktop widget)";
+      };
       layout = {
         widgetMargins = mkOption {
           type = types.nullOr types.ints.unsigned;
@@ -125,20 +165,42 @@ in
           description = "The spacing between elements.";
         };
         horizontalAlignment = mkOption {
-          type = types.enum [ "left" "right" "center" "justify" ];
-          default = "left";
+          type = types.nullOr (
+            types.enum [
+              "left"
+              "right"
+              "center"
+              "justify"
+            ]
+          );
+          default = null;
+          example = "left";
           description = "The horizontal alignment of the widget.";
           apply = convertHorizontalAlignment;
         };
         verticalAlignment = mkOption {
-          type = types.enum [ "top" "center" "bottom" "baseline" ];
-          default = "center";
+          type = types.nullOr (
+            types.enum [
+              "top"
+              "center"
+              "bottom"
+              "baseline"
+            ]
+          );
+          default = null;
+          example = "center";
           description = "The vertical alignment of the widget.";
           apply = convertVerticalAlignment;
         };
         showDisabledElements =
-          let enumVals = [ "deactivated" "hideKeepSpace" "hide" ];
-          in mkOption {
+          let
+            enumVals = [
+              "deactivated"
+              "hideKeepSpace"
+              "hide"
+            ];
+          in
+          mkOption {
             type = with types; nullOr (enum enumVals);
             default = null;
             example = "deactivated";
@@ -147,17 +209,21 @@ in
           };
         fillFreeSpace = mkBoolOption "Whether the widget should fill the free space on the panel.";
         elements = mkOption {
-          type = types.nullOr (types.listOf (types.enum [
-            "windowCloseButton"
-            "windowMinimizeButton"
-            "windowMaximizeButton"
-            "windowKeepAboveButton"
-            "windowKeepBelowButton"
-            "windowShadeButton"
-            "windowTitle"
-            "windowIcon"
-            "spacer"
-          ]));
+          type = types.nullOr (
+            types.listOf (
+              types.enum [
+                "windowCloseButton"
+                "windowMinimizeButton"
+                "windowMaximizeButton"
+                "windowKeepAboveButton"
+                "windowKeepBelowButton"
+                "windowShadeButton"
+                "windowTitle"
+                "windowIcon"
+                "spacer"
+              ]
+            )
+          );
           default = null;
           example = [ "windowTitle" ];
           description = ''
@@ -167,8 +233,15 @@ in
       };
       windowControlButtons = {
         iconSource =
-          let enumVals = [ "plasma" "breeze" "aurorae" "oxygen" ];
-          in mkOption {
+          let
+            enumVals = [
+              "plasma"
+              "breeze"
+              "aurorae"
+              "oxygen"
+            ];
+          in
+          mkOption {
             type = with types; nullOr (enum enumVals);
             default = null;
             example = "plasma";
@@ -223,11 +296,13 @@ in
             size = 11;
           };
           description = "The font settings of the window title.";
-          apply = font: lib.optionalAttrs (font != null) {
-            windowTitleFontBold = font.bold;
-            windowTitleFontSize = font.size;
-            windowTitleFontSizeMode = font.fit;
-          };
+          apply =
+            font:
+            lib.optionalAttrs (font != null) {
+              windowTitleFontBold = font.bold;
+              windowTitleFontSize = font.size;
+              windowTitleFontSizeMode = font.fit;
+            };
         };
         hideEmptyTitle = mkBoolOption "Whether to hide the window title when it's empty.";
         undefinedWindowTitle = mkOption {
@@ -236,8 +311,15 @@ in
           description = "The text to show when the window title is undefined.";
         };
         source =
-          let enumVals = [ "appName" "decoration" "genericAppName" "alwaysUndefined" ];
-          in mkOption {
+          let
+            enumVals = [
+              "appName"
+              "decoration"
+              "genericAppName"
+              "alwaysUndefined"
+            ];
+          in
+          mkOption {
             type = with types; nullOr (enum enumVals);
             default = null;
             example = "appName";
@@ -261,28 +343,34 @@ in
             bottom = 0;
           };
           description = "The margins around the window title.";
-          apply = margins: lib.optionalAttrs (margins != null) {
-            windowTitleMarginsLeft = margins.left;
-            windowTitleMarginsRight = margins.right;
-            windowTitleMarginsTop = margins.top;
-            windowTitleMarginsBottom = margins.bottom;
-          };
+          apply =
+            margins:
+            lib.optionalAttrs (margins != null) {
+              windowTitleMarginsLeft = margins.left;
+              windowTitleMarginsRight = margins.right;
+              windowTitleMarginsTop = margins.top;
+              windowTitleMarginsBottom = margins.bottom;
+            };
         };
       };
       overrideForMaximized = {
         enable = mkBoolOption "Whether to override the settings for maximized windows.";
         elements = mkOption {
-          type = types.nullOr (types.listOf (types.enum [
-            "windowCloseButton"
-            "windowMinimizeButton"
-            "windowMaximizeButton"
-            "windowKeepAboveButton"
-            "windowKeepBelowButton"
-            "windowShadeButton"
-            "windowTitle"
-            "windowIcon"
-            "spacer"
-          ]));
+          type = types.nullOr (
+            types.listOf (
+              types.enum [
+                "windowCloseButton"
+                "windowMinimizeButton"
+                "windowMaximizeButton"
+                "windowKeepAboveButton"
+                "windowKeepBelowButton"
+                "windowShadeButton"
+                "windowTitle"
+                "windowIcon"
+                "spacer"
+              ]
+            )
+          );
           default = null;
           example = [ "windowTitle" ];
           description = ''
@@ -291,7 +379,12 @@ in
         };
         source =
           let
-            enumVals = [ "appName" "decoration" "genericAppName" "alwaysUndefined" ];
+            enumVals = [
+              "appName"
+              "decoration"
+              "genericAppName"
+              "alwaysUndefined"
+            ];
           in
           mkOption {
             type = with types; nullOr (enum enumVals);
@@ -310,8 +403,14 @@ in
       };
       behavior = {
         activeTaskSource =
-          let enumVals = [ "activeTask" "lastActiveTask" "lastActiveMaximized" ];
-          in mkOption {
+          let
+            enumVals = [
+              "activeTask"
+              "lastActiveTask"
+              "lastActiveMaximized"
+            ];
+          in
+          mkOption {
             type = with types; nullOr (enum enumVals);
             default = null;
             example = "activeTask";
@@ -431,14 +530,16 @@ in
           }
         ];
         description = "The replacements for the window title.";
-        apply = replacements: lib.optionalAttrs (replacements != null) {
-          titleReplacementsPatterns = map (r: r.originalTitle) replacements;
-          titleReplacementsTemplates = map (r: r.newTitle) replacements;
-          titleReplacementsTypes = map (r: r.type) replacements;
-        };
+        apply =
+          replacements:
+          lib.optionalAttrs (replacements != null) {
+            titleReplacementsPatterns = map (r: r.originalTitle) replacements;
+            titleReplacementsTemplates = map (r: r.newTitle) replacements;
+            titleReplacementsTypes = map (r: r.type) replacements;
+          };
       };
       settings = mkOption {
-        type = with types; nullOr (attrsOf (attrsOf (either (oneOf [ bool float int str ]) (listOf (oneOf [ bool float int str ])))));
+        type = configValueType;
         default = null;
         example = {
           Appearance = {
@@ -450,21 +551,25 @@ in
 
           See available options at https://github.com/antroids/application-title-bar/blob/main/package/contents/config/main.xml
         '';
-        apply = settings: if settings == null then {} else settings;
+        apply = settings: if settings == null then { } else settings;
       };
     };
     convert =
-      { layout
-      , windowControlButtons
-      , windowTitle
-      , overrideForMaximized
-      , behavior
-      , mouseAreaDrag
-      , mouseAreaClick
-      , mouseAreaWheel
-      , titleReplacements
-      , settings
-      }: {
+      {
+        position,
+        size,
+        layout,
+        windowControlButtons,
+        windowTitle,
+        overrideForMaximized,
+        behavior,
+        mouseAreaDrag,
+        mouseAreaClick,
+        mouseAreaWheel,
+        titleReplacements,
+        settings,
+      }:
+      {
         name = "com.github.antroids.application-title-bar";
         config = lib.recursiveUpdate {
           Appearance = lib.filterAttrs (_: v: v != null) (
@@ -500,42 +605,40 @@ in
             // windowTitle.font
             // windowTitle.margins
           );
-          Behavior = lib.filterAttrs (_: v: v != null) (
-            {
-              # Behavior
-              widgetActiveTaskSource = behavior.activeTaskSource;
-              widgetActiveTaskFilterByActivity = behavior.filterByActivity;
-              widgetActiveTaskFilterByScreen = behavior.filterByScreen;
-              widgetActiveTaskFilterByVirtualDesktop = behavior.filterByVirtualDesktop;
-              widgetActiveTaskFilterNotMaximized = behavior.disableForNotMaximized;
-              disableButtonsForNotHoveredWidget = behavior.disableButtonsForNotHovered;
+          Behavior = lib.filterAttrs (_: v: v != null) ({
+            # Behavior
+            widgetActiveTaskSource = behavior.activeTaskSource;
+            widgetActiveTaskFilterByActivity = behavior.filterByActivity;
+            widgetActiveTaskFilterByScreen = behavior.filterByScreen;
+            widgetActiveTaskFilterByVirtualDesktop = behavior.filterByVirtualDesktop;
+            widgetActiveTaskFilterNotMaximized = behavior.disableForNotMaximized;
+            disableButtonsForNotHoveredWidget = behavior.disableButtonsForNotHovered;
 
-              # Mouse area drag
-              windowTitleDragEnabled = mouseAreaDrag.enable;
-              windowTitleDragOnlyMaximized = mouseAreaDrag.onlyMaximized;
-              windowTitleDragThreshold = mouseAreaDrag.threshold;
-              widgetMouseAreaLeftDragAction = mouseAreaDrag.leftDragAction;
-              widgetMouseAreaMiddleDragAction = mouseAreaDrag.middleDragAction;
+            # Mouse area drag
+            windowTitleDragEnabled = mouseAreaDrag.enable;
+            windowTitleDragOnlyMaximized = mouseAreaDrag.onlyMaximized;
+            windowTitleDragThreshold = mouseAreaDrag.threshold;
+            widgetMouseAreaLeftDragAction = mouseAreaDrag.leftDragAction;
+            widgetMouseAreaMiddleDragAction = mouseAreaDrag.middleDragAction;
 
-              # Mouse area click
-              widgetMouseAreaClickEnabled = mouseAreaClick.enable;
-              widgetMouseAreaLeftClickAction = mouseAreaClick.leftButtonClick;
-              widgetMouseAreaLeftDoubleClickAction = mouseAreaClick.leftButtonDoubleClick;
-              widgetMouseAreaLeftLongPressAction = mouseAreaClick.leftButtonLongClick;
-              widgetMouseAreaMiddleClickAction = mouseAreaClick.middleButtonClick;
-              widgetMouseAreaMiddleDoubleClickAction = mouseAreaClick.middleButtonDoubleClick;
-              widgetMouseAreaMiddleLongPressAction = mouseAreaClick.middleButtonLongClick;
+            # Mouse area click
+            widgetMouseAreaClickEnabled = mouseAreaClick.enable;
+            widgetMouseAreaLeftClickAction = mouseAreaClick.leftButtonClick;
+            widgetMouseAreaLeftDoubleClickAction = mouseAreaClick.leftButtonDoubleClick;
+            widgetMouseAreaLeftLongPressAction = mouseAreaClick.leftButtonLongClick;
+            widgetMouseAreaMiddleClickAction = mouseAreaClick.middleButtonClick;
+            widgetMouseAreaMiddleDoubleClickAction = mouseAreaClick.middleButtonDoubleClick;
+            widgetMouseAreaMiddleLongPressAction = mouseAreaClick.middleButtonLongClick;
 
-              # Mouse area wheel
-              widgetMouseAreaWheelEnabled = mouseAreaWheel.enable;
-              widgetMouseAreaWheelFirstEventDistance = mouseAreaWheel.firstEventDistance;
-              widgetMouseAreaWheelNextEventDistance = mouseAreaWheel.nextEventDistance;
-              widgetMouseAreaWheelUpAction = mouseAreaWheel.wheelUp;
-              widgetMouseAreaWheelDownAction = mouseAreaWheel.wheelDown;
-              widgetMouseAreaWheelLeftAction = mouseAreaWheel.wheelLeft;
-              widgetMouseAreaWheelRightAction = mouseAreaWheel.wheelRight;
-            }
-          );
+            # Mouse area wheel
+            widgetMouseAreaWheelEnabled = mouseAreaWheel.enable;
+            widgetMouseAreaWheelFirstEventDistance = mouseAreaWheel.firstEventDistance;
+            widgetMouseAreaWheelNextEventDistance = mouseAreaWheel.nextEventDistance;
+            widgetMouseAreaWheelUpAction = mouseAreaWheel.wheelUp;
+            widgetMouseAreaWheelDownAction = mouseAreaWheel.wheelDown;
+            widgetMouseAreaWheelLeftAction = mouseAreaWheel.wheelLeft;
+            widgetMouseAreaWheelRightAction = mouseAreaWheel.wheelRight;
+          });
           TitleReplacements = titleReplacements;
         } settings;
       };
