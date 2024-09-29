@@ -1,8 +1,33 @@
 { lib, ... }:
 let
-  inherit (lib) mkOption types;
   inherit (import ./lib.nix { inherit lib; }) configValueType;
   inherit (import ./default.nix { inherit lib; }) positionType sizeType;
+
+  elements = [
+    "windowCloseButton"
+    "windowMinimizeButton"
+    "windowMaximizeButton"
+    "windowKeepAboveButton"
+    "windowKeepBelowButton"
+    "windowShadeButton"
+    "windowTitle"
+    "windowIcon"
+    "spacer"
+  ];
+
+  horizontalAlignment = [
+    "left"
+    "right"
+    "center"
+    "justify"
+  ];
+
+  windowTitleSources = [
+    "appName"
+    "decoration"
+    "genericAppName"
+    "alwaysUndefined"
+  ];
 
   mkBoolOption =
     description:
@@ -51,7 +76,7 @@ let
         (throw "getIndexFromEnum (application-title-bar widget): Value ${value} isn't present in the enum. This is a bug")
         enum;
 
-  fontType = types.submodule {
+  fontType = lib.types.submodule {
     options = {
       bold = mkBoolOption "Enable bold text.";
       fit =
@@ -63,47 +88,47 @@ let
             "fit"
           ];
         in
-        mkOption {
-          type = with types; nullOr (enum enumVals);
+        lib.mkOption {
+          type = with lib.types; nullOr (enum enumVals);
           default = null;
           example = "fixedSize";
           description = "The mode of the size of the font.";
           apply = getIndexFromEnum enumVals;
         };
-      size = mkOption {
-        type = types.ints.positive;
+      size = lib.mkOption {
+        type = lib.types.ints.positive;
         default = 10;
         description = "The size of the font.";
       };
     };
   };
 
-  marginType = types.submodule {
+  marginType = lib.types.submodule {
     options = {
-      left = mkOption {
-        type = types.ints.unsigned;
+      left = lib.mkOption {
+        type = lib.types.ints.unsigned;
         default = 10;
         description = "The left margin.";
       };
-      right = mkOption {
-        type = types.ints.unsigned;
+      right = lib.mkOption {
+        type = lib.types.ints.unsigned;
         default = 10;
         description = "The right margin.";
       };
-      top = mkOption {
-        type = types.ints.unsigned;
+      top = lib.mkOption {
+        type = lib.types.ints.unsigned;
         default = 0;
         description = "The top margin.";
       };
-      bottom = mkOption {
-        type = types.ints.unsigned;
+      bottom = lib.mkOption {
+        type = lib.types.ints.unsigned;
         default = 0;
         description = "The bottom margin.";
       };
     };
   };
 
-  titleReplacementType = types.submodule {
+  titleReplacementType = lib.types.submodule {
     options = {
       type =
         let
@@ -112,20 +137,20 @@ let
             "regexp"
           ];
         in
-        mkOption {
-          type = types.enum enumVals;
+        lib.mkOption {
+          type = lib.types.enum enumVals;
           default = null;
           example = "string";
           description = "The type of the replacement.";
           apply = getIndexFromEnum enumVals;
         };
-      originalTitle = mkOption {
-        type = types.str;
+      originalTitle = lib.mkOption {
+        type = lib.types.str;
         example = "Brave Web Browser";
         description = "The original text to replace.";
       };
-      newTitle = mkOption {
-        type = types.str;
+      newTitle = lib.mkOption {
+        type = lib.types.str;
         example = "Brave";
         description = "The new text to replace with.";
       };
@@ -137,7 +162,7 @@ in
     description = "KDE plasmoid with window title and buttons";
 
     opts = {
-      position = mkOption {
+      position = lib.mkOption {
         type = positionType;
         example = {
           horizontal = 100;
@@ -145,7 +170,7 @@ in
         };
         description = "The position of the widget. (Only for desktop widget)";
       };
-      size = mkOption {
+      size = lib.mkOption {
         type = sizeType;
         example = {
           width = 500;
@@ -154,39 +179,32 @@ in
         description = "The size of the widget. (Only for desktop widget)";
       };
       layout = {
-        widgetMargins = mkOption {
-          type = types.nullOr types.ints.unsigned;
+        widgetMargins = lib.mkOption {
+          type = with lib.types; nullOr ints.unsigned;
           default = null;
           description = "The margins around the widget.";
         };
-        spacingBetweenElements = mkOption {
-          type = types.nullOr types.ints.unsigned;
+        spacingBetweenElements = lib.mkOption {
+          type = with lib.types; nullOr ints.unsigned;
           default = null;
           description = "The spacing between elements.";
         };
-        horizontalAlignment = mkOption {
-          type = types.nullOr (
-            types.enum [
-              "left"
-              "right"
-              "center"
-              "justify"
-            ]
-          );
+        horizontalAlignment = lib.mkOption {
+          type = with lib.types; nullOr (enum horizontalAlignment);
           default = null;
           example = "left";
           description = "The horizontal alignment of the widget.";
           apply = convertHorizontalAlignment;
         };
-        verticalAlignment = mkOption {
-          type = types.nullOr (
-            types.enum [
+        verticalAlignment = lib.mkOption {
+          type =
+            with lib.types;
+            nullOr (enum [
               "top"
               "center"
               "bottom"
               "baseline"
-            ]
-          );
+            ]);
           default = null;
           example = "center";
           description = "The vertical alignment of the widget.";
@@ -200,30 +218,16 @@ in
               "hide"
             ];
           in
-          mkOption {
-            type = with types; nullOr (enum enumVals);
+          lib.mkOption {
+            type = with lib.types; nullOr (enum enumVals);
             default = null;
             example = "deactivated";
             description = "How to show the elements when the widget is disabled.";
             apply = getIndexFromEnum enumVals;
           };
         fillFreeSpace = mkBoolOption "Whether the widget should fill the free space on the panel.";
-        elements = mkOption {
-          type = types.nullOr (
-            types.listOf (
-              types.enum [
-                "windowCloseButton"
-                "windowMinimizeButton"
-                "windowMaximizeButton"
-                "windowKeepAboveButton"
-                "windowKeepBelowButton"
-                "windowShadeButton"
-                "windowTitle"
-                "windowIcon"
-                "spacer"
-              ]
-            )
-          );
+        elements = lib.mkOption {
+          type = with lib.types; nullOr (listOf (enum elements));
           default = null;
           example = [ "windowTitle" ];
           description = ''
@@ -241,8 +245,8 @@ in
               "oxygen"
             ];
           in
-          mkOption {
-            type = with types; nullOr (enum enumVals);
+          lib.mkOption {
+            type = with lib.types; nullOr (enum enumVals);
             default = null;
             example = "plasma";
             description = ''
@@ -255,40 +259,40 @@ in
             '';
             apply = getIndexFromEnum enumVals;
           };
-        auroraeTheme = mkOption {
-          type = types.nullOr types.str;
+        auroraeTheme = lib.mkOption {
+          type = with lib.types; nullOr str;
           default = null;
           description = "The Aurorae theme to use for the control buttons.";
         };
-        buttonsMargin = mkOption {
-          type = types.nullOr types.ints.unsigned;
+        buttonsMargin = lib.mkOption {
+          type = with lib.types; nullOr ints.unsigned;
           default = null;
           description = "The margin around the buttons.";
         };
-        buttonsAspectRatio = mkOption {
-          type = types.nullOr types.ints.unsigned;
+        buttonsAspectRatio = lib.mkOption {
+          type = with lib.types; nullOr ints.unsigned;
           default = null;
           description = "The ratio of button width in percent to 100% of its height. If you need wider buttons, the value should be >100, otherwise less.";
         };
-        buttonsAnimationSpeed = mkOption {
-          type = types.nullOr types.ints.unsigned;
+        buttonsAnimationSpeed = lib.mkOption {
+          type = with lib.types; nullOr ints.unsigned;
           default = null;
           description = "The speed of the buttons animation in milliseconds.";
         };
       };
       windowTitle = {
-        minimumWidth = mkOption {
-          type = types.nullOr types.ints.unsigned;
+        minimumWidth = lib.mkOption {
+          type = with lib.types; nullOr ints.unsigned;
           default = null;
           description = "The minimum width of the window title.";
         };
-        maximumWidth = mkOption {
-          type = types.nullOr types.ints.unsigned;
+        maximumWidth = lib.mkOption {
+          type = with lib.types; nullOr ints.unsigned;
           default = null;
           description = "The maximum width of the window title.";
         };
-        font = mkOption {
-          type = types.nullOr fontType;
+        font = lib.mkOption {
+          type = lib.types.nullOr fontType;
           default = null;
           example = {
             bold = false;
@@ -305,36 +309,28 @@ in
             };
         };
         hideEmptyTitle = mkBoolOption "Whether to hide the window title when it's empty.";
-        undefinedWindowTitle = mkOption {
-          type = types.nullOr types.str;
+        undefinedWindowTitle = lib.mkOption {
+          type = with lib.types; nullOr str;
           default = null;
+          example = "Plasma";
           description = "The text to show when the window title is undefined.";
         };
-        source =
-          let
-            enumVals = [
-              "appName"
-              "decoration"
-              "genericAppName"
-              "alwaysUndefined"
-            ];
-          in
-          mkOption {
-            type = with types; nullOr (enum enumVals);
-            default = null;
-            example = "appName";
-            description = ''
-              The source of the window title.
+        source = lib.mkOption {
+          type = with lib.types; nullOr (enum windowTitleSources);
+          default = null;
+          example = "appName";
+          description = ''
+            The source of the window title.
 
-              - appName: The name of the application
-              - decoration: The title of the window decoration
-              - genericAppName: The generic name of the application
-              - alwaysUndefined: Always show the undefined title
-            '';
-            apply = getIndexFromEnum enumVals;
-          };
-        margins = mkOption {
-          type = types.nullOr marginType;
+            - appName: The name of the application
+            - decoration: The title of the window decoration
+            - genericAppName: The generic name of the application
+            - alwaysUndefined: Always show the undefined title
+          '';
+          apply = getIndexFromEnum windowTitleSources;
+        };
+        margins = lib.mkOption {
+          type = lib.types.nullOr marginType;
           default = null;
           example = {
             left = 10;
@@ -352,54 +348,53 @@ in
               windowTitleMarginsBottom = margins.bottom;
             };
         };
+        horizontalAlignment = lib.mkOption {
+          type = with lib.types; nullOr (enum horizontalAlignment);
+          default = null;
+          example = "left";
+          description = "The horizontal alignment of the window title.";
+          apply = getIndexFromEnum horizontalAlignment;
+        };
+        verticalAlignment =
+          let
+            enumVals = [
+              "top"
+              "bottom"
+              "center"
+            ];
+          in
+          lib.mkOption {
+            type = with lib.types; nullOr (enum enumVals);
+            default = null;
+            example = "center";
+            description = "The vertical alignment of the window title.";
+            apply = getIndexFromEnum enumVals;
+          };
       };
       overrideForMaximized = {
         enable = mkBoolOption "Whether to override the settings for maximized windows.";
-        elements = mkOption {
-          type = types.nullOr (
-            types.listOf (
-              types.enum [
-                "windowCloseButton"
-                "windowMinimizeButton"
-                "windowMaximizeButton"
-                "windowKeepAboveButton"
-                "windowKeepBelowButton"
-                "windowShadeButton"
-                "windowTitle"
-                "windowIcon"
-                "spacer"
-              ]
-            )
-          );
+        elements = lib.mkOption {
+          type = with lib.types; nullOr (types.listOf (types.enum elements));
           default = null;
           example = [ "windowTitle" ];
           description = ''
             The elements to show in the widget for maximized windows.
           '';
         };
-        source =
-          let
-            enumVals = [
-              "appName"
-              "decoration"
-              "genericAppName"
-              "alwaysUndefined"
-            ];
-          in
-          mkOption {
-            type = with types; nullOr (enum enumVals);
-            default = null;
-            example = "appName";
-            description = ''
-              The source of the window title for maximized windows.
+        source = lib.mkOption {
+          type = with lib.types; nullOr (enum windowTitleSources);
+          default = null;
+          example = "appName";
+          description = ''
+            The source of the window title for maximized windows.
 
-              - appName: The name of the application
-              - decoration: The title of the window decoration
-              - genericAppName: The generic name of the application
-              - alwaysUndefined: Always show the undefined title
-            '';
-            apply = getIndexFromEnum enumVals;
-          };
+            - appName: The name of the application
+            - decoration: The title of the window decoration
+            - genericAppName: The generic name of the application
+            - alwaysUndefined: Always show the undefined title
+          '';
+          apply = getIndexFromEnum windowTitleSources;
+        };
       };
       behavior = {
         activeTaskSource =
@@ -410,8 +405,8 @@ in
               "lastActiveMaximized"
             ];
           in
-          mkOption {
-            type = with types; nullOr (enum enumVals);
+          lib.mkOption {
+            type = with lib.types; nullOr (enum enumVals);
             default = null;
             example = "activeTask";
             description = ''
@@ -432,90 +427,90 @@ in
       mouseAreaDrag = {
         enable = mkBoolOption "Whether to enable dragging the widget by the mouse area.";
         onlyMaximized = mkBoolOption "Whether to allow dragging the widget only for maximized windows.";
-        threshold = mkOption {
-          type = types.nullOr types.ints.unsigned;
+        threshold = lib.mkOption {
+          type = with lib.types; nullOr ints.unsigned;
           default = null;
           description = "The threshold for dragging the widget.";
         };
-        leftDragAction = mkOption {
-          type = types.nullOr types.str;
+        leftDragAction = lib.mkOption {
+          type = with lib.types; nullOr str;
           default = null;
           description = "The action to perform on left click drag.";
         };
-        middleDragAction = mkOption {
-          type = types.nullOr types.str;
+        middleDragAction = lib.mkOption {
+          type = with lib.types; nullOr str;
           default = null;
           description = "The action to perform on middle click drag.";
         };
       };
       mouseAreaClick = {
         enable = mkBoolOption "Whether to enable clicking the widget by the mouse area.";
-        leftButtonClick = mkOption {
-          type = types.nullOr types.str;
+        leftButtonClick = lib.mkOption {
+          type = with lib.types; nullOr str;
           default = null;
           description = "The action to perform on left click.";
         };
-        leftButtonDoubleClick = mkOption {
-          type = types.nullOr types.str;
+        leftButtonDoubleClick = lib.mkOption {
+          type = with lib.types; nullOr str;
           default = null;
           description = "The action to perform on left double click.";
         };
-        leftButtonLongClick = mkOption {
-          type = types.nullOr types.str;
+        leftButtonLongClick = lib.mkOption {
+          type = with lib.types; nullOr str;
           default = null;
           description = "The action to perform on left long press.";
         };
-        middleButtonClick = mkOption {
-          type = types.nullOr types.str;
+        middleButtonClick = lib.mkOption {
+          type = with lib.types; nullOr str;
           default = null;
           description = "The action to perform on middle click.";
         };
-        middleButtonDoubleClick = mkOption {
-          type = types.nullOr types.str;
+        middleButtonDoubleClick = lib.mkOption {
+          type = with lib.types; nullOr str;
           default = null;
           description = "The action to perform on middle double click.";
         };
-        middleButtonLongClick = mkOption {
-          type = types.nullOr types.str;
+        middleButtonLongClick = lib.mkOption {
+          type = with lib.types; nullOr str;
           default = null;
           description = "The action to perform on middle long press.";
         };
       };
       mouseAreaWheel = {
         enable = mkBoolOption "Whether to enable scrolling the widget by the mouse area.";
-        firstEventDistance = mkOption {
-          type = types.nullOr types.ints.unsigned;
+        firstEventDistance = lib.mkOption {
+          type = with lib.types; nullOr ints.unsigned;
           default = null;
           description = "The distance of the first event.";
         };
-        nextEventDistance = mkOption {
-          type = types.nullOr types.ints.unsigned;
+        nextEventDistance = lib.mkOption {
+          type = with lib.types; nullOr ints.unsigned;
           default = null;
           description = "The distance of the next event.";
         };
-        wheelUp = mkOption {
-          type = types.nullOr types.str;
+        wheelUp = lib.mkOption {
+          type = with lib.types; nullOr str;
           default = null;
           description = "The action to perform on wheel up.";
         };
-        wheelDown = mkOption {
-          type = types.nullOr types.str;
+        wheelDown = lib.mkOption {
+          type = with lib.types; nullOr str;
           default = null;
           description = "The action to perform on wheel down.";
         };
-        wheelLeft = mkOption {
-          type = types.nullOr types.str;
+        wheelLeft = lib.mkOption {
+          type = with lib.types; nullOr str;
           default = null;
           description = "The action to perform on wheel left.";
         };
-        wheelRight = mkOption {
-          type = types.nullOr types.str;
+        wheelRight = lib.mkOption {
+          type = with lib.types; nullOr str;
           default = null;
           description = "The action to perform on wheel right.";
         };
       };
-      titleReplacements = mkOption {
-        type = with types; nullOr (listOf titleReplacementType);
+      titleReplacements = lib.mkOption {
+        type = with lib.types; nullOr (listOf titleReplacementType);
         default = null;
         example = [
           {
@@ -538,7 +533,7 @@ in
             titleReplacementsTypes = map (r: r.type) replacements;
           };
       };
-      settings = mkOption {
+      settings = lib.mkOption {
         type = configValueType;
         default = null;
         example = {
@@ -596,6 +591,8 @@ in
               windowTitleHideEmpty = windowTitle.hideEmptyTitle;
               windowTitleUndefined = windowTitle.undefinedWindowTitle;
               windowTitleSource = windowTitle.source;
+              windowTitleHorizontalAlignment = windowTitle.horizontalAlignment;
+              windowTitleVerticalAlignment = windowTitle.verticalAlignment;
 
               # Override for maximized windows
               overrideElementsMaximized = overrideForMaximized.enable;
@@ -605,7 +602,7 @@ in
             // windowTitle.font
             // windowTitle.margins
           );
-          Behavior = lib.filterAttrs (_: v: v != null) ({
+          Behavior = lib.filterAttrs (_: v: v != null) {
             # Behavior
             widgetActiveTaskSource = behavior.activeTaskSource;
             widgetActiveTaskFilterByActivity = behavior.filterByActivity;
@@ -638,7 +635,7 @@ in
             widgetMouseAreaWheelDownAction = mouseAreaWheel.wheelDown;
             widgetMouseAreaWheelLeftAction = mouseAreaWheel.wheelLeft;
             widgetMouseAreaWheelRightAction = mouseAreaWheel.wheelRight;
-          });
+          };
           TitleReplacements = titleReplacements;
         } settings;
       };
