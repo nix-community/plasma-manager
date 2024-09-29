@@ -76,6 +76,14 @@ let
         (throw "getIndexFromEnum (application-title-bar widget): Value ${value} isn't present in the enum. This is a bug")
         enum;
 
+  capitalizeWord =
+    word:
+    let
+      firstLetter = builtins.substring 0 1 word;
+      rest = builtins.substring 1 (builtins.stringLength word - 1) word;
+    in
+    if word == null then null else "${lib.toUpper firstLetter}${rest}";
+
   fontType = lib.types.submodule {
     options = {
       bold = mkBoolOption "Enable bold text.";
@@ -353,7 +361,7 @@ in
           default = null;
           example = "left";
           description = "The horizontal alignment of the window title.";
-          apply = getIndexFromEnum horizontalAlignment;
+          apply = capitalizeWord;
         };
         verticalAlignment =
           let
@@ -368,7 +376,7 @@ in
             default = null;
             example = "center";
             description = "The vertical alignment of the window title.";
-            apply = getIndexFromEnum enumVals;
+            apply = capitalizeWord;
           };
       };
       overrideForMaximized = {
