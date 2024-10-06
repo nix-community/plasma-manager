@@ -221,49 +221,16 @@ in
 {
   imports = [
     (lib.mkRenamedOptionModule
-      [
-        "programs"
-        "plasma"
-        "powerdevil"
-        "powerButtonAction"
-      ]
-      [
-        "programs"
-        "plasma"
-        "powerdevil"
-        "AC"
-        "powerButtonAction"
-      ]
+      ["programs" "plasma" "powerdevil" "powerButtonAction"]
+      ["programs" "plasma" "powerdevil" "AC" "powerButtonAction"]
     )
     (lib.mkRenamedOptionModule
-      [
-        "programs"
-        "plasma"
-        "powerdevil"
-        "autoSuspend"
-      ]
-      [
-        "programs"
-        "plasma"
-        "powerdevil"
-        "AC"
-        "autoSuspend"
-      ]
+      ["programs" "plasma" "powerdevil" "autoSuspend"]
+      ["programs" "plasma" "powerdevil" "AC" "autoSuspend"]
     )
     (lib.mkRenamedOptionModule
-      [
-        "programs"
-        "plasma"
-        "powerdevil"
-        "turnOffDisplay"
-      ]
-      [
-        "programs"
-        "plasma"
-        "powerdevil"
-        "AC"
-        "turnOffDisplay"
-      ]
+      ["programs" "plasma" "powerdevil" "turnOffDisplay"]
+      ["programs" "plasma" "powerdevil" "AC" "turnOffDisplay"]
     )
   ];
 
