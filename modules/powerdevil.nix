@@ -40,7 +40,28 @@ let
   # can generate the options by just specifying the type (i.e. "AC" or
   # "battery").
   createPowerDevilOptions = type: {
-    suspendSession = {};
+    suspendSession = {
+      autoSuspend = {
+        action = lib.mkOption {
+          type = with lib.types; nullOr (enum (builtins.attrNames autoSuspendActions));
+          default = null;
+          example = "nothing";
+          description = ''
+          The action, when on ${type}, to perform after a certain period of inactivity.
+        '';
+          apply = action: if (action == null) then null else autoSuspendActions."${action}";
+        };
+        idleTimeout = lib.mkOption {
+          type = with lib.types; nullOr (ints.between 60 600000);
+          default = null;
+          example = 600;
+          description = ''
+          The duration (in seconds), when on ${type}, the computer must be idle
+          until the auto-suspend action is executed.
+        '';
+        };
+      };
+    };
 
     displayAndBrightness = {};
 
@@ -54,26 +75,6 @@ let
         The action, when on ${type}, to perform when the power button is pressed.
       '';
       apply = action: if (action == null) then null else powerButtonActions."${action}";
-    };
-    autoSuspend = {
-      action = lib.mkOption {
-        type = with lib.types; nullOr (enum (builtins.attrNames autoSuspendActions));
-        default = null;
-        example = "nothing";
-        description = ''
-          The action, when on ${type}, to perform after a certain period of inactivity.
-        '';
-        apply = action: if (action == null) then null else autoSuspendActions."${action}";
-      };
-      idleTimeout = lib.mkOption {
-        type = with lib.types; nullOr (ints.between 60 600000);
-        default = null;
-        example = 600;
-        description = ''
-          The duration (in seconds), when on ${type}, the computer must be idle
-          until the auto-suspend action is executed.
-        '';
-      };
     };
     whenSleepingEnter = lib.mkOption {
       type = with lib.types; nullOr (enum (builtins.attrNames whenSleepingEnterActions));
@@ -188,8 +189,8 @@ let
   createPowerDevilConfig = cfgSectName: optionsName: {
     "${cfgSectName}/SuspendAndShutdown" = {
       PowerButtonAction = cfg.powerdevil.${optionsName}.powerButtonAction;
-      AutoSuspendAction = cfg.powerdevil.${optionsName}.autoSuspend.action;
-      AutoSuspendIdleTimeoutSec = cfg.powerdevil.${optionsName}.autoSuspend.idleTimeout;
+      AutoSuspendAction = cfg.powerdevil.${optionsName}.suspendSession.autoSuspend.action;
+      AutoSuspendIdleTimeoutSec = cfg.powerdevil.${optionsName}.suspendSession.autoSuspend.idleTimeout;
       SleepMode = cfg.powerdevil.${optionsName}.whenSleepingEnter;
       LidAction = cfg.powerdevil.${optionsName}.whenLaptopLidClosed;
       InhibitLidActionWhenExternalMonitorPresent =
@@ -232,6 +233,18 @@ in
       ["programs" "plasma" "powerdevil" "turnOffDisplay"]
       ["programs" "plasma" "powerdevil" "AC" "turnOffDisplay"]
     )
+    (lib.mkRenamedOptionModule
+      ["programs" "plasma" "powerdevil" "AC" "autoSuspend"]
+      ["programs" "plasma" "powerdevil" "AC" "suspendSession" "autoSuspend"]
+    )
+    (lib.mkRenamedOptionModule
+      ["programs" "plasma" "powerdevil" "battery" "autoSuspend"]
+      ["programs" "plasma" "powerdevil" "battery" "suspendSession" "autoSuspend"]
+    )
+    (lib.mkRenamedOptionModule
+      ["programs" "plasma" "powerdevil" "lowBattery" "autoSuspend"]
+      ["programs" "plasma" "powerdevil" "lowBattery" "suspendSession" "autoSuspend"]
+    )
   ];
 
   config.assertions =
@@ -239,10 +252,10 @@ in
       createAssertions = type: [
         {
           assertion = (
-            cfg.powerdevil.${type}.autoSuspend.action != autoSuspendActions.nothing
-            || cfg.powerdevil.${type}.autoSuspend.idleTimeout == null
+            cfg.powerdevil.${type}.suspendSession.autoSuspend.action != autoSuspendActions.nothing
+            || cfg.powerdevil.${type}.suspendSession.autoSuspend.idleTimeout == null
           );
-          message = "Setting programs.plasma.powerdevil.${type}.autoSuspend.idleTimeout for autosuspend-action \"nothing\" is not supported.";
+          message = "Setting programs.plasma.powerdevil.${type}.suspendSession.autoSuspend.idleTimeout for autosuspend-action \"nothing\" is not supported.";
         }
         {
           assertion = (
