@@ -40,6 +40,12 @@ let
   # can generate the options by just specifying the type (i.e. "AC" or
   # "battery").
   createPowerDevilOptions = type: {
+    suspendSession = {};
+
+    displayAndBrightness = {};
+
+    otherSettings = {};
+
     powerButtonAction = lib.mkOption {
       type = with lib.types; nullOr (enum (builtins.attrNames powerButtonActions));
       default = null;
