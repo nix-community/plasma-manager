@@ -71,6 +71,16 @@ let
         '';
         apply = action: if (action == null) then null else powerButtonActions."${action}";
       };
+
+      whenLaptopLidClosed = lib.mkOption {
+        type = with lib.types; nullOr (enum (builtins.attrNames whenLaptopLidClosedActions));
+        default = null;
+        example = "shutdown";
+        description = ''
+          The action, when on ${type}, to perform when the laptop lid is closed.
+        '';
+        apply = action: if (action == null) then null else whenLaptopLidClosedActions."${action}";
+      };
     };
 
     displayAndBrightness = {};
@@ -85,15 +95,6 @@ let
         The state, when on ${type}, to enter when sleeping.
       '';
       apply = action: if (action == null) then null else whenSleepingEnterActions."${action}";
-    };
-    whenLaptopLidClosed = lib.mkOption {
-      type = with lib.types; nullOr (enum (builtins.attrNames whenLaptopLidClosedActions));
-      default = null;
-      example = "shutdown";
-      description = ''
-        The action, when on ${type}, to perform when the laptop lid is closed.
-      '';
-      apply = action: if (action == null) then null else whenLaptopLidClosedActions."${action}";
     };
     inhibitLidActionWhenExternalMonitorConnected = lib.mkOption {
       type = with lib.types; nullOr bool;
@@ -193,7 +194,7 @@ let
       AutoSuspendAction = cfg.powerdevil.${optionsName}.suspendSession.autoSuspend.action;
       AutoSuspendIdleTimeoutSec = cfg.powerdevil.${optionsName}.suspendSession.autoSuspend.idleTimeout;
       SleepMode = cfg.powerdevil.${optionsName}.whenSleepingEnter;
-      LidAction = cfg.powerdevil.${optionsName}.whenLaptopLidClosed;
+      LidAction = cfg.powerdevil.${optionsName}.suspendSession.whenLaptopLidClosed;
       InhibitLidActionWhenExternalMonitorPresent =
         cfg.powerdevil.${optionsName}.inhibitLidActionWhenExternalMonitorConnected;
     };
@@ -257,6 +258,18 @@ in
     (lib.mkRenamedOptionModule
       ["programs" "plasma" "powerdevil" "lowBattery" "powerButtonAction"]
       ["programs" "plasma" "powerdevil" "lowBattery" "suspendSession" "powerButtonAction"]
+    )
+    (lib.mkRenamedOptionModule
+      ["programs" "plasma" "powerdevil" "AC" "whenLaptopLidClosed"]
+      ["programs" "plasma" "powerdevil" "AC" "suspendSession" "whenLaptopLidClosed"]
+    )
+    (lib.mkRenamedOptionModule
+      ["programs" "plasma" "powerdevil" "battery" "whenLaptopLidClosed"]
+      ["programs" "plasma" "powerdevil" "battery" "suspendSession" "whenLaptopLidClosed"]
+    )
+    (lib.mkRenamedOptionModule
+      ["programs" "plasma" "powerdevil" "lowBattery" "whenLaptopLidClosed"]
+      ["programs" "plasma" "powerdevil" "lowBattery" "suspendSession" "whenLaptopLidClosed"]
     )
   ];
 
