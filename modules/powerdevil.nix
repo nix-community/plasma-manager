@@ -61,21 +61,22 @@ let
         '';
         };
       };
+
+      powerButtonAction = lib.mkOption {
+        type = with lib.types; nullOr (enum (builtins.attrNames powerButtonActions));
+        default = null;
+        example = "nothing";
+        description = ''
+          The action, when on ${type}, to perform when the power button is pressed.
+        '';
+        apply = action: if (action == null) then null else powerButtonActions."${action}";
+      };
     };
 
     displayAndBrightness = {};
 
     otherSettings = {};
 
-    powerButtonAction = lib.mkOption {
-      type = with lib.types; nullOr (enum (builtins.attrNames powerButtonActions));
-      default = null;
-      example = "nothing";
-      description = ''
-        The action, when on ${type}, to perform when the power button is pressed.
-      '';
-      apply = action: if (action == null) then null else powerButtonActions."${action}";
-    };
     whenSleepingEnter = lib.mkOption {
       type = with lib.types; nullOr (enum (builtins.attrNames whenSleepingEnterActions));
       default = null;
@@ -188,7 +189,7 @@ let
   # options from (i.e. powerdevil.AC or powerdevil.battery).
   createPowerDevilConfig = cfgSectName: optionsName: {
     "${cfgSectName}/SuspendAndShutdown" = {
-      PowerButtonAction = cfg.powerdevil.${optionsName}.powerButtonAction;
+      PowerButtonAction = cfg.powerdevil.${optionsName}.suspendSession.powerButtonAction;
       AutoSuspendAction = cfg.powerdevil.${optionsName}.suspendSession.autoSuspend.action;
       AutoSuspendIdleTimeoutSec = cfg.powerdevil.${optionsName}.suspendSession.autoSuspend.idleTimeout;
       SleepMode = cfg.powerdevil.${optionsName}.whenSleepingEnter;
@@ -244,6 +245,18 @@ in
     (lib.mkRenamedOptionModule
       ["programs" "plasma" "powerdevil" "lowBattery" "autoSuspend"]
       ["programs" "plasma" "powerdevil" "lowBattery" "suspendSession" "autoSuspend"]
+    )
+    (lib.mkRenamedOptionModule
+      ["programs" "plasma" "powerdevil" "AC" "powerButtonAction"]
+      ["programs" "plasma" "powerdevil" "AC" "suspendSession" "powerButtonAction"]
+    )
+    (lib.mkRenamedOptionModule
+      ["programs" "plasma" "powerdevil" "battery" "powerButtonAction"]
+      ["programs" "plasma" "powerdevil" "battery" "suspendSession" "powerButtonAction"]
+    )
+    (lib.mkRenamedOptionModule
+      ["programs" "plasma" "powerdevil" "lowBattery" "powerButtonAction"]
+      ["programs" "plasma" "powerdevil" "lowBattery" "suspendSession" "powerButtonAction"]
     )
   ];
 
