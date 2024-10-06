@@ -157,6 +157,22 @@ let
         '';
       };
     };
+    changeScreenBrightness = {
+      enable = lib.mkOption {
+        type = with lib.types; nullOr bool;
+        default = null;
+        example = true;
+        description = "Enable or disable screen brightness changing.";
+      };
+      percentage = lib.mkOption {
+        type = with lib.types; nullOr (ints.between 0 100);
+        default = null;
+        example = 70;
+        description = ''
+          The screen brightness percentage when on ${type}.
+        '';
+      };
+    };
   };
 
   # By the same logic as createPowerDevilOptions, we can generate the
@@ -185,6 +201,14 @@ let
         else
           null;
       DimDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.dimDisplay.idleTimeout;
+      UseProfileSpecificDisplayBrightness=
+        if (cfg.powerdevil.${optionsName}.changeScreenBrightness.enable != null) then
+          cfg.powerdevil.${optionsName}.changeScreenBrightness.enable
+        else if (cfg.powerdevil.${optionsName}.changeScreenBrightness.percentage != null) then
+          true
+        else
+          null;
+      DisplayBrightness=cfg.powerdevil.${optionsName}.changeScreenBrightness.percentage;
     };
   };
 in
@@ -260,6 +284,13 @@ in
             || cfg.powerdevil.${type}.dimDisplay.idleTimeout == null
           );
           message = "Cannot set programs.plasma.powerdevil.${type}.dimDisplay.idleTimeout when programs.plasma.powerdevil.${type}.dimDisplay.enable is disabled.";
+        }
+        {
+          assertion = (
+            cfg.powerdevil.${type}.changeScreenBrightness.enable != false
+            || cfg.powerdevil.${type}.changeScreenBrightness.percentage == null
+          );
+          message = "Cannot set programs.plasma.powerdevil.${type}.changeScreenBrightness.percentage when programs.plasma.powerdevil.${type}.changeScreenBrightness.enable is disabled.";
         }
       ];
     in
