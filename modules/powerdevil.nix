@@ -2,6 +2,13 @@
 let
   cfg = config.programs.plasma;
 
+  autoSuspendActions = {
+    nothing = 0;
+    sleep = 1;
+    hibernate = 2;
+    shutDown = 8;
+  };
+
   # Values can be found at:
   # https://github.com/KDE/powerdevil/blob/master/daemon/powerdevilenums.h
   powerButtonActions = {
@@ -14,19 +21,6 @@ let
     turnOffScreen = 64;
   };
 
-  autoSuspendActions = {
-    nothing = 0;
-    hibernate = 2;
-    sleep = 1;
-    shutDown = 8;
-  };
-
-  whenSleepingEnterActions = {
-    standby = 1;
-    hybridSleep = 2;
-    standbyThenHibernate = 3;
-  };
-
   whenLaptopLidClosedActions = {
     doNothing = 0;
     sleep = 1;
@@ -34,6 +28,12 @@ let
     shutdown = 8;
     lockScreen = 32;
     turnOffScreen = 64;
+  };
+
+  whenSleepingEnterActions = {
+    standby = 1;
+    hybridSleep = 2;
+    standbyThenHibernate = 3;
   };
 
   # Since AC and battery allows the same options we create a function here which
