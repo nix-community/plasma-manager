@@ -82,12 +82,12 @@ let
         apply = action: if (action == null) then null else whenLaptopLidClosedActions."${action}";
       };
 
-      inhibitLidActionWhenExternalMonitorConnected = lib.mkOption {
+      evenWhenAnExternalMonitorIsConnected = lib.mkOption {
         type = with lib.types; nullOr bool;
         default = null;
-        example = true;
+        example = false;
         description = ''
-          If enabled, the lid action will be inhibited when an external monitor is connected.
+          If enabled, the lid action will be executed even when an external monitor is connected.
         '';
       };
 
@@ -199,8 +199,7 @@ let
       AutoSuspendIdleTimeoutSec = cfg.powerdevil.${optionsName}.suspendSession.afterAPeriodOfInactivity.idleTimeout;
       SleepMode = cfg.powerdevil.${optionsName}.suspendSession.whenSleepingEnter;
       LidAction = cfg.powerdevil.${optionsName}.suspendSession.whenLaptopLidClosed;
-      InhibitLidActionWhenExternalMonitorPresent =
-        cfg.powerdevil.${optionsName}.suspendSession.inhibitLidActionWhenExternalMonitorConnected;
+      InhibitLidActionWhenExternalMonitorPresent = ! cfg.powerdevil.${optionsName}.suspendSession.evenWhenAnExternalMonitorIsConnected;
     };
     "${cfgSectName}/Display" = {
       TurnOffDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.displayAndBrightness.turnOffDisplay.idleTimeout;
@@ -277,15 +276,15 @@ in
     )
     (lib.mkRenamedOptionModule
       ["programs" "plasma" "powerdevil" "AC" "inhibitLidActionWhenExternalMonitorConnected"]
-      ["programs" "plasma" "powerdevil" "AC" "suspendSession" "inhibitLidActionWhenExternalMonitorConnected"]
+      ["programs" "plasma" "powerdevil" "AC" "suspendSession" "evenWhenAnExternalMonitorIsConnected"]
     )
     (lib.mkRenamedOptionModule
       ["programs" "plasma" "powerdevil" "battery" "inhibitLidActionWhenExternalMonitorConnected"]
-      ["programs" "plasma" "powerdevil" "battery" "suspendSession" "inhibitLidActionWhenExternalMonitorConnected"]
+      ["programs" "plasma" "powerdevil" "battery" "suspendSession" "evenWhenAnExternalMonitorIsConnected"]
     )
     (lib.mkRenamedOptionModule
       ["programs" "plasma" "powerdevil" "lowBattery" "inhibitLidActionWhenExternalMonitorConnected"]
-      ["programs" "plasma" "powerdevil" "lowBattery" "suspendSession" "inhibitLidActionWhenExternalMonitorConnected"]
+      ["programs" "plasma" "powerdevil" "lowBattery" "suspendSession" "evenWhenAnExternalMonitorIsConnected"]
     )
     (lib.mkRenamedOptionModule
       ["programs" "plasma" "powerdevil" "AC" "whenSleepingEnter"]
