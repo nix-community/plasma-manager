@@ -11,7 +11,7 @@ let
 
   # Values can be found at:
   # https://github.com/KDE/powerdevil/blob/master/daemon/powerdevilenums.h
-  powerButtonActions = {
+  whenPowerButtonPressedActions = {
     nothing = 0;
     sleep = 1;
     hibernate = 2;
@@ -62,14 +62,14 @@ let
         };
       };
 
-      powerButtonAction = lib.mkOption {
-        type = with lib.types; nullOr (enum (builtins.attrNames powerButtonActions));
+      whenPowerButtonPressed = lib.mkOption {
+        type = with lib.types; nullOr (enum (builtins.attrNames whenPowerButtonPressedActions));
         default = null;
         example = "nothing";
         description = ''
           The action, when on ${type}, to perform when the power button is pressed.
         '';
-        apply = action: if (action == null) then null else powerButtonActions."${action}";
+        apply = action: if (action == null) then null else whenPowerButtonPressedActions."${action}";
       };
 
       whenLaptopLidClosed = lib.mkOption {
@@ -194,7 +194,7 @@ let
   # options from (i.e. powerdevil.AC or powerdevil.battery).
   createPowerDevilConfig = cfgSectName: optionsName: {
     "${cfgSectName}/SuspendAndShutdown" = {
-      PowerButtonAction = cfg.powerdevil.${optionsName}.suspendSession.powerButtonAction;
+      PowerButtonAction = cfg.powerdevil.${optionsName}.suspendSession.whenPowerButtonPressed;
       AutoSuspendAction = cfg.powerdevil.${optionsName}.suspendSession.afterAPeriodOfInactivity.action;
       AutoSuspendIdleTimeoutSec = cfg.powerdevil.${optionsName}.suspendSession.afterAPeriodOfInactivity.idleTimeout;
       SleepMode = cfg.powerdevil.${optionsName}.suspendSession.whenSleepingEnter;
@@ -253,15 +253,15 @@ in
     )
     (lib.mkRenamedOptionModule
       ["programs" "plasma" "powerdevil" "AC" "powerButtonAction"]
-      ["programs" "plasma" "powerdevil" "AC" "suspendSession" "powerButtonAction"]
+      ["programs" "plasma" "powerdevil" "AC" "suspendSession" "whenPowerButtonPressed"]
     )
     (lib.mkRenamedOptionModule
       ["programs" "plasma" "powerdevil" "battery" "powerButtonAction"]
-      ["programs" "plasma" "powerdevil" "battery" "suspendSession" "powerButtonAction"]
+      ["programs" "plasma" "powerdevil" "battery" "suspendSession" "whenPowerButtonPressed"]
     )
     (lib.mkRenamedOptionModule
       ["programs" "plasma" "powerdevil" "lowBattery" "powerButtonAction"]
-      ["programs" "plasma" "powerdevil" "lowBattery" "suspendSession" "powerButtonAction"]
+      ["programs" "plasma" "powerdevil" "lowBattery" "suspendSession" "whenPowerButtonPressed"]
     )
     (lib.mkRenamedOptionModule
       ["programs" "plasma" "powerdevil" "AC" "whenLaptopLidClosed"]
