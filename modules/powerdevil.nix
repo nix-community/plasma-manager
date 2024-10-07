@@ -102,7 +102,24 @@ let
       };
     };
 
-    displayAndBrightness = {};
+    displayAndBrightness = {
+      changeScreenBrightness = {
+        enable = lib.mkOption {
+          type = with lib.types; nullOr bool;
+          default = null;
+          example = true;
+          description = "Enable or disable screen brightness changing.";
+        };
+        percentage = lib.mkOption {
+          type = with lib.types; nullOr (ints.between 0 100);
+          default = null;
+          example = 70;
+          description = ''
+            The screen brightness percentage when on ${type}.
+          '';
+        };
+      };
+    };
 
     otherSettings = {};
 
@@ -168,22 +185,6 @@ let
         '';
       };
     };
-    changeScreenBrightness = {
-      enable = lib.mkOption {
-        type = with lib.types; nullOr bool;
-        default = null;
-        example = true;
-        description = "Enable or disable screen brightness changing.";
-      };
-      percentage = lib.mkOption {
-        type = with lib.types; nullOr (ints.between 0 100);
-        default = null;
-        example = 70;
-        description = ''
-          The screen brightness percentage when on ${type}.
-        '';
-      };
-    };
   };
 
   # By the same logic as createPowerDevilOptions, we can generate the
@@ -213,13 +214,13 @@ let
           null;
       DimDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.dimDisplay.idleTimeout;
       UseProfileSpecificDisplayBrightness=
-        if (cfg.powerdevil.${optionsName}.changeScreenBrightness.enable != null) then
-          cfg.powerdevil.${optionsName}.changeScreenBrightness.enable
-        else if (cfg.powerdevil.${optionsName}.changeScreenBrightness.percentage != null) then
+        if (cfg.powerdevil.${optionsName}.displayAndBrightness.changeScreenBrightness.enable != null) then
+          cfg.powerdevil.${optionsName}.displayAndBrightness.changeScreenBrightness.enable
+        else if (cfg.powerdevil.${optionsName}.displayAndBrightness.changeScreenBrightness.percentage != null) then
           true
         else
           null;
-      DisplayBrightness=cfg.powerdevil.${optionsName}.changeScreenBrightness.percentage;
+      DisplayBrightness=cfg.powerdevil.${optionsName}.displayAndBrightness.changeScreenBrightness.percentage;
     };
   };
 in
@@ -297,6 +298,18 @@ in
       ["programs" "plasma" "powerdevil" "lowBattery" "whenSleepingEnter"]
       ["programs" "plasma" "powerdevil" "lowBattery" "suspendSession" "whenSleepingEnter"]
     )
+    (lib.mkRenamedOptionModule
+      ["programs" "plasma" "powerdevil" "AC" "changeScreenBrightness"]
+      ["programs" "plasma" "powerdevil" "AC" "displayAndBrightness" "changeScreenBrightness"]
+    )
+    (lib.mkRenamedOptionModule
+      ["programs" "plasma" "powerdevil" "battery" "changeScreenBrightness"]
+      ["programs" "plasma" "powerdevil" "battery" "displayAndBrightness" "changeScreenBrightness"]
+    )
+    (lib.mkRenamedOptionModule
+      ["programs" "plasma" "powerdevil" "lowBattery" "changeScreenBrightness"]
+      ["programs" "plasma" "powerdevil" "lowBattery" "displayAndBrightness" "changeScreenBrightness"]
+    )
   ];
 
   config.assertions =
@@ -325,10 +338,10 @@ in
         }
         {
           assertion = (
-            cfg.powerdevil.${type}.changeScreenBrightness.enable != false
-            || cfg.powerdevil.${type}.changeScreenBrightness.percentage == null
+            cfg.powerdevil.${type}.displayAndBrightness.changeScreenBrightness.enable != false
+            || cfg.powerdevil.${type}.displayAndBrightness.changeScreenBrightness.percentage == null
           );
-          message = "Cannot set programs.plasma.powerdevil.${type}.changeScreenBrightness.percentage when programs.plasma.powerdevil.${type}.changeScreenBrightness.enable is disabled.";
+          message = "Cannot set programs.plasma.powerdevil.${type}.displayAndBrightness.changeScreenBrightness.percentage when programs.plasma.powerdevil.${type}.displayAndBrightness.changeScreenBrightness.enable is disabled.";
         }
       ];
     in
