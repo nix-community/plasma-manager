@@ -138,7 +138,7 @@ let
         };
       };
 
-      turnOffDisplay = {
+      turnOffScreen = {
         idleTimeout = lib.mkOption {
           type = with lib.types; nullOr (either (enum [ "never" ]) (ints.between 30 600000));
           default = null;
@@ -202,9 +202,9 @@ let
       InhibitLidActionWhenExternalMonitorPresent = ! cfg.powerdevil.${optionsName}.suspendSession.evenWhenAnExternalMonitorIsConnected;
     };
     "${cfgSectName}/Display" = {
-      TurnOffDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.displayAndBrightness.turnOffDisplay.idleTimeout;
+      TurnOffDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.displayAndBrightness.turnOffScreen.idleTimeout;
       TurnOffDisplayIdleTimeoutWhenLockedSec =
-        cfg.powerdevil.${optionsName}.displayAndBrightness.turnOffDisplay.idleTimeoutWhenLocked;
+        cfg.powerdevil.${optionsName}.displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked;
       DimDisplayWhenIdle =
         if (cfg.powerdevil.${optionsName}.displayAndBrightness.dimAutomatically.enable != null) then
           cfg.powerdevil.${optionsName}.displayAndBrightness.dimAutomatically.enable
@@ -324,15 +324,15 @@ in
     )
     (lib.mkRenamedOptionModule
       ["programs" "plasma" "powerdevil" "AC" "turnOffDisplay"]
-      ["programs" "plasma" "powerdevil" "AC" "displayAndBrightness" "turnOffDisplay"]
+      ["programs" "plasma" "powerdevil" "AC" "displayAndBrightness" "turnOffScreen"]
     )
     (lib.mkRenamedOptionModule
       ["programs" "plasma" "powerdevil" "battery" "turnOffDisplay"]
-      ["programs" "plasma" "powerdevil" "battery" "displayAndBrightness" "turnOffDisplay"]
+      ["programs" "plasma" "powerdevil" "battery" "displayAndBrightness" "turnOffScreen"]
     )
     (lib.mkRenamedOptionModule
       ["programs" "plasma" "powerdevil" "lowBattery" "turnOffDisplay"]
-      ["programs" "plasma" "powerdevil" "lowBattery" "displayAndBrightness" "turnOffDisplay"]
+      ["programs" "plasma" "powerdevil" "lowBattery" "displayAndBrightness" "turnOffScreen"]
     )
   ];
 
@@ -348,10 +348,10 @@ in
         }
         {
           assertion = (
-            cfg.powerdevil.${type}.displayAndBrightness.turnOffDisplay.idleTimeout != -1
-            || cfg.powerdevil.${type}.displayAndBrightness.turnOffDisplay.idleTimeoutWhenLocked == null
+            cfg.powerdevil.${type}.displayAndBrightness.turnOffScreen.idleTimeout != -1
+            || cfg.powerdevil.${type}.displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked == null
           );
-          message = "Setting programs.plasma.powerdevil.${type}.displayAndBrightness.turnOffDisplay.idleTimeoutWhenLocked for idleTimeout \"never\" is not supported.";
+          message = "Setting programs.plasma.powerdevil.${type}.displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked for idleTimeout \"never\" is not supported.";
         }
         {
           assertion = (
