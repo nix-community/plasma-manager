@@ -21,6 +21,13 @@ let
     shutDown = 8;
   };
 
+  autoCriticalActions = {
+    nothing = 0;
+    hibernate = 2;
+    sleep = 1;
+    shutDown = 8;
+  };
+
   whenSleepingEnterActions = {
     standby = 1;
     hybridSleep = 2;
@@ -299,6 +306,33 @@ in
           '';
         };
       };
+      batteryLevels = {
+            lowLevel = lib.mkOption {
+              type = with lib.types; nullOr (ints.between 0 100);
+              default = null;
+              example = 10;
+              description = ''
+              The battery level considered "low" for the laptop
+              '';
+            };
+            criticalLevel = lib.mkOption {
+              type = with lib.types; nullOr (ints.between 0 100);
+              default = null;
+              example = 2;
+              description = ''
+              The battery level considered "critical" for the laptop
+              '';
+            };
+            criticalAction = lib.mkOption {
+              type = with lib.types; nullOr (enum (builtins.attrNames autoCriticalActions));
+              default = null;
+              example = "shutDown";
+              description = ''
+                The action to perform when Critical Battery Level is reached
+              '';
+              apply = action: if (action == null) then null else autoCriticalActions."${action}";
+            };
+          };
     };
   };
 
@@ -310,6 +344,11 @@ in
       // {
         General = {
           pausePlayersOnSuspend = cfg.powerdevil.general.pausePlayersOnSuspend;
+        };
+        BatteryManagement = {
+          BatteryCriticalAction = cfg.powerdevil.batteryLevels.criticalAction;
+          BatteryCriticalLevel = cfg.powerdevil.batteryLevels.criticalLevel;
+          BatteryLowLevel = cfg.powerdevil.batteryLevels.lowLevel;
         };
       }
     );
