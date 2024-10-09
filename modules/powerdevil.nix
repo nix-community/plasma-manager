@@ -165,6 +165,13 @@ let
       The brightness to set the display to in this mode
       '';
     };
+    powerProfile = lib.mkOption {
+      type = with lib.types; nullOr (enum [
+        "performance"
+        "balanced"
+        "power-saver"
+      ]);
+    };
   };
 
   # By the same logic as createPowerDevilOptions, we can generate the
@@ -194,6 +201,9 @@ let
           null;
       DimDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.dimDisplay.idleTimeout;
       DisplayBrightness = cfg.powerdevil.${optionsName}.displayBrightness;
+    };
+    "${cfgSectName}/Performance" = {
+      PowerProfile = cfg.powerdevil.${optionsName}.powerProfile;
     };
   };
 in
