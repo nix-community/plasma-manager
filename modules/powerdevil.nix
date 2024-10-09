@@ -157,6 +157,14 @@ let
         '';
       };
     };
+    displayBrightness = lib.mkOption {
+      type = with lib.types; nullOr (ints.between 0 100);
+      default = null;
+      example = 10;
+      description = ''
+      The brightness to set the display to in this mode
+      '';
+    };
   };
 
   # By the same logic as createPowerDevilOptions, we can generate the
@@ -185,6 +193,7 @@ let
         else
           null;
       DimDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.dimDisplay.idleTimeout;
+      DisplayBrightness = cfg.powerdevil.${optionsName}.displayBrightness;
     };
   };
 in
