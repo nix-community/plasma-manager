@@ -39,6 +39,7 @@ let
     sleep = 1;
     hibernate = 2;
     shutdown = 8;
+    shutDown = 8; # For consistency - all the other instances use camelCase - ideally, the above option would be replaced with this one, but I don't think I can simply add a renamed module import as it's renaming one of the values in the enum type, rather than the option itself?
     lockScreen = 32;
     turnOffScreen = 64;
   };
