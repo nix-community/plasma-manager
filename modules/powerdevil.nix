@@ -178,13 +178,21 @@ let
         nullOr (enum [
           "performance"
           "balanced"
-          "power-saver"
+          "powerSaving"
         ]);
       default = null;
-      example = "power-saver";
+      example = "powerSaving";
       description = ''
         The Power Profile to Enter in this mode
       '';
+      apply =
+        profile:
+        if profile == null then
+          null
+        else if profile == "powerSaving" then
+          "power-saver"
+        else
+          profile;
     };
   };
 
