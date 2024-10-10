@@ -250,25 +250,14 @@ let
   # options from (i.e. powerdevil.AC or powerdevil.battery).
   createPowerDevilConfig = cfgSectName: optionsName: {
     "${cfgSectName}/SuspendAndShutdown" = {
-      PowerButtonAction = cfg.powerdevil.${optionsName}.suspendSession.whenPowerButtonPressed;
       AutoSuspendAction = cfg.powerdevil.${optionsName}.suspendSession.afterAPeriodOfInactivity.action;
       AutoSuspendIdleTimeoutSec = cfg.powerdevil.${optionsName}.suspendSession.afterAPeriodOfInactivity.idleTimeout;
-      SleepMode = cfg.powerdevil.${optionsName}.suspendSession.whenSleepingEnter;
+      PowerButtonAction = cfg.powerdevil.${optionsName}.suspendSession.whenPowerButtonPressed;
       LidAction = cfg.powerdevil.${optionsName}.suspendSession.whenLaptopLidClosed;
       InhibitLidActionWhenExternalMonitorPresent = ! cfg.powerdevil.${optionsName}.suspendSession.evenWhenAnExternalMonitorIsConnected;
+      SleepMode = cfg.powerdevil.${optionsName}.suspendSession.whenSleepingEnter;
     };
     "${cfgSectName}/Display" = {
-      TurnOffDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.displayAndBrightness.turnOffScreen.idleTimeout;
-      TurnOffDisplayIdleTimeoutWhenLockedSec =
-        cfg.powerdevil.${optionsName}.displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked;
-      DimDisplayWhenIdle =
-        if (cfg.powerdevil.${optionsName}.displayAndBrightness.dimAutomatically.enable != null) then
-          cfg.powerdevil.${optionsName}.displayAndBrightness.dimAutomatically.enable
-        else if (cfg.powerdevil.${optionsName}.displayAndBrightness.dimAutomatically.idleTimeout != null) then
-          true
-        else
-          null;
-      DimDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.displayAndBrightness.dimAutomatically.idleTimeout;
       UseProfileSpecificDisplayBrightness=
         if (cfg.powerdevil.${optionsName}.displayAndBrightness.changeScreenBrightness.enable != null) then
           cfg.powerdevil.${optionsName}.displayAndBrightness.changeScreenBrightness.enable
@@ -277,6 +266,17 @@ let
         else
           null;
       DisplayBrightness=cfg.powerdevil.${optionsName}.displayAndBrightness.changeScreenBrightness.percentage;
+      DimDisplayWhenIdle =
+        if (cfg.powerdevil.${optionsName}.displayAndBrightness.dimAutomatically.enable != null) then
+          cfg.powerdevil.${optionsName}.displayAndBrightness.dimAutomatically.enable
+        else if (cfg.powerdevil.${optionsName}.displayAndBrightness.dimAutomatically.idleTimeout != null) then
+          true
+        else
+          null;
+      DimDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.displayAndBrightness.dimAutomatically.idleTimeout;
+      TurnOffDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.displayAndBrightness.turnOffScreen.idleTimeout;
+      TurnOffDisplayIdleTimeoutWhenLockedSec =
+        cfg.powerdevil.${optionsName}.displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked;
     };
   };
 in
