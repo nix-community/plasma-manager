@@ -215,7 +215,7 @@ let
       DimDisplayIdleTimeoutSec = 
         if (cfg.powerdevil.${optionsName}.dimDisplay.idleTimeout != null) then
           cfg.powerdevil.${optionsName}.dimDisplay.idleTimeout
-        else if (cfg.powerdevil.${optionsName}.dimDisplay.enable = false) then
+        else if (cfg.powerdevil.${optionsName}.dimDisplay.enable == false) then
           -1
         else
           null;
