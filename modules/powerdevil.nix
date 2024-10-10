@@ -36,6 +36,13 @@ let
     standbyThenHibernate = 3;
   };
 
+  atCriticalLevelActions = {
+    doNothing = 0;
+    sleep = 1;
+    hibernate = 2;
+    shutDown = 8;
+  };
+
   # Since AC and battery allows the same options we create a function here which
   # can generate the options by just specifying the type (i.e. "AC" or
   # "battery").
@@ -423,6 +430,14 @@ in
           );
           message = "Cannot set programs.plasma.powerdevil.${type}.displayAndBrightness.changeScreenBrightness.percentage when programs.plasma.powerdevil.${type}.displayAndBrightness.changeScreenBrightness.enable is disabled.";
         }
+        {
+          assertion = (
+            cfg.powerdevil.batteryLevels.lowLevel == null
+            || cfg.powerdevil.batteryLevels.criticalLevel == null
+            || cfg.powerdevil.batteryLevels.lowLevel > cfg.powerdevil.batteryLevels.criticalLevel
+          );
+          message = "programs.plasma.powerdevil.batteryLevels.criticalLevel cannot be greater than programs.plasma.powerdevil.batteryLevels.lowLevel.";
+        }
       ];
     in
     (createAssertions "AC") ++ (createAssertions "battery") ++ (createAssertions "lowBattery");
@@ -432,6 +447,53 @@ in
       AC = (createPowerDevilOptions "AC");
       battery = (createPowerDevilOptions "battery");
       lowBattery = (createPowerDevilOptions "lowBattery");
+      batteryLevels = {
+        lowLevel = lib.mkOption {
+          type = with lib.types;
+            nullOr (
+              ints.between 0 100
+            );
+          default = null;
+          example = "10";
+          description = ''
+            The battery charge will be considered low when it drops to this
+            level. Settings for low battery will be used instead of regular
+            battery settings.
+          '';
+        };
+        criticalLevel = lib.mkOption {
+          type = with lib.types;
+            nullOr (
+              ints.between 0 100
+            );
+          default = null;
+          example = "5";
+          description = ''
+            The battery charge will be considered critical when it drops to this
+            level. After a brief warning, the system will automaticelly suspend
+            or shutdown, according to the configured critical battery level
+            action.
+          '';
+        };
+        atCriticalLevel = lib.mkOption {
+          type = with lib.types;
+            nullOr (
+              enum (
+                builtins.attrNames atCriticalLevelActions
+              )
+            );
+          default = null;
+          example = "hibernate";
+          description = ''
+            The action to perform when the battery reaches critical level.
+          '';
+          apply = action:
+            if (action == null)
+            then null
+            else atCriticalLevelActions."${action}";
+
+        };
+      };
       general = {
         pausePlayersOnSuspend = lib.mkOption {
           type = with lib.types; nullOr bool;
@@ -451,6 +513,11 @@ in
       // (createPowerDevilConfig "Battery" "battery")
       // (createPowerDevilConfig "LowBattery" "lowBattery")
       // {
+        BatteryManagement = {
+          BatteryLowLevel = cfg.powerdevil.batteryLevels.lowLevel;
+          BatteryCriticalLevel = cfg.powerdevil.batteryLevels.criticalLevel;
+          BatteryCriticalAction = cfg.powerdevil.batteryLevels.atCriticalLevel;
+        };
         General = {
           pausePlayersOnSuspend = cfg.powerdevil.general.pausePlayersOnSuspend;
         };
