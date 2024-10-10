@@ -3,7 +3,7 @@ let
   cfg = config.programs.plasma;
 
   afterAPeriodOfInactivityActions = {
-    nothing = 0;
+    doNothing = 0;
     sleep = 1;
     hibernate = 2;
     shutDown = 8;
@@ -12,7 +12,7 @@ let
   # Values can be found at:
   # https://github.com/KDE/powerdevil/blob/master/daemon/powerdevilenums.h
   whenPowerButtonPressedActions = {
-    nothing = 0;
+    doNothing = 0;
     sleep = 1;
     hibernate = 2;
     shutDown = 8;
@@ -25,7 +25,7 @@ let
     doNothing = 0;
     sleep = 1;
     hibernate = 2;
-    shutdown = 8;
+    shutDown = 8;
     lockScreen = 32;
     turnOffScreen = 64;
   };
@@ -50,7 +50,7 @@ let
               )
             );
           default = null;
-          example = "nothing";
+          example = "doNothing";
           description = ''
             The action, when on ${type}, to perform after a certain period of inactivity.
           '';
@@ -82,7 +82,7 @@ let
             )
           );
         default = null;
-        example = "nothing";
+        example = "doNothing";
         description = ''
           The action, when on ${type}, to perform when the power button is pressed.
         '';
@@ -100,7 +100,7 @@ let
             )
           );
         default = null;
-        example = "shutdown";
+        example = "shutDown";
         description = ''
           The action, when on ${type}, to perform when the laptop lid is closed.
         '';
@@ -397,10 +397,10 @@ in
       createAssertions = type: [
         {
           assertion = (
-            cfg.powerdevil.${type}.suspendSession.afterAPeriodOfInactivity.action != afterAPeriodOfInactivityActions.nothing
+            cfg.powerdevil.${type}.suspendSession.afterAPeriodOfInactivity.action != afterAPeriodOfInactivityActions.doNothing
             || cfg.powerdevil.${type}.suspendSession.afterAPeriodOfInactivity.idleTimeout == null
           );
-          message = "Setting programs.plasma.powerdevil.${type}.suspendSession.afterAPeriodOfInactivity.idleTimeout for autosuspend-action \"nothing\" is not supported.";
+          message = "Setting programs.plasma.powerdevil.${type}.suspendSession.afterAPeriodOfInactivity.idleTimeout for autosuspend-action \"doNothing\" is not supported.";
         }
         {
           assertion = (
