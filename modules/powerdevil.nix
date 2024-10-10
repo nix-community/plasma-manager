@@ -170,19 +170,21 @@ let
       default = null;
       example = 10;
       description = ''
-      The brightness to set the display to in this mode
+        The brightness to set the display to in this mode
       '';
     };
     powerProfile = lib.mkOption {
-      type = with lib.types; nullOr (enum [
-        "performance"
-        "balanced"
-        "power-saver"
-      ]);
+      type =
+        with lib.types;
+        nullOr (enum [
+          "performance"
+          "balanced"
+          "power-saver"
+        ]);
       default = null;
       example = "power-saver";
       description = ''
-      The Power Profile to Enter in this mode
+        The Power Profile to Enter in this mode
       '';
     };
   };
@@ -212,7 +214,7 @@ let
           true
         else
           null;
-      DimDisplayIdleTimeoutSec = 
+      DimDisplayIdleTimeoutSec =
         if (cfg.powerdevil.${optionsName}.dimDisplay.idleTimeout != null) then
           cfg.powerdevil.${optionsName}.dimDisplay.idleTimeout
         else if (cfg.powerdevil.${optionsName}.dimDisplay.enable == false) then
@@ -319,32 +321,32 @@ in
         };
       };
       batteryLevels = {
-            lowLevel = lib.mkOption {
-              type = with lib.types; nullOr (ints.between 0 100);
-              default = null;
-              example = 10;
-              description = ''
-              The battery level considered "low" for the laptop
-              '';
-            };
-            criticalLevel = lib.mkOption {
-              type = with lib.types; nullOr (ints.between 0 100);
-              default = null;
-              example = 2;
-              description = ''
-              The battery level considered "critical" for the laptop
-              '';
-            };
-            criticalAction = lib.mkOption {
-              type = with lib.types; nullOr (enum (builtins.attrNames autoCriticalActions));
-              default = null;
-              example = "shutDown";
-              description = ''
-                The action to perform when Critical Battery Level is reached
-              '';
-              apply = action: if (action == null) then null else autoCriticalActions."${action}";
-            };
-          };
+        lowLevel = lib.mkOption {
+          type = with lib.types; nullOr (ints.between 0 100);
+          default = null;
+          example = 10;
+          description = ''
+            The battery level considered "low" for the laptop
+          '';
+        };
+        criticalLevel = lib.mkOption {
+          type = with lib.types; nullOr (ints.between 0 100);
+          default = null;
+          example = 2;
+          description = ''
+            The battery level considered "critical" for the laptop
+          '';
+        };
+        criticalAction = lib.mkOption {
+          type = with lib.types; nullOr (enum (builtins.attrNames autoCriticalActions));
+          default = null;
+          example = "shutDown";
+          description = ''
+            The action to perform when Critical Battery Level is reached
+          '';
+          apply = action: if (action == null) then null else autoCriticalActions."${action}";
+        };
+      };
     };
   };
 
