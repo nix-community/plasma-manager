@@ -212,7 +212,13 @@ let
           true
         else
           null;
-      DimDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.dimDisplay.idleTimeout;
+      DimDisplayIdleTimeoutSec = 
+        if (cfg.powerdevil.${optionsName}.dimDisplay.idleTimeout != null) then
+          cfg.powerdevil.${optionsName}.dimDisplay.idleTimeout
+        else if (cfg.powerdevil.${optionsName}.dimDisplay.enable = false) then
+          -1
+        else
+          null;
       DisplayBrightness = cfg.powerdevil.${optionsName}.displayBrightness;
     };
     "${cfgSectName}/Performance" = {
