@@ -179,6 +179,11 @@ let
         "balanced"
         "power-saver"
       ]);
+      default = null;
+      example = "power-saver";
+      description = ''
+      The Power Profile to Enter in this mode
+      '';
     };
   };
 
