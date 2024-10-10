@@ -43,16 +43,28 @@ let
     suspendSession = {
       afterAPeriodOfInactivity = {
         action = lib.mkOption {
-          type = with lib.types; nullOr (enum (builtins.attrNames afterAPeriodOfInactivityActions));
+          type = with lib.types;
+            nullOr (
+              enum (
+                builtins.attrNames afterAPeriodOfInactivityActions
+              )
+            );
           default = null;
           example = "nothing";
           description = ''
             The action, when on ${type}, to perform after a certain period of inactivity.
           '';
-          apply = action: if (action == null) then null else afterAPeriodOfInactivityActions."${action}";
+          apply = action:
+            if (action == null)
+            then null
+            else afterAPeriodOfInactivityActions."${action}";
         };
+
         idleTimeout = lib.mkOption {
-          type = with lib.types; nullOr (ints.between 60 600000);
+          type = with lib.types;
+            nullOr (
+              ints.between 60 600000
+            );
           default = null;
           example = 600;
           description = ''
@@ -63,27 +75,46 @@ let
       };
 
       whenPowerButtonPressed = lib.mkOption {
-        type = with lib.types; nullOr (enum (builtins.attrNames whenPowerButtonPressedActions));
+        type = with lib.types;
+          nullOr (
+            enum (
+              builtins.attrNames whenPowerButtonPressedActions
+            )
+          );
         default = null;
         example = "nothing";
         description = ''
           The action, when on ${type}, to perform when the power button is pressed.
         '';
-        apply = action: if (action == null) then null else whenPowerButtonPressedActions."${action}";
+        apply = action:
+          if (action == null)
+          then null
+          else whenPowerButtonPressedActions."${action}";
       };
 
       whenLaptopLidClosed = lib.mkOption {
-        type = with lib.types; nullOr (enum (builtins.attrNames whenLaptopLidClosedActions));
+        type = with lib.types;
+          nullOr (
+            enum (
+              builtins.attrNames whenLaptopLidClosedActions
+            )
+          );
         default = null;
         example = "shutdown";
         description = ''
           The action, when on ${type}, to perform when the laptop lid is closed.
         '';
-        apply = action: if (action == null) then null else whenLaptopLidClosedActions."${action}";
+        apply = action:
+          if (action == null)
+          then null
+          else whenLaptopLidClosedActions."${action}";
       };
 
       evenWhenAnExternalMonitorIsConnected = lib.mkOption {
-        type = with lib.types; nullOr bool;
+        type = with lib.types;
+          nullOr (
+            bool
+          );
         default = null;
         example = false;
         description = ''
@@ -92,26 +123,43 @@ let
       };
 
       whenSleepingEnter = lib.mkOption {
-        type = with lib.types; nullOr (enum (builtins.attrNames whenSleepingEnterActions));
+        type = with lib.types;
+          nullOr (
+            enum (
+              builtins.attrNames whenSleepingEnterActions
+            )
+          );
         default = null;
         example = "standbyThenHibernate";
         description = ''
           The state, when on ${type}, to enter when sleeping.
         '';
-        apply = action: if (action == null) then null else whenSleepingEnterActions."${action}";
+        apply = action:
+          if (action == null)
+          then null
+          else whenSleepingEnterActions."${action}";
       };
     };
 
     displayAndBrightness = {
       changeScreenBrightness = {
         enable = lib.mkOption {
-          type = with lib.types; nullOr bool;
+          type = with lib.types;
+            nullOr (
+              bool
+            );
           default = null;
           example = true;
-          description = "Enable or disable screen brightness changing.";
+          description = ''
+            Enable or disable screen brightness changing.
+          '';
         };
+
         percentage = lib.mkOption {
-          type = with lib.types; nullOr (ints.between 0 100);
+          type = with lib.types;
+            nullOr (
+              ints.between 0 100
+            );
           default = null;
           example = 70;
           description = ''
@@ -122,13 +170,20 @@ let
 
       dimAutomatically = {
         enable = lib.mkOption {
-          type = with lib.types; nullOr bool;
+          type = with lib.types;
+            nullOr
+            bool;
           default = null;
           example = false;
-          description = "Enable or disable screen dimming.";
+          description = ''
+            Enable or disable screen dimming.
+          '';
         };
+
         idleTimeout = lib.mkOption {
-          type = with lib.types; nullOr (ints.between 20 600000);
+          type = with lib.types;
+            nullOr
+            (ints.between 20 600000);
           default = null;
           example = 300;
           description = ''
@@ -140,7 +195,8 @@ let
 
       turnOffScreen = {
         idleTimeout = lib.mkOption {
-          type = with lib.types; nullOr (either (enum [ "never" ]) (ints.between 30 600000));
+          type = with lib.types;
+            nullOr (either (enum [ "never" ]) (ints.between 30 600000));
           default = null;
           example = 300;
           description = ''
