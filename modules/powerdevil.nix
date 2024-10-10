@@ -397,6 +397,11 @@ in
       ["programs" "plasma" "powerdevil" "lowBattery" "turnOffDisplay"]
       ["programs" "plasma" "powerdevil" "lowBattery" "displayAndBrightness" "turnOffScreen"]
     )
+
+    (lib.mkRenamedOptionModule
+      ["programs" "plasma" "powerdevil" "general" "pausePlayersOnSuspend"]
+      ["programs" "plasma" "powerdevil" "otherSettings" "pauseMediaPlayersWhenSuspending"]
+    )
   ];
 
   config.assertions =
@@ -494,8 +499,8 @@ in
 
         };
       };
-      general = {
-        pausePlayersOnSuspend = lib.mkOption {
+      otherSettings = {
+        pauseMediaPlayersWhenSuspending = lib.mkOption {
           type = with lib.types; nullOr bool;
           default = null;
           example = false;
@@ -519,7 +524,7 @@ in
           BatteryCriticalAction = cfg.powerdevil.batteryLevels.atCriticalLevel;
         };
         General = {
-          pausePlayersOnSuspend = cfg.powerdevil.general.pausePlayersOnSuspend;
+          pausePlayersOnSuspend = cfg.powerdevil.otherSettings.pauseMediaPlayersWhenSuspending;
         };
       }
     );
