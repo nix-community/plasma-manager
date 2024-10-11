@@ -210,8 +210,7 @@ let
             The duration (in seconds), when on ${type}, the computer must be idle
             (when unlocked) until the display turns off.
           '';
-          apply =
-            timeout:
+          apply = timeout:
             if (timeout == null) then
               null
             else if (timeout == "never") then
@@ -234,8 +233,7 @@ let
             The duration (in seconds), when on ${type}, the computer must be idle
             (when locked) until the display turns off.
           '';
-          apply =
-            timeout:
+          apply = timeout:
             if (timeout == null) then
               null
             else if (timeout == "whenLockedAndUnlocked") then
