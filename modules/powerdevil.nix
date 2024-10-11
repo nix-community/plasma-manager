@@ -36,6 +36,13 @@ let
     standbyThenHibernate = 3;
   };
 
+  switchToPowerProfileActions = {
+    leaveUnchanged = "leave-unchanged";
+    powerSave = "power-saver";
+    balanced = "balanced";
+    performance = "performance";
+  };
+
   atCriticalLevelActions = {
     doNothing = 0;
     sleep = 1;
@@ -246,7 +253,27 @@ let
       };
     };
 
-    otherSettings = {};
+    otherSettings = {
+      switchToPowerProfile = lib.mkOption {
+        type =
+          with lib.types;
+            nullOr (
+              enum (
+                builtins.attrNames switchToPowerProfileActions
+              )
+            );
+        default = null;
+        example = "performance";
+        description = ''
+          The power profile, when on ${type}, adopted by the computer.
+        '';
+        apply = profile:
+          if (profile == null || profile == "leaveUnchanged") then
+            null
+          else
+            switchToPowerProfileActions."${profile}";
+      };
+    };
   };
 
   # By the same logic as createPowerDevilOptions, we can generate the
@@ -282,6 +309,9 @@ let
       TurnOffDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.displayAndBrightness.turnOffScreen.idleTimeout;
       TurnOffDisplayIdleTimeoutWhenLockedSec =
         cfg.powerdevil.${optionsName}.displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked;
+    };
+    "${cfgSectName}/Performance" = {
+      PowerProfile=cfg.powerdevil.${optionsName}.otherSettings.switchToPowerProfile;
     };
   };
 in
