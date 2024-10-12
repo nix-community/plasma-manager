@@ -684,8 +684,10 @@ in
           })
           (mkIf (cfg.kwin.effects.blur.enable != null) {
             Plugins.blurEnabled = cfg.kwin.effects.blur.enable;
-            Effect-blur.BlurStrength = cfg.kwin.effects.blur.strength;
-            Effect-blur.NoiseStrength = cfg.kwin.effects.blur.noiseStrength;
+            Effect-blur = {
+              BlurStrength = cfg.kwin.effects.blur.strength;
+              NoiseStrength = cfg.kwin.effects.blur.noiseStrength;
+            };
           })
           (mkIf (cfg.kwin.effects.dimInactive.enable != null) {
             Plugins.diminactiveEnabled = cfg.kwin.effects.dimInactive.enable;
