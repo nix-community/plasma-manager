@@ -1,0 +1,33 @@
+name: Backport
+on:
+  pull_request_target:
+    types: [closed, labeled]
+
+# WARNING:
+# When extending this action, be aware that $GITHUB_TOKEN allows write access to
+# the GitHub repository. This means that it should not evaluate user input in a
+# way that allows code injection.
+
+permissions:
+  contents: read
+
+jobs:
+  backport:
+    permissions:
+      contents: write
+      pull-requests: write
+    name: Backport pull request
+    if: github.repository_owner == 'nix-community' && github.event.pull_request.merged == true && (github.event_name != 'labeled' || startsWith('backport', github.event.label.name))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Create backport pull request
+        uses: korthout/backport-action@v3.1.0
+        with:
+          pull_description: |-
+            This is an automated backport of #${pull_number} to `${target_branch}`.
+
+            Before merging, make sure this change is backwards compatible with the stable release branch.
