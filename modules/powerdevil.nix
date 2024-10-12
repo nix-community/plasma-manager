@@ -88,7 +88,7 @@ let
     whenLaptopLidClosed = lib.mkOption {
       type = with lib.types; nullOr (enum (builtins.attrNames whenLaptopLidClosedActions));
       default = null;
-      example = "shutdown";
+      example = "shutDown";
       description = ''
         The action, when on ${type}, to perform when the laptop lid is closed.
       '';
