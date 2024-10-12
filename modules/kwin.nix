@@ -241,14 +241,16 @@ in
           description = "Blurs the background behind semi-transparent windows.";
         };
         strength = mkOption {
-            type = with types; nullOr (ints.between 1 15);
-            default = null;
-            description = "Controls the intensity of the blur";
+          type = with types; nullOr (ints.between 1 15);
+          default = null;
+          example = 5;
+          description = "Controls the intensity of the blur";
         };
         noiseStrength = mkOption {
-            type = with types; nullOr (ints.between 0 14);
-            default = null;
-            description = "Adds noise to the effect";
+          type = with types; nullOr (ints.between 0 14);
+          default = null;
+          example = 8;
+          description = "Adds noise to the effect";
         };
       };
       snapHelper.enable = mkOption {
