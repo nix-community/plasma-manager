@@ -240,6 +240,18 @@ in
           default = null;
           description = "Blurs the background behind semi-transparent windows.";
         };
+        strength = mkOption {
+          type = with types; nullOr (ints.between 1 15);
+          default = null;
+          example = 5;
+          description = "Controls the intensity of the blur";
+        };
+        noiseStrength = mkOption {
+          type = with types; nullOr (ints.between 0 14);
+          default = null;
+          example = 8;
+          description = "Adds noise to the effect";
+        };
       };
       snapHelper.enable = mkOption {
         type = with types; nullOr bool;
@@ -674,6 +686,10 @@ in
           })
           (mkIf (cfg.kwin.effects.blur.enable != null) {
             Plugins.blurEnabled = cfg.kwin.effects.blur.enable;
+            Effect-blur = {
+              BlurStrength = cfg.kwin.effects.blur.strength;
+              NoiseStrength = cfg.kwin.effects.blur.noiseStrength;
+            };
           })
           (mkIf (cfg.kwin.effects.dimInactive.enable != null) {
             Plugins.diminactiveEnabled = cfg.kwin.effects.dimInactive.enable;
