@@ -481,7 +481,7 @@ in
 
   config.assertions =
     let
-      createAssertionsForProfile = profile: [
+      generateAssertionsForProfile = profile: [
         {
           assertion = (
             cfg.powerdevil.${profile}.suspendSession.afterAPeriodOfInactivity.action != afterAPeriodOfInactivityActions.doNothing
@@ -517,9 +517,9 @@ in
       ];
 
     in
-      (createAssertionsForProfile "AC")
-      ++ (createAssertionsForProfile "battery")
-      ++ (createAssertionsForProfile "lowBattery")
+      (generateAssertionsForProfile "AC")
+      ++ (generateAssertionsForProfile "battery")
+      ++ (generateAssertionsForProfile "lowBattery")
       ++ generalAssertions;
 
   options = {
