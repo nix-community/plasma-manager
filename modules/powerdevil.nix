@@ -50,6 +50,17 @@ let
     shutDown = 8;
   };
 
+  # ancillary function
+  capitalize = string:
+    with lib.strings;
+    concatImapStrings
+      (pos: char:
+        if (pos == 1) then
+          toUpper char
+        else
+          char)
+      (stringToCharacters string);
+
   # Since AC and battery allows the same options we create a function here which
   # can generate the options by just specifying the type (i.e. "AC" or
   # "battery").
@@ -273,6 +284,45 @@ let
           else
             switchToPowerProfileActions."${profile}";
       };
+
+      runCustomScripts = {
+        "whenEnteringOn${capitalize(type)}PowerState" = lib.mkOption {
+          type = with lib.types;
+            nullOr (
+              str
+            );
+          default = null;
+          example = "echo 'hello, world'";
+          description = ''
+            A script or the path for a script/program to be run when entering
+            ${type}.
+          '';
+        };
+        "whenExitingOn${capitalize(type)}PowerState" = lib.mkOption {
+          type = with lib.types;
+            nullOr (
+              str
+            );
+          default = null;
+          example = "echo 'farewwll, world'";
+          description = ''
+            A script or the path for a script/program to be run when exiting
+            ${type}.
+          '';
+        };
+        afterAPeriodOfInactivity = lib.mkOption {
+          type = with lib.types;
+            nullOr (
+              str
+            );
+          default = null;
+          example = "echo 'are you there, world'";
+          description = ''
+            A script or the path for a script/program to be run after a period
+            of inactivity when on ${type}.
+          '';
+        };
+      };
     };
   };
 
@@ -312,6 +362,11 @@ let
     };
     "${cfgSectName}/Performance" = {
       PowerProfile=cfg.powerdevil.${optionsName}.otherSettings.switchToPowerProfile;
+    };
+    "${cfgSectName}/RunScript" = {
+      ProfileLoadCommand = cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts."whenEnteringOn${capitalize(optionsName)}PowerState";
+      ProfileUnloadCommand=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts."whenExitingOn${capitalize(optionsName)}PowerState";
+      IdleTimeoutCommand=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts.afterAPeriodOfInactivity;
     };
   };
 in
