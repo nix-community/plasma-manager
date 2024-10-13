@@ -64,7 +64,7 @@ let
   # Since AC and battery allows the same options we create a function here which
   # can generate the options by just specifying the type (i.e. "AC" or
   # "battery").
-  createPowerDevilOptions = profile: {
+  generateOptionsForProfile = profile: {
     suspendSession = {
       afterAPeriodOfInactivity = {
         action = lib.mkOption {
@@ -286,7 +286,7 @@ let
     };
   };
 
-  # By the same logic as createPowerDevilOptions, we can generate the
+  # By the same logic as generateOptionsForProfile, we can generate the
   # configuration. cfgSectName is here the name of the section in powerdevilrc,
   # while optionsName is the name of the "namespace" where we should draw the
   # options from (i.e. powerdevil.AC or powerdevil.battery).
@@ -517,9 +517,9 @@ in
 
   options = {
     programs.plasma.powerdevil = {
-      AC = (createPowerDevilOptions "AC");
-      battery = (createPowerDevilOptions "battery");
-      lowBattery = (createPowerDevilOptions "lowBattery");
+      AC = (generateOptionsForProfile "AC");
+      battery = (generateOptionsForProfile "battery");
+      lowBattery = (generateOptionsForProfile "lowBattery");
       batteryLevels = {
         lowLevel = lib.mkOption {
           type = with lib.types;
