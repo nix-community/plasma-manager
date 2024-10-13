@@ -216,6 +216,7 @@ let
             else
               timeout;
         };
+
         idleTimeoutWhenLocked = lib.mkOption {
           type =
             with lib.types;
@@ -291,6 +292,7 @@ let
             ${type}.
           '';
         };
+
         "whenExitingOn${capitalize(type)}PowerState" = lib.mkOption {
           type = with lib.types;
             nullOr str;
@@ -301,6 +303,7 @@ let
             ${type}.
           '';
         };
+
         afterAPeriodOfInactivity = {
           script = lib.mkOption {
             type = with lib.types;
@@ -312,6 +315,7 @@ let
               of inactivity when on ${type}.
             '';
           };
+
           idleTimeout = lib.mkOption {
             type = with lib.types;
               nullOr (ints.between 10 604800);
@@ -340,6 +344,7 @@ let
       InhibitLidActionWhenExternalMonitorPresent = ! cfg.powerdevil.${optionsName}.suspendSession.evenWhenAnExternalMonitorIsConnected;
       SleepMode = cfg.powerdevil.${optionsName}.suspendSession.whenSleepingEnter;
     };
+
     "${cfgSectName}/Display" = {
       UseProfileSpecificDisplayBrightness=
         if (cfg.powerdevil.${optionsName}.displayAndBrightness.changeScreenBrightness.enable != null) then
@@ -361,15 +366,18 @@ let
       TurnOffDisplayIdleTimeoutWhenLockedSec =
         cfg.powerdevil.${optionsName}.displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked;
     };
+
     "${cfgSectName}/Performance" = {
       PowerProfile=cfg.powerdevil.${optionsName}.otherSettings.switchToPowerProfile;
     };
+
     "${cfgSectName}/RunScript" = {
       ProfileLoadCommand = cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts."whenEnteringOn${capitalize(optionsName)}PowerState";
       ProfileUnloadCommand=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts."whenExitingOn${capitalize(optionsName)}PowerState";
       IdleTimeoutCommand=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts.afterAPeriodOfInactivity.script;
       RunScriptIdleTimeoutSec=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts.afterAPeriodOfInactivity.idleTimeout;
     };
+
     "${cfgSectName}/Keyboard" = {
       UseProfileSpecificKeyboardBrightness=
         if (cfg.powerdevil.${optionsName}.displayAndBrightness.changeKeyboardBrightness.enable != null) then
@@ -492,7 +500,6 @@ in
       ["programs" "plasma" "powerdevil" "lowBattery" "turnOffDisplay"]
       ["programs" "plasma" "powerdevil" "lowBattery" "displayAndBrightness" "turnOffScreen"]
     )
-
     (lib.mkRenamedOptionModule
       ["programs" "plasma" "powerdevil" "general" "pausePlayersOnSuspend"]
       ["programs" "plasma" "powerdevil" "otherSettings" "pauseMediaPlayersWhenSuspending"]
@@ -559,6 +566,7 @@ in
             battery settings.
           '';
         };
+
         criticalLevel = lib.mkOption {
           type = with lib.types;
             nullOr (ints.between 0 100);
@@ -571,6 +579,7 @@ in
             action.
           '';
         };
+
         atCriticalLevel = lib.mkOption {
           type = with lib.types;
             nullOr (enum (builtins.attrNames atCriticalLevelActions));
@@ -586,6 +595,7 @@ in
               atCriticalLevelActions."${action}";
 
         };
+
         lowLevelForPeripheralDevice = lib.mkOption {
           type = with lib.types;
             nullOr (ints.between 0 100);
@@ -597,6 +607,7 @@ in
           '';
         };
       };
+
       otherSettings = {
         pauseMediaPlayersWhenSuspending = lib.mkOption {
           type = with lib.types;
