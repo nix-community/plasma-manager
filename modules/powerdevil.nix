@@ -80,9 +80,10 @@ let
             The action, when on ${type}, to perform after a certain period of inactivity.
           '';
           apply = action:
-            if (action == null)
-            then null
-            else afterAPeriodOfInactivityActions."${action}";
+            if (action == null) then
+              null
+            else
+              afterAPeriodOfInactivityActions."${action}";
         };
 
         idleTimeout = lib.mkOption {
@@ -112,9 +113,10 @@ let
           The action, when on ${type}, to perform when the power button is pressed.
         '';
         apply = action:
-          if (action == null)
-          then null
-          else whenPowerButtonPressedActions."${action}";
+          if (action == null) then
+            null
+          else
+            whenPowerButtonPressedActions."${action}";
       };
 
       whenLaptopLidClosed = lib.mkOption {
@@ -130,9 +132,10 @@ let
           The action, when on ${type}, to perform when the laptop lid is closed.
         '';
         apply = action:
-          if (action == null)
-          then null
-          else whenLaptopLidClosedActions."${action}";
+          if (action == null) then
+            null
+          else
+            whenLaptopLidClosedActions."${action}";
       };
 
       evenWhenAnExternalMonitorIsConnected = lib.mkOption {
@@ -160,9 +163,10 @@ let
           The state, when on ${type}, to enter when sleeping.
         '';
         apply = action:
-          if (action == null)
-          then null
-          else whenSleepingEnterActions."${action}";
+          if (action == null) then
+            null
+          else
+            whenSleepingEnterActions."${action}";
       };
     };
 
@@ -627,9 +631,10 @@ in
             The action to perform when the battery reaches critical level.
           '';
           apply = action:
-            if (action == null)
-            then null
-            else atCriticalLevelActions."${action}";
+            if (action == null) then
+              null
+            else
+              atCriticalLevelActions."${action}";
 
         };
         lowLevelForPeripheralDevice = lib.mkOption {
