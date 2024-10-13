@@ -503,6 +503,9 @@ in
           );
           message = "Cannot set programs.plasma.powerdevil.${profile}.displayAndBrightness.changeScreenBrightness.percentage when programs.plasma.powerdevil.${profile}.displayAndBrightness.changeScreenBrightness.enable is disabled.";
         }
+      ];
+
+      generalAssertions = [
         {
           assertion = (
             cfg.powerdevil.batteryLevels.lowLevel == null
@@ -512,8 +515,12 @@ in
           message = "programs.plasma.powerdevil.batteryLevels.criticalLevel cannot be greater than programs.plasma.powerdevil.batteryLevels.lowLevel.";
         }
       ];
+
     in
-    (createAssertionsForProfile "AC") ++ (createAssertionsForProfile "battery") ++ (createAssertionsForProfile "lowBattery");
+      (createAssertionsForProfile "AC")
+      ++ (createAssertionsForProfile "battery")
+      ++ (createAssertionsForProfile "lowBattery")
+      ++ generalAssertions;
 
   options = {
     programs.plasma.powerdevil = {
