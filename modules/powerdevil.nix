@@ -596,6 +596,18 @@ in
             else atCriticalLevelActions."${action}";
 
         };
+        lowLevelForPeripheralDevice = lib.mkOption {
+          type = with lib.types;
+            nullOr (
+              ints.between 0 100
+            );
+          default = null;
+          example = "10";
+          description = ''
+            The battery charge for peripheral devices will be considered low
+             when it reaches this level.
+          '';
+        };
       };
       otherSettings = {
         pauseMediaPlayersWhenSuspending = lib.mkOption {
@@ -620,6 +632,7 @@ in
           BatteryLowLevel = cfg.powerdevil.batteryLevels.lowLevel;
           BatteryCriticalLevel = cfg.powerdevil.batteryLevels.criticalLevel;
           BatteryCriticalAction = cfg.powerdevil.batteryLevels.atCriticalLevel;
+          PeripheralBatteryLowLevel = cfg.powerdevil.batteryLevels.lowLevelForPeripheralDevice;
         };
         General = {
           pausePlayersOnSuspend = cfg.powerdevil.otherSettings.pauseMediaPlayersWhenSuspending;
