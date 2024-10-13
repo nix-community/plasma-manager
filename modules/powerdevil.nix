@@ -262,6 +262,32 @@ let
               timeout;
         };
       };
+
+      changeKeyboardBrightness = {
+        enable = lib.mkOption {
+          type = with lib.types;
+            nullOr (
+              bool
+            );
+          default = null;
+          example = true;
+          description = ''
+            Enable or disable keyboard brightness changing.
+          '';
+        };
+
+        percentage = lib.mkOption {
+          type = with lib.types;
+            nullOr (
+              ints.between 0 100
+            );
+          default = null;
+          example = 70;
+          description = ''
+            The keyboard brightness percentage when on ${type}.
+          '';
+        };
+      };
     };
 
     otherSettings = {
@@ -382,6 +408,16 @@ let
       ProfileUnloadCommand=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts."whenExitingOn${capitalize(optionsName)}PowerState";
       IdleTimeoutCommand=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts.afterAPeriodOfInactivity.script;
       RunScriptIdleTimeoutSec=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts.afterAPeriodOfInactivity.idleTimeout;
+    };
+    "${cfgSectName}/Keyboard" = {
+      UseProfileSpecificKeyboardBrightness=
+        if (cfg.powerdevil.${optionsName}.displayAndBrightness.changeKeyboardBrightness.enable != null) then
+          cfg.powerdevil.${optionsName}.displayAndBrightness.changeKeyboardBrightness.enable
+        else if (cfg.powerdevil.${optionsName}.displayAndBrightness.changeKeyboardBrightness.percentage != null) then
+          true
+        else
+          null;
+      KeyboardBrightness=cfg.powerdevil.${optionsName}.displayAndBrightness.changeKeyboardBrightness.percentage;
     };
   };
 in
