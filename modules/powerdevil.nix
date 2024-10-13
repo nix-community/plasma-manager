@@ -72,9 +72,7 @@ let
             nullOr (enum (builtins.attrNames afterAPeriodOfInactivityActions));
           default = null;
           example = "doNothing";
-          description = ''
-            The action, when on ${type}, to perform after a certain period of inactivity.
-          '';
+          description = "The action, when on ${type}, to perform after a certain period of inactivity.";
           apply = action:
             if (action == null) then
               null
@@ -87,10 +85,7 @@ let
             nullOr (ints.between 60 604800);
           default = null;
           example = 600;
-          description = ''
-            The duration (in seconds), when on ${type}, the computer must be idle
-            until the auto-suspend action is executed.
-          '';
+          description = "The duration (in seconds), when on ${type}, the computer must be idle until the auto-suspend action is executed.";
         };
       };
 
@@ -99,9 +94,7 @@ let
           nullOr (enum (builtins.attrNames whenPowerButtonPressedActions));
         default = null;
         example = "doNothing";
-        description = ''
-          The action, when on ${type}, to perform when the power button is pressed.
-        '';
+        description = "The action, when on ${type}, to perform when the power button is pressed.";
         apply = action:
           if (action == null) then
             null
@@ -114,9 +107,7 @@ let
           nullOr (enum (builtins.attrNames whenLaptopLidClosedActions));
         default = null;
         example = "shutDown";
-        description = ''
-          The action, when on ${type}, to perform when the laptop lid is closed.
-        '';
+        description = "The action, when on ${type}, to perform when the laptop lid is closed.";
         apply = action:
           if (action == null) then
             null
@@ -129,9 +120,7 @@ let
           nullOr bool;
         default = null;
         example = false;
-        description = ''
-          If enabled, the lid action will be executed even when an external monitor is connected.
-        '';
+        description = "If enabled, the lid action will be executed even when an external monitor is connected.";
       };
 
       whenSleepingEnter = lib.mkOption {
@@ -139,9 +128,7 @@ let
           nullOr (enum (builtins.attrNames whenSleepingEnterActions));
         default = null;
         example = "standbyThenHibernate";
-        description = ''
-          The state, when on ${type}, to enter when sleeping.
-        '';
+        description = "The state, when on ${type}, to enter when sleeping.";
         apply = action:
           if (action == null) then
             null
@@ -157,9 +144,7 @@ let
             nullOr bool;
           default = null;
           example = true;
-          description = ''
-            Enable or disable screen brightness changing.
-          '';
+          description = "Enable or disable screen brightness changing.";
         };
 
         percentage = lib.mkOption {
@@ -167,9 +152,7 @@ let
             nullOr (ints.between 1 100);
           default = null;
           example = 70;
-          description = ''
-            The screen brightness percentage when on ${type}.
-          '';
+          description = "The screen brightness percentage when on ${type}.";
         };
       };
 
@@ -181,10 +164,7 @@ let
               (ints.between 10 604800));
           default = null;
           example = 300;
-          description = ''
-            The duration (in seconds), when on ${type}, the computer must be idle
-            until the display starts dimming.
-          '';
+          description = "The duration (in seconds), when on ${type}, the computer must be idle until the display starts dimming.";
           apply = timeout:
             if (timeout == null) then
               null
@@ -203,10 +183,7 @@ let
               (ints.between 30 604800));
           default = null;
           example = 300;
-          description = ''
-            The duration (in seconds), when on ${type}, the computer must be idle
-            (when unlocked) until the display turns off.
-          '';
+          description = "The duration (in seconds), when on ${type}, the computer must be idle (when unlocked) until the display turns off.";
           apply = timeout:
             if (timeout == null) then
               null
@@ -224,10 +201,7 @@ let
               (ints.between 10 604800));
           default = null;
           example = 60;
-          description = ''
-            The duration (in seconds), when on ${type}, the computer must be idle
-            (when locked) until the display turns off.
-          '';
+          description = "The duration (in seconds), when on ${type}, the computer must be idle (when locked) until the display turns off.";
           apply = timeout:
             if (timeout == null) then
               null
@@ -246,9 +220,7 @@ let
             nullOr bool;
           default = null;
           example = true;
-          description = ''
-            Enable or disable keyboard brightness changing.
-          '';
+          description = "Enable or disable keyboard brightness changing.";
         };
 
         percentage = lib.mkOption {
@@ -256,9 +228,7 @@ let
             nullOr (ints.between 0 100);
           default = null;
           example = 70;
-          description = ''
-            The keyboard brightness percentage when on ${type}.
-          '';
+          description = "The keyboard brightness percentage when on ${type}.";
         };
       };
     };
@@ -270,9 +240,7 @@ let
             nullOr (enum (builtins.attrNames switchToPowerProfileActions));
         default = null;
         example = "performance";
-        description = ''
-          The power profile, when on ${type}, adopted by the computer.
-        '';
+        description = "The power profile, when on ${type}, adopted by the computer.";
         apply = profile:
           if (profile == null || profile == "leaveUnchanged") then
             null
@@ -286,10 +254,7 @@ let
             nullOr str;
           default = null;
           example = "echo 'hello, world'";
-          description = ''
-            A script or the path for a script/program to be run when entering
-            ${type}.
-          '';
+          description = "A script or the path for a script/program to be run when entering ${type}.";
         };
 
         "whenExitingOn${capitalize(type)}PowerState" = lib.mkOption {
@@ -297,10 +262,7 @@ let
             nullOr str;
           default = null;
           example = "echo 'farewwll, world'";
-          description = ''
-            A script or the path for a script/program to be run when exiting
-            ${type}.
-          '';
+          description = "A script or the path for a script/program to be run when exiting ${type}.";
         };
 
         afterAPeriodOfInactivity = {
@@ -309,10 +271,7 @@ let
               nullOr str;
             default = null;
             example = "echo 'are you there, world'";
-            description = ''
-              A script or the path for a script/program to be run after a period
-              of inactivity when on ${type}.
-            '';
+            description = "A script or the path for a script/program to be run after a period of inactivity when on ${type}.";
           };
 
           idleTimeout = lib.mkOption {
@@ -320,10 +279,7 @@ let
               nullOr (ints.between 10 604800);
             default = null;
             example = 600;
-            description = ''
-              The duration (in seconds), when on ${type}, the computer must be
-               idle until the script is run.
-            '';
+            description = "The duration (in seconds), when on ${type}, the computer must be idle until the script is run.";
           };
         };
       };
@@ -482,30 +438,15 @@ in
     )
     (lib.mkRemovedOptionModule
       ["programs" "plasma" "powerdevil" "AC" "displayAndBrightness" "dimAutomatically" "enable"]
-      ''
-      The programs.plasma.powerdevil.AC.displayAndbrightness.dimAutomatically.enable
-      option was removed. If you wish to disable the screen to dim automatically,
-      set the programs.plasma.powerdevil.AC.displayAndbrightness.dimAutomatically.idleTimeout
-      to "never".
-      ''
+      "The programs.plasma.powerdevil.AC.displayAndbrightness.dimAutomatically.enable option was removed. If you wish to disable the screen to dim automatically, set the programs.plasma.powerdevil.AC.displayAndbrightness.dimAutomatically.idleTimeout to \"never\"."
     )
     (lib.mkRemovedOptionModule
       ["programs" "plasma" "powerdevil" "battery" "displayAndBrightness" "dimAutomatically" "enable"]
-      ''
-      The programs.plasma.powerdevil.battery.displayAndbrightness.dimAutomatically.enable
-      option was removed. If you wish to disable the screen to dim automatically,
-      set the programs.plasma.powerdevil.battery.displayAndbrightness.dimAutomatically.idleTimeout
-      to "never".
-      ''
+      "The programs.plasma.powerdevil.battery.displayAndbrightness.dimAutomatically.enable option was removed. If you wish to disable the screen to dim automatically, set the programs.plasma.powerdevil.battery.displayAndbrightness.dimAutomatically.idleTimeout to \"never\"."
     )
     (lib.mkRemovedOptionModule
       ["programs" "plasma" "powerdevil" "lowBattery" "displayAndBrightness" "dimAutomatically" "enable"]
-      ''
-      The programs.plasma.powerdevil.lowBattery.displayAndbrightness.dimAutomatically.enable
-      option was removed. If you wish to disable the screen to dim automatically,
-      set the programs.plasma.powerdevil.lowBattery.displayAndbrightness.dimAutomatically.idleTimeout
-      to "never".
-      ''
+      "The programs.plasma.powerdevil.lowBattery.displayAndbrightness.dimAutomatically.enable option was removed. If you wish to disable the screen to dim automatically, set the programs.plasma.powerdevil.lowBattery.displayAndbrightness.dimAutomatically.idleTimeout to \"never\"."
     )
     (lib.mkRenamedOptionModule
       ["programs" "plasma" "powerdevil" "AC" "turnOffDisplay"]
@@ -572,11 +513,7 @@ in
             nullOr (ints.between 0 100);
           default = null;
           example = "10";
-          description = ''
-            The battery charge will be considered low when it drops to this
-            level. Settings for low battery will be used instead of regular
-            battery settings.
-          '';
+          description = "The battery charge will be considered low when it drops to this level. Settings for low battery will be used instead of regular battery settings.";
         };
 
         criticalLevel = lib.mkOption {
@@ -584,12 +521,7 @@ in
             nullOr (ints.between 0 100);
           default = null;
           example = "5";
-          description = ''
-            The battery charge will be considered critical when it drops to this
-            level. After a brief warning, the system will automaticelly suspend
-            or shutdown, according to the configured critical battery level
-            action.
-          '';
+          description = "The battery charge will be considered critical when it drops to this level. After a brief warning, the system will automaticelly suspend or shutdown, according to the configured critical battery level action.";
         };
 
         atCriticalLevel = lib.mkOption {
@@ -597,9 +529,7 @@ in
             nullOr (enum (builtins.attrNames atCriticalLevelActions));
           default = null;
           example = "hibernate";
-          description = ''
-            The action to perform when the battery reaches critical level.
-          '';
+          description = "The action to perform when the battery reaches critical level.";
           apply = action:
             if (action == null) then
               null
@@ -613,10 +543,7 @@ in
             nullOr (ints.between 0 100);
           default = null;
           example = "10";
-          description = ''
-            The battery charge for peripheral devices will be considered low
-             when it reaches this level.
-          '';
+          description = "The battery charge for peripheral devices will be considered low when it reaches this level.";
         };
       };
 
@@ -626,9 +553,7 @@ in
             nullOr bool;
           default = null;
           example = false;
-          description = ''
-            If enabled, pause media players when the system is suspended.
-          '';
+          description = "If enabled, pause media players when the system is suspended.";
         };
       };
     };
