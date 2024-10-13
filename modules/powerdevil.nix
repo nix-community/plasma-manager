@@ -290,7 +290,7 @@ let
   # configuration. cfgSectName is here the name of the section in powerdevilrc,
   # while profile is the name of the "namespace" where we should draw the
   # options from (i.e. powerdevil.AC or powerdevil.battery).
-  createPowerDevilConfig = cfgSectName: profile: {
+  generateConfigForProfile = cfgSectName: profile: {
     "${cfgSectName}/SuspendAndShutdown" = {
       AutoSuspendAction = cfg.powerdevil.${profile}.suspendSession.afterAPeriodOfInactivity.action;
       AutoSuspendIdleTimeoutSec = cfg.powerdevil.${profile}.suspendSession.afterAPeriodOfInactivity.idleTimeout;
@@ -574,9 +574,9 @@ in
 
   config.programs.plasma.configFile = lib.mkIf cfg.enable {
     powerdevilrc = lib.filterAttrsRecursive (k: v: v != null) (
-      (createPowerDevilConfig "AC" "AC")
-      // (createPowerDevilConfig "Battery" "battery")
-      // (createPowerDevilConfig "LowBattery" "lowBattery")
+      (generateConfigForProfile "AC" "AC")
+      // (generateConfigForProfile "Battery" "battery")
+      // (generateConfigForProfile "LowBattery" "lowBattery")
       // generalConfig
     );
   };
