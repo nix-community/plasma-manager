@@ -310,17 +310,31 @@ let
             ${type}.
           '';
         };
-        afterAPeriodOfInactivity = lib.mkOption {
-          type = with lib.types;
-            nullOr (
-              str
-            );
-          default = null;
-          example = "echo 'are you there, world'";
-          description = ''
-            A script or the path for a script/program to be run after a period
-            of inactivity when on ${type}.
-          '';
+        afterAPeriodOfInactivity = {
+          script = lib.mkOption {
+            type = with lib.types;
+              nullOr (
+                str
+              );
+            default = null;
+            example = "echo 'are you there, world'";
+            description = ''
+              A script or the path for a script/program to be run after a period
+              of inactivity when on ${type}.
+            '';
+          };
+          idleTimeout = lib.mkOption {
+            type = with lib.types;
+              nullOr (
+                ints.between 10 604800
+              );
+            default = null;
+            example = 600;
+            description = ''
+              The duration (in seconds), when on ${type}, the computer must be
+               idle until the script is run.
+            '';
+          };
         };
       };
     };
@@ -366,7 +380,8 @@ let
     "${cfgSectName}/RunScript" = {
       ProfileLoadCommand = cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts."whenEnteringOn${capitalize(optionsName)}PowerState";
       ProfileUnloadCommand=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts."whenExitingOn${capitalize(optionsName)}PowerState";
-      IdleTimeoutCommand=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts.afterAPeriodOfInactivity;
+      IdleTimeoutCommand=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts.afterAPeriodOfInactivity.script;
+      RunScriptIdleTimeoutSec=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts.afterAPeriodOfInactivity.idleTimeout;
     };
   };
 in
