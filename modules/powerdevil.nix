@@ -481,27 +481,27 @@ in
 
   config.assertions =
     let
-      createAssertions = type: [
+      createAssertions = profile: [
         {
           assertion = (
-            cfg.powerdevil.${type}.suspendSession.afterAPeriodOfInactivity.action != afterAPeriodOfInactivityActions.doNothing
-            || cfg.powerdevil.${type}.suspendSession.afterAPeriodOfInactivity.idleTimeout == null
+            cfg.powerdevil.${profile}.suspendSession.afterAPeriodOfInactivity.action != afterAPeriodOfInactivityActions.doNothing
+            || cfg.powerdevil.${profile}.suspendSession.afterAPeriodOfInactivity.idleTimeout == null
           );
-          message = "Setting programs.plasma.powerdevil.${type}.suspendSession.afterAPeriodOfInactivity.idleTimeout for autosuspend-action \"doNothing\" is not supported.";
+          message = "Setting programs.plasma.powerdevil.${profile}.suspendSession.afterAPeriodOfInactivity.idleTimeout for autosuspend-action \"doNothing\" is not supported.";
         }
         {
           assertion = (
-            cfg.powerdevil.${type}.displayAndBrightness.turnOffScreen.idleTimeout != -1
-            || cfg.powerdevil.${type}.displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked == null
+            cfg.powerdevil.${profile}.displayAndBrightness.turnOffScreen.idleTimeout != -1
+            || cfg.powerdevil.${profile}.displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked == null
           );
-          message = "Setting programs.plasma.powerdevil.${type}.displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked for idleTimeout \"never\" is not supported.";
+          message = "Setting programs.plasma.powerdevil.${profile}.displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked for idleTimeout \"never\" is not supported.";
         }
         {
           assertion = (
-            cfg.powerdevil.${type}.displayAndBrightness.changeScreenBrightness.enable != false
-            || cfg.powerdevil.${type}.displayAndBrightness.changeScreenBrightness.percentage == null
+            cfg.powerdevil.${profile}.displayAndBrightness.changeScreenBrightness.enable != false
+            || cfg.powerdevil.${profile}.displayAndBrightness.changeScreenBrightness.percentage == null
           );
-          message = "Cannot set programs.plasma.powerdevil.${type}.displayAndBrightness.changeScreenBrightness.percentage when programs.plasma.powerdevil.${type}.displayAndBrightness.changeScreenBrightness.enable is disabled.";
+          message = "Cannot set programs.plasma.powerdevil.${profile}.displayAndBrightness.changeScreenBrightness.percentage when programs.plasma.powerdevil.${profile}.displayAndBrightness.changeScreenBrightness.enable is disabled.";
         }
         {
           assertion = (
