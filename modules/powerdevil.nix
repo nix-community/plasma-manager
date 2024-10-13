@@ -367,17 +367,6 @@ let
         cfg.powerdevil.${optionsName}.displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked;
     };
 
-    "${cfgSectName}/Performance" = {
-      PowerProfile=cfg.powerdevil.${optionsName}.otherSettings.switchToPowerProfile;
-    };
-
-    "${cfgSectName}/RunScript" = {
-      ProfileLoadCommand = cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts."whenEnteringOn${capitalize(optionsName)}PowerState";
-      ProfileUnloadCommand=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts."whenExitingOn${capitalize(optionsName)}PowerState";
-      IdleTimeoutCommand=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts.afterAPeriodOfInactivity.script;
-      RunScriptIdleTimeoutSec=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts.afterAPeriodOfInactivity.idleTimeout;
-    };
-
     "${cfgSectName}/Keyboard" = {
       UseProfileSpecificKeyboardBrightness=
         if (cfg.powerdevil.${optionsName}.displayAndBrightness.changeKeyboardBrightness.enable != null) then
@@ -387,6 +376,17 @@ let
         else
           null;
       KeyboardBrightness=cfg.powerdevil.${optionsName}.displayAndBrightness.changeKeyboardBrightness.percentage;
+    };
+
+    "${cfgSectName}/Performance" = {
+      PowerProfile=cfg.powerdevil.${optionsName}.otherSettings.switchToPowerProfile;
+    };
+
+    "${cfgSectName}/RunScript" = {
+      ProfileLoadCommand = cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts."whenEnteringOn${capitalize(optionsName)}PowerState";
+      ProfileUnloadCommand=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts."whenExitingOn${capitalize(optionsName)}PowerState";
+      IdleTimeoutCommand=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts.afterAPeriodOfInactivity.script;
+      RunScriptIdleTimeoutSec=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts.afterAPeriodOfInactivity.idleTimeout;
     };
   };
 in
