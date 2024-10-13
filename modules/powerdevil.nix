@@ -183,7 +183,7 @@ let
         percentage = lib.mkOption {
           type = with lib.types;
             nullOr (
-              ints.between 0 100
+              ints.between 1 100
             );
           default = null;
           example = 70;
