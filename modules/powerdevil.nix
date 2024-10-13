@@ -69,11 +69,7 @@ let
       afterAPeriodOfInactivity = {
         action = lib.mkOption {
           type = with lib.types;
-            nullOr (
-              enum (
-                builtins.attrNames afterAPeriodOfInactivityActions
-              )
-            );
+            nullOr (enum (builtins.attrNames afterAPeriodOfInactivityActions));
           default = null;
           example = "doNothing";
           description = ''
@@ -88,9 +84,7 @@ let
 
         idleTimeout = lib.mkOption {
           type = with lib.types;
-            nullOr (
-              ints.between 60 604800
-            );
+            nullOr (ints.between 60 604800);
           default = null;
           example = 600;
           description = ''
@@ -102,11 +96,7 @@ let
 
       whenPowerButtonPressed = lib.mkOption {
         type = with lib.types;
-          nullOr (
-            enum (
-              builtins.attrNames whenPowerButtonPressedActions
-            )
-          );
+          nullOr (enum (builtins.attrNames whenPowerButtonPressedActions));
         default = null;
         example = "doNothing";
         description = ''
@@ -121,11 +111,7 @@ let
 
       whenLaptopLidClosed = lib.mkOption {
         type = with lib.types;
-          nullOr (
-            enum (
-              builtins.attrNames whenLaptopLidClosedActions
-            )
-          );
+          nullOr (enum (builtins.attrNames whenLaptopLidClosedActions));
         default = null;
         example = "shutDown";
         description = ''
@@ -140,9 +126,7 @@ let
 
       evenWhenAnExternalMonitorIsConnected = lib.mkOption {
         type = with lib.types;
-          nullOr (
-            bool
-          );
+          nullOr bool;
         default = null;
         example = false;
         description = ''
@@ -152,11 +136,7 @@ let
 
       whenSleepingEnter = lib.mkOption {
         type = with lib.types;
-          nullOr (
-            enum (
-              builtins.attrNames whenSleepingEnterActions
-            )
-          );
+          nullOr (enum (builtins.attrNames whenSleepingEnterActions));
         default = null;
         example = "standbyThenHibernate";
         description = ''
@@ -174,9 +154,7 @@ let
       changeScreenBrightness = {
         enable = lib.mkOption {
           type = with lib.types;
-            nullOr (
-              bool
-            );
+            nullOr bool;
           default = null;
           example = true;
           description = ''
@@ -186,9 +164,7 @@ let
 
         percentage = lib.mkOption {
           type = with lib.types;
-            nullOr (
-              ints.between 1 100
-            );
+            nullOr (ints.between 1 100);
           default = null;
           example = 70;
           description = ''
@@ -200,8 +176,7 @@ let
       dimAutomatically = {
         enable = lib.mkOption {
           type = with lib.types;
-            nullOr
-            bool;
+            nullOr bool;
           default = null;
           example = false;
           description = ''
@@ -211,8 +186,7 @@ let
 
         idleTimeout = lib.mkOption {
           type = with lib.types;
-            nullOr
-            (ints.between 10 604800);
+            nullOr (ints.between 10 604800);
           default = null;
           example = 300;
           description = ''
@@ -225,7 +199,9 @@ let
       turnOffScreen = {
         idleTimeout = lib.mkOption {
           type = with lib.types;
-            nullOr (either (enum [ "never" ]) (ints.between 30 604800));
+            nullOr (either
+              (enum [ "never" ])
+              (ints.between 30 604800));
           default = null;
           example = 300;
           description = ''
@@ -243,12 +219,9 @@ let
         idleTimeoutWhenLocked = lib.mkOption {
           type =
             with lib.types;
-            nullOr (
-              either (enum [
-                "whenLockedAndUnlocked"
-                "immediately"
-              ]) (ints.between 10 604800)
-            );
+            nullOr (either
+              (enum ["whenLockedAndUnlocked" "immediately"])
+              (ints.between 10 604800));
           default = null;
           example = 60;
           description = ''
@@ -270,9 +243,7 @@ let
       changeKeyboardBrightness = {
         enable = lib.mkOption {
           type = with lib.types;
-            nullOr (
-              bool
-            );
+            nullOr bool;
           default = null;
           example = true;
           description = ''
@@ -282,9 +253,7 @@ let
 
         percentage = lib.mkOption {
           type = with lib.types;
-            nullOr (
-              ints.between 0 100
-            );
+            nullOr (ints.between 0 100);
           default = null;
           example = 70;
           description = ''
@@ -298,11 +267,7 @@ let
       switchToPowerProfile = lib.mkOption {
         type =
           with lib.types;
-            nullOr (
-              enum (
-                builtins.attrNames switchToPowerProfileActions
-              )
-            );
+            nullOr (enum (builtins.attrNames switchToPowerProfileActions));
         default = null;
         example = "performance";
         description = ''
@@ -318,9 +283,7 @@ let
       runCustomScripts = {
         "whenEnteringOn${capitalize(type)}PowerState" = lib.mkOption {
           type = with lib.types;
-            nullOr (
-              str
-            );
+            nullOr str;
           default = null;
           example = "echo 'hello, world'";
           description = ''
@@ -330,9 +293,7 @@ let
         };
         "whenExitingOn${capitalize(type)}PowerState" = lib.mkOption {
           type = with lib.types;
-            nullOr (
-              str
-            );
+            nullOr str;
           default = null;
           example = "echo 'farewwll, world'";
           description = ''
@@ -343,9 +304,7 @@ let
         afterAPeriodOfInactivity = {
           script = lib.mkOption {
             type = with lib.types;
-              nullOr (
-                str
-              );
+              nullOr str;
             default = null;
             example = "echo 'are you there, world'";
             description = ''
@@ -355,9 +314,7 @@ let
           };
           idleTimeout = lib.mkOption {
             type = with lib.types;
-              nullOr (
-                ints.between 10 604800
-              );
+              nullOr (ints.between 10 604800);
             default = null;
             example = 600;
             description = ''
@@ -593,9 +550,7 @@ in
       batteryLevels = {
         lowLevel = lib.mkOption {
           type = with lib.types;
-            nullOr (
-              ints.between 0 100
-            );
+            nullOr (ints.between 0 100);
           default = null;
           example = "10";
           description = ''
@@ -606,9 +561,7 @@ in
         };
         criticalLevel = lib.mkOption {
           type = with lib.types;
-            nullOr (
-              ints.between 0 100
-            );
+            nullOr (ints.between 0 100);
           default = null;
           example = "5";
           description = ''
@@ -620,11 +573,7 @@ in
         };
         atCriticalLevel = lib.mkOption {
           type = with lib.types;
-            nullOr (
-              enum (
-                builtins.attrNames atCriticalLevelActions
-              )
-            );
+            nullOr (enum (builtins.attrNames atCriticalLevelActions));
           default = null;
           example = "hibernate";
           description = ''
@@ -639,9 +588,7 @@ in
         };
         lowLevelForPeripheralDevice = lib.mkOption {
           type = with lib.types;
-            nullOr (
-              ints.between 0 100
-            );
+            nullOr (ints.between 0 100);
           default = null;
           example = "10";
           description = ''
@@ -652,7 +599,8 @@ in
       };
       otherSettings = {
         pauseMediaPlayersWhenSuspending = lib.mkOption {
-          type = with lib.types; nullOr bool;
+          type = with lib.types;
+            nullOr bool;
           default = null;
           example = false;
           description = ''
