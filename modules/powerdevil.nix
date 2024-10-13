@@ -288,53 +288,53 @@ let
 
   # By the same logic as generateOptionsForProfile, we can generate the
   # configuration. cfgSectName is here the name of the section in powerdevilrc,
-  # while optionsName is the name of the "namespace" where we should draw the
+  # while profile is the name of the "namespace" where we should draw the
   # options from (i.e. powerdevil.AC or powerdevil.battery).
-  createPowerDevilConfig = cfgSectName: optionsName: {
+  createPowerDevilConfig = cfgSectName: profile: {
     "${cfgSectName}/SuspendAndShutdown" = {
-      AutoSuspendAction = cfg.powerdevil.${optionsName}.suspendSession.afterAPeriodOfInactivity.action;
-      AutoSuspendIdleTimeoutSec = cfg.powerdevil.${optionsName}.suspendSession.afterAPeriodOfInactivity.idleTimeout;
-      PowerButtonAction = cfg.powerdevil.${optionsName}.suspendSession.whenPowerButtonPressed;
-      LidAction = cfg.powerdevil.${optionsName}.suspendSession.whenLaptopLidClosed;
-      InhibitLidActionWhenExternalMonitorPresent = ! cfg.powerdevil.${optionsName}.suspendSession.evenWhenAnExternalMonitorIsConnected;
-      SleepMode = cfg.powerdevil.${optionsName}.suspendSession.whenSleepingEnter;
+      AutoSuspendAction = cfg.powerdevil.${profile}.suspendSession.afterAPeriodOfInactivity.action;
+      AutoSuspendIdleTimeoutSec = cfg.powerdevil.${profile}.suspendSession.afterAPeriodOfInactivity.idleTimeout;
+      PowerButtonAction = cfg.powerdevil.${profile}.suspendSession.whenPowerButtonPressed;
+      LidAction = cfg.powerdevil.${profile}.suspendSession.whenLaptopLidClosed;
+      InhibitLidActionWhenExternalMonitorPresent = ! cfg.powerdevil.${profile}.suspendSession.evenWhenAnExternalMonitorIsConnected;
+      SleepMode = cfg.powerdevil.${profile}.suspendSession.whenSleepingEnter;
     };
 
     "${cfgSectName}/Display" = {
       UseProfileSpecificDisplayBrightness=
-        if (cfg.powerdevil.${optionsName}.displayAndBrightness.changeScreenBrightness.enable != null) then
-          cfg.powerdevil.${optionsName}.displayAndBrightness.changeScreenBrightness.enable
-        else if (cfg.powerdevil.${optionsName}.displayAndBrightness.changeScreenBrightness.percentage != null) then
+        if (cfg.powerdevil.${profile}.displayAndBrightness.changeScreenBrightness.enable != null) then
+          cfg.powerdevil.${profile}.displayAndBrightness.changeScreenBrightness.enable
+        else if (cfg.powerdevil.${profile}.displayAndBrightness.changeScreenBrightness.percentage != null) then
           true
         else
           null;
-      DisplayBrightness=cfg.powerdevil.${optionsName}.displayAndBrightness.changeScreenBrightness.percentage;
-      DimDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.displayAndBrightness.dimAutomatically.idleTimeout;
-      TurnOffDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.displayAndBrightness.turnOffScreen.idleTimeout;
+      DisplayBrightness=cfg.powerdevil.${profile}.displayAndBrightness.changeScreenBrightness.percentage;
+      DimDisplayIdleTimeoutSec = cfg.powerdevil.${profile}.displayAndBrightness.dimAutomatically.idleTimeout;
+      TurnOffDisplayIdleTimeoutSec = cfg.powerdevil.${profile}.displayAndBrightness.turnOffScreen.idleTimeout;
       TurnOffDisplayIdleTimeoutWhenLockedSec =
-        cfg.powerdevil.${optionsName}.displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked;
+        cfg.powerdevil.${profile}.displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked;
     };
 
     "${cfgSectName}/Keyboard" = {
       UseProfileSpecificKeyboardBrightness=
-        if (cfg.powerdevil.${optionsName}.displayAndBrightness.changeKeyboardBrightness.enable != null) then
-          cfg.powerdevil.${optionsName}.displayAndBrightness.changeKeyboardBrightness.enable
-        else if (cfg.powerdevil.${optionsName}.displayAndBrightness.changeKeyboardBrightness.percentage != null) then
+        if (cfg.powerdevil.${profile}.displayAndBrightness.changeKeyboardBrightness.enable != null) then
+          cfg.powerdevil.${profile}.displayAndBrightness.changeKeyboardBrightness.enable
+        else if (cfg.powerdevil.${profile}.displayAndBrightness.changeKeyboardBrightness.percentage != null) then
           true
         else
           null;
-      KeyboardBrightness=cfg.powerdevil.${optionsName}.displayAndBrightness.changeKeyboardBrightness.percentage;
+      KeyboardBrightness=cfg.powerdevil.${profile}.displayAndBrightness.changeKeyboardBrightness.percentage;
     };
 
     "${cfgSectName}/Performance" = {
-      PowerProfile=cfg.powerdevil.${optionsName}.otherSettings.switchToPowerProfile;
+      PowerProfile=cfg.powerdevil.${profile}.otherSettings.switchToPowerProfile;
     };
 
     "${cfgSectName}/RunScript" = {
-      ProfileLoadCommand = cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts."whenEnteringOn${capitalize(optionsName)}PowerState";
-      ProfileUnloadCommand=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts."whenExitingOn${capitalize(optionsName)}PowerState";
-      IdleTimeoutCommand=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts.afterAPeriodOfInactivity.script;
-      RunScriptIdleTimeoutSec=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts.afterAPeriodOfInactivity.idleTimeout;
+      ProfileLoadCommand = cfg.powerdevil.${profile}.otherSettings.runCustomScripts."whenEnteringOn${capitalize(profile)}PowerState";
+      ProfileUnloadCommand=cfg.powerdevil.${profile}.otherSettings.runCustomScripts."whenExitingOn${capitalize(profile)}PowerState";
+      IdleTimeoutCommand=cfg.powerdevil.${profile}.otherSettings.runCustomScripts.afterAPeriodOfInactivity.script;
+      RunScriptIdleTimeoutSec=cfg.powerdevil.${profile}.otherSettings.runCustomScripts.afterAPeriodOfInactivity.idleTimeout;
     };
   };
 
