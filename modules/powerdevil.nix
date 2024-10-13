@@ -174,25 +174,24 @@ let
       };
 
       dimAutomatically = {
-        enable = lib.mkOption {
-          type = with lib.types;
-            nullOr bool;
-          default = null;
-          example = false;
-          description = ''
-            Enable or disable screen dimming.
-          '';
-        };
-
         idleTimeout = lib.mkOption {
           type = with lib.types;
-            nullOr (ints.between 10 604800);
+            nullOr (either
+              (enum ["never"])
+              (ints.between 10 604800));
           default = null;
           example = 300;
           description = ''
             The duration (in seconds), when on ${type}, the computer must be idle
             until the display starts dimming.
           '';
+          apply = timeout:
+            if (timeout == null) then
+              null
+            else if (timeout == "never") then
+              -1
+            else
+              timeout;
         };
       };
 
@@ -354,13 +353,6 @@ let
         else
           null;
       DisplayBrightness=cfg.powerdevil.${optionsName}.displayAndBrightness.changeScreenBrightness.percentage;
-      DimDisplayWhenIdle =
-        if (cfg.powerdevil.${optionsName}.displayAndBrightness.dimAutomatically.enable != null) then
-          cfg.powerdevil.${optionsName}.displayAndBrightness.dimAutomatically.enable
-        else if (cfg.powerdevil.${optionsName}.displayAndBrightness.dimAutomatically.idleTimeout != null) then
-          true
-        else
-          null;
       DimDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.displayAndBrightness.dimAutomatically.idleTimeout;
       TurnOffDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.displayAndBrightness.turnOffScreen.idleTimeout;
       TurnOffDisplayIdleTimeoutWhenLockedSec =
@@ -488,6 +480,33 @@ in
       ["programs" "plasma" "powerdevil" "lowBattery" "dimDisplay"]
       ["programs" "plasma" "powerdevil" "lowBattery" "displayAndBrightness" "dimAutomatically"]
     )
+    (lib.mkRemovedOptionModule
+      ["programs" "plasma" "powerdevil" "AC" "displayAndBrightness" "dimAutomatically" "enable"]
+      ''
+      The programs.plasma.powerdevil.AC.displayAndbrightness.dimAutomatically.enable
+      option was removed. If you wish to disable the screen to dim automatically,
+      set the programs.plasma.powerdevil.AC.displayAndbrightness.dimAutomatically.idleTimeout
+      to "never".
+      ''
+    )
+    (lib.mkRemovedOptionModule
+      ["programs" "plasma" "powerdevil" "battery" "displayAndBrightness" "dimAutomatically" "enable"]
+      ''
+      The programs.plasma.powerdevil.battery.displayAndbrightness.dimAutomatically.enable
+      option was removed. If you wish to disable the screen to dim automatically,
+      set the programs.plasma.powerdevil.battery.displayAndbrightness.dimAutomatically.idleTimeout
+      to "never".
+      ''
+    )
+    (lib.mkRemovedOptionModule
+      ["programs" "plasma" "powerdevil" "lowBattery" "displayAndBrightness" "dimAutomatically" "enable"]
+      ''
+      The programs.plasma.powerdevil.lowBattery.displayAndbrightness.dimAutomatically.enable
+      option was removed. If you wish to disable the screen to dim automatically,
+      set the programs.plasma.powerdevil.lowBattery.displayAndbrightness.dimAutomatically.idleTimeout
+      to "never".
+      ''
+    )
     (lib.mkRenamedOptionModule
       ["programs" "plasma" "powerdevil" "AC" "turnOffDisplay"]
       ["programs" "plasma" "powerdevil" "AC" "displayAndBrightness" "turnOffScreen"]
@@ -522,13 +541,6 @@ in
             || cfg.powerdevil.${type}.displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked == null
           );
           message = "Setting programs.plasma.powerdevil.${type}.displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked for idleTimeout \"never\" is not supported.";
-        }
-        {
-          assertion = (
-            cfg.powerdevil.${type}.displayAndBrightness.dimAutomatically.enable != false
-            || cfg.powerdevil.${type}.displayAndBrightness.dimAutomatically.idleTimeout == null
-          );
-          message = "Cannot set programs.plasma.powerdevil.${type}.displayAndBrightness.dimAutomatically.idleTimeout when programs.plasma.powerdevil.${type}.displayAndBrightness.dimAutomatically.enable is disabled.";
         }
         {
           assertion = (
