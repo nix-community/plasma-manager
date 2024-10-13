@@ -88,7 +88,7 @@ let
         idleTimeout = lib.mkOption {
           type = with lib.types;
             nullOr (
-              ints.between 60 600000
+              ints.between 60 604800
             );
           default = null;
           example = 600;
@@ -208,7 +208,7 @@ let
         idleTimeout = lib.mkOption {
           type = with lib.types;
             nullOr
-            (ints.between 20 600000);
+            (ints.between 10 604800);
           default = null;
           example = 300;
           description = ''
@@ -221,7 +221,7 @@ let
       turnOffScreen = {
         idleTimeout = lib.mkOption {
           type = with lib.types;
-            nullOr (either (enum [ "never" ]) (ints.between 30 600000));
+            nullOr (either (enum [ "never" ]) (ints.between 30 604800));
           default = null;
           example = 300;
           description = ''
@@ -243,7 +243,7 @@ let
               either (enum [
                 "whenLockedAndUnlocked"
                 "immediately"
-              ]) (ints.between 20 600000)
+              ]) (ints.between 10 604800)
             );
           default = null;
           example = 60;
