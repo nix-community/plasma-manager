@@ -337,6 +337,19 @@ let
       RunScriptIdleTimeoutSec=cfg.powerdevil.${optionsName}.otherSettings.runCustomScripts.afterAPeriodOfInactivity.idleTimeout;
     };
   };
+
+  generalConfig = {
+    BatteryManagement = {
+      BatteryLowLevel = cfg.powerdevil.batteryLevels.lowLevel;
+      BatteryCriticalLevel = cfg.powerdevil.batteryLevels.criticalLevel;
+      BatteryCriticalAction = cfg.powerdevil.batteryLevels.atCriticalLevel;
+      PeripheralBatteryLowLevel = cfg.powerdevil.batteryLevels.lowLevelForPeripheralDevice;
+    };
+    General = {
+      pausePlayersOnSuspend = cfg.powerdevil.otherSettings.pauseMediaPlayersWhenSuspending;
+    };
+  };
+
 in
 {
   imports = [
@@ -564,17 +577,7 @@ in
       (createPowerDevilConfig "AC" "AC")
       // (createPowerDevilConfig "Battery" "battery")
       // (createPowerDevilConfig "LowBattery" "lowBattery")
-      // {
-        BatteryManagement = {
-          BatteryLowLevel = cfg.powerdevil.batteryLevels.lowLevel;
-          BatteryCriticalLevel = cfg.powerdevil.batteryLevels.criticalLevel;
-          BatteryCriticalAction = cfg.powerdevil.batteryLevels.atCriticalLevel;
-          PeripheralBatteryLowLevel = cfg.powerdevil.batteryLevels.lowLevelForPeripheralDevice;
-        };
-        General = {
-          pausePlayersOnSuspend = cfg.powerdevil.otherSettings.pauseMediaPlayersWhenSuspending;
-        };
-      }
+      // generalConfig
     );
   };
 }
