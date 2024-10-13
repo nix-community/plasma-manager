@@ -120,7 +120,7 @@ let
           nullOr bool;
         default = null;
         example = false;
-        description = "If enabled, the lid action will be executed even when an external monitor is connected.";
+        description = "If enabled, when on ${type}, the lid action will be executed even when an external monitor is connected.";
       };
 
       whenSleepingEnter = lib.mkOption {
@@ -144,7 +144,7 @@ let
             nullOr bool;
           default = null;
           example = true;
-          description = "Enable or disable screen brightness changing.";
+          description = "Enable or disable, when on ${type}, changing the screen brightness.";
         };
 
         percentage = lib.mkOption {
@@ -220,7 +220,7 @@ let
             nullOr bool;
           default = null;
           example = true;
-          description = "Enable or disable keyboard brightness changing.";
+          description = "Enable or disable, when on ${type}, changing the keyboard brightness.";
         };
 
         percentage = lib.mkOption {
