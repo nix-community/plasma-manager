@@ -284,6 +284,57 @@ let
     };
   };
 
+  generalOptions = {
+    batteryLevels = {
+      lowLevel = lib.mkOption {
+        type = with lib.types;
+          nullOr (ints.between 0 100);
+        default = null;
+        example = "10";
+        description = "The battery charge will be considered low when it drops to this level. Settings for low battery will be used instead of regular battery settings.";
+      };
+
+      criticalLevel = lib.mkOption {
+        type = with lib.types;
+          nullOr (ints.between 0 100);
+        default = null;
+        example = "5";
+        description = "The battery charge will be considered critical when it drops to this level. After a brief warning, the system will automaticelly suspend or shutdown, according to the configured critical battery level action.";
+      };
+
+      atCriticalLevel = lib.mkOption {
+        type = with lib.types;
+          nullOr (enum (builtins.attrNames atCriticalLevelActions));
+        default = null;
+        example = "hibernate";
+        description = "The action to perform when the battery reaches critical level.";
+        apply = action:
+          if (action == null) then
+            null
+          else
+            atCriticalLevelActions."${action}";
+      };
+
+      lowLevelForPeripheralDevice = lib.mkOption {
+        type = with lib.types;
+          nullOr (ints.between 0 100);
+        default = null;
+        example = "10";
+        description = "The battery charge for peripheral devices will be considered low when it reaches this level.";
+      };
+    };
+
+    otherSettings = {
+      pauseMediaPlayersWhenSuspending = lib.mkOption {
+        type = with lib.types;
+          nullOr bool;
+        default = null;
+        example = false;
+        description = "If enabled, pause media players when the system is suspended.";
+      };
+    };
+  };
+
   # By the same logic as generateOptionsForProfile, we can generate the
   # configuration. cfgSectName is here the name of the section in powerdevilrc,
   # while profile is the name of the "namespace" where we should draw the
@@ -525,56 +576,8 @@ in
       AC = (generateOptionsForProfile "AC");
       battery = (generateOptionsForProfile "battery");
       lowBattery = (generateOptionsForProfile "lowBattery");
-      batteryLevels = {
-        lowLevel = lib.mkOption {
-          type = with lib.types;
-            nullOr (ints.between 0 100);
-          default = null;
-          example = "10";
-          description = "The battery charge will be considered low when it drops to this level. Settings for low battery will be used instead of regular battery settings.";
-        };
-
-        criticalLevel = lib.mkOption {
-          type = with lib.types;
-            nullOr (ints.between 0 100);
-          default = null;
-          example = "5";
-          description = "The battery charge will be considered critical when it drops to this level. After a brief warning, the system will automaticelly suspend or shutdown, according to the configured critical battery level action.";
-        };
-
-        atCriticalLevel = lib.mkOption {
-          type = with lib.types;
-            nullOr (enum (builtins.attrNames atCriticalLevelActions));
-          default = null;
-          example = "hibernate";
-          description = "The action to perform when the battery reaches critical level.";
-          apply = action:
-            if (action == null) then
-              null
-            else
-              atCriticalLevelActions."${action}";
-
-        };
-
-        lowLevelForPeripheralDevice = lib.mkOption {
-          type = with lib.types;
-            nullOr (ints.between 0 100);
-          default = null;
-          example = "10";
-          description = "The battery charge for peripheral devices will be considered low when it reaches this level.";
-        };
-      };
-
-      otherSettings = {
-        pauseMediaPlayersWhenSuspending = lib.mkOption {
-          type = with lib.types;
-            nullOr bool;
-          default = null;
-          example = false;
-          description = "If enabled, pause media players when the system is suspended.";
-        };
-      };
-    };
+    }
+    // generalOptions;
   };
 
   config.programs.plasma.configFile = lib.mkIf cfg.enable {
