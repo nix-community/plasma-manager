@@ -484,7 +484,11 @@ let
           AutoSuspendIdleTimeoutSec = suspendSession.afterAPeriodOfInactivity.idleTimeout;
           PowerButtonAction = suspendSession.whenPowerButtonPressed;
           LidAction = suspendSession.whenLaptopLidClosed;
-          InhibitLidActionWhenExternalMonitorPresent = ! suspendSession.evenWhenAnExternalMonitorIsConnected;
+          InhibitLidActionWhenExternalMonitorPresent =
+            if (suspendSession.evenWhenAnExternalMonitorIsConnected != null) then
+              ! suspendSession.evenWhenAnExternalMonitorIsConnected
+            else
+              null;
           SleepMode = suspendSession.whenSleepingEnter;
         };
       };
