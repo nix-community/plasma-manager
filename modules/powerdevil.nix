@@ -510,35 +510,51 @@ let
 
   generateAssertionsForProfile = profile: [
     {
-      assertion = (
-        cfg.powerdevil.${profile}.suspendSession.afterAPeriodOfInactivity.action != afterAPeriodOfInactivityActions.doNothing
-        || cfg.powerdevil.${profile}.suspendSession.afterAPeriodOfInactivity.idleTimeout == null
-      );
+      assertion =
+        let
+          afterAPeriodOfInactivity = cfg.powerdevil.${profile}.suspendSession.afterAPeriodOfInactivity;
+        in
+          (
+            afterAPeriodOfInactivity.action != afterAPeriodOfInactivityActions.doNothing
+            || afterAPeriodOfInactivity.idleTimeout == null
+          );
       message = "Setting programs.plasma.powerdevil.${profile}.suspendSession.afterAPeriodOfInactivity.idleTimeout for autosuspend-action \"doNothing\" is not supported.";
     }
     {
-      assertion = (
-        cfg.powerdevil.${profile}.displayAndBrightness.turnOffScreen.idleTimeout != -1
-        || cfg.powerdevil.${profile}.displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked == null
-      );
+      assertion =
+        let
+          turnOffScreen = cfg.powerdevil.${profile}.displayAndBrightness.turnOffScreen;
+        in
+          (
+            turnOffScreen.idleTimeout != -1
+            || turnOffScreen.idleTimeoutWhenLocked == null
+          );
       message = "Setting programs.plasma.powerdevil.${profile}.displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked for idleTimeout \"never\" is not supported.";
     }
     {
-      assertion = (
-        cfg.powerdevil.${profile}.displayAndBrightness.changeScreenBrightness.enable != false
-        || cfg.powerdevil.${profile}.displayAndBrightness.changeScreenBrightness.percentage == null
-      );
+      assertion =
+        let
+          changeScreenBrightness = cfg.powerdevil.${profile}.displayAndBrightness.changeScreenBrightness;
+        in
+          (
+            changeScreenBrightness.enable != false
+            || changeScreenBrightness.percentage == null
+          );
       message = "Cannot set programs.plasma.powerdevil.${profile}.displayAndBrightness.changeScreenBrightness.percentage when programs.plasma.powerdevil.${profile}.displayAndBrightness.changeScreenBrightness.enable is disabled.";
     }
   ];
 
   generalAssertions = [
     {
-      assertion = (
-        cfg.powerdevil.batteryLevels.lowLevel == null
-        || cfg.powerdevil.batteryLevels.criticalLevel == null
-        || cfg.powerdevil.batteryLevels.lowLevel > cfg.powerdevil.batteryLevels.criticalLevel
-      );
+      assertion =
+        let
+          batteryLevels = cfg.powerdevil.batteryLevels;
+        in
+          (
+            batteryLevels.lowLevel == null
+            || batteryLevels.criticalLevel == null
+            || batteryLevels.lowLevel > batteryLevels.criticalLevel
+          );
       message = "programs.plasma.powerdevil.batteryLevels.criticalLevel cannot be greater than programs.plasma.powerdevil.batteryLevels.lowLevel.";
     }
   ];
