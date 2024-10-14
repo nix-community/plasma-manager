@@ -399,134 +399,72 @@ let
     };
   };
 
+  generateModifiedOptionsModules = profile:
+    [
+      (lib.mkRenamedOptionModule
+        ["programs" "plasma" "powerdevil" "${profile}" "autoSuspend"]
+        ["programs" "plasma" "powerdevil" "${profile}" "suspendSession" "afterAPeriodOfInactivity"]
+      )
+      (lib.mkRenamedOptionModule
+        ["programs" "plasma" "powerdevil" "${profile}" "powerButtonAction"]
+        ["programs" "plasma" "powerdevil" "${profile}" "suspendSession" "whenPowerButtonPressed"]
+      )
+      (lib.mkRenamedOptionModule
+        ["programs" "plasma" "powerdevil" "${profile}" "whenLaptopLidClosed"]
+        ["programs" "plasma" "powerdevil" "${profile}" "suspendSession" "whenLaptopLidClosed"]
+      )
+      (lib.mkRenamedOptionModule
+        ["programs" "plasma" "powerdevil" "${profile}" "inhibitLidActionWhenExternalMonitorConnected"]
+        ["programs" "plasma" "powerdevil" "${profile}" "suspendSession" "evenWhenAnExternalMonitorIsConnected"]
+      )
+      (lib.mkRenamedOptionModule
+        ["programs" "plasma" "powerdevil" "${profile}" "whenSleepingEnter"]
+        ["programs" "plasma" "powerdevil" "${profile}" "suspendSession" "whenSleepingEnter"]
+      )
+      (lib.mkRenamedOptionModule
+        ["programs" "plasma" "powerdevil" "${profile}" "changeScreenBrightness"]
+        ["programs" "plasma" "powerdevil" "${profile}" "displayAndBrightness" "changeScreenBrightness"]
+      )
+      (lib.mkRenamedOptionModule
+        ["programs" "plasma" "powerdevil" "${profile}" "dimDisplay"]
+        ["programs" "plasma" "powerdevil" "${profile}" "displayAndBrightness" "dimAutomatically"]
+      )
+      (lib.mkRemovedOptionModule
+        ["programs" "plasma" "powerdevil" "${profile}" "displayAndBrightness" "dimAutomatically" "enable"]
+        "The programs.plasma.powerdevil.${profile}.displayAndbrightness.dimAutomatically.enable option was removed. If you wish to disable the screen to dim automatically, set the programs.plasma.powerdevil.${profile}.displayAndbrightness.dimAutomatically.idleTimeout to \"never\"."
+      )
+      (lib.mkRenamedOptionModule
+        ["programs" "plasma" "powerdevil" "${profile}" "turnOffDisplay"]
+        ["programs" "plasma" "powerdevil" "${profile}" "displayAndBrightness" "turnOffScreen"]
+      )
+    ];
+
+    generalModifiedOptionsModules = [
+      (lib.mkRenamedOptionModule
+        ["programs" "plasma" "powerdevil" "powerButtonAction"]
+        ["programs" "plasma" "powerdevil" "AC" "powerButtonAction"]
+      )
+      (lib.mkRenamedOptionModule
+        ["programs" "plasma" "powerdevil" "autoSuspend"]
+        ["programs" "plasma" "powerdevil" "AC" "autoSuspend"]
+      )
+      (lib.mkRenamedOptionModule
+        ["programs" "plasma" "powerdevil" "turnOffDisplay"]
+        ["programs" "plasma" "powerdevil" "AC" "turnOffDisplay"]
+      )
+      (lib.mkRenamedOptionModule
+        ["programs" "plasma" "powerdevil" "general" "pausePlayersOnSuspend"]
+        ["programs" "plasma" "powerdevil" "otherSettings" "pauseMediaPlayersWhenSuspending"]
+      )
+    ];
+
 in
 {
-  imports = [
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "powerButtonAction"]
-      ["programs" "plasma" "powerdevil" "AC" "powerButtonAction"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "autoSuspend"]
-      ["programs" "plasma" "powerdevil" "AC" "autoSuspend"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "turnOffDisplay"]
-      ["programs" "plasma" "powerdevil" "AC" "turnOffDisplay"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "AC" "autoSuspend"]
-      ["programs" "plasma" "powerdevil" "AC" "suspendSession" "afterAPeriodOfInactivity"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "battery" "autoSuspend"]
-      ["programs" "plasma" "powerdevil" "battery" "suspendSession" "afterAPeriodOfInactivity"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "lowBattery" "autoSuspend"]
-      ["programs" "plasma" "powerdevil" "lowBattery" "suspendSession" "afterAPeriodOfInactivity"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "AC" "powerButtonAction"]
-      ["programs" "plasma" "powerdevil" "AC" "suspendSession" "whenPowerButtonPressed"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "battery" "powerButtonAction"]
-      ["programs" "plasma" "powerdevil" "battery" "suspendSession" "whenPowerButtonPressed"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "lowBattery" "powerButtonAction"]
-      ["programs" "plasma" "powerdevil" "lowBattery" "suspendSession" "whenPowerButtonPressed"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "AC" "whenLaptopLidClosed"]
-      ["programs" "plasma" "powerdevil" "AC" "suspendSession" "whenLaptopLidClosed"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "battery" "whenLaptopLidClosed"]
-      ["programs" "plasma" "powerdevil" "battery" "suspendSession" "whenLaptopLidClosed"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "lowBattery" "whenLaptopLidClosed"]
-      ["programs" "plasma" "powerdevil" "lowBattery" "suspendSession" "whenLaptopLidClosed"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "AC" "inhibitLidActionWhenExternalMonitorConnected"]
-      ["programs" "plasma" "powerdevil" "AC" "suspendSession" "evenWhenAnExternalMonitorIsConnected"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "battery" "inhibitLidActionWhenExternalMonitorConnected"]
-      ["programs" "plasma" "powerdevil" "battery" "suspendSession" "evenWhenAnExternalMonitorIsConnected"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "lowBattery" "inhibitLidActionWhenExternalMonitorConnected"]
-      ["programs" "plasma" "powerdevil" "lowBattery" "suspendSession" "evenWhenAnExternalMonitorIsConnected"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "AC" "whenSleepingEnter"]
-      ["programs" "plasma" "powerdevil" "AC" "suspendSession" "whenSleepingEnter"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "battery" "whenSleepingEnter"]
-      ["programs" "plasma" "powerdevil" "battery" "suspendSession" "whenSleepingEnter"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "lowBattery" "whenSleepingEnter"]
-      ["programs" "plasma" "powerdevil" "lowBattery" "suspendSession" "whenSleepingEnter"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "AC" "changeScreenBrightness"]
-      ["programs" "plasma" "powerdevil" "AC" "displayAndBrightness" "changeScreenBrightness"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "battery" "changeScreenBrightness"]
-      ["programs" "plasma" "powerdevil" "battery" "displayAndBrightness" "changeScreenBrightness"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "lowBattery" "changeScreenBrightness"]
-      ["programs" "plasma" "powerdevil" "lowBattery" "displayAndBrightness" "changeScreenBrightness"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "AC" "dimDisplay"]
-      ["programs" "plasma" "powerdevil" "AC" "displayAndBrightness" "dimAutomatically"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "battery" "dimDisplay"]
-      ["programs" "plasma" "powerdevil" "battery" "displayAndBrightness" "dimAutomatically"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "lowBattery" "dimDisplay"]
-      ["programs" "plasma" "powerdevil" "lowBattery" "displayAndBrightness" "dimAutomatically"]
-    )
-    (lib.mkRemovedOptionModule
-      ["programs" "plasma" "powerdevil" "AC" "displayAndBrightness" "dimAutomatically" "enable"]
-      "The programs.plasma.powerdevil.AC.displayAndbrightness.dimAutomatically.enable option was removed. If you wish to disable the screen to dim automatically, set the programs.plasma.powerdevil.AC.displayAndbrightness.dimAutomatically.idleTimeout to \"never\"."
-    )
-    (lib.mkRemovedOptionModule
-      ["programs" "plasma" "powerdevil" "battery" "displayAndBrightness" "dimAutomatically" "enable"]
-      "The programs.plasma.powerdevil.battery.displayAndbrightness.dimAutomatically.enable option was removed. If you wish to disable the screen to dim automatically, set the programs.plasma.powerdevil.battery.displayAndbrightness.dimAutomatically.idleTimeout to \"never\"."
-    )
-    (lib.mkRemovedOptionModule
-      ["programs" "plasma" "powerdevil" "lowBattery" "displayAndBrightness" "dimAutomatically" "enable"]
-      "The programs.plasma.powerdevil.lowBattery.displayAndbrightness.dimAutomatically.enable option was removed. If you wish to disable the screen to dim automatically, set the programs.plasma.powerdevil.lowBattery.displayAndbrightness.dimAutomatically.idleTimeout to \"never\"."
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "AC" "turnOffDisplay"]
-      ["programs" "plasma" "powerdevil" "AC" "displayAndBrightness" "turnOffScreen"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "battery" "turnOffDisplay"]
-      ["programs" "plasma" "powerdevil" "battery" "displayAndBrightness" "turnOffScreen"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "lowBattery" "turnOffDisplay"]
-      ["programs" "plasma" "powerdevil" "lowBattery" "displayAndBrightness" "turnOffScreen"]
-    )
-    (lib.mkRenamedOptionModule
-      ["programs" "plasma" "powerdevil" "general" "pausePlayersOnSuspend"]
-      ["programs" "plasma" "powerdevil" "otherSettings" "pauseMediaPlayersWhenSuspending"]
-    )
-  ];
+  imports =
+    (generateModifiedOptionsModules "AC")
+    ++ (generateModifiedOptionsModules "battery")
+    ++ (generateModifiedOptionsModules "lowBattery")
+    ++ generalModifiedOptionsModules;
 
   config.assertions =
     let
