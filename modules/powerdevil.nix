@@ -342,104 +342,6 @@ let
   };
 
 
-  # ==================================
-  # === configuration declarations ===
-  # ==================================
-
-  # By the same logic as generateOptionsForProfile, we can generate the
-  # configuration. cfgSectName is here the name of the section in powerdevilrc,
-  # while profile is the name of the "namespace" where we should draw the
-  # options from (i.e. powerdevil.AC or powerdevil.battery).
-  generateConfigForProfile = cfgSectName: profile:
-    let
-      suspendSession = cfg.powerdevil.${profile}.suspendSession;
-      displayAndBrightness = cfg.powerdevil.${profile}.displayAndBrightness;
-      changeKeyboardBrightness = displayAndBrightness.changeKeyboardBrightness;
-      otherSettings = cfg.powerdevil.${profile}.otherSettings;
-      runCustomScripts = otherSettings.runCustomScripts;
-
-      suspendAndShutdown = {
-        "${cfgSectName}/SuspendAndShutdown" = {
-          AutoSuspendAction = suspendSession.afterAPeriodOfInactivity.action;
-          AutoSuspendIdleTimeoutSec = suspendSession.afterAPeriodOfInactivity.idleTimeout;
-          PowerButtonAction = suspendSession.whenPowerButtonPressed;
-          LidAction = suspendSession.whenLaptopLidClosed;
-          InhibitLidActionWhenExternalMonitorPresent = ! suspendSession.evenWhenAnExternalMonitorIsConnected;
-          SleepMode = suspendSession.whenSleepingEnter;
-        };
-      };
-
-      display = {
-        "${cfgSectName}/Display" = {
-          UseProfileSpecificDisplayBrightness =
-            if (displayAndBrightness.changeScreenBrightness.enable != null) then
-              displayAndBrightness.changeScreenBrightness.enable
-            else if (displayAndBrightness.changeScreenBrightness.percentage != null) then
-              true
-            else
-              null;
-          DisplayBrightness = displayAndBrightness.changeScreenBrightness.percentage;
-          DimDisplayIdleTimeoutSec = displayAndBrightness.dimAutomatically.idleTimeout;
-          TurnOffDisplayIdleTimeoutSec = displayAndBrightness.turnOffScreen.idleTimeout;
-          TurnOffDisplayIdleTimeoutWhenLockedSec = displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked;
-        };
-      };
-
-      keyboard = {
-        "${cfgSectName}/Keyboard" = {
-          UseProfileSpecificKeyboardBrightness =
-            if (changeKeyboardBrightness.enable != null) then
-              changeKeyboardBrightness.enable
-            else if (changeKeyboardBrightness.percentage != null) then
-              true
-            else
-              null;
-          KeyboardBrightness = changeKeyboardBrightness.percentage;
-        };
-      };
-
-      performance = {
-        "${cfgSectName}/Performance" = {
-          PowerProfile = otherSettings.switchToPowerProfile;
-        };
-      };
-
-      runScripts = {
-        "${cfgSectName}/RunScript" = {
-          ProfileLoadCommand = runCustomScripts."whenEnteringOn${capitalize(profile)}PowerState";
-          ProfileUnloadCommand = runCustomScripts."whenExitingOn${capitalize(profile)}PowerState";
-          IdleTimeoutCommand = runCustomScripts.afterAPeriodOfInactivity.script;
-          RunScriptIdleTimeoutSec = runCustomScripts.afterAPeriodOfInactivity.idleTimeout;
-        };
-      };
-
-    in
-      suspendAndShutdown
-      // display
-      // keyboard
-      // performance
-      // runScripts;
-
-  generalConfig =
-    let
-      batteryLevels = cfg.powerdevil.batteryLevels;
-      otherSettings = cfg.powerdevil.otherSettings;
-
-    in
-      {
-        BatteryManagement = {
-          BatteryLowLevel = batteryLevels.lowLevel;
-          BatteryCriticalLevel = batteryLevels.criticalLevel;
-          BatteryCriticalAction = batteryLevels.atCriticalLevel;
-          PeripheralBatteryLowLevel = batteryLevels.lowLevelForPeripheralDevice;
-        };
-
-        General = {
-          pausePlayersOnSuspend = otherSettings.pauseMediaPlayersWhenSuspending;
-        };
-      };
-
-
   # =============================================
   # === modified options modules declarations ===
   # =============================================
@@ -559,8 +461,114 @@ let
     }
   ];
 
+
+  # ==================================
+  # === configuration declarations ===
+  # ==================================
+
+  # By the same logic as generateOptionsForProfile, we can generate the
+  # configuration. cfgSectName is here the name of the section in powerdevilrc,
+  # while profile is the name of the "namespace" where we should draw the
+  # options from (i.e. powerdevil.AC or powerdevil.battery).
+  generateConfigForProfile = cfgSectName: profile:
+    let
+      suspendSession = cfg.powerdevil.${profile}.suspendSession;
+      displayAndBrightness = cfg.powerdevil.${profile}.displayAndBrightness;
+      changeKeyboardBrightness = displayAndBrightness.changeKeyboardBrightness;
+      otherSettings = cfg.powerdevil.${profile}.otherSettings;
+      runCustomScripts = otherSettings.runCustomScripts;
+
+      suspendAndShutdown = {
+        "${cfgSectName}/SuspendAndShutdown" = {
+          AutoSuspendAction = suspendSession.afterAPeriodOfInactivity.action;
+          AutoSuspendIdleTimeoutSec = suspendSession.afterAPeriodOfInactivity.idleTimeout;
+          PowerButtonAction = suspendSession.whenPowerButtonPressed;
+          LidAction = suspendSession.whenLaptopLidClosed;
+          InhibitLidActionWhenExternalMonitorPresent = ! suspendSession.evenWhenAnExternalMonitorIsConnected;
+          SleepMode = suspendSession.whenSleepingEnter;
+        };
+      };
+
+      display = {
+        "${cfgSectName}/Display" = {
+          UseProfileSpecificDisplayBrightness =
+            if (displayAndBrightness.changeScreenBrightness.enable != null) then
+              displayAndBrightness.changeScreenBrightness.enable
+            else if (displayAndBrightness.changeScreenBrightness.percentage != null) then
+              true
+            else
+              null;
+          DisplayBrightness = displayAndBrightness.changeScreenBrightness.percentage;
+          DimDisplayIdleTimeoutSec = displayAndBrightness.dimAutomatically.idleTimeout;
+          TurnOffDisplayIdleTimeoutSec = displayAndBrightness.turnOffScreen.idleTimeout;
+          TurnOffDisplayIdleTimeoutWhenLockedSec = displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked;
+        };
+      };
+
+      keyboard = {
+        "${cfgSectName}/Keyboard" = {
+          UseProfileSpecificKeyboardBrightness =
+            if (changeKeyboardBrightness.enable != null) then
+              changeKeyboardBrightness.enable
+            else if (changeKeyboardBrightness.percentage != null) then
+              true
+            else
+              null;
+          KeyboardBrightness = changeKeyboardBrightness.percentage;
+        };
+      };
+
+      performance = {
+        "${cfgSectName}/Performance" = {
+          PowerProfile = otherSettings.switchToPowerProfile;
+        };
+      };
+
+      runScripts = {
+        "${cfgSectName}/RunScript" = {
+          ProfileLoadCommand = runCustomScripts."whenEnteringOn${capitalize(profile)}PowerState";
+          ProfileUnloadCommand = runCustomScripts."whenExitingOn${capitalize(profile)}PowerState";
+          IdleTimeoutCommand = runCustomScripts.afterAPeriodOfInactivity.script;
+          RunScriptIdleTimeoutSec = runCustomScripts.afterAPeriodOfInactivity.idleTimeout;
+        };
+      };
+
+    in
+      suspendAndShutdown
+      // display
+      // keyboard
+      // performance
+      // runScripts;
+
+  generalConfig =
+    let
+      batteryLevels = cfg.powerdevil.batteryLevels;
+      otherSettings = cfg.powerdevil.otherSettings;
+
+    in
+      {
+        BatteryManagement = {
+          BatteryLowLevel = batteryLevels.lowLevel;
+          BatteryCriticalLevel = batteryLevels.criticalLevel;
+          BatteryCriticalAction = batteryLevels.atCriticalLevel;
+          PeripheralBatteryLowLevel = batteryLevels.lowLevelForPeripheralDevice;
+        };
+
+        General = {
+          pausePlayersOnSuspend = otherSettings.pauseMediaPlayersWhenSuspending;
+        };
+      };
+
 in
 {
+  options = {
+    programs.plasma.powerdevil =
+      (generateOptionsForProfile "AC")
+      // (generateOptionsForProfile "battery")
+      // (generateOptionsForProfile "lowBattery")
+      // generalOptions;
+  };
+
   imports =
     (generateModifiedOptionsModulesForProfile "AC")
     ++ (generateModifiedOptionsModulesForProfile "battery")
@@ -572,14 +580,6 @@ in
     ++ (generateAssertionsForProfile "battery")
     ++ (generateAssertionsForProfile "lowBattery")
     ++ generalAssertions;
-
-  options = {
-    programs.plasma.powerdevil =
-      (generateOptionsForProfile "AC")
-      // (generateOptionsForProfile "battery")
-      // (generateOptionsForProfile "lowBattery")
-      // generalOptions;
-  };
 
   config.programs.plasma.configFile = lib.mkIf cfg.enable {
     powerdevilrc = lib.filterAttrsRecursive (k: v: v != null) (
