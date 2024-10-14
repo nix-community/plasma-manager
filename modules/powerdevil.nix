@@ -413,7 +413,7 @@ let
   # === modified options modules declarations ===
   # =============================================
 
-  generateModifiedOptionsModules = profile:
+  generateModifiedOptionsModulesForProfile = profile:
     [
       (lib.mkRenamedOptionModule
         ["programs" "plasma" "powerdevil" "${profile}" "autoSuspend"]
@@ -515,9 +515,9 @@ let
 in
 {
   imports =
-    (generateModifiedOptionsModules "AC")
-    ++ (generateModifiedOptionsModules "battery")
-    ++ (generateModifiedOptionsModules "lowBattery")
+    (generateModifiedOptionsModulesForProfile "AC")
+    ++ (generateModifiedOptionsModulesForProfile "battery")
+    ++ (generateModifiedOptionsModulesForProfile "lowBattery")
     ++ generalModifiedOptionsModules;
 
   config.assertions =
