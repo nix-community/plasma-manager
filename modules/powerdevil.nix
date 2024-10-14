@@ -194,8 +194,7 @@ let
         };
 
         idleTimeoutWhenLocked = lib.mkOption {
-          type =
-            with lib.types;
+          type = with lib.types;
             nullOr (either
               (enum ["whenLockedAndUnlocked" "immediately"])
               (ints.between 10 604800));
@@ -235,9 +234,8 @@ let
 
     otherSettings = {
       switchToPowerProfile = lib.mkOption {
-        type =
-          with lib.types;
-            nullOr (enum (builtins.attrNames switchToPowerProfileActions));
+        type = with lib.types;
+          nullOr (enum (builtins.attrNames switchToPowerProfileActions));
         default = null;
         example = "performance";
         description = "The power profile, when on ${profile}, adopted by the computer.";
