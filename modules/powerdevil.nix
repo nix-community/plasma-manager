@@ -69,219 +69,221 @@ let
   # can generate the options by just specifying the type (i.e. "AC" or
   # "battery").
   generateOptionsForProfile = profile: {
-    suspendSession = {
-      afterAPeriodOfInactivity = {
-        action = lib.mkOption {
-          type = with lib.types;
-            nullOr (enum (builtins.attrNames afterAPeriodOfInactivityActions));
-          default = null;
-          example = "doNothing";
-          description = "The action, when on ${profile}, to perform after a certain period of inactivity.";
-          apply = action:
-            if (action == null) then
-              null
-            else
-              afterAPeriodOfInactivityActions."${action}";
-        };
-
-        idleTimeout = lib.mkOption {
-          type = with lib.types;
-            nullOr (ints.between 60 604800);
-          default = null;
-          example = 600;
-          description = "The duration (in seconds), when on ${profile}, the computer must be idle until the auto-suspend action is executed.";
-        };
-      };
-
-      whenPowerButtonPressed = lib.mkOption {
-        type = with lib.types;
-          nullOr (enum (builtins.attrNames whenPowerButtonPressedActions));
-        default = null;
-        example = "doNothing";
-        description = "The action, when on ${profile}, to perform when the power button is pressed.";
-        apply = action:
-          if (action == null) then
-            null
-          else
-            whenPowerButtonPressedActions."${action}";
-      };
-
-      whenLaptopLidClosed = lib.mkOption {
-        type = with lib.types;
-          nullOr (enum (builtins.attrNames whenLaptopLidClosedActions));
-        default = null;
-        example = "shutDown";
-        description = "The action, when on ${profile}, to perform when the laptop lid is closed.";
-        apply = action:
-          if (action == null) then
-            null
-          else
-            whenLaptopLidClosedActions."${action}";
-      };
-
-      evenWhenAnExternalMonitorIsConnected = lib.mkOption {
-        type = with lib.types;
-          nullOr bool;
-        default = null;
-        example = false;
-        description = "If enabled, when on ${profile}, the lid action will be executed even when an external monitor is connected.";
-      };
-
-      whenSleepingEnter = lib.mkOption {
-        type = with lib.types;
-          nullOr (enum (builtins.attrNames whenSleepingEnterActions));
-        default = null;
-        example = "standbyThenHibernate";
-        description = "The state, when on ${profile}, to enter when sleeping.";
-        apply = action:
-          if (action == null) then
-            null
-          else
-            whenSleepingEnterActions."${action}";
-      };
-    };
-
-    displayAndBrightness = {
-      changeScreenBrightness = {
-        enable = lib.mkOption {
-          type = with lib.types;
-            nullOr bool;
-          default = null;
-          example = true;
-          description = "Enable or disable, when on ${profile}, changing the screen brightness.";
-        };
-
-        percentage = lib.mkOption {
-          type = with lib.types;
-            nullOr (ints.between 1 100);
-          default = null;
-          example = 70;
-          description = "The screen brightness percentage when on ${profile}.";
-        };
-      };
-
-      dimAutomatically = {
-        idleTimeout = lib.mkOption {
-          type = with lib.types;
-            nullOr (either
-              (enum ["never"])
-              (ints.between 10 604800));
-          default = null;
-          example = 300;
-          description = "The duration (in seconds), when on ${profile}, the computer must be idle until the display starts dimming.";
-          apply = timeout:
-            if (timeout == null) then
-              null
-            else if (timeout == "never") then
-              -1
-            else
-              timeout;
-        };
-      };
-
-      turnOffScreen = {
-        idleTimeout = lib.mkOption {
-          type = with lib.types;
-            nullOr (either
-              (enum [ "never" ])
-              (ints.between 30 604800));
-          default = null;
-          example = 300;
-          description = "The duration (in seconds), when on ${profile}, the computer must be idle (when unlocked) until the display turns off.";
-          apply = timeout:
-            if (timeout == null) then
-              null
-            else if (timeout == "never") then
-              -1
-            else
-              timeout;
-        };
-
-        idleTimeoutWhenLocked = lib.mkOption {
-          type = with lib.types;
-            nullOr (either
-              (enum ["whenLockedAndUnlocked" "immediately"])
-              (ints.between 10 604800));
-          default = null;
-          example = 60;
-          description = "The duration (in seconds), when on ${profile}, the computer must be idle (when locked) until the display turns off.";
-          apply = timeout:
-            if (timeout == null) then
-              null
-            else if (timeout == "whenLockedAndUnlocked") then
-              -2
-            else if (timeout == "immediately") then
-              0
-            else
-              timeout;
-        };
-      };
-
-      changeKeyboardBrightness = {
-        enable = lib.mkOption {
-          type = with lib.types;
-            nullOr bool;
-          default = null;
-          example = true;
-          description = "Enable or disable, when on ${profile}, changing the keyboard brightness.";
-        };
-
-        percentage = lib.mkOption {
-          type = with lib.types;
-            nullOr (ints.between 0 100);
-          default = null;
-          example = 70;
-          description = "The keyboard brightness percentage when on ${profile}.";
-        };
-      };
-    };
-
-    otherSettings = {
-      switchToPowerProfile = lib.mkOption {
-        type = with lib.types;
-          nullOr (enum (builtins.attrNames switchToPowerProfileActions));
-        default = null;
-        example = "performance";
-        description = "The power profile, when on ${profile}, adopted by the computer.";
-        apply = profile:
-          if (profile == null || profile == "leaveUnchanged") then
-            null
-          else
-            switchToPowerProfileActions."${profile}";
-      };
-
-      runCustomScripts = {
-        "whenEnteringOn${capitalize(profile)}PowerState" = lib.mkOption {
-          type = with lib.types;
-            nullOr str;
-          default = null;
-          example = "echo 'hello, world'";
-          description = "A script or the path for a script/program to be run when entering ${profile}.";
-        };
-
-        "whenExitingOn${capitalize(profile)}PowerState" = lib.mkOption {
-          type = with lib.types;
-            nullOr str;
-          default = null;
-          example = "echo 'farewwll, world'";
-          description = "A script or the path for a script/program to be run when exiting ${profile}.";
-        };
-
+    "${profile}" = {
+      suspendSession = {
         afterAPeriodOfInactivity = {
-          script = lib.mkOption {
+          action = lib.mkOption {
             type = with lib.types;
-              nullOr str;
+              nullOr (enum (builtins.attrNames afterAPeriodOfInactivityActions));
             default = null;
-            example = "echo 'are you there, world'";
-            description = "A script or the path for a script/program to be run after a period of inactivity when on ${profile}.";
+            example = "doNothing";
+            description = "The action, when on ${profile}, to perform after a certain period of inactivity.";
+            apply = action:
+              if (action == null) then
+                null
+              else
+                afterAPeriodOfInactivityActions."${action}";
           };
 
           idleTimeout = lib.mkOption {
             type = with lib.types;
-              nullOr (ints.between 10 604800);
+              nullOr (ints.between 60 604800);
             default = null;
             example = 600;
-            description = "The duration (in seconds), when on ${profile}, the computer must be idle until the script is run.";
+            description = "The duration (in seconds), when on ${profile}, the computer must be idle until the auto-suspend action is executed.";
+          };
+        };
+
+        whenPowerButtonPressed = lib.mkOption {
+          type = with lib.types;
+            nullOr (enum (builtins.attrNames whenPowerButtonPressedActions));
+          default = null;
+          example = "doNothing";
+          description = "The action, when on ${profile}, to perform when the power button is pressed.";
+          apply = action:
+            if (action == null) then
+              null
+            else
+              whenPowerButtonPressedActions."${action}";
+        };
+
+        whenLaptopLidClosed = lib.mkOption {
+          type = with lib.types;
+            nullOr (enum (builtins.attrNames whenLaptopLidClosedActions));
+          default = null;
+          example = "shutDown";
+          description = "The action, when on ${profile}, to perform when the laptop lid is closed.";
+          apply = action:
+            if (action == null) then
+              null
+            else
+              whenLaptopLidClosedActions."${action}";
+        };
+
+        evenWhenAnExternalMonitorIsConnected = lib.mkOption {
+          type = with lib.types;
+            nullOr bool;
+          default = null;
+          example = false;
+          description = "If enabled, when on ${profile}, the lid action will be executed even when an external monitor is connected.";
+        };
+
+        whenSleepingEnter = lib.mkOption {
+          type = with lib.types;
+            nullOr (enum (builtins.attrNames whenSleepingEnterActions));
+          default = null;
+          example = "standbyThenHibernate";
+          description = "The state, when on ${profile}, to enter when sleeping.";
+          apply = action:
+            if (action == null) then
+              null
+            else
+              whenSleepingEnterActions."${action}";
+        };
+      };
+
+      displayAndBrightness = {
+        changeScreenBrightness = {
+          enable = lib.mkOption {
+            type = with lib.types;
+              nullOr bool;
+            default = null;
+            example = true;
+            description = "Enable or disable, when on ${profile}, changing the screen brightness.";
+          };
+
+          percentage = lib.mkOption {
+            type = with lib.types;
+              nullOr (ints.between 1 100);
+            default = null;
+            example = 70;
+            description = "The screen brightness percentage when on ${profile}.";
+          };
+        };
+
+        dimAutomatically = {
+          idleTimeout = lib.mkOption {
+            type = with lib.types;
+              nullOr (either
+                (enum ["never"])
+                (ints.between 10 604800));
+            default = null;
+            example = 300;
+            description = "The duration (in seconds), when on ${profile}, the computer must be idle until the display starts dimming.";
+            apply = timeout:
+              if (timeout == null) then
+                null
+              else if (timeout == "never") then
+                -1
+              else
+                timeout;
+          };
+        };
+
+        turnOffScreen = {
+          idleTimeout = lib.mkOption {
+            type = with lib.types;
+              nullOr (either
+                (enum [ "never" ])
+                (ints.between 30 604800));
+            default = null;
+            example = 300;
+            description = "The duration (in seconds), when on ${profile}, the computer must be idle (when unlocked) until the display turns off.";
+            apply = timeout:
+              if (timeout == null) then
+                null
+              else if (timeout == "never") then
+                -1
+              else
+                timeout;
+          };
+
+          idleTimeoutWhenLocked = lib.mkOption {
+            type = with lib.types;
+              nullOr (either
+                (enum ["whenLockedAndUnlocked" "immediately"])
+                (ints.between 10 604800));
+            default = null;
+            example = 60;
+            description = "The duration (in seconds), when on ${profile}, the computer must be idle (when locked) until the display turns off.";
+            apply = timeout:
+              if (timeout == null) then
+                null
+              else if (timeout == "whenLockedAndUnlocked") then
+                -2
+              else if (timeout == "immediately") then
+                0
+              else
+                timeout;
+          };
+        };
+
+        changeKeyboardBrightness = {
+          enable = lib.mkOption {
+            type = with lib.types;
+              nullOr bool;
+            default = null;
+            example = true;
+            description = "Enable or disable, when on ${profile}, changing the keyboard brightness.";
+          };
+
+          percentage = lib.mkOption {
+            type = with lib.types;
+              nullOr (ints.between 0 100);
+            default = null;
+            example = 70;
+            description = "The keyboard brightness percentage when on ${profile}.";
+          };
+        };
+      };
+
+      otherSettings = {
+        switchToPowerProfile = lib.mkOption {
+          type = with lib.types;
+            nullOr (enum (builtins.attrNames switchToPowerProfileActions));
+          default = null;
+          example = "performance";
+          description = "The power profile, when on ${profile}, adopted by the computer.";
+          apply = profile:
+            if (profile == null || profile == "leaveUnchanged") then
+              null
+            else
+              switchToPowerProfileActions."${profile}";
+        };
+
+        runCustomScripts = {
+          "whenEnteringOn${capitalize(profile)}PowerState" = lib.mkOption {
+            type = with lib.types;
+              nullOr str;
+            default = null;
+            example = "echo 'hello, world'";
+            description = "A script or the path for a script/program to be run when entering ${profile}.";
+          };
+
+          "whenExitingOn${capitalize(profile)}PowerState" = lib.mkOption {
+            type = with lib.types;
+              nullOr str;
+            default = null;
+            example = "echo 'farewwll, world'";
+            description = "A script or the path for a script/program to be run when exiting ${profile}.";
+          };
+
+          afterAPeriodOfInactivity = {
+            script = lib.mkOption {
+              type = with lib.types;
+                nullOr str;
+              default = null;
+              example = "echo 'are you there, world'";
+              description = "A script or the path for a script/program to be run after a period of inactivity when on ${profile}.";
+            };
+
+            idleTimeout = lib.mkOption {
+              type = with lib.types;
+                nullOr (ints.between 10 604800);
+              default = null;
+              example = 600;
+              description = "The duration (in seconds), when on ${profile}, the computer must be idle until the script is run.";
+            };
           };
         };
       };
@@ -527,12 +529,11 @@ in
     ++ generalAssertions;
 
   options = {
-    programs.plasma.powerdevil = {
-      AC = (generateOptionsForProfile "AC");
-      battery = (generateOptionsForProfile "battery");
-      lowBattery = (generateOptionsForProfile "lowBattery");
-    }
-    // generalOptions;
+    programs.plasma.powerdevil =
+      (generateOptionsForProfile "AC")
+      // (generateOptionsForProfile "battery")
+      // (generateOptionsForProfile "lowBattery")
+      // generalOptions;
   };
 
   config.programs.plasma.configFile = lib.mkIf cfg.enable {
