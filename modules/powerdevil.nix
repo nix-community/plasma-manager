@@ -350,65 +350,94 @@ let
   # configuration. cfgSectName is here the name of the section in powerdevilrc,
   # while profile is the name of the "namespace" where we should draw the
   # options from (i.e. powerdevil.AC or powerdevil.battery).
-  generateConfigForProfile = cfgSectName: profile: {
-    "${cfgSectName}/SuspendAndShutdown" = {
-      AutoSuspendAction = cfg.powerdevil.${profile}.suspendSession.afterAPeriodOfInactivity.action;
-      AutoSuspendIdleTimeoutSec = cfg.powerdevil.${profile}.suspendSession.afterAPeriodOfInactivity.idleTimeout;
-      PowerButtonAction = cfg.powerdevil.${profile}.suspendSession.whenPowerButtonPressed;
-      LidAction = cfg.powerdevil.${profile}.suspendSession.whenLaptopLidClosed;
-      InhibitLidActionWhenExternalMonitorPresent = ! cfg.powerdevil.${profile}.suspendSession.evenWhenAnExternalMonitorIsConnected;
-      SleepMode = cfg.powerdevil.${profile}.suspendSession.whenSleepingEnter;
-    };
+  generateConfigForProfile = cfgSectName: profile:
+    let
+      suspendSession = cfg.powerdevil.${profile}.suspendSession;
+      displayAndBrightness = cfg.powerdevil.${profile}.displayAndBrightness;
+      changeKeyboardBrightness = displayAndBrightness.changeKeyboardBrightness;
+      otherSettings = cfg.powerdevil.${profile}.otherSettings;
+      runCustomScripts = otherSettings.runCustomScripts;
 
-    "${cfgSectName}/Display" = {
-      UseProfileSpecificDisplayBrightness=
-        if (cfg.powerdevil.${profile}.displayAndBrightness.changeScreenBrightness.enable != null) then
-          cfg.powerdevil.${profile}.displayAndBrightness.changeScreenBrightness.enable
-        else if (cfg.powerdevil.${profile}.displayAndBrightness.changeScreenBrightness.percentage != null) then
-          true
-        else
-          null;
-      DisplayBrightness=cfg.powerdevil.${profile}.displayAndBrightness.changeScreenBrightness.percentage;
-      DimDisplayIdleTimeoutSec = cfg.powerdevil.${profile}.displayAndBrightness.dimAutomatically.idleTimeout;
-      TurnOffDisplayIdleTimeoutSec = cfg.powerdevil.${profile}.displayAndBrightness.turnOffScreen.idleTimeout;
-      TurnOffDisplayIdleTimeoutWhenLockedSec =
-        cfg.powerdevil.${profile}.displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked;
-    };
+      suspendAndShutdown = {
+        "${cfgSectName}/SuspendAndShutdown" = {
+          AutoSuspendAction = suspendSession.afterAPeriodOfInactivity.action;
+          AutoSuspendIdleTimeoutSec = suspendSession.afterAPeriodOfInactivity.idleTimeout;
+          PowerButtonAction = suspendSession.whenPowerButtonPressed;
+          LidAction = suspendSession.whenLaptopLidClosed;
+          InhibitLidActionWhenExternalMonitorPresent = ! suspendSession.evenWhenAnExternalMonitorIsConnected;
+          SleepMode = suspendSession.whenSleepingEnter;
+        };
+      };
 
-    "${cfgSectName}/Keyboard" = {
-      UseProfileSpecificKeyboardBrightness=
-        if (cfg.powerdevil.${profile}.displayAndBrightness.changeKeyboardBrightness.enable != null) then
-          cfg.powerdevil.${profile}.displayAndBrightness.changeKeyboardBrightness.enable
-        else if (cfg.powerdevil.${profile}.displayAndBrightness.changeKeyboardBrightness.percentage != null) then
-          true
-        else
-          null;
-      KeyboardBrightness=cfg.powerdevil.${profile}.displayAndBrightness.changeKeyboardBrightness.percentage;
-    };
+      display = {
+        "${cfgSectName}/Display" = {
+          UseProfileSpecificDisplayBrightness =
+            if (displayAndBrightness.changeScreenBrightness.enable != null) then
+              displayAndBrightness.changeScreenBrightness.enable
+            else if (displayAndBrightness.changeScreenBrightness.percentage != null) then
+              true
+            else
+              null;
+          DisplayBrightness = displayAndBrightness.changeScreenBrightness.percentage;
+          DimDisplayIdleTimeoutSec = displayAndBrightness.dimAutomatically.idleTimeout;
+          TurnOffDisplayIdleTimeoutSec = displayAndBrightness.turnOffScreen.idleTimeout;
+          TurnOffDisplayIdleTimeoutWhenLockedSec = displayAndBrightness.turnOffScreen.idleTimeoutWhenLocked;
+        };
+      };
 
-    "${cfgSectName}/Performance" = {
-      PowerProfile=cfg.powerdevil.${profile}.otherSettings.switchToPowerProfile;
-    };
+      keyboard = {
+        "${cfgSectName}/Keyboard" = {
+          UseProfileSpecificKeyboardBrightness =
+            if (changeKeyboardBrightness.enable != null) then
+              changeKeyboardBrightness.enable
+            else if (changeKeyboardBrightness.percentage != null) then
+              true
+            else
+              null;
+          KeyboardBrightness = changeKeyboardBrightness.percentage;
+        };
+      };
 
-    "${cfgSectName}/RunScript" = {
-      ProfileLoadCommand = cfg.powerdevil.${profile}.otherSettings.runCustomScripts."whenEnteringOn${capitalize(profile)}PowerState";
-      ProfileUnloadCommand=cfg.powerdevil.${profile}.otherSettings.runCustomScripts."whenExitingOn${capitalize(profile)}PowerState";
-      IdleTimeoutCommand=cfg.powerdevil.${profile}.otherSettings.runCustomScripts.afterAPeriodOfInactivity.script;
-      RunScriptIdleTimeoutSec=cfg.powerdevil.${profile}.otherSettings.runCustomScripts.afterAPeriodOfInactivity.idleTimeout;
-    };
-  };
+      performance = {
+        "${cfgSectName}/Performance" = {
+          PowerProfile = otherSettings.switchToPowerProfile;
+        };
+      };
 
-  generalConfig = {
-    BatteryManagement = {
-      BatteryLowLevel = cfg.powerdevil.batteryLevels.lowLevel;
-      BatteryCriticalLevel = cfg.powerdevil.batteryLevels.criticalLevel;
-      BatteryCriticalAction = cfg.powerdevil.batteryLevels.atCriticalLevel;
-      PeripheralBatteryLowLevel = cfg.powerdevil.batteryLevels.lowLevelForPeripheralDevice;
-    };
-    General = {
-      pausePlayersOnSuspend = cfg.powerdevil.otherSettings.pauseMediaPlayersWhenSuspending;
-    };
-  };
+      runScripts = {
+        "${cfgSectName}/RunScript" = {
+          ProfileLoadCommand = runCustomScripts."whenEnteringOn${capitalize(profile)}PowerState";
+          ProfileUnloadCommand = runCustomScripts."whenExitingOn${capitalize(profile)}PowerState";
+          IdleTimeoutCommand = runCustomScripts.afterAPeriodOfInactivity.script;
+          RunScriptIdleTimeoutSec = runCustomScripts.afterAPeriodOfInactivity.idleTimeout;
+        };
+      };
+
+    in
+      suspendAndShutdown
+      // display
+      // keyboard
+      // performance
+      // runScripts;
+
+  generalConfig =
+    let
+      batteryLevels = cfg.powerdevil.batteryLevels;
+      otherSettings = cfg.powerdevil.otherSettings;
+
+    in
+      {
+        BatteryManagement = {
+          BatteryLowLevel = batteryLevels.lowLevel;
+          BatteryCriticalLevel = batteryLevels.criticalLevel;
+          BatteryCriticalAction = batteryLevels.atCriticalLevel;
+          PeripheralBatteryLowLevel = batteryLevels.lowLevelForPeripheralDevice;
+        };
+
+        General = {
+          pausePlayersOnSuspend = otherSettings.pauseMediaPlayersWhenSuspending;
+        };
+      };
 
 
   # =============================================
