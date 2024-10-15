@@ -12,7 +12,6 @@ let
       default = null;
       inherit description;
     };
-
 in
 {
   pager = {
@@ -26,7 +25,6 @@ in
         };
         description = "The position of the widget. (Only for desktop widget)";
       };
-
       size = mkOption {
         type = sizeType;
         example = {
@@ -35,14 +33,12 @@ in
         };
         description = "The size of the widget. (Only for desktop widget)";
       };
-
       behavior = {
         general = {
           showApplicationIconsOnWindowOutlines = mkBoolOption "Show application icons on window outlines.";
           showOnlyCurrentScreen = mkBoolOption "Show only current screen.";
           navigationWrapsAround = mkBoolOption "Navigation wraps around.";
         };
-
         textDisplay =
           let
             options = {
@@ -50,20 +46,14 @@ in
               desktopNumber = "Number";
               desktopName = "Name";
             };
-
           in
-            mkOption {
-              type = with types; nullOr (enum (builtins.attrNames options));
-              default = null;
-              example = "desktopNumber";
-              description = "Choose what to show inside each virtual desktop representation.";
-              apply = option:
-                if (option == null || option == options.noText) then
-                  null
-                else
-                  options."${option}";
-            };
-
+          mkOption {
+            type = with types; nullOr (enum (builtins.attrNames options));
+            default = null;
+            example = "desktopNumber";
+            description = "Choose what to show inside each virtual desktop representation.";
+            apply = option: if (option == null || option == options.noText) then null else options."${option}";
+          };
         selectingCurrentVirtualDesktop =
           let
             options = {
@@ -72,17 +62,14 @@ in
             };
 
           in
-            mkOption {
-              type = with types; nullOr (enum (builtins.attrNames options));
-              default = null;
-              example = "showsTheDesktop";
-              description = "Choose which action to take when selecting a virtual desktop representation.";
-              apply = option:
-                if (option == null || option == options.doesNothing) then
-                  null
-                else
-                  options."${option}";
-            };
+          mkOption {
+            type = with types; nullOr (enum (builtins.attrNames options));
+            default = null;
+            example = "showsTheDesktop";
+            description = "Choose which action to take when selecting a virtual desktop representation.";
+            apply =
+              option: if (option == null || option == options.doesNothing) then null else options."${option}";
+          };
       };
       settings = mkOption {
         type = configValueType;
@@ -91,7 +78,6 @@ in
         apply = settings: if settings == null then { } else settings;
       };
     };
-
     convert =
       {
         position,
@@ -102,13 +88,13 @@ in
       {
         name = "org.kde.plasma.pager";
         config = lib.recursiveUpdate {
-          General = lib.filterAttrs (_: v: v != null) ({
+          General = lib.filterAttrs (_: v: v != null) {
             showWindowIcons = behavior.general.showApplicationIconsOnWindowOutlines;
             showOnlyCurrentScreen = behavior.general.showOnlyCurrentScreen;
             wrapPage = behavior.general.navigationWrapsAround;
             displayedText = behavior.textDisplay;
             currentDesktopSelected = behavior.selectingCurrentVirtualDesktop;
-          });
+          };
         } settings;
       };
   };
