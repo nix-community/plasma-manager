@@ -1,23 +1,31 @@
 { lib, ... }:
-
 let
-  inherit (lib) mkOption types;
   inherit (import ./lib.nix { inherit lib; }) configValueType;
   inherit (import ./default.nix { inherit lib; }) positionType sizeType;
 
   mkBoolOption =
     description:
-    mkOption {
-      type = with types; nullOr bool;
+    lib.mkOption {
+      type = with lib.types; nullOr bool;
       default = null;
+      example = true;
       inherit description;
     };
+
+  capitalizeWord =
+    word:
+    with lib.strings;
+    if word == null then
+      null
+    else
+      concatImapStrings (pos: char: if pos == 1 then toUpper char else char) (stringToCharacters word);
 in
 {
   pager = {
     description = "The desktop pager is a plasma widget that helps you to organize virtual desktops.";
+
     opts = {
-      position = mkOption {
+      position = lib.mkOption {
         type = positionType;
         example = {
           horizontal = 250;
@@ -25,7 +33,7 @@ in
         };
         description = "The position of the widget. (Only for desktop widget)";
       };
-      size = mkOption {
+      size = lib.mkOption {
         type = sizeType;
         example = {
           width = 500;
@@ -33,47 +41,60 @@ in
         };
         description = "The size of the widget. (Only for desktop widget)";
       };
-      behavior = {
-        general = {
-          showApplicationIconsOnWindowOutlines = mkBoolOption "Show application icons on window outlines.";
-          showOnlyCurrentScreen = mkBoolOption "Show only current screen.";
-          navigationWrapsAround = mkBoolOption "Navigation wraps around.";
-        };
-        textDisplay =
+      general = {
+        showWindowOutlines = mkBoolOption "Whether to show window outlines";
+        showApplicationIconsOnWindowOutlines = mkBoolOption "Whether to show application icons on window outlines";
+        showOnlyCurrentScreen = mkBoolOption "Whether to limit the Pager to the set of windows and the geometry of the screen the widget resides on";
+        navigationWrapsAround = mkBoolOption "Whether to wrap around when navigating the desktops";
+        displayedText =
           let
             options = {
-              noText = null;
+              none = "None";
               desktopNumber = "Number";
               desktopName = "Name";
             };
           in
-          mkOption {
-            type = with types; nullOr (enum (builtins.attrNames options));
+          lib.mkOption {
+            type = with lib.types; nullOr (enum (builtins.attrNames options));
             default = null;
             example = "desktopNumber";
-            description = "Choose what to show inside each virtual desktop representation.";
-            apply = option: if (option == null || option == options.noText) then null else options."${option}";
+            description = "The text to show inside the desktop rectangles";
+            apply = option: if option == null then null else options.${option};
           };
-        selectingCurrentVirtualDesktop =
-          let
-            options = {
-              doesNothing = null;
-              showsTheDesktop = "ShowDesktop";
-            };
-
-          in
-          mkOption {
-            type = with types; nullOr (enum (builtins.attrNames options));
-            default = null;
-            example = "showsTheDesktop";
-            description = "Choose which action to take when selecting a virtual desktop representation.";
-            apply =
-              option: if (option == null || option == options.doesNothing) then null else options."${option}";
-          };
+        selectingCurrentVirtualDesktop = lib.mkOption {
+          type =
+            with lib.types;
+            nullOr (enum [
+              "doNothing"
+              "showDesktop"
+            ]);
+          default = null;
+          example = "showDesktop";
+          description = "What to do on left-mouse click on a desktop rectangle";
+          apply = capitalizeWord;
+        };
+        pagerLayout = lib.mkOption {
+          type =
+            with lib.types;
+            nullOr (enum [
+              "default"
+              "horizontal"
+              "vertical"
+            ]);
+          default = null;
+          example = "horizontal";
+          description = "The layout style used for the presentation of the desktops";
+          apply = capitalizeWord;
+        };
       };
-      settings = mkOption {
+      settings = lib.mkOption {
         type = configValueType;
         default = null;
+        example = {
+          General = {
+            showWindowOutlines = true;
+          };
+        };
         description = "Extra configuration options for the widget.";
         apply = settings: if settings == null then { } else settings;
       };
@@ -82,18 +103,20 @@ in
       {
         position,
         size,
-        behavior,
+        general,
         settings,
       }:
       {
         name = "org.kde.plasma.pager";
         config = lib.recursiveUpdate {
           General = lib.filterAttrs (_: v: v != null) {
-            showWindowIcons = behavior.general.showApplicationIconsOnWindowOutlines;
-            showOnlyCurrentScreen = behavior.general.showOnlyCurrentScreen;
-            wrapPage = behavior.general.navigationWrapsAround;
-            displayedText = behavior.textDisplay;
-            currentDesktopSelected = behavior.selectingCurrentVirtualDesktop;
+            showWindowOutlines = general.showWindowOutlines;
+            showWindowIcons = general.showApplicationIconsOnWindowOutlines;
+            showOnlyCurrentScreen = general.showOnlyCurrentScreen;
+            wrapPage = general.navigationWrapsAround;
+            displayedText = general.displayedText;
+            currentDesktopSelected = general.selectingCurrentVirtualDesktop;
+            pagerLayout = general.pagerLayout;
           };
         } settings;
       };
