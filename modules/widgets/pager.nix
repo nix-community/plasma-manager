@@ -73,19 +73,6 @@ in
           description = "What to do on left-mouse click on a desktop rectangle";
           apply = capitalizeWord;
         };
-        pagerLayout = lib.mkOption {
-          type =
-            with lib.types;
-            nullOr (enum [
-              "default"
-              "horizontal"
-              "vertical"
-            ]);
-          default = null;
-          example = "horizontal";
-          description = "The layout style used for the presentation of the desktops";
-          apply = capitalizeWord;
-        };
       };
       settings = lib.mkOption {
         type = configValueType;
@@ -116,7 +103,6 @@ in
             wrapPage = general.navigationWrapsAround;
             displayedText = general.displayedText;
             currentDesktopSelected = general.selectingCurrentVirtualDesktop;
-            pagerLayout = general.pagerLayout;
           };
         } settings;
       };
