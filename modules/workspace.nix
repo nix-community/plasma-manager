@@ -178,9 +178,8 @@ in
       example = "stretch";
       description = ''
         Defines how the wallpaper should be displayed on the screen.
-        Applies only to wallpaperPictureOfTheDay or wallpaperSlideShow.
+        Applies only to wallpaper, wallpaperPictureOfTheDay or wallpaperSlideShow.
       '';
-      apply = value: if value == null then null else (builtins.toString wallpaperFillModeTypes.${value});
     };
 
     soundTheme = lib.mkOption {
@@ -409,7 +408,7 @@ in
             # gives us the correct behavior with last_run files.
             text = "// Wallpaper to set later: ${cfg.workspace.wallpaper}";
             postCommands = ''
-              plasma-apply-wallpaperimage ${cfg.workspace.wallpaper}
+              plasma-apply-wallpaperimage ${cfg.workspace.wallpaper} ${lib.optionalString (cfg.workspace.wallpaperFillMode != null) "--fill-mode ${cfg.workspace.wallpaperFillMode}"}
             '';
             priority = 3;
           }
@@ -430,7 +429,7 @@ in
                   ${
                     lib.optionalString (
                       cfg.workspace.wallpaperFillMode != null
-                    ) ''desktop.writeConfig("FillMode", "${cfg.workspace.wallpaperFillMode}");''
+                    ) ''desktop.writeConfig("FillMode", "${toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}}");''
                   }
               }
             '';
@@ -474,7 +473,7 @@ in
                   ${
                     lib.optionalString (
                       cfg.workspace.wallpaperFillMode != null
-                    ) ''desktop.writeConfig("FillMode", "${cfg.workspace.wallpaperFillMode}");''
+                    ) ''desktop.writeConfig("FillMode", "${toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}}");''
                   }
               }
             '';
