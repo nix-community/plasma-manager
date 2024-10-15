@@ -222,6 +222,9 @@ let
         else
           null;
       DisplayBrightness = cfg.powerdevil.${optionsName}.displayBrightness;
+      UseProfileSpecificDisplayBrightness = (
+        if (cfg.powerdevil.${optionsName}.displayBrightness == null) then null else true
+      );
     };
     "${cfgSectName}/Performance" = {
       PowerProfile = cfg.powerdevil.${optionsName}.powerProfile;
