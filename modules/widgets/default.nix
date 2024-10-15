@@ -15,8 +15,8 @@ let
       ./kicker.nix
       ./kickerdash.nix
       ./kickoff.nix
-      ./panel-spacer.nix
       ./pager.nix
+      ./panel-spacer.nix
       ./plasma-panel-colorizer.nix
       ./plasmusic-toolbar.nix
       ./system-monitor.nix
