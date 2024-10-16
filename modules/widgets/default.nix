@@ -17,6 +17,7 @@ let
       ./kickoff.nix
       ./pager.nix
       ./panel-spacer.nix
+      ./panel-spacer-extended.nix
       ./plasma-panel-colorizer.nix
       ./plasmusic-toolbar.nix
       ./system-monitor.nix
