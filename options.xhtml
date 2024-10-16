@@ -12540,6 +12540,33 @@ null or integer between 20 and 600000 (both inclusive)</p>
 </dd>
 <dt>
  <span class="term">
+ <a id="opt-programs.plasma.powerdevil.AC.displayBrightness"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.AC.displayBrightness"><code class="option">programs.plasma.powerdevil.AC.displayBrightness</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The brightness to set the display to in this mode</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or integer between 0 and 100 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">10</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
  <a id="opt-programs.plasma.powerdevil.AC.inhibitLidActionWhenExternalMonitorConnected"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.AC.inhibitLidActionWhenExternalMonitorConnected"><code class="option">programs.plasma.powerdevil.AC.inhibitLidActionWhenExternalMonitorConnected</code>
   </a>
  </span>
@@ -12582,6 +12609,33 @@ null or one of “hibernate”, “lockScreen”, “nothing”, “showLogoutSc
 
 <p><span class="emphasis"><em>Example:</em></span>
 <code class="literal">&quot;nothing&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.AC.powerProfile"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.AC.powerProfile"><code class="option">programs.plasma.powerdevil.AC.powerProfile</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The Power Profile to Enter in this mode</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “performance”, “balanced”, “powerSaving”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;powerSaving&quot;</code></p>
 
 <p><span class="emphasis"><em>Declared by:</em></span></p>
 <table border="0" summary="Simple list" class="simplelist">
@@ -12658,13 +12712,13 @@ null or one of “whenLockedAndUnlocked”, “immediately” or integer between
 <p>The action, when on AC, to perform when the laptop lid is closed.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
-null or one of “doNothing”, “hibernate”, “lockScreen”, “shutdown”, “sleep”, “turnOffScreen”</p>
+null or one of “doNothing”, “hibernate”, “lockScreen”, “shutDown”, “sleep”, “turnOffScreen”</p>
 
 <p><span class="emphasis"><em>Default:</em></span>
 <code class="literal">null</code></p>
 
 <p><span class="emphasis"><em>Example:</em></span>
-<code class="literal">&quot;shutdown&quot;</code></p>
+<code class="literal">&quot;shutDown&quot;</code></p>
 
 <p><span class="emphasis"><em>Declared by:</em></span></p>
 <table border="0" summary="Simple list" class="simplelist">
@@ -12814,6 +12868,33 @@ null or integer between 20 and 600000 (both inclusive)</p>
 </dd>
 <dt>
  <span class="term">
+ <a id="opt-programs.plasma.powerdevil.battery.displayBrightness"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.battery.displayBrightness"><code class="option">programs.plasma.powerdevil.battery.displayBrightness</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The brightness to set the display to in this mode</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or integer between 0 and 100 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">10</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
  <a id="opt-programs.plasma.powerdevil.battery.inhibitLidActionWhenExternalMonitorConnected"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.battery.inhibitLidActionWhenExternalMonitorConnected"><code class="option">programs.plasma.powerdevil.battery.inhibitLidActionWhenExternalMonitorConnected</code>
   </a>
  </span>
@@ -12856,6 +12937,33 @@ null or one of “hibernate”, “lockScreen”, “nothing”, “showLogoutSc
 
 <p><span class="emphasis"><em>Example:</em></span>
 <code class="literal">&quot;nothing&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.battery.powerProfile"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.battery.powerProfile"><code class="option">programs.plasma.powerdevil.battery.powerProfile</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The Power Profile to Enter in this mode</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “performance”, “balanced”, “powerSaving”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;powerSaving&quot;</code></p>
 
 <p><span class="emphasis"><em>Declared by:</em></span></p>
 <table border="0" summary="Simple list" class="simplelist">
@@ -12932,13 +13040,13 @@ null or one of “whenLockedAndUnlocked”, “immediately” or integer between
 <p>The action, when on battery, to perform when the laptop lid is closed.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
-null or one of “doNothing”, “hibernate”, “lockScreen”, “shutdown”, “sleep”, “turnOffScreen”</p>
+null or one of “doNothing”, “hibernate”, “lockScreen”, “shutDown”, “sleep”, “turnOffScreen”</p>
 
 <p><span class="emphasis"><em>Default:</em></span>
 <code class="literal">null</code></p>
 
 <p><span class="emphasis"><em>Example:</em></span>
-<code class="literal">&quot;shutdown&quot;</code></p>
+<code class="literal">&quot;shutDown&quot;</code></p>
 
 <p><span class="emphasis"><em>Declared by:</em></span></p>
 <table border="0" summary="Simple list" class="simplelist">
@@ -12966,6 +13074,87 @@ null or one of “hybridSleep”, “standby”, “standbyThenHibernate”</p>
 
 <p><span class="emphasis"><em>Example:</em></span>
 <code class="literal">&quot;standbyThenHibernate&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.batteryLevels.criticalAction"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.batteryLevels.criticalAction"><code class="option">programs.plasma.powerdevil.batteryLevels.criticalAction</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The action to perform when Critical Battery Level is reached</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “hibernate”, “nothing”, “shutDown”, “sleep”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;shutDown&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.batteryLevels.criticalLevel"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.batteryLevels.criticalLevel"><code class="option">programs.plasma.powerdevil.batteryLevels.criticalLevel</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The battery level considered “critical” for the laptop</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or integer between 0 and 100 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">2</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.batteryLevels.lowLevel"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.batteryLevels.lowLevel"><code class="option">programs.plasma.powerdevil.batteryLevels.lowLevel</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The battery level considered “low” for the laptop</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or integer between 0 and 100 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">10</code></p>
 
 <p><span class="emphasis"><em>Declared by:</em></span></p>
 <table border="0" summary="Simple list" class="simplelist">
@@ -13115,6 +13304,33 @@ null or integer between 20 and 600000 (both inclusive)</p>
 </dd>
 <dt>
  <span class="term">
+ <a id="opt-programs.plasma.powerdevil.lowBattery.displayBrightness"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.lowBattery.displayBrightness"><code class="option">programs.plasma.powerdevil.lowBattery.displayBrightness</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The brightness to set the display to in this mode</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or integer between 0 and 100 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">10</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
  <a id="opt-programs.plasma.powerdevil.lowBattery.inhibitLidActionWhenExternalMonitorConnected"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.lowBattery.inhibitLidActionWhenExternalMonitorConnected"><code class="option">programs.plasma.powerdevil.lowBattery.inhibitLidActionWhenExternalMonitorConnected</code>
   </a>
  </span>
@@ -13157,6 +13373,33 @@ null or one of “hibernate”, “lockScreen”, “nothing”, “showLogoutSc
 
 <p><span class="emphasis"><em>Example:</em></span>
 <code class="literal">&quot;nothing&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/powerdevil.nix" target="_top">
+&lt;plasma-manager/modules/powerdevil.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.powerdevil.lowBattery.powerProfile"></a><a class="term" href="options.xhtml#opt-programs.plasma.powerdevil.lowBattery.powerProfile"><code class="option">programs.plasma.powerdevil.lowBattery.powerProfile</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The Power Profile to Enter in this mode</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “performance”, “balanced”, “powerSaving”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;powerSaving&quot;</code></p>
 
 <p><span class="emphasis"><em>Declared by:</em></span></p>
 <table border="0" summary="Simple list" class="simplelist">
@@ -13233,13 +13476,13 @@ null or one of “whenLockedAndUnlocked”, “immediately” or integer between
 <p>The action, when on lowBattery, to perform when the laptop lid is closed.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
-null or one of “doNothing”, “hibernate”, “lockScreen”, “shutdown”, “sleep”, “turnOffScreen”</p>
+null or one of “doNothing”, “hibernate”, “lockScreen”, “shutDown”, “sleep”, “turnOffScreen”</p>
 
 <p><span class="emphasis"><em>Default:</em></span>
 <code class="literal">null</code></p>
 
 <p><span class="emphasis"><em>Example:</em></span>
-<code class="literal">&quot;shutdown&quot;</code></p>
+<code class="literal">&quot;shutDown&quot;</code></p>
 
 <p><span class="emphasis"><em>Declared by:</em></span></p>
 <table border="0" summary="Simple list" class="simplelist">
