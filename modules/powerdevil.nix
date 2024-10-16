@@ -21,6 +21,13 @@ let
     shutDown = 8;
   };
 
+  autoCriticalActions = {
+    nothing = 0;
+    hibernate = 2;
+    sleep = 1;
+    shutDown = 8;
+  };
+
   whenSleepingEnterActions = {
     standby = 1;
     hybridSleep = 2;
@@ -31,7 +38,7 @@ let
     doNothing = 0;
     sleep = 1;
     hibernate = 2;
-    shutdown = 8;
+    shutDown = 8;
     lockScreen = 32;
     turnOffScreen = 64;
   };
@@ -81,7 +88,7 @@ let
     whenLaptopLidClosed = lib.mkOption {
       type = with lib.types; nullOr (enum (builtins.attrNames whenLaptopLidClosedActions));
       default = null;
-      example = "shutdown";
+      example = "shutDown";
       description = ''
         The action, when on ${type}, to perform when the laptop lid is closed.
       '';
@@ -157,6 +164,29 @@ let
         '';
       };
     };
+    displayBrightness = lib.mkOption {
+      type = with lib.types; nullOr (ints.between 0 100);
+      default = null;
+      example = 10;
+      description = ''
+        The brightness to set the display to in this mode
+      '';
+    };
+    powerProfile = lib.mkOption {
+      type =
+        with lib.types;
+        nullOr (enum [
+          "performance"
+          "balanced"
+          "powerSaving"
+        ]);
+      default = null;
+      example = "powerSaving";
+      description = ''
+        The Power Profile to Enter in this mode
+      '';
+      apply = profile: if profile == "powerSaving" then "power-saver" else profile;
+    };
   };
 
   # By the same logic as createPowerDevilOptions, we can generate the
@@ -184,7 +214,20 @@ let
           true
         else
           null;
-      DimDisplayIdleTimeoutSec = cfg.powerdevil.${optionsName}.dimDisplay.idleTimeout;
+      DimDisplayIdleTimeoutSec =
+        if (cfg.powerdevil.${optionsName}.dimDisplay.idleTimeout != null) then
+          cfg.powerdevil.${optionsName}.dimDisplay.idleTimeout
+        else if (cfg.powerdevil.${optionsName}.dimDisplay.enable == false) then
+          -1
+        else
+          null;
+      DisplayBrightness = cfg.powerdevil.${optionsName}.displayBrightness;
+      UseProfileSpecificDisplayBrightness = (
+        if (cfg.powerdevil.${optionsName}.displayBrightness == null) then null else true
+      );
+    };
+    "${cfgSectName}/Performance" = {
+      PowerProfile = cfg.powerdevil.${optionsName}.powerProfile;
     };
   };
 in
@@ -280,6 +323,33 @@ in
           '';
         };
       };
+      batteryLevels = {
+        lowLevel = lib.mkOption {
+          type = with lib.types; nullOr (ints.between 0 100);
+          default = null;
+          example = 10;
+          description = ''
+            The battery level considered "low" for the laptop
+          '';
+        };
+        criticalLevel = lib.mkOption {
+          type = with lib.types; nullOr (ints.between 0 100);
+          default = null;
+          example = 2;
+          description = ''
+            The battery level considered "critical" for the laptop
+          '';
+        };
+        criticalAction = lib.mkOption {
+          type = with lib.types; nullOr (enum (builtins.attrNames autoCriticalActions));
+          default = null;
+          example = "shutDown";
+          description = ''
+            The action to perform when Critical Battery Level is reached
+          '';
+          apply = action: if (action == null) then null else autoCriticalActions."${action}";
+        };
+      };
     };
   };
 
@@ -291,6 +361,11 @@ in
       // {
         General = {
           pausePlayersOnSuspend = cfg.powerdevil.general.pausePlayersOnSuspend;
+        };
+        BatteryManagement = {
+          BatteryCriticalAction = cfg.powerdevil.batteryLevels.criticalAction;
+          BatteryCriticalLevel = cfg.powerdevil.batteryLevels.criticalLevel;
+          BatteryLowLevel = cfg.powerdevil.batteryLevels.lowLevel;
         };
       }
     );

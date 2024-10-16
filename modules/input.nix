@@ -478,7 +478,9 @@ in
         Use.value = true;
         LayoutList.value = strings.concatStringsSep "," (map (l: l.layout) cfg.input.keyboard.layouts);
         VariantList.value = strings.concatStringsSep "," (map (l: l.variant) cfg.input.keyboard.layouts);
-        DisplayNames.value = strings.concatStringsSep "," (map (l: l.displayName) cfg.input.keyboard.layouts);
+        DisplayNames.value = strings.concatStringsSep "," (
+          map (l: l.displayName) cfg.input.keyboard.layouts
+        );
       };
     })
     (mkIf (cfg.input.keyboard.options != null) {
