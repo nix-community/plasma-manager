@@ -30,7 +30,7 @@ let
         if ((builtins.length keys) == 1) then
           (escape (builtins.head keys))
         else
-          "\t" + (lib.concatStringsSep "\t" (map escape keys))
+          builtins.concatStringsSep "\t" (map escape keys)
       );
     in
     (
