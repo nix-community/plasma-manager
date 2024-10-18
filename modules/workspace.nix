@@ -333,7 +333,7 @@ in
               lib.mkIf (cfg.workspace.windowDecorations.theme != null) {
                 "org.kde.kdecoration2".library = cfg.workspace.windowDecorations.library;
                 "org.kde.kdecoration2".theme = cfg.workspace.windowDecorations.theme;
-              }) // (lib.mkIf (cfg.workspace.enableMiddleClickPaste != null) {
+              }) // (lib.optionalAttrs (cfg.workspace.enableMiddleClickPaste != null) {
                 Wayland.EnablePrimarySelection = cfg.workspace.enableMiddleClickPaste;
               });
           }
