@@ -94,9 +94,20 @@
       devShells = forAllSystems (system: {
         default = nixpkgsFor.${system}.mkShell {
           buildInputs = with nixpkgsFor.${system}; [
+            deadnix
             nixfmt-rfc-style
+            nodePackages.prettier
             ruby
             ruby.devdoc
+            rufo
+            shellcheck
+            shfmt
+            taplo
+            (pkgs.writeShellScriptBin "statix-fix" ''
+              for file in "''$@"; do
+                ${lib.getExe statix} fix "$file"
+              done
+            '')
             (python3.withPackages (pyPkgs: [
               pyPkgs.python-lsp-server
               pyPkgs.black
