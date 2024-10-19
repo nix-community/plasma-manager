@@ -159,7 +159,7 @@ in
           apply =
             value:
             if value == null then
-              null
+              { }
             else if value ? custom then
               {
                 primaryActions = 2;
