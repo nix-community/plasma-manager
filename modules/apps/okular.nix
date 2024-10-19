@@ -30,10 +30,11 @@ with lib.types;
           "okular"
         ]
         {
+          nullable = true;
           example = "pkgs.libsForQt5.okular";
           extraDescription = ''
             Which okular package to install. Use `pkgs.libsForQt5.okular` in Plasma5 and
-            `pkgs.kdePackages.okular` in Plasma6.
+            `pkgs.kdePackages.okular` in Plasma6. Use `null` if home-manager should not install Okular.
           '';
         };
 
@@ -193,7 +194,7 @@ with lib.types;
   };
 
   config = {
-    home.packages = lib.mkIf (cfg.enable) [ cfg.package ];
+    home.packages = lib.mkIf (cfg.enable && cfg.package != null) [ cfg.package ];
   };
 
   # ==================================
