@@ -1,8 +1,4 @@
-{
-  pkgs,
-  lib,
-  config,
-}:
+{ pkgs, config, ... }:
 
 let
   writeConfigScript = pkgs.writeShellApplication {
