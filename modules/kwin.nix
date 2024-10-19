@@ -5,8 +5,6 @@
   ...
 }:
 
-with lib;
-
 let
   cfg = config.programs.plasma;
   validTitlebarButtons = {
@@ -39,11 +37,11 @@ let
   # Gets a list with long names and turns it into short names
   getShortNames =
     wantedButtons:
-    lists.forEach (lists.flatten (
-      lists.forEach wantedButtons (
+    lib.forEach (lib.flatten (
+      lib.forEach wantedButtons (
         currentButton:
-        lists.remove null (
-          lists.imap0 (
+        lib.remove null (
+          lib.imap0 (
             index: value: if value == currentButton then "${toString index}" else null
           ) validTitlebarButtons.longNames
         )
@@ -52,10 +50,11 @@ let
 
   # Gets the index and returns the short name in that position
   getShortNameFromIndex =
-    position: builtins.elemAt validTitlebarButtons.shortNames (strings.toInt position);
+    position: builtins.elemAt validTitlebarButtons.shortNames (lib.toInt position);
 
   virtualDesktopNameAttrs =
-    names: builtins.listToAttrs (imap1 (i: v: (nameValuePair "Name_${builtins.toString i}" v)) names);
+    names:
+    builtins.listToAttrs (lib.imap1 (i: v: (lib.nameValuePair "Name_${builtins.toString i}" v)) names);
 
   capitalizeWord =
     word:
@@ -63,7 +62,7 @@ let
       firstLetter = builtins.substring 0 1 word;
       rest = builtins.substring 1 (builtins.stringLength word - 1) word;
     in
-    "${toUpper firstLetter}${rest}";
+    "${lib.toUpper firstLetter}${rest}";
 
   removeColon = string: builtins.replaceStrings [ ":" ] [ "" ] string;
 
@@ -72,21 +71,21 @@ let
     if value == null then
       null
     else
-      lib.lists.findFirstIndex (
+      lib.findFirstIndex (
         x: x == value
       ) (throw "getIndexFromEnum (kwin): Value ${value} isn't present in the enum. This is a bug") enum;
 
   convertPoloniumFilter = list: if list == null then null else builtins.concatStringsSep ", " list;
 
-  tilingLayoutType = types.submodule {
+  tilingLayoutType = lib.types.submodule {
     options = {
-      id = mkOption {
-        type = types.str;
+      id = lib.mkOption {
+        type = lib.types.str;
         description = "The id of the layout.";
         example = "cf5c25c2-4217-4193-add6-b5971cb543f2";
       };
-      tiles = mkOption {
-        type = with types; attrsOf anything;
+      tiles = lib.mkOption {
+        type = with lib.types; attrsOf anything;
         example = {
           layoutDirection = "horizontal";
           tiles = [
@@ -128,8 +127,8 @@ in
   ];
 
   options.programs.plasma.kwin = {
-    titlebarButtons.right = mkOption {
-      type = with types; nullOr (listOf (enum validTitlebarButtons.longNames));
+    titlebarButtons.right = lib.mkOption {
+      type = with lib.types; nullOr (listOf (enum validTitlebarButtons.longNames));
       default = null;
       example = [
         "help"
@@ -141,8 +140,8 @@ in
         Title bar buttons to be placed on the right.
       '';
     };
-    titlebarButtons.left = mkOption {
-      type = with types; nullOr (listOf (enum validTitlebarButtons.longNames));
+    titlebarButtons.left = lib.mkOption {
+      type = with lib.types; nullOr (listOf (enum validTitlebarButtons.longNames));
       default = null;
       example = [
         "on-all-desktops"
@@ -154,20 +153,20 @@ in
     };
 
     effects = {
-      shakeCursor.enable = mkOption {
-        type = with types; nullOr bool;
+      shakeCursor.enable = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         description = "Enable the shake cursor effect.";
       };
-      translucency.enable = mkOption {
-        type = with types; nullOr bool;
+      translucency.enable = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         description = "Make windows translucent under different conditions.";
       };
       minimization = {
-        animation = mkOption {
+        animation = lib.mkOption {
           type =
-            with types;
+            with lib.types;
             nullOr (enum [
               "squash"
               "magiclamp"
@@ -177,8 +176,8 @@ in
           example = "magiclamp";
           description = "The effect when windows are minimized.";
         };
-        duration = mkOption {
-          type = with types; nullOr ints.positive;
+        duration = lib.mkOption {
+          type = with lib.types; nullOr ints.positive;
           default = null;
           example = 50;
           description = ''
@@ -187,24 +186,24 @@ in
           '';
         };
       };
-      wobblyWindows.enable = mkOption {
-        type = with types; nullOr bool;
+      wobblyWindows.enable = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         description = "Deform windows while they are moving.";
       };
-      fps.enable = mkOption {
-        type = with types; nullOr bool;
+      fps.enable = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         description = "Display KWin's fps in the corner of the screen;";
       };
-      cube.enable = mkOption {
-        type = with types; nullOr bool;
+      cube.enable = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         description = "Arrange desktops in a virtual cube.";
       };
-      desktopSwitching.animation = mkOption {
+      desktopSwitching.animation = lib.mkOption {
         type =
-          with types;
+          with lib.types;
           nullOr (enum [
             "fade"
             "slide"
@@ -215,9 +214,9 @@ in
         description = "The animation used when switching virtual desktop.";
       };
       windowOpenClose = {
-        animation = mkOption {
+        animation = lib.mkOption {
           type =
-            with types;
+            with lib.types;
             nullOr (enum [
               "fade"
               "glide"
@@ -229,61 +228,61 @@ in
           description = "The animation used when opening/closing windows.";
         };
       };
-      fallApart.enable = mkOption {
-        type = with types; nullOr bool;
+      fallApart.enable = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         description = "Closed windows fall into pieces.";
       };
       blur = {
-        enable = mkOption {
-          type = with types; nullOr bool;
+        enable = lib.mkOption {
+          type = with lib.types; nullOr bool;
           default = null;
           description = "Blurs the background behind semi-transparent windows.";
         };
-        strength = mkOption {
-          type = with types; nullOr (ints.between 1 15);
+        strength = lib.mkOption {
+          type = with lib.types; nullOr (ints.between 1 15);
           default = null;
           example = 5;
           description = "Controls the intensity of the blur";
         };
-        noiseStrength = mkOption {
-          type = with types; nullOr (ints.between 0 14);
+        noiseStrength = lib.mkOption {
+          type = with lib.types; nullOr (ints.between 0 14);
           default = null;
           example = 8;
           description = "Adds noise to the effect";
         };
       };
-      snapHelper.enable = mkOption {
-        type = with types; nullOr bool;
+      snapHelper.enable = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         description = "Helps locate the center of the screen when moving a window.";
       };
-      dimInactive.enable = mkOption {
-        type = with types; nullOr bool;
+      dimInactive.enable = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         description = "Darken inactive windows.";
       };
-      dimAdminMode.enable = mkOption {
-        type = with types; nullOr bool;
+      dimAdminMode.enable = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         description = "Darken the entire when when requesting root privileges.";
       };
-      slideBack.enable = mkOption {
-        type = with types; nullOr bool;
+      slideBack.enable = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         description = "Slide back windows when another window is raised.";
       };
     };
 
     virtualDesktops = {
-      rows = mkOption {
-        type = with types; nullOr ints.positive;
+      rows = lib.mkOption {
+        type = with lib.types; nullOr ints.positive;
         default = null;
         example = 2;
         description = "The amount of rows for the virtual desktops.";
       };
-      names = mkOption {
-        type = with types; nullOr (listOf str);
+      names = lib.mkOption {
+        type = with lib.types; nullOr (listOf str);
         default = null;
         example = [
           "Desktop 1"
@@ -296,8 +295,8 @@ in
           desktops is automatically detected and doesn't need to be specified.
         '';
       };
-      number = mkOption {
-        type = with types; nullOr ints.positive;
+      number = lib.mkOption {
+        type = with lib.types; nullOr ints.positive;
         default = null;
         example = 8;
         description = ''
@@ -308,23 +307,23 @@ in
       };
     };
 
-    borderlessMaximizedWindows = mkOption {
-      type = with types; nullOr bool;
+    borderlessMaximizedWindows = lib.mkOption {
+      type = with lib.types; nullOr bool;
       default = null;
       example = true;
       description = "Maximized windows will not have a border.";
     };
 
     nightLight = {
-      enable = mkOption {
-        type = with types; nullOr bool;
+      enable = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         example = true;
         description = "Enable the night light effect.";
       };
-      mode = mkOption {
+      mode = lib.mkOption {
         type =
-          with types;
+          with lib.types;
           nullOr (enum [
             "constant"
             "location"
@@ -336,59 +335,59 @@ in
         apply = mode: if mode == null then null else capitalizeWord mode;
       };
       location = {
-        latitude = mkOption {
-          type = with types; nullOr str;
+        latitude = lib.mkOption {
+          type = with lib.types; nullOr str;
           default = null;
           example = "39.160305343511446";
           description = "The latitude of your location.";
         };
-        longitude = mkOption {
-          type = with types; nullOr str;
+        longitude = lib.mkOption {
+          type = with lib.types; nullOr str;
           default = null;
           example = "-35.86466165413535";
           description = "The longitude of your location.";
         };
       };
       temperature = {
-        day = mkOption {
-          type = with types; nullOr ints.positive;
+        day = lib.mkOption {
+          type = with lib.types; nullOr ints.positive;
           default = null;
           example = 4500;
           description = "The temperature of the screen during the day.";
         };
-        night = mkOption {
-          type = with types; nullOr ints.positive;
+        night = lib.mkOption {
+          type = with lib.types; nullOr ints.positive;
           default = null;
           example = 4500;
           description = "The temperature of the screen during the night.";
         };
       };
       time = {
-        morning = mkOption {
-          type = with types; nullOr str;
+        morning = lib.mkOption {
+          type = with lib.types; nullOr str;
           default = null;
           example = "06:30";
           description = "The exact time when the morning light starts.";
           apply = time: if time == null then null else removeColon time;
         };
-        evening = mkOption {
-          type = with types; nullOr str;
+        evening = lib.mkOption {
+          type = with lib.types; nullOr str;
           default = null;
           example = "19:30";
           description = "The exact time when the evening light starts.";
           apply = time: if time == null then null else removeColon time;
         };
       };
-      transitionTime = mkOption {
-        type = with types; nullOr ints.positive;
+      transitionTime = lib.mkOption {
+        type = with lib.types; nullOr ints.positive;
         default = null;
         example = 30;
         description = "The time in minutes it takes to transition from day to night.";
       };
     };
 
-    edgeBarrier = mkOption {
-      type = with types; nullOr (ints.between 0 1000);
+    edgeBarrier = lib.mkOption {
+      type = with lib.types; nullOr (ints.between 0 1000);
       default = null;
       example = 50;
       description = ''
@@ -397,22 +396,22 @@ in
       '';
     };
 
-    cornerBarrier = mkOption {
-      type = with types; nullOr bool;
+    cornerBarrier = lib.mkOption {
+      type = with lib.types; nullOr bool;
       default = null;
       example = false;
       description = "When enabled, prevents the cursor from crossing at screen-corners.";
     };
 
     tiling = {
-      padding = mkOption {
-        type = with types; nullOr ints.positive;
+      padding = lib.mkOption {
+        type = with lib.types; nullOr ints.positive;
         default = null;
         example = 10;
         description = "The padding between windows in tiling.";
       };
-      layout = mkOption {
-        type = with types; nullOr tilingLayoutType;
+      layout = lib.mkOption {
+        type = with lib.types; nullOr tilingLayoutType;
         default = null;
         example = {
           id = "cf5c25c2-4217-4193-add6-b5971cb543f2";
@@ -436,8 +435,8 @@ in
 
     scripts = {
       polonium = {
-        enable = mkOption {
-          type = with types; nullOr bool;
+        enable = lib.mkOption {
+          type = with lib.types; nullOr bool;
           default = null;
           example = true;
           description = "Whether to enable Polonium";
@@ -452,28 +451,28 @@ in
                 "borderAll"
               ];
             in
-            mkOption {
-              type = with types; nullOr (enum enumVals);
+            lib.mkOption {
+              type = with lib.types; nullOr (enum enumVals);
               default = null;
               example = "noBorderAll";
               description = "The border visibility setting for Polonium";
               apply = getIndexFromEnum enumVals;
             };
-          callbackDelay = mkOption {
-            type = with types; nullOr (ints.between 1 200);
+          callbackDelay = lib.mkOption {
+            type = with lib.types; nullOr (ints.between 1 200);
             default = null;
             example = 100;
             description = "The callback delay setting for Polonium";
           };
-          enableDebug = mkOption {
-            type = with types; nullOr bool;
+          enableDebug = lib.mkOption {
+            type = with lib.types; nullOr bool;
             default = null;
             example = true;
             description = "Whether to enable debug for Polonium";
           };
           filter = {
-            processes = mkOption {
-              type = with types; nullOr (listOf str);
+            processes = lib.mkOption {
+              type = with lib.types; nullOr (listOf str);
               default = null;
               example = [
                 "firefox"
@@ -482,8 +481,8 @@ in
               description = "The processes to filter for Polonium";
               apply = convertPoloniumFilter;
             };
-            windowTitles = mkOption {
-              type = with types; nullOr (listOf str);
+            windowTitles = lib.mkOption {
+              type = with lib.types; nullOr (listOf str);
               default = null;
               example = [
                 "Discord"
@@ -504,8 +503,8 @@ in
                   "kwin"
                 ];
               in
-              mkOption {
-                type = with types; nullOr (enum enumVals);
+              lib.mkOption {
+                type = with lib.types; nullOr (enum enumVals);
                 default = null;
                 example = "binaryTree";
                 description = "The layout engine setting for Polonium";
@@ -519,40 +518,40 @@ in
                   "activeWindow"
                 ];
               in
-              mkOption {
-                type = with types; nullOr (enum enumVals);
+              lib.mkOption {
+                type = with lib.types; nullOr (enum enumVals);
                 default = null;
                 example = "top";
                 description = "The insertion point setting for Polonium";
                 apply = getIndexFromEnum enumVals;
               };
-            rotate = mkOption {
-              type = with types; nullOr bool;
+            rotate = lib.mkOption {
+              type = with lib.types; nullOr bool;
               default = null;
               example = true;
               description = "Whether to rotate layout for Polonium";
             };
           };
-          maximizeSingleWindow = mkOption {
-            type = with types; nullOr bool;
+          maximizeSingleWindow = lib.mkOption {
+            type = with lib.types; nullOr bool;
             default = null;
             example = true;
             description = "Whether to maximize single window for Polonium";
           };
-          resizeAmount = mkOption {
-            type = with types; nullOr (ints.between 1 450);
+          resizeAmount = lib.mkOption {
+            type = with lib.types; nullOr (ints.between 1 450);
             default = null;
             example = 100;
             description = "The resize amount setting for Polonium";
           };
-          saveOnTileEdit = mkOption {
-            type = with types; nullOr bool;
+          saveOnTileEdit = lib.mkOption {
+            type = with lib.types; nullOr bool;
             default = null;
             example = true;
             description = "Whether to save on tile edit for Polonium";
           };
-          tilePopups = mkOption {
-            type = with types; nullOr bool;
+          tilePopups = lib.mkOption {
+            type = with lib.types; nullOr bool;
             default = null;
             example = true;
             description = "Whether to tile popups for Polonium";
@@ -563,7 +562,7 @@ in
   };
 
   config = (
-    mkIf cfg.enable {
+    lib.mkIf cfg.enable {
       assertions = [
         {
           assertion =
@@ -626,102 +625,106 @@ in
         }
       ];
 
-      home.packages = with pkgs; [ ] ++ optionals (cfg.kwin.scripts.polonium.enable == true) [ polonium ];
+      home.packages =
+        with pkgs;
+        [ ] ++ lib.optionals (cfg.kwin.scripts.polonium.enable == true) [ polonium ];
 
       programs.plasma.configFile."kwinrc" = (
-        mkMerge [
+        lib.mkMerge [
           # Titlebar buttons
-          (mkIf (cfg.kwin.titlebarButtons.left != null) {
-            "org.kde.kdecoration2".ButtonsOnLeft = strings.concatStrings (
+          (lib.mkIf (cfg.kwin.titlebarButtons.left != null) {
+            "org.kde.kdecoration2".ButtonsOnLeft = lib.concatStrings (
               getShortNames cfg.kwin.titlebarButtons.left
             );
           })
-          (mkIf (cfg.kwin.titlebarButtons.right != null) {
-            "org.kde.kdecoration2".ButtonsOnRight = strings.concatStrings (
+          (lib.mkIf (cfg.kwin.titlebarButtons.right != null) {
+            "org.kde.kdecoration2".ButtonsOnRight = lib.concatStrings (
               getShortNames cfg.kwin.titlebarButtons.right
             );
           })
 
           # Effects
-          (mkIf (cfg.kwin.effects.shakeCursor.enable != null) {
+          (lib.mkIf (cfg.kwin.effects.shakeCursor.enable != null) {
             Plugins.shakecursorEnabled = cfg.kwin.effects.shakeCursor.enable;
           })
-          (mkIf (cfg.kwin.effects.minimization.animation != null) {
+          (lib.mkIf (cfg.kwin.effects.minimization.animation != null) {
             Plugins = {
               magiclampEnabled = cfg.kwin.effects.minimization.animation == "magiclamp";
               squashEnabled = cfg.kwin.effects.minimization.animation == "squash";
             };
           })
-          (mkIf (cfg.kwin.effects.minimization.duration != null) {
+          (lib.mkIf (cfg.kwin.effects.minimization.duration != null) {
             Effect-magiclamp.AnimationDuration = cfg.kwin.effects.minimization.duration;
           })
-          (mkIf (cfg.kwin.effects.wobblyWindows.enable != null) {
+          (lib.mkIf (cfg.kwin.effects.wobblyWindows.enable != null) {
             Plugins.wobblywindowsEnabled = cfg.kwin.effects.wobblyWindows.enable;
           })
-          (mkIf (cfg.kwin.effects.translucency.enable != null) {
+          (lib.mkIf (cfg.kwin.effects.translucency.enable != null) {
             Plugins.translucencyEnabled = cfg.kwin.effects.translucency.enable;
           })
-          (mkIf (cfg.kwin.effects.windowOpenClose.animation != null) {
+          (lib.mkIf (cfg.kwin.effects.windowOpenClose.animation != null) {
             Plugins = {
               glideEnabled = cfg.kwin.effects.windowOpenClose.animation == "glide";
               fadeEnabled = cfg.kwin.effects.windowOpenClose.animation == "fade";
               scaleEnabled = cfg.kwin.effects.windowOpenClose.animation == "scale";
             };
           })
-          (mkIf (cfg.kwin.effects.fps.enable != null) {
+          (lib.mkIf (cfg.kwin.effects.fps.enable != null) {
             Plugins.showfpsEnabled = cfg.kwin.effects.fps.enable;
           })
-          (mkIf (cfg.kwin.effects.cube.enable != null) {
+          (lib.mkIf (cfg.kwin.effects.cube.enable != null) {
             Plugins.cubeEnabled = cfg.kwin.effects.cube.enable;
           })
-          (mkIf (cfg.kwin.effects.desktopSwitching.animation != null) {
+          (lib.mkIf (cfg.kwin.effects.desktopSwitching.animation != null) {
             Plugins.slideEnabled = cfg.kwin.effects.desktopSwitching.animation == "slide";
             Plugins.fadedesktopEnabled = cfg.kwin.effects.desktopSwitching.animation == "fade";
           })
-          (mkIf (cfg.kwin.effects.fallApart.enable != null) {
+          (lib.mkIf (cfg.kwin.effects.fallApart.enable != null) {
             Plugins.fallapartEnabled = cfg.kwin.effects.fallApart.enable;
           })
-          (mkIf (cfg.kwin.effects.snapHelper.enable != null) {
+          (lib.mkIf (cfg.kwin.effects.snapHelper.enable != null) {
             Plugins.snaphelperEnabled = cfg.kwin.effects.snapHelper.enable;
           })
-          (mkIf (cfg.kwin.effects.blur.enable != null) {
+          (lib.mkIf (cfg.kwin.effects.blur.enable != null) {
             Plugins.blurEnabled = cfg.kwin.effects.blur.enable;
             Effect-blur = {
               BlurStrength = cfg.kwin.effects.blur.strength;
               NoiseStrength = cfg.kwin.effects.blur.noiseStrength;
             };
           })
-          (mkIf (cfg.kwin.effects.dimInactive.enable != null) {
+          (lib.mkIf (cfg.kwin.effects.dimInactive.enable != null) {
             Plugins.diminactiveEnabled = cfg.kwin.effects.dimInactive.enable;
           })
-          (mkIf (cfg.kwin.effects.dimAdminMode.enable != null) {
+          (lib.mkIf (cfg.kwin.effects.dimAdminMode.enable != null) {
             Plugins.dimscreenEnabled = cfg.kwin.effects.dimAdminMode.enable;
           })
-          (mkIf (cfg.kwin.effects.slideBack.enable != null) {
+          (lib.mkIf (cfg.kwin.effects.slideBack.enable != null) {
             Plugins.slidebackEnabled = cfg.kwin.effects.slideBack.enable;
           })
 
           # Virtual Desktops
-          (mkIf (cfg.kwin.virtualDesktops.number != null) {
+          (lib.mkIf (cfg.kwin.virtualDesktops.number != null) {
             Desktops.Number = cfg.kwin.virtualDesktops.number;
           })
-          (mkIf (cfg.kwin.virtualDesktops.rows != null) { Desktops.Rows = cfg.kwin.virtualDesktops.rows; })
-          (mkIf (cfg.kwin.virtualDesktops.names != null) {
-            Desktops = mkMerge [
+          (lib.mkIf (cfg.kwin.virtualDesktops.rows != null) {
+            Desktops.Rows = cfg.kwin.virtualDesktops.rows;
+          })
+          (lib.mkIf (cfg.kwin.virtualDesktops.names != null) {
+            Desktops = lib.mkMerge [
               { Number = builtins.length cfg.kwin.virtualDesktops.names; }
               (virtualDesktopNameAttrs cfg.kwin.virtualDesktops.names)
             ];
           })
 
           # Borderless maximized windows
-          (mkIf (cfg.kwin.borderlessMaximizedWindows != null) {
+          (lib.mkIf (cfg.kwin.borderlessMaximizedWindows != null) {
             Windows = {
               BorderlessMaximizedWindows = cfg.kwin.borderlessMaximizedWindows;
             };
           })
 
           # Night Light
-          (mkIf (cfg.kwin.nightLight.enable != null) {
+          (lib.mkIf (cfg.kwin.nightLight.enable != null) {
             NightColor = {
               Active = cfg.kwin.nightLight.enable;
               DayTemperature = cfg.kwin.nightLight.temperature.day;
@@ -735,10 +738,10 @@ in
             };
           })
 
-          (mkIf (cfg.kwin.cornerBarrier != null) { EdgeBarrier.CornerBarrier = cfg.kwin.cornerBarrier; })
-          (mkIf (cfg.kwin.edgeBarrier != null) { EdgeBarrier.EdgeBarrier = cfg.kwin.edgeBarrier; })
+          (lib.mkIf (cfg.kwin.cornerBarrier != null) { EdgeBarrier.CornerBarrier = cfg.kwin.cornerBarrier; })
+          (lib.mkIf (cfg.kwin.edgeBarrier != null) { EdgeBarrier.EdgeBarrier = cfg.kwin.edgeBarrier; })
 
-          (mkIf (cfg.kwin.scripts.polonium.enable != null) {
+          (lib.mkIf (cfg.kwin.scripts.polonium.enable != null) {
             Plugins.poloniumEnabled = cfg.kwin.scripts.polonium.enable;
             Script-polonium = {
               Borders = cfg.kwin.scripts.polonium.settings.borderVisibility;
@@ -756,13 +759,13 @@ in
             };
           })
 
-          (mkIf (cfg.kwin.tiling.padding != null) {
+          (lib.mkIf (cfg.kwin.tiling.padding != null) {
             Tiling = {
               padding = cfg.kwin.tiling.padding;
             };
           })
 
-          (mkIf (cfg.kwin.tiling.layout != null) {
+          (lib.mkIf (cfg.kwin.tiling.layout != null) {
             "Tiling/${cfg.kwin.tiling.layout.id}" = {
               tiles = {
                 escapeValue = false;

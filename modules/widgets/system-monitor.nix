@@ -29,21 +29,13 @@ let
   # {name, color} -> {name, value}
   # Convert the sensor attrset into a name-value pair expected by listToAttrs
   toColorKV =
-    {
-      name,
-      color,
-      label,
-    }:
+    { name, color, ... }:
     {
       inherit name;
       value = color;
     };
   toLabelKV =
-    {
-      name,
-      color,
-      label,
-    }:
+    { name, label, ... }:
     {
       inherit name;
       value = label;
@@ -54,7 +46,7 @@ in
     description = "A system monitor widget.";
 
     opts = {
-      # See https://invent.kde.org/plasma/plasma-workspace/-/blob/master/applets/systemmonitor/systemmonitor/package/contents/config/main.xml for the accepted raw options 
+      # See https://invent.kde.org/plasma/plasma-workspace/-/blob/master/applets/systemmonitor/systemmonitor/package/contents/config/main.xml for the accepted raw options
 
       position = mkOption {
         type = positionType;
@@ -174,8 +166,6 @@ in
 
     convert =
       {
-        position,
-        size,
         title,
         showTitle,
         showLegend,
@@ -185,11 +175,12 @@ in
         textOnlySensors,
         range,
         settings,
+        ...
       }:
       {
         name = "org.kde.plasma.systemmonitor";
         config = lib.filterAttrsRecursive (_: v: v != null) (
-          lib.recursiveUpdate ({
+          lib.recursiveUpdate {
             Appearance = {
               inherit title;
               inherit showTitle;
@@ -205,7 +196,7 @@ in
               rangeFrom = range.from;
               rangeTo = range.to;
             };
-          }) (lib.recursiveUpdate sensors settings)
+          } (lib.recursiveUpdate sensors settings)
         );
       };
   };

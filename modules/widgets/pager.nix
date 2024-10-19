@@ -87,12 +87,7 @@ in
       };
     };
     convert =
-      {
-        position,
-        size,
-        general,
-        settings,
-      }:
+      { general, settings, ... }:
       {
         name = "org.kde.plasma.pager";
         config = lib.recursiveUpdate {

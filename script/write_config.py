@@ -8,7 +8,7 @@ from typing import Any, Optional, Self
 
 
 # KDE has a bespoke escape format:
-# https://github.com/KDE/kconfig/blob/44f98ff5cb9008436ba5ba385cae03bbd0ab33e6/src/core/kconfigini.cpp#L882
+# https://invent.kde.org/frameworks/kconfig/-/blob/v6.7.0/src/core/kconfigini.cpp?ref_type=tags#L880-945
 def unescape(s: str) -> str:
     out: list[str] = []
     while s:

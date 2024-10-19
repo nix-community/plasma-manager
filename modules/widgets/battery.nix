@@ -44,12 +44,7 @@ in
     };
 
     convert =
-      {
-        position,
-        size,
-        showPercentage,
-        settings,
-      }:
+      { showPercentage, settings, ... }:
       {
         name = "org.kde.plasma.battery";
         config = lib.recursiveUpdate {

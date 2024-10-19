@@ -3,7 +3,7 @@ let
   cfg = config.programs.plasma;
 
   # Values can be found at:
-  # https://github.com/KDE/powerdevil/blob/master/daemon/powerdevilenums.h
+  # https://invent.kde.org/plasma/powerdevil/-/blob/v6.2.1/daemon/powerdevilenums.h
   powerButtonActions = {
     nothing = 0;
     sleep = 1;

@@ -157,8 +157,6 @@ in
     };
     convert =
       {
-        position,
-        size,
         icon,
         label,
         sortAlphabetically,
@@ -172,6 +170,7 @@ in
         popupHeight,
         popupWidth,
         settings,
+        ...
       }:
       {
         name = "org.kde.plasma.kickoff";

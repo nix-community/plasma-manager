@@ -121,8 +121,6 @@ in
     };
     convert =
       {
-        position,
-        size,
         icon,
         customButtonImage,
         applicationNameFormat,
@@ -130,11 +128,12 @@ in
         categories,
         search,
         settings,
+        ...
       }:
       {
         name = "org.kde.plasma.kickerdash";
         config = lib.recursiveUpdate {
-          General = lib.filterAttrs (_: v: v != null) ({
+          General = lib.filterAttrs (_: v: v != null) {
             inherit icon customButtonImage;
             useCustomButtonImage = (customButtonImage != null);
 
@@ -147,7 +146,7 @@ in
             recentOrdering = categories.order;
 
             useExtraRunners = search.expandSearchResults;
-          });
+          };
         } settings;
       };
   };
