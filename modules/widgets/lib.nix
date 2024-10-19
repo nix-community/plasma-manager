@@ -22,7 +22,7 @@ let
     with lib.types;
     nullOr (attrsOf (either configValueTypeInner (attrsOf configValueTypeInner)));
 
-  # any value or null -> string -> string 
+  # any value or null -> string -> string
   # If value is null, returns the empty string, otherwise returns the provided string
   stringIfNotNull = v: optionalString (v != null);
 

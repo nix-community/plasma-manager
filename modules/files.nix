@@ -188,7 +188,7 @@ in
   config.home.activation = lib.mkIf plasmaCfg.enable {
     configure-plasma = (
       lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        $DRY_RUN_CMD ${script} 
+        $DRY_RUN_CMD ${script}
       ''
     );
   };

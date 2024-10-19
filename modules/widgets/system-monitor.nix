@@ -54,7 +54,7 @@ in
     description = "A system monitor widget.";
 
     opts = {
-      # See https://invent.kde.org/plasma/plasma-workspace/-/blob/master/applets/systemmonitor/systemmonitor/package/contents/config/main.xml for the accepted raw options 
+      # See https://invent.kde.org/plasma/plasma-workspace/-/blob/master/applets/systemmonitor/systemmonitor/package/contents/config/main.xml for the accepted raw options
 
       position = mkOption {
         type = positionType;
