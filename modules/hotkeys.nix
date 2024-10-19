@@ -88,7 +88,7 @@ in
       noDisplay = true;
       type = "Application";
       actions = lib.mapAttrs (_: command: {
-        name = command.name;
+        inherit (command) name;
         exec =
           if command.logs.enabled then
             "${pkgs.systemd}/bin/systemd-cat --identifier=${command.logs.identifier} ${command.logs.extraArgs} ${commandString command.command}"

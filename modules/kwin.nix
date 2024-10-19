@@ -561,69 +561,68 @@ in
     };
   };
 
-  config = (
-    lib.mkIf cfg.enable {
-      assertions = [
-        {
-          assertion =
-            cfg.kwin.virtualDesktops.number == null
-            || cfg.kwin.virtualDesktops.names == null
-            || cfg.kwin.virtualDesktops.number == (builtins.length cfg.kwin.virtualDesktops.names);
-          message = "programs.plasma.virtualDesktops.number doesn't match the length of programs.plasma.virtualDesktops.names.";
-        }
-        {
-          assertion =
-            cfg.kwin.virtualDesktops.rows == null
-            || (cfg.kwin.virtualDesktops.names == null && cfg.kwin.virtualDesktops.number == null)
-            || (
-              cfg.kwin.virtualDesktops.number != null
-              && cfg.kwin.virtualDesktops.number >= cfg.kwin.virtualDesktops.rows
-            )
-            || (
-              cfg.kwin.virtualDesktops.names != null
-              && (builtins.length cfg.kwin.virtualDesktops.names) >= cfg.kwin.virtualDesktops.rows
-            );
-          message = "KWin cannot have more rows virtual desktops.";
-        }
-        {
-          assertion =
-            cfg.kwin.effects.minimization.duration == null
-            || cfg.kwin.effects.minimization.animation == "magiclamp";
-          message = "programs.plasma.kwin.effects.minimization.duration is only supported for the magic lamp effect";
-        }
-        {
-          assertion =
-            (cfg.kwin.nightLight.enable == null || cfg.kwin.nightLight.enable == false)
-            || cfg.kwin.nightLight.mode != null;
-          message = "programs.plasma.kwin.nightLight.mode must be set when programs.plasma.kwin.nightLight.enable is true.";
-        }
-        {
-          assertion =
-            cfg.kwin.nightLight.mode != "Times"
-            || (cfg.kwin.nightLight.time.morning != null && cfg.kwin.nightLight.time.evening != null);
-          message = "programs.plasma.kwin.nightLight.time.morning and programs.plasma.kwin.nightLight.time.evening must be set when programs.plasma.kwin.nightLight.mode is set to times.";
-        }
-        {
-          assertion =
-            cfg.kwin.nightLight.mode != "Location"
-            || (
-              cfg.kwin.nightLight.location.latitude != null && cfg.kwin.nightLight.location.longitude != null
-            );
-          message = "programs.plasma.kwin.nightLight.location.latitude and programs.plasma.kwin.nightLight.location.longitude must be set when programs.plasma.kwin.nightLight.mode is set to location.";
-        }
-        {
-          assertion =
-            cfg.kwin.nightLight.time.morning == null
-            || builtins.stringLength cfg.kwin.nightLight.time.morning == 4;
-          message = "programs.plasma.kwin.nightLight.time.morning must have the exact length of 4. If it doesn't have, it means that it doesn't have this time format: HH:MM";
-        }
-        {
-          assertion =
-            cfg.kwin.nightLight.time.evening == null
-            || builtins.stringLength cfg.kwin.nightLight.time.evening == 4;
-          message = "programs.plasma.kwin.nightLight.time.evening must have the exact length of 4. If it doesn't have, it means that it doesn't have this time format: HH:MM";
-        }
-      ];
+  config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion =
+          cfg.kwin.virtualDesktops.number == null
+          || cfg.kwin.virtualDesktops.names == null
+          || cfg.kwin.virtualDesktops.number == (builtins.length cfg.kwin.virtualDesktops.names);
+        message = "programs.plasma.virtualDesktops.number doesn't match the length of programs.plasma.virtualDesktops.names.";
+      }
+      {
+        assertion =
+          cfg.kwin.virtualDesktops.rows == null
+          || (cfg.kwin.virtualDesktops.names == null && cfg.kwin.virtualDesktops.number == null)
+          || (
+            cfg.kwin.virtualDesktops.number != null
+            && cfg.kwin.virtualDesktops.number >= cfg.kwin.virtualDesktops.rows
+          )
+          || (
+            cfg.kwin.virtualDesktops.names != null
+            && (builtins.length cfg.kwin.virtualDesktops.names) >= cfg.kwin.virtualDesktops.rows
+          );
+        message = "KWin cannot have more rows virtual desktops.";
+      }
+      {
+        assertion =
+          cfg.kwin.effects.minimization.duration == null
+          || cfg.kwin.effects.minimization.animation == "magiclamp";
+        message = "programs.plasma.kwin.effects.minimization.duration is only supported for the magic lamp effect";
+      }
+      {
+        assertion =
+          (cfg.kwin.nightLight.enable == null || !cfg.kwin.nightLight.enable)
+          || cfg.kwin.nightLight.mode != null;
+        message = "programs.plasma.kwin.nightLight.mode must be set when programs.plasma.kwin.nightLight.enable is true.";
+      }
+      {
+        assertion =
+          cfg.kwin.nightLight.mode != "Times"
+          || (cfg.kwin.nightLight.time.morning != null && cfg.kwin.nightLight.time.evening != null);
+        message = "programs.plasma.kwin.nightLight.time.morning and programs.plasma.kwin.nightLight.time.evening must be set when programs.plasma.kwin.nightLight.mode is set to times.";
+      }
+      {
+        assertion =
+          cfg.kwin.nightLight.mode != "Location"
+          || (
+            cfg.kwin.nightLight.location.latitude != null && cfg.kwin.nightLight.location.longitude != null
+          );
+        message = "programs.plasma.kwin.nightLight.location.latitude and programs.plasma.kwin.nightLight.location.longitude must be set when programs.plasma.kwin.nightLight.mode is set to location.";
+      }
+      {
+        assertion =
+          cfg.kwin.nightLight.time.morning == null
+          || builtins.stringLength cfg.kwin.nightLight.time.morning == 4;
+        message = "programs.plasma.kwin.nightLight.time.morning must have the exact length of 4. If it doesn't have, it means that it doesn't have this time format: HH:MM";
+      }
+      {
+        assertion =
+          cfg.kwin.nightLight.time.evening == null
+          || builtins.stringLength cfg.kwin.nightLight.time.evening == 4;
+        message = "programs.plasma.kwin.nightLight.time.evening must have the exact length of 4. If it doesn't have, it means that it doesn't have this time format: HH:MM";
+      }
+    ];
 
     home.packages =
       with pkgs;
@@ -631,152 +630,149 @@ in
         if builtins.isBool cfg.kwin.scripts.polonium.enable then cfg.kwin.scripts.polonium.enable else false
       ) [ polonium ];
 
-      programs.plasma.configFile."kwinrc" = (
-        lib.mkMerge [
-          # Titlebar buttons
-          (lib.mkIf (cfg.kwin.titlebarButtons.left != null) {
-            "org.kde.kdecoration2".ButtonsOnLeft = lib.concatStrings (
-              getShortNames cfg.kwin.titlebarButtons.left
-            );
-          })
-          (lib.mkIf (cfg.kwin.titlebarButtons.right != null) {
-            "org.kde.kdecoration2".ButtonsOnRight = lib.concatStrings (
-              getShortNames cfg.kwin.titlebarButtons.right
-            );
-          })
+    programs.plasma.configFile."kwinrc" = lib.mkMerge [
+      # Titlebar buttons
+      (lib.mkIf (cfg.kwin.titlebarButtons.left != null) {
+        "org.kde.kdecoration2".ButtonsOnLeft = lib.concatStrings (
+          getShortNames cfg.kwin.titlebarButtons.left
+        );
+      })
+      (lib.mkIf (cfg.kwin.titlebarButtons.right != null) {
+        "org.kde.kdecoration2".ButtonsOnRight = lib.concatStrings (
+          getShortNames cfg.kwin.titlebarButtons.right
+        );
+      })
 
-          # Effects
-          (lib.mkIf (cfg.kwin.effects.shakeCursor.enable != null) {
-            Plugins.shakecursorEnabled = cfg.kwin.effects.shakeCursor.enable;
-          })
-          (lib.mkIf (cfg.kwin.effects.minimization.animation != null) {
-            Plugins = {
-              magiclampEnabled = cfg.kwin.effects.minimization.animation == "magiclamp";
-              squashEnabled = cfg.kwin.effects.minimization.animation == "squash";
-            };
-          })
-          (lib.mkIf (cfg.kwin.effects.minimization.duration != null) {
-            Effect-magiclamp.AnimationDuration = cfg.kwin.effects.minimization.duration;
-          })
-          (lib.mkIf (cfg.kwin.effects.wobblyWindows.enable != null) {
-            Plugins.wobblywindowsEnabled = cfg.kwin.effects.wobblyWindows.enable;
-          })
-          (lib.mkIf (cfg.kwin.effects.translucency.enable != null) {
-            Plugins.translucencyEnabled = cfg.kwin.effects.translucency.enable;
-          })
-          (lib.mkIf (cfg.kwin.effects.windowOpenClose.animation != null) {
-            Plugins = {
-              glideEnabled = cfg.kwin.effects.windowOpenClose.animation == "glide";
-              fadeEnabled = cfg.kwin.effects.windowOpenClose.animation == "fade";
-              scaleEnabled = cfg.kwin.effects.windowOpenClose.animation == "scale";
-            };
-          })
-          (lib.mkIf (cfg.kwin.effects.fps.enable != null) {
-            Plugins.showfpsEnabled = cfg.kwin.effects.fps.enable;
-          })
-          (lib.mkIf (cfg.kwin.effects.cube.enable != null) {
-            Plugins.cubeEnabled = cfg.kwin.effects.cube.enable;
-          })
-          (lib.mkIf (cfg.kwin.effects.desktopSwitching.animation != null) {
-            Plugins.slideEnabled = cfg.kwin.effects.desktopSwitching.animation == "slide";
-            Plugins.fadedesktopEnabled = cfg.kwin.effects.desktopSwitching.animation == "fade";
-          })
-          (lib.mkIf (cfg.kwin.effects.fallApart.enable != null) {
-            Plugins.fallapartEnabled = cfg.kwin.effects.fallApart.enable;
-          })
-          (lib.mkIf (cfg.kwin.effects.snapHelper.enable != null) {
-            Plugins.snaphelperEnabled = cfg.kwin.effects.snapHelper.enable;
-          })
-          (lib.mkIf (cfg.kwin.effects.blur.enable != null) {
-            Plugins.blurEnabled = cfg.kwin.effects.blur.enable;
-            Effect-blur = {
-              BlurStrength = cfg.kwin.effects.blur.strength;
-              NoiseStrength = cfg.kwin.effects.blur.noiseStrength;
-            };
-          })
-          (lib.mkIf (cfg.kwin.effects.dimInactive.enable != null) {
-            Plugins.diminactiveEnabled = cfg.kwin.effects.dimInactive.enable;
-          })
-          (lib.mkIf (cfg.kwin.effects.dimAdminMode.enable != null) {
-            Plugins.dimscreenEnabled = cfg.kwin.effects.dimAdminMode.enable;
-          })
-          (lib.mkIf (cfg.kwin.effects.slideBack.enable != null) {
-            Plugins.slidebackEnabled = cfg.kwin.effects.slideBack.enable;
-          })
+      # Effects
+      (lib.mkIf (cfg.kwin.effects.shakeCursor.enable != null) {
+        Plugins.shakecursorEnabled = cfg.kwin.effects.shakeCursor.enable;
+      })
+      (lib.mkIf (cfg.kwin.effects.minimization.animation != null) {
+        Plugins = {
+          magiclampEnabled = cfg.kwin.effects.minimization.animation == "magiclamp";
+          squashEnabled = cfg.kwin.effects.minimization.animation == "squash";
+        };
+      })
+      (lib.mkIf (cfg.kwin.effects.minimization.duration != null) {
+        Effect-magiclamp.AnimationDuration = cfg.kwin.effects.minimization.duration;
+      })
+      (lib.mkIf (cfg.kwin.effects.wobblyWindows.enable != null) {
+        Plugins.wobblywindowsEnabled = cfg.kwin.effects.wobblyWindows.enable;
+      })
+      (lib.mkIf (cfg.kwin.effects.translucency.enable != null) {
+        Plugins.translucencyEnabled = cfg.kwin.effects.translucency.enable;
+      })
+      (lib.mkIf (cfg.kwin.effects.windowOpenClose.animation != null) {
+        Plugins = {
+          glideEnabled = cfg.kwin.effects.windowOpenClose.animation == "glide";
+          fadeEnabled = cfg.kwin.effects.windowOpenClose.animation == "fade";
+          scaleEnabled = cfg.kwin.effects.windowOpenClose.animation == "scale";
+        };
+      })
+      (lib.mkIf (cfg.kwin.effects.fps.enable != null) {
+        Plugins.showfpsEnabled = cfg.kwin.effects.fps.enable;
+      })
+      (lib.mkIf (cfg.kwin.effects.cube.enable != null) {
+        Plugins.cubeEnabled = cfg.kwin.effects.cube.enable;
+      })
+      (lib.mkIf (cfg.kwin.effects.desktopSwitching.animation != null) {
+        Plugins.slideEnabled = cfg.kwin.effects.desktopSwitching.animation == "slide";
+        Plugins.fadedesktopEnabled = cfg.kwin.effects.desktopSwitching.animation == "fade";
+      })
+      (lib.mkIf (cfg.kwin.effects.fallApart.enable != null) {
+        Plugins.fallapartEnabled = cfg.kwin.effects.fallApart.enable;
+      })
+      (lib.mkIf (cfg.kwin.effects.snapHelper.enable != null) {
+        Plugins.snaphelperEnabled = cfg.kwin.effects.snapHelper.enable;
+      })
+      (lib.mkIf (cfg.kwin.effects.blur.enable != null) {
+        Plugins.blurEnabled = cfg.kwin.effects.blur.enable;
+        Effect-blur = {
+          BlurStrength = cfg.kwin.effects.blur.strength;
+          NoiseStrength = cfg.kwin.effects.blur.noiseStrength;
+        };
+      })
+      (lib.mkIf (cfg.kwin.effects.dimInactive.enable != null) {
+        Plugins.diminactiveEnabled = cfg.kwin.effects.dimInactive.enable;
+      })
+      (lib.mkIf (cfg.kwin.effects.dimAdminMode.enable != null) {
+        Plugins.dimscreenEnabled = cfg.kwin.effects.dimAdminMode.enable;
+      })
+      (lib.mkIf (cfg.kwin.effects.slideBack.enable != null) {
+        Plugins.slidebackEnabled = cfg.kwin.effects.slideBack.enable;
+      })
 
-          # Virtual Desktops
-          (lib.mkIf (cfg.kwin.virtualDesktops.number != null) {
-            Desktops.Number = cfg.kwin.virtualDesktops.number;
-          })
-          (lib.mkIf (cfg.kwin.virtualDesktops.rows != null) {
-            Desktops.Rows = cfg.kwin.virtualDesktops.rows;
-          })
-          (lib.mkIf (cfg.kwin.virtualDesktops.names != null) {
-            Desktops = lib.mkMerge [
-              { Number = builtins.length cfg.kwin.virtualDesktops.names; }
-              (virtualDesktopNameAttrs cfg.kwin.virtualDesktops.names)
-            ];
-          })
+      # Virtual Desktops
+      (lib.mkIf (cfg.kwin.virtualDesktops.number != null) {
+        Desktops.Number = cfg.kwin.virtualDesktops.number;
+      })
+      (lib.mkIf (cfg.kwin.virtualDesktops.rows != null) {
+        Desktops.Rows = cfg.kwin.virtualDesktops.rows;
+      })
+      (lib.mkIf (cfg.kwin.virtualDesktops.names != null) {
+        Desktops = lib.mkMerge [
+          { Number = builtins.length cfg.kwin.virtualDesktops.names; }
+          (virtualDesktopNameAttrs cfg.kwin.virtualDesktops.names)
+        ];
+      })
 
-          # Borderless maximized windows
-          (lib.mkIf (cfg.kwin.borderlessMaximizedWindows != null) {
-            Windows = {
-              BorderlessMaximizedWindows = cfg.kwin.borderlessMaximizedWindows;
-            };
-          })
+      # Borderless maximized windows
+      (lib.mkIf (cfg.kwin.borderlessMaximizedWindows != null) {
+        Windows = {
+          BorderlessMaximizedWindows = cfg.kwin.borderlessMaximizedWindows;
+        };
+      })
 
-          # Night Light
-          (lib.mkIf (cfg.kwin.nightLight.enable != null) {
-            NightColor = {
-              Active = cfg.kwin.nightLight.enable;
-              DayTemperature = cfg.kwin.nightLight.temperature.day;
-              EveningBeginFixed = cfg.kwin.nightLight.time.evening;
-              LatitudeFixed = cfg.kwin.nightLight.location.latitude;
-              LongitudeFixed = cfg.kwin.nightLight.location.longitude;
-              Mode = cfg.kwin.nightLight.mode;
-              MorningBeginFixed = cfg.kwin.nightLight.time.morning;
-              NightTemperature = cfg.kwin.nightLight.temperature.night;
-              TransitionTime = cfg.kwin.nightLight.transitionTime;
-            };
-          })
+      # Night Light
+      (lib.mkIf (cfg.kwin.nightLight.enable != null) {
+        NightColor = {
+          Active = cfg.kwin.nightLight.enable;
+          DayTemperature = cfg.kwin.nightLight.temperature.day;
+          EveningBeginFixed = cfg.kwin.nightLight.time.evening;
+          LatitudeFixed = cfg.kwin.nightLight.location.latitude;
+          LongitudeFixed = cfg.kwin.nightLight.location.longitude;
+          Mode = cfg.kwin.nightLight.mode;
+          MorningBeginFixed = cfg.kwin.nightLight.time.morning;
+          NightTemperature = cfg.kwin.nightLight.temperature.night;
+          TransitionTime = cfg.kwin.nightLight.transitionTime;
+        };
+      })
 
-          (lib.mkIf (cfg.kwin.cornerBarrier != null) { EdgeBarrier.CornerBarrier = cfg.kwin.cornerBarrier; })
-          (lib.mkIf (cfg.kwin.edgeBarrier != null) { EdgeBarrier.EdgeBarrier = cfg.kwin.edgeBarrier; })
+      (lib.mkIf (cfg.kwin.cornerBarrier != null) { EdgeBarrier.CornerBarrier = cfg.kwin.cornerBarrier; })
+      (lib.mkIf (cfg.kwin.edgeBarrier != null) { EdgeBarrier.EdgeBarrier = cfg.kwin.edgeBarrier; })
 
-          (lib.mkIf (cfg.kwin.scripts.polonium.enable != null) {
-            Plugins.poloniumEnabled = cfg.kwin.scripts.polonium.enable;
-            Script-polonium = {
-              Borders = cfg.kwin.scripts.polonium.settings.borderVisibility;
-              Debug = cfg.kwin.scripts.polonium.settings.enableDebug;
-              EngineType = cfg.kwin.scripts.polonium.settings.layout.engine;
-              FilterCaption = cfg.kwin.scripts.polonium.settings.filter.windowTitles;
-              FilterProcess = cfg.kwin.scripts.polonium.settings.filter.processes;
-              InsertionPoint = cfg.kwin.scripts.polonium.settings.layout.insertionPoint;
-              MaximizeSingle = cfg.kwin.scripts.polonium.settings.maximizeSingleWindow;
-              ResizeAmount = cfg.kwin.scripts.polonium.settings.resizeAmount;
-              RotateLayout = cfg.kwin.scripts.polonium.settings.layout.rotate;
-              SaveOnTileEdit = cfg.kwin.scripts.polonium.settings.saveOnTileEdit;
-              TilePopups = cfg.kwin.scripts.polonium.settings.tilePopups;
-              TimerDelay = cfg.kwin.scripts.polonium.settings.callbackDelay;
-            };
-          })
+      (lib.mkIf (cfg.kwin.scripts.polonium.enable != null) {
+        Plugins.poloniumEnabled = cfg.kwin.scripts.polonium.enable;
+        Script-polonium = {
+          Borders = cfg.kwin.scripts.polonium.settings.borderVisibility;
+          Debug = cfg.kwin.scripts.polonium.settings.enableDebug;
+          EngineType = cfg.kwin.scripts.polonium.settings.layout.engine;
+          FilterCaption = cfg.kwin.scripts.polonium.settings.filter.windowTitles;
+          FilterProcess = cfg.kwin.scripts.polonium.settings.filter.processes;
+          InsertionPoint = cfg.kwin.scripts.polonium.settings.layout.insertionPoint;
+          MaximizeSingle = cfg.kwin.scripts.polonium.settings.maximizeSingleWindow;
+          ResizeAmount = cfg.kwin.scripts.polonium.settings.resizeAmount;
+          RotateLayout = cfg.kwin.scripts.polonium.settings.layout.rotate;
+          SaveOnTileEdit = cfg.kwin.scripts.polonium.settings.saveOnTileEdit;
+          TilePopups = cfg.kwin.scripts.polonium.settings.tilePopups;
+          TimerDelay = cfg.kwin.scripts.polonium.settings.callbackDelay;
+        };
+      })
 
-          (lib.mkIf (cfg.kwin.tiling.padding != null) {
-            Tiling = {
-              padding = cfg.kwin.tiling.padding;
-            };
-          })
+      (lib.mkIf (cfg.kwin.tiling.padding != null) {
+        Tiling = {
+          inherit (cfg.kwin.tiling) padding;
+        };
+      })
 
-          (lib.mkIf (cfg.kwin.tiling.layout != null) {
-            "Tiling/${cfg.kwin.tiling.layout.id}" = {
-              tiles = {
-                escapeValue = false;
-                value = cfg.kwin.tiling.layout.tiles;
-              };
-            };
-          })
-        ]
-      );
-    }
-  );
+      (lib.mkIf (cfg.kwin.tiling.layout != null) {
+        "Tiling/${cfg.kwin.tiling.layout.id}" = {
+          tiles = {
+            escapeValue = false;
+            value = cfg.kwin.tiling.layout.tiles;
+          };
+        };
+      })
+    ];
+  };
 }

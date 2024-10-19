@@ -1,6 +1,6 @@
 { lib, config, ... }:
 let
-  widgets = (import ../modules/widgets { inherit lib; });
+  widgets = import ../modules/widgets { inherit lib; };
   panelToLayout =
     panel:
     let

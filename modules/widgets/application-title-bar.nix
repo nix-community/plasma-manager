@@ -577,7 +577,7 @@ in
           Appearance = lib.filterAttrs (_: v: v != null) (
             {
               # Widget layout
-              widgetMargins = layout.widgetMargins;
+              inherit (layout) widgetMargins;
               widgetSpacing = layout.spacingBetweenElements;
               widgetHorizontalAlignment = layout.horizontalAlignment;
               widgetVerticalAlignment = layout.verticalAlignment;

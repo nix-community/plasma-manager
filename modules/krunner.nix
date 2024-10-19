@@ -35,24 +35,21 @@ in
     };
   };
 
-  config.programs.plasma.configFile."krunnerrc" = (
-    lib.mkMerge [
-      (lib.mkIf (cfg.krunner.position != null) {
-        General.FreeFloating = cfg.krunner.position == "center";
-      })
-      (lib.mkIf (cfg.krunner.activateWhenTypingOnDesktop != null) {
-        General.ActivateWhenTypingOnDesktop = cfg.krunner.activateWhenTypingOnDesktop;
-      })
-      (lib.mkIf (cfg.krunner.historyBehavior != null) {
-        General.historyBehavior = (
-          if cfg.krunner.historyBehavior == "enableSuggestions" then
-            "CompletionSuggestion"
-          else if cfg.krunner.historyBehavior == "enableAutoComplete" then
-            "ImmediateCompletion"
-          else
-            "Disabled"
-        );
-      })
-    ]
-  );
+  config.programs.plasma.configFile."krunnerrc" = lib.mkMerge [
+    (lib.mkIf (cfg.krunner.position != null) {
+      General.FreeFloating = cfg.krunner.position == "center";
+    })
+    (lib.mkIf (cfg.krunner.activateWhenTypingOnDesktop != null) {
+      General.ActivateWhenTypingOnDesktop = cfg.krunner.activateWhenTypingOnDesktop;
+    })
+    (lib.mkIf (cfg.krunner.historyBehavior != null) {
+      General.historyBehavior =
+        if cfg.krunner.historyBehavior == "enableSuggestions" then
+          "CompletionSuggestion"
+        else if cfg.krunner.historyBehavior == "enableAutoComplete" then
+          "ImmediateCompletion"
+        else
+          "Disabled";
+    })
+  ];
 }

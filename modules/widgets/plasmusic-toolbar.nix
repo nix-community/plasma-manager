@@ -409,14 +409,14 @@ in
             textScrollingResetOnPause = songText.scrolling.resetOnPause;
 
             commandsInPanel = musicControls.showPlaybackControls;
-            volumeStep = musicControls.volumeStep;
+            inherit (musicControls) volumeStep;
 
-            useCustomFont = (font != null);
+            useCustomFont = font != null;
             customFont = font;
 
             desktopWidgetBg = background;
 
-            albumPlaceholder = albumCover.albumPlaceholder;
+            inherit (albumCover) albumPlaceholder;
           };
         } settings;
       };

@@ -25,7 +25,7 @@ let
         else
           resetFilesList
       );
-      immutableByDefault = (builtins.toString config.programs.plasma.immutableByDefault);
+      immutableByDefault = builtins.toString config.programs.plasma.immutableByDefault;
     in
     ''
       ${writeConfigScript}/bin/write_config ${jsonFile} "${resetFilesStr}" "${immutableByDefault}"

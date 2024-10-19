@@ -65,7 +65,7 @@ let
         };
         size = lib.mkOption {
           # The konsole ui gives you a limited range
-          type = (lib.types.ints.between 4 128);
+          type = lib.types.ints.between 4 128;
           default = 10;
           example = 12;
           description = ''
@@ -138,14 +138,14 @@ in
     };
   };
 
-  config = lib.mkIf (cfg.enable) {
+  config = lib.mkIf cfg.enable {
     programs.plasma.configFile."konsolerc" = lib.mkMerge [
       (lib.mkIf (cfg.defaultProfile != null) {
         "Desktop Entry"."DefaultProfile" = "${cfg.defaultProfile}.profile";
       })
       (lib.mkIf (cfg.extraConfig != null) (
         lib.mapAttrs (
-          groupName: groupAttrs: (lib.mapAttrs (keyName: keyAttrs: { value = keyAttrs; }) groupAttrs)
+          _groupName: groupAttrs: (lib.mapAttrs (_keyName: keyAttrs: { value = keyAttrs; }) groupAttrs)
         ) cfg.extraConfig
       ))
       {
@@ -174,22 +174,16 @@ in
               {
                 "konsole/${profileName}.profile".text = lib.generators.toINI { } (
                   lib.recursiveUpdate {
-                    "General" = (
-                      {
-                        "Name" = profileName;
-                        # Konsole generated profiles seem to always have this
-                        "Parent" = "FALLBACK/";
-                      }
-                      // (lib.optionalAttrs (profile.command != null) { "Command" = profile.command; })
-                    );
-                    "Appearance" = (
-                      {
-                        # If the font size is not set we leave a comma at the end after the name
-                        # We should fix this probs but konsole doesn't seem to care ¯\_(ツ)_/¯
-                        "Font" = fontString.content;
-                      }
-                      // (lib.optionalAttrs (profile.colorScheme != null) { "ColorScheme" = profile.colorScheme; })
-                    );
+                    "General" = {
+                      "Name" = profileName;
+                      # Konsole generated profiles seem to always have this
+                      "Parent" = "FALLBACK/";
+                    } // (lib.optionalAttrs (profile.command != null) { "Command" = profile.command; });
+                    "Appearance" = {
+                      # If the font size is not set we leave a comma at the end after the name
+                      # We should fix this probs but konsole doesn't seem to care ¯\_(ツ)_/¯
+                      "Font" = fontString.content;
+                    } // (lib.optionalAttrs (profile.colorScheme != null) { "ColorScheme" = profile.colorScheme; });
                   } profile.extraConfig
                 );
               }

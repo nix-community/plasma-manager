@@ -10,7 +10,7 @@ let
     description = "The content of the startup-script.";
   };
   priorityOption = lib.mkOption {
-    type = (lib.types.ints.between 0 8);
+    type = lib.types.ints.between 0 8;
     default = 0;
     description = "The priority for the execution of the script. Lower priority means earlier execution.";
   };
@@ -166,7 +166,7 @@ in
             ) cfg.startup.desktopScript)
             ++ (lib.mapAttrsToList (name: content: {
               "plasma-manager/${cfg.startup.dataDir}/desktop_script_${name}.js" = {
-                text = content.text;
+                inherit (content) text;
               };
             }) cfg.startup.desktopScript)
           ))

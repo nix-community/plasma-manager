@@ -34,16 +34,14 @@ let
   ##############################################################################
   # Generate a script that will use write_config.py to update all
   # settings.
-  resetFilesList = (
-    map (f: "${config.xdg.configHome}/${f}") (
-      lib.lists.subtractLists plasmaCfg.resetFilesExclude plasmaCfg.resetFiles
-    )
+  resetFilesList = map (f: "${config.xdg.configHome}/${f}") (
+    lib.lists.subtractLists plasmaCfg.resetFilesExclude plasmaCfg.resetFiles
   );
   script = pkgs.writeScript "plasma-config" (writeConfig cfg plasmaCfg.overrideConfig resetFilesList);
 
   ##############################################################################
   # Generate a script that will remove all the current config files.
-  defaultResetFiles = (
+  defaultResetFiles =
     if plasmaCfg.overrideConfig then
       [
         "auroraerc"
@@ -86,8 +84,7 @@ let
         "systemsettingsrc"
       ]
     else
-      lib.optional (builtins.length plasmaCfg.window-rules > 0) "kwinrulesrc"
-  );
+      lib.optional (builtins.length plasmaCfg.window-rules > 0) "kwinrulesrc";
 in
 {
   options.programs.plasma = {
@@ -186,10 +183,8 @@ in
   ];
 
   config.home.activation = lib.mkIf plasmaCfg.enable {
-    configure-plasma = (
-      lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        $DRY_RUN_CMD ${script}
-      ''
-    );
+    configure-plasma = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      $DRY_RUN_CMD ${script}
+    '';
   };
 }

@@ -54,7 +54,7 @@ module Rc2Nix
     "ffmpegthumbsrc",
     "kservicemenurc",
     "kiorc",
-  ].map {|f| File.expand_path(f, XDG_CONFIG_HOME)}.freeze
+  ].map { |f| File.expand_path(f, XDG_CONFIG_HOME) }.freeze
 
   ##############################################################################
   class RcFile
@@ -96,7 +96,7 @@ module Rc2Nix
     # List of functions that get called with a group name and a key
     # name.  If the function returns +true+ then block that key.
     BLOCK_LIST_LAMBDA = [
-      ->(group, key) { group == "org.kde.kdecoration2" && key == "library" }
+      ->(group, key) { group == "org.kde.kdecoration2" && key == "library" },
     ]
 
     ############################################################################
@@ -127,9 +127,9 @@ module Rc2Nix
             end
 
             # Reasons to skip this group or key:
-            next if GROUP_BLOCK_LIST.any? {|re| @last_group.match(re)}
-            next if KEY_BLOCK_LIST.any? {|re| key.match(re)}
-            next if BLOCK_LIST_LAMBDA.any? {|fn| fn.call(@last_group, key)}
+            next if GROUP_BLOCK_LIST.any? { |re| @last_group.match(re) }
+            next if KEY_BLOCK_LIST.any? { |re| key.match(re) }
+            next if BLOCK_LIST_LAMBDA.any? { |fn| fn.call(@last_group, key) }
             next if File.basename(@file_name) == "plasmanotifyrc" && key == "Seen"
 
             @settings[@last_group] ||= {}
@@ -145,7 +145,7 @@ module Rc2Nix
     def parse_group(line)
       line.gsub("/", "\\\\\\/").gsub(/\s*\[([^\]]+)\]\s*/) do |match|
         $1 + "/"
-      end.sub(/\/$/, '')
+      end.sub(/\/$/, "")
     end
   end
 
@@ -157,7 +157,7 @@ module Rc2Nix
       @files = KNOWN_FILES.dup
 
       OptionParser.new do |p|
-        p.on("-h", "--help", "This message") {$stdout.puts(p); exit}
+        p.on("-h", "--help", "This message") { $stdout.puts(p); exit }
 
         p.on("-c", "--clear", "Clear the file list") do
           @files = []
@@ -228,14 +228,14 @@ module Rc2Nix
 
           keys = groups[group][action].
             split(/(?<!\\),/).first.to_s.
-            gsub(/\\?\\,/, ',').
+            gsub(/\\?\\,/, ",").
             gsub(/\\t/, "\t").
             split(/\t/)
 
           if keys.empty?
             print("[ ]")
           elsif keys.size > 1
-            print("[" + keys.map {|k| nix_val(k)}.join(" ") + "]")
+            print("[" + keys.map { |k| nix_val(k) }.join(" ") + "]")
           elsif keys.first == "none"
             print("[ ]")
           else

@@ -448,91 +448,77 @@ in
     };
   };
 
-  config = (
-    lib.mkIf cfg.enable {
-      programs.plasma.startup = {
-        desktopScript."set_desktop_folder_settings" = (
-          lib.mkIf anyDesktopFolderSettingsSet {
-            text = ''
-              // Desktop folder settings
-              let allDesktops = desktops();
-              for (const desktop of allDesktops) {
-                desktop.currentConfigGroup = ["General"];
-                ${
-                  lib.optionalString (
-                    cfg.desktop.icons.arrangement == "topToBottom"
-                  ) ''desktop.writeConfig("arrangement", 1);''
-                }
-                ${
-                  lib.optionalString (cfg.desktop.icons.alignment == "right") ''desktop.writeConfig("alignment", 1);''
-                }
-                ${
-                  lib.optionalString (cfg.desktop.icons.lockInPlace == true) ''desktop.writeConfig("locked", true);''
-                }
-                ${widgets.lib.stringIfNotNull cfg.desktop.icons.size ''desktop.writeConfig("iconSize", ${builtins.toString cfg.desktop.icons.size});''}
-                ${
-                  lib.optionalString (
-                    cfg.desktop.icons.folderPreviewPopups == false
-                  ) ''desktop.writeConfig("popups", false);''
-                }
-                ${widgets.lib.stringIfNotNull cfg.desktop.icons.previewPlugins ''desktop.writeConfig("previewPlugins", "${lib.strings.concatStringsSep "," cfg.desktop.icons.previewPlugins}");''}
-                ${widgets.lib.stringIfNotNull cfg.desktop.icons.sorting.mode ''desktop.writeConfig("sortMode", ${builtins.toString cfg.desktop.icons.sorting.mode});''}
-                ${
-                  lib.optionalString (
-                    cfg.desktop.icons.sorting.descending == true
-                  ) ''desktop.writeConfig("sortDesc", true);''
-                }
-                ${
-                  lib.optionalString (
-                    cfg.desktop.icons.sorting.foldersFirst == false
-                  ) ''desktop.writeConfig("sortDirsFirst", false);''
-                }
-              }
-            '';
-            priority = 3;
+  config = lib.mkIf cfg.enable {
+    programs.plasma.startup = {
+      desktopScript."set_desktop_folder_settings" = lib.mkIf anyDesktopFolderSettingsSet {
+        text = ''
+          // Desktop folder settings
+          let allDesktops = desktops();
+          for (const desktop of allDesktops) {
+            desktop.currentConfigGroup = ["General"];
+            ${
+              lib.optionalString (
+                cfg.desktop.icons.arrangement == "topToBottom"
+              ) ''desktop.writeConfig("arrangement", 1);''
+            }
+            ${
+              lib.optionalString (cfg.desktop.icons.alignment == "right") ''desktop.writeConfig("alignment", 1);''
+            }
+            ${lib.optionalString cfg.desktop.icons.lockInPlace ''desktop.writeConfig("locked", true);''}
+            ${widgets.lib.stringIfNotNull cfg.desktop.icons.size ''desktop.writeConfig("iconSize", ${builtins.toString cfg.desktop.icons.size});''}
+            ${
+              lib.optionalString (
+                !cfg.desktop.icons.folderPreviewPopups
+              ) ''desktop.writeConfig("popups", false);''
+            }
+            ${widgets.lib.stringIfNotNull cfg.desktop.icons.previewPlugins ''desktop.writeConfig("previewPlugins", "${lib.strings.concatStringsSep "," cfg.desktop.icons.previewPlugins}");''}
+            ${widgets.lib.stringIfNotNull cfg.desktop.icons.sorting.mode ''desktop.writeConfig("sortMode", ${builtins.toString cfg.desktop.icons.sorting.mode});''}
+            ${lib.optionalString cfg.desktop.icons.sorting.descending ''desktop.writeConfig("sortDesc", true);''}
+            ${
+              lib.optionalString (
+                !cfg.desktop.icons.sorting.foldersFirst
+              ) ''desktop.writeConfig("sortDirsFirst", false);''
+            }
           }
-        );
-
-        desktopScript."set_desktop_mouse_actions" = (
-          lib.mkIf anyDesktopMouseActionsSet {
-            text = ''
-              // Mouse actions
-              let configFile = ConfigFile('plasma-org.kde.plasma.desktop-appletsrc');
-              configFile.group = 'ActionPlugins';
-              // References the section [ActionPlugins][0].
-              let actionPluginSubSection = ConfigFile(configFile, 0)
-              ${widgets.lib.stringIfNotNull cfg.desktop.mouseActions.leftClick ''actionPluginSubSection.writeEntry("LeftButton;NoModifier", "${cfg.desktop.mouseActions.leftClick}");''}
-              ${widgets.lib.stringIfNotNull cfg.desktop.mouseActions.middleClick ''actionPluginSubSection.writeEntry("MiddleButton;NoModifier", "${cfg.desktop.mouseActions.middleClick}");''}
-              ${widgets.lib.stringIfNotNull cfg.desktop.mouseActions.rightClick ''actionPluginSubSection.writeEntry("RightButton;NoModifier", "${cfg.desktop.mouseActions.rightClick}");''}
-              ${widgets.lib.stringIfNotNull cfg.desktop.mouseActions.verticalScroll ''actionPluginSubSection.writeEntry("wheel:Vertical;NoModifier", "${cfg.desktop.mouseActions.verticalScroll}");''}
-            '';
-            priority = 3;
-            restartServices = [ "plasma-plasmashell" ];
-          }
-        );
-
-        desktopScript."set_desktop_widgets" = (
-          lib.mkIf (cfg.desktop.widgets != null) {
-            text = ''
-              // Desktop widgets
-              let allDesktops = desktops();
-
-              // Remove all desktop widgets
-              allDesktops.forEach((desktop) => {
-                desktop.widgets().forEach((widget) => {
-                  widget.remove();
-                });
-              });
-
-              for (let i = 0; i < allDesktops.length; i++) {
-                const desktop = allDesktops[i];
-                ${widgets.lib.addDesktopWidgetStmts "desktop" "desktopWidgets" cfg.desktop.widgets}
-              }
-            '';
-            priority = 2;
-          }
-        );
+        '';
+        priority = 3;
       };
-    }
-  );
+
+      desktopScript."set_desktop_mouse_actions" = lib.mkIf anyDesktopMouseActionsSet {
+        text = ''
+          // Mouse actions
+          let configFile = ConfigFile('plasma-org.kde.plasma.desktop-appletsrc');
+          configFile.group = 'ActionPlugins';
+          // References the section [ActionPlugins][0].
+          let actionPluginSubSection = ConfigFile(configFile, 0)
+          ${widgets.lib.stringIfNotNull cfg.desktop.mouseActions.leftClick ''actionPluginSubSection.writeEntry("LeftButton;NoModifier", "${cfg.desktop.mouseActions.leftClick}");''}
+          ${widgets.lib.stringIfNotNull cfg.desktop.mouseActions.middleClick ''actionPluginSubSection.writeEntry("MiddleButton;NoModifier", "${cfg.desktop.mouseActions.middleClick}");''}
+          ${widgets.lib.stringIfNotNull cfg.desktop.mouseActions.rightClick ''actionPluginSubSection.writeEntry("RightButton;NoModifier", "${cfg.desktop.mouseActions.rightClick}");''}
+          ${widgets.lib.stringIfNotNull cfg.desktop.mouseActions.verticalScroll ''actionPluginSubSection.writeEntry("wheel:Vertical;NoModifier", "${cfg.desktop.mouseActions.verticalScroll}");''}
+        '';
+        priority = 3;
+        restartServices = [ "plasma-plasmashell" ];
+      };
+
+      desktopScript."set_desktop_widgets" = lib.mkIf (cfg.desktop.widgets != null) {
+        text = ''
+          // Desktop widgets
+          let allDesktops = desktops();
+
+          // Remove all desktop widgets
+          allDesktops.forEach((desktop) => {
+            desktop.widgets().forEach((widget) => {
+              widget.remove();
+            });
+          });
+
+          for (let i = 0; i < allDesktops.length; i++) {
+            const desktop = allDesktops[i];
+            ${widgets.lib.addDesktopWidgetStmts "desktop" "desktopWidgets" cfg.desktop.widgets}
+          }
+        '';
+        priority = 2;
+      };
+    };
+  };
 }

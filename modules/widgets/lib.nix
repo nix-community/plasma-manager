@@ -53,8 +53,8 @@ let
         ${concatStringsSep "\n" (mapAttrsToList perConfig configs)}
       '';
 
-      groups = (filterAttrs (_: value: builtins.isAttrs value) settings);
-      topLevel = (filterAttrs (_: value: !builtins.isAttrs value) settings);
+      groups = filterAttrs (_: value: builtins.isAttrs value) settings;
+      topLevel = filterAttrs (_: value: !builtins.isAttrs value) settings;
     in
     concatStringsSep "\n" (
       (lib.optional (topLevel != { }) "${var}.currentConfigGroup = [];")

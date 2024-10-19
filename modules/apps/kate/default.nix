@@ -476,7 +476,7 @@ in
     "KTextEditor Document" = {
       "Auto Detect Indent" = cfg.editor.indent.autodetect;
       "Indentation Width" = cfg.editor.indent.width;
-      "Tab Handling" = (tabHandlingMode cfg.editor.indent);
+      "Tab Handling" = tabHandlingMode cfg.editor.indent;
       "Tab Width" = cfg.editor.tabWidth;
       "Keep Extra Spaces" = cfg.editor.indent.keepExtraSpaces;
       "ReplaceTabsDyn" = cfg.editor.indent.replaceWithSpaces;

@@ -144,7 +144,7 @@ in
             inherit icon customButtonImage;
             inherit (search) alignResultsToBottom;
 
-            useCustomButtonImage = (customButtonImage != null);
+            useCustomButtonImage = customButtonImage != null;
 
             appNameFormat = applicationNameFormat;
 

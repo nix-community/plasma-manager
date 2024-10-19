@@ -2,16 +2,15 @@
 let
   ##############################################################################
   # Types for storing settings.
-  basicSettingsType = (
+  basicSettingsType =
     with lib.types;
     nullOr (oneOf [
       bool
       float
       int
       str
-    ])
-  );
-  advancedSettingsType = (
+    ]);
+  advancedSettingsType =
     with lib.types;
     submodule {
       options = {
@@ -54,8 +53,7 @@ let
           '';
         };
       };
-    }
-  );
+    };
   coercedSettingsType =
     with lib.types;
     coercedTo basicSettingsType (value: { inherit value; }) advancedSettingsType;

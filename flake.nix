@@ -39,7 +39,7 @@
           pkgs = nixpkgsFor.${system};
           docs = import ./docs {
             inherit pkgs;
-            lib = pkgs.lib;
+            inherit (pkgs) lib;
           };
         in
         {

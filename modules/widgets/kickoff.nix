@@ -237,8 +237,8 @@ in
       {
         name = "org.kde.plasma.kickoff";
         config = lib.recursiveUpdate (lib.filterAttrsRecursive (_: v: v != null) {
-          popupHeight = popupHeight;
-          popupWidth = popupWidth;
+          inherit popupHeight;
+          inherit popupWidth;
 
           General = {
             inherit icon pin showActionButtonCaptions;

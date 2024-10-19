@@ -46,7 +46,7 @@ let
       let
         candidates = serviceRestarts."${service}";
       in
-      (builtins.any (x: x) (map (v: (builtins.any v.cond (widgetsOfName v.widget))) candidates))
+      builtins.any (x: x) (map (v: (builtins.any v.cond (widgetsOfName v.widget))) candidates)
     );
 
   widgets = import ./widgets args;
@@ -209,55 +209,45 @@ in
     default = [ ];
   };
 
-  config = (
-    lib.mkIf cfg.enable {
-      home.packages = (
-        lib.flatten (
-          lib.filter (x: x != null) (
-            lib.mapAttrsToList (
-              widgetName: packages: if (hasWidget widgetName) then packages else null
-            ) additionalWidgetPackages
-          )
-        )
-      );
+  config = lib.mkIf cfg.enable {
+    home.packages = lib.flatten (
+      lib.filter (x: x != null) (
+        lib.mapAttrsToList (
+          widgetName: packages: if (hasWidget widgetName) then packages else null
+        ) additionalWidgetPackages
+      )
+    );
 
-      programs.plasma.startup.desktopScript."panels" = (
-        lib.mkIf anyPanelSet (
-          let
-            anyNonDefaultScreens = ((builtins.any (panel: panel.screen != null)) cfg.panels);
-            panelPreCMD = ''
-              # We delete plasma-org.kde.plasma.desktop-appletsrc to hinder it
-              # growing indefinitely. See:
-              # https://github.com/nix-community/plasma-manager/issues/76
-              [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ] && rm ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
-            '';
-            panelLayoutStr = (
-              import ../lib/panel.nix {
-                inherit lib;
-                inherit config;
-              }
-            );
-            panelPostCMD = (
-              if anyNonDefaultScreens then
-                ''
-                  sed -i 's/^lastScreen\\x5b$i\\x5d=/lastScreen[$i]=/' ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
-                ''
-              else
-                ""
-            );
-          in
-          {
-            preCommands = panelPreCMD;
-            text = panelLayoutStr;
-            postCommands = panelPostCMD;
-            restartServices = (
-              lib.unique (if anyNonDefaultScreens then [ "plasma-plasmashell" ] else [ ])
-              ++ (lib.filter (service: shouldRestart service) (builtins.attrNames serviceRestarts))
-            );
-            priority = 2;
-          }
-        )
-      );
-    }
-  );
+    programs.plasma.startup.desktopScript."panels" = lib.mkIf anyPanelSet (
+      let
+        anyNonDefaultScreens = (builtins.any (panel: panel.screen != null)) cfg.panels;
+        panelPreCMD = ''
+          # We delete plasma-org.kde.plasma.desktop-appletsrc to hinder it
+          # growing indefinitely. See:
+          # https://github.com/nix-community/plasma-manager/issues/76
+          [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ] && rm ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
+        '';
+        panelLayoutStr = import ../lib/panel.nix {
+          inherit lib;
+          inherit config;
+        };
+        panelPostCMD =
+          if anyNonDefaultScreens then
+            ''
+              sed -i 's/^lastScreen\\x5b$i\\x5d=/lastScreen[$i]=/' ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
+            ''
+          else
+            "";
+      in
+      {
+        preCommands = panelPreCMD;
+        text = panelLayoutStr;
+        postCommands = panelPostCMD;
+        restartServices =
+          lib.unique (if anyNonDefaultScreens then [ "plasma-plasmashell" ] else [ ])
+          ++ (lib.filter shouldRestart (builtins.attrNames serviceRestarts));
+        priority = 2;
+      }
+    );
+  };
 }

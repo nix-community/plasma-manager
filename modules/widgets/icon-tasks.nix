@@ -240,25 +240,25 @@ in
         name = "org.kde.plasma.icontasks";
         config = lib.recursiveUpdate {
           General = lib.filterAttrs (_: v: v != null) {
-            launchers = launchers;
+            inherit launchers;
 
             # Appearance
             showToolTips = appearance.showTooltips;
-            highlightWindows = appearance.highlightWindows;
-            indicateAudioStreams = appearance.indicateAudioStreams;
-            fill = appearance.fill;
+            inherit (appearance) highlightWindows;
+            inherit (appearance) indicateAudioStreams;
+            inherit (appearance) fill;
 
             forceStripes = appearance.rows.multirowView;
             maxStripes = appearance.rows.maximum;
 
-            iconSpacing = appearance.iconSpacing;
+            inherit (appearance) iconSpacing;
 
             # Behavior
             groupingStrategy = behavior.grouping.method;
             groupedTaskVisualization = behavior.grouping.clickAction;
             sortingStrategy = behavior.sortingMethod;
-            minimizeActiveTaskOnClick = behavior.minimizeActiveTaskOnClick;
-            middleClickAction = behavior.middleClickAction;
+            inherit (behavior) minimizeActiveTaskOnClick;
+            inherit (behavior) middleClickAction;
 
             wheelEnabled = behavior.wheel.switchBetweenTasks;
             wheelSkipMinimized = behavior.wheel.ignoreMinimizedTasks;

@@ -4,6 +4,6 @@
 {
   docs = import ./docs {
     inherit pkgs;
-    lib = pkgs.lib;
+    inherit (pkgs) lib;
   };
 }

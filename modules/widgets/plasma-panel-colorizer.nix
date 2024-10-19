@@ -788,7 +788,7 @@ in
           General = lib.filterAttrs (_: v: v != null) {
             # General options
             isEnabled = general.enable;
-            hideWidget = general.hideWidget;
+            inherit (general) hideWidget;
 
             # Preset autoloading
             normalPreset = presetAutoLoading.normal;
@@ -800,7 +800,7 @@ in
             widgetBgEnabled = widgetBackground.enable;
 
             # Widget background options > Color mode
-            mode = widgetBackground.colorMode.mode; # Color mode
+            inherit (widgetBackground.colorMode) mode; # Color mode
             rainbowInterval = widgetBackground.colorMode.animationInterval;
             rainbowTransition = widgetBackground.colorMode.animationSmoothing;
 
@@ -816,8 +816,8 @@ in
             bgLightness = widgetBackground.colors.contrastCorrection.lightness;
 
             # Widget background options > Shape
-            opacity = widgetBackground.shape.opacity;
-            radius = widgetBackground.shape.radius;
+            inherit (widgetBackground.shape) opacity;
+            inherit (widgetBackground.shape) radius;
             bgLineModeEnabled = widgetBackground.shape.line.enable;
             bgLinePosition = widgetBackground.shape.line.position;
             bgLineWidth = widgetBackground.shape.line.width;
@@ -865,7 +865,7 @@ in
             fgShadowY = textAndIcons.shadow.verticalOffset;
 
             # Text and icons options > Custom badges
-            fixCustomBadges = textAndIcons.customBadges.fixCustomBadges;
+            inherit (textAndIcons.customBadges) fixCustomBadges;
 
             # Text and icons options > Force icon color
             forceRecolor = textAndIcons.forceIconColor.widgets;
