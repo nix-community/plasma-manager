@@ -262,10 +262,12 @@ in
           "ghostwriter"
         ]
         {
+          nullable = true;
           example = "pkgs.kdePackages.ghostwriter";
           extraDescription = ''
             Use `pkgs.libsForQt5.ghostwriter` in Plasma5 and
-            `pkgs.kdePackages.ghostwriter` in Plasma6.
+            `pkgs.kdePackages.ghostwriter` in Plasma6. Use
+            `null` if home-manager should not install GhostWriter.
           '';
         };
 
@@ -601,7 +603,7 @@ in
         }
       ];
 
-      home.packages = [ cfg.package ];
+      home.packages = lib.mkIf (cfg.package != null) [ cfg.package ];
 
       programs.plasma.configFile = {
         "kde.org/ghostwriter.conf" = (

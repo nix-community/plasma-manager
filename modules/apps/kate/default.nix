@@ -247,6 +247,7 @@ in
           "kate"
         ]
         {
+          nullable = true;
           example = "pkgs.libsForQt5.kate";
           extraDescription = ''
             Which kate package to install. Use `pkgs.libsForQt5.kate` in Plasma5 and
