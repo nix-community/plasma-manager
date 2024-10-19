@@ -107,7 +107,7 @@ in
             "list"
           ];
         in
-        mkOption {
+        lib.mkOption {
           type = with lib.types; nullOr (enum enumVals);
           default = null;
           example = "grid";
