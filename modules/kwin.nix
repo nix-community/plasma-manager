@@ -71,7 +71,7 @@ let
     if value == null then
       null
     else
-      lib.findFirstIndex (
+      lib.lists.findFirstIndex (
         x: x == value
       ) (throw "getIndexFromEnum (kwin): Value ${value} isn't present in the enum. This is a bug") enum;
 
