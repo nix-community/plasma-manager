@@ -217,7 +217,14 @@ let
       DimDisplayIdleTimeoutSec =
         if (cfg.powerdevil.${optionsName}.dimDisplay.idleTimeout != null) then
           cfg.powerdevil.${optionsName}.dimDisplay.idleTimeout
-        else if (cfg.powerdevil.${optionsName}.dimDisplay.enable == false) then
+        else if
+          (
+            if builtins.isBool cfg.powerdevil.${optionsName}.dimDisplay.enable then
+              !cfg.powerdevil.${optionsName}.dimDisplay.enable
+            else
+              false
+          )
+        then
           -1
         else
           null;
@@ -298,10 +305,14 @@ in
           message = "Setting programs.plasma.powerdevil.${type}.turnOffDisplay.idleTimeoutWhenLocked for idleTimeout \"never\" is not supported.";
         }
         {
-          assertion = (
-            cfg.powerdevil.${type}.dimDisplay.enable != false
-            || cfg.powerdevil.${type}.dimDisplay.idleTimeout == null
-          );
+          assertion =
+            (
+              if builtins.isBool cfg.powerdevil.${type}.dimDisplay.enable then
+                cfg.powerdevil.${type}.dimDisplay.enable
+              else
+                false
+            )
+            || cfg.powerdevil.${type}.dimDisplay.idleTimeout == null;
           message = "Cannot set programs.plasma.powerdevil.${type}.dimDisplay.idleTimeout when programs.plasma.powerdevil.${type}.dimDisplay.enable is disabled.";
         }
       ];
