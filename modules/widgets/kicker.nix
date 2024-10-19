@@ -141,7 +141,7 @@ in
       {
         name = "org.kde.plasma.kicker";
         config = lib.recursiveUpdate {
-          General = lib.filterAttrs (_: v: v != null) ({
+          General = lib.filterAttrs (_: v: v != null) {
             inherit icon customButtonImage;
             inherit (search) alignResultsToBottom;
 
@@ -158,7 +158,7 @@ in
             recentOrdering = categories.order;
 
             useExtraRunners = search.expandSearchResults;
-          });
+          };
         } settings;
       };
   };

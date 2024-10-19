@@ -240,7 +240,7 @@ in
       {
         name = "org.kde.plasma.icontasks";
         config = lib.recursiveUpdate {
-          General = lib.filterAttrs (_: v: v != null) ({
+          General = lib.filterAttrs (_: v: v != null) {
             launchers = launchers;
 
             # Appearance
@@ -271,7 +271,7 @@ in
 
             unhideOnAttention = behavior.unhideOnAttentionNeeded;
             reverseMode = behavior.newTasksAppearOn;
-          });
+          };
         } settings;
       };
   };

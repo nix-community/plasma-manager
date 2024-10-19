@@ -382,10 +382,10 @@ in
           !(lib.all (c: builtins.elem (lib.toLower c) validChars) (hexChars hex))
           && (builtins.stringLength hex) > 0;
         allHexCodes = lib.flatten (
-          (map (t: [
+          map (t: [
             t.vendorId
             t.productId
-          ]) (cfg.input.touchpads ++ cfg.input.mice))
+          ]) (cfg.input.touchpads ++ cfg.input.mice)
         );
         invalidHexCodes = builtins.filter hexCodeInvalid allHexCodes;
       in

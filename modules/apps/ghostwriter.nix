@@ -11,10 +11,10 @@ let
 
   createThemes = lib.attrsets.mapAttrs' (
     name: value:
-    lib.attrsets.nameValuePair ("ghostwriter/themes/${name}.json") ({
+    lib.attrsets.nameValuePair "ghostwriter/themes/${name}.json" {
       enable = true;
       source = value;
-    })
+    }
   );
 
   getIndexFromEnum =

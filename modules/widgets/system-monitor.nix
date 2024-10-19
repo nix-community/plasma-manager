@@ -189,7 +189,7 @@ in
       {
         name = "org.kde.plasma.systemmonitor";
         config = lib.filterAttrsRecursive (_: v: v != null) (
-          lib.recursiveUpdate ({
+          lib.recursiveUpdate {
             Appearance = {
               inherit title;
               inherit showTitle;
@@ -205,7 +205,7 @@ in
               rangeFrom = range.from;
               rangeTo = range.to;
             };
-          }) (lib.recursiveUpdate sensors settings)
+          } (lib.recursiveUpdate sensors settings)
         );
       };
   };
