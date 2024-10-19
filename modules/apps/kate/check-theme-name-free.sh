@@ -1,4 +1,5 @@
 # there could be a bash shebang to ${pkgs.bash}/bin/bash here
+# shellcheck shell=bash
 
 # https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux/5947802#5947802
 RED='\033[0;31m'
