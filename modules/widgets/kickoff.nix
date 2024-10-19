@@ -55,7 +55,7 @@ in
         };
         description = "The size of the widget. (Only for desktop widget)";
       };
-      icon = mkOption {
+      icon = lib.mkOption {
         type = with lib.types; nullOr str;
         default = null;
         example = "start-here-kde-symbolic";
@@ -66,7 +66,7 @@ in
           To do this, set the value to a absolute path to the image file.
         '';
       };
-      label = mkOption {
+      label = lib.mkOption {
         type = with lib.types; nullOr str;
         default = null;
         example = "Menu";
