@@ -175,7 +175,7 @@ in
                       3
                     ]
                     (
-                      lib.findFirstIndex (
+                      lib.lists.findFirstIndex (
                         x: x == value
                       ) (throw "kickoff: non-existent value ${value}! This is a bug!") enumVals
                     );
