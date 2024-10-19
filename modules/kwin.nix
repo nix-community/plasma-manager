@@ -625,9 +625,11 @@ in
         }
       ];
 
-      home.packages =
-        with pkgs;
-        [ ] ++ lib.optionals (cfg.kwin.scripts.polonium.enable == true) [ polonium ];
+    home.packages =
+      with pkgs;
+      lib.optionals (
+        if builtins.isBool cfg.kwin.scripts.polonium.enable then cfg.kwin.scripts.polonium.enable else false
+      ) [ polonium ];
 
       programs.plasma.configFile."kwinrc" = (
         lib.mkMerge [
