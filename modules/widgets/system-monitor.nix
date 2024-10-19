@@ -29,21 +29,13 @@ let
   # {name, color} -> {name, value}
   # Convert the sensor attrset into a name-value pair expected by listToAttrs
   toColorKV =
-    {
-      name,
-      color,
-      label,
-    }:
+    { name, color, ... }:
     {
       inherit name;
       value = color;
     };
   toLabelKV =
-    {
-      name,
-      color,
-      label,
-    }:
+    { name, label, ... }:
     {
       inherit name;
       value = label;
@@ -174,8 +166,6 @@ in
 
     convert =
       {
-        position,
-        size,
         title,
         showTitle,
         showLegend,
@@ -185,6 +175,7 @@ in
         textOnlySensors,
         range,
         settings,
+        ...
       }:
       {
         name = "org.kde.plasma.systemmonitor";

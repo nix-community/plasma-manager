@@ -121,8 +121,6 @@ in
     };
     convert =
       {
-        position,
-        size,
         icon,
         customButtonImage,
         applicationNameFormat,
@@ -130,6 +128,7 @@ in
         categories,
         search,
         settings,
+        ...
       }:
       {
         name = "org.kde.plasma.kickerdash";

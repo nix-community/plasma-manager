@@ -58,11 +58,10 @@ in
 
     convert =
       {
-        position,
-        size,
         expanding,
         length,
         settings,
+        ...
       }:
       {
         name = "org.kde.plasma.panelspacer";

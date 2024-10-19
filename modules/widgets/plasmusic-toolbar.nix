@@ -378,8 +378,6 @@ in
     };
     convert =
       {
-        position,
-        size,
         panelIcon,
         preferredSource,
         songText,
@@ -388,6 +386,7 @@ in
         background,
         albumCover,
         settings,
+        ...
       }:
       {
         name = "plasmusic-toolbar";

@@ -230,12 +230,11 @@ in
     };
     convert =
       {
-        position,
-        size,
         appearance,
         behavior,
         launchers,
         settings,
+        ...
       }:
       {
         name = "org.kde.plasma.icontasks";
