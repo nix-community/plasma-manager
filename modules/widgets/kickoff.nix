@@ -1,14 +1,14 @@
 { lib, ... }:
 let
-  inherit (lib) mkOption types;
   inherit (import ./lib.nix { inherit lib; }) configValueType;
   inherit (import ./default.nix { inherit lib; }) positionType sizeType;
 
   mkBoolOption =
     description:
-    mkOption {
-      type = with types; nullOr bool;
+    lib.mkOption {
+      type = with lib.types; nullOr bool;
       default = null;
+      example = true;
       inherit description;
     };
 
@@ -39,7 +39,7 @@ in
     description = "Kickoff is the default application launcher of the Plasma desktop.";
 
     opts = {
-      position = mkOption {
+      position = lib.mkOption {
         type = positionType;
         example = {
           horizontal = 250;
@@ -47,7 +47,7 @@ in
         };
         description = "The position of the widget. (Only for desktop widget)";
       };
-      size = mkOption {
+      size = lib.mkOption {
         type = sizeType;
         example = {
           width = 500;
@@ -56,7 +56,7 @@ in
         description = "The size of the widget. (Only for desktop widget)";
       };
       icon = mkOption {
-        type = types.nullOr types.str;
+        type = with lib.types; nullOr str;
         default = null;
         example = "start-here-kde-symbolic";
         description = ''
@@ -67,20 +67,20 @@ in
         '';
       };
       label = mkOption {
-        type = types.nullOr types.str;
+        type = with lib.types; nullOr str;
         default = null;
         example = "Menu";
         description = "The label to use for the kickoff button.";
       };
       sortAlphabetically = mkBoolOption "Whether to sort menu contents alphabetically or use manual/system sort order.";
       compactDisplayStyle = mkBoolOption "Whether to use a compact display style for list items.";
-      sidebarPosition = mkOption {
-        type = types.nullOr (
-          types.enum [
+      sidebarPosition = lib.mkOption {
+        type =
+          with lib.types;
+          nullOr (enum [
             "left"
             "right"
-          ]
-        );
+          ]);
         default = null;
         example = "left";
         description = "The position of the sidebar.";
@@ -93,8 +93,8 @@ in
             "list"
           ];
         in
-        mkOption {
-          type = with types; nullOr (enum enumVals);
+        lib.mkOption {
+          type = with lib.types; nullOr (enum enumVals);
           default = null;
           example = "list";
           description = "How to display favorites.";
@@ -108,7 +108,7 @@ in
           ];
         in
         mkOption {
-          type = with types; nullOr (enum enumVals);
+          type = with lib.types; nullOr (enum enumVals);
           default = null;
           example = "grid";
           description = "How to display applications.";
@@ -119,30 +119,92 @@ in
           enumVals = [
             "power"
             "session"
-            "custom"
             "powerAndSession"
           ];
+          buttonsEnum = [
+            "lock-screen"
+            "logout"
+            "save-session"
+            "switch-user"
+            "suspend"
+            "hibernate"
+            "reboot"
+            "shutdown"
+          ];
         in
-        mkOption {
-          type = with types; nullOr (enum enumVals);
+        lib.mkOption {
+          type =
+            with lib.types;
+            nullOr (
+              either (enum enumVals) (submodule {
+                options.custom = lib.mkOption {
+                  type = listOf (enum buttonsEnum);
+                  example = [
+                    "shutdown"
+                    "reboot"
+                  ];
+                  description = "The custom buttons to show";
+                };
+              })
+            );
           default = null;
-          example = "powerAndSession";
+          example = {
+            custom = [
+              "shutdown"
+              "reboot"
+              "logout"
+            ];
+          };
           description = "Which actions should be displayed in the footer.";
-          apply = getIndexFromEnum enumVals;
+          apply =
+            value:
+            if value == null then
+              null
+            else if value ? custom then
+              {
+                primaryActions = 2;
+                systemFavorites = builtins.concatStringsSep ''\\,'' value.custom;
+              }
+            else
+              {
+                primaryActions =
+                  builtins.elemAt
+                    [
+                      0
+                      1
+                      3
+                    ]
+                    (
+                      lib.findFirstIndex (
+                        x: x == value
+                      ) (throw "kickoff: non-existent value ${value}! This is a bug!") enumVals
+                    );
+                systemFavorites =
+                  if value == "session" then
+                    builtins.concatStringsSep ''\\,'' (
+                      builtins.filter (v: v != null) (lib.imap0 (i: v: if i < 4 then v else null) buttonsEnum)
+                    )
+                  else if value == "power" then
+                    builtins.concatStringsSep ''\\,'' (
+                      builtins.filter (v: v != null) (lib.imap0 (i: v: if i > 3 then v else null) buttonsEnum)
+                    )
+                  else
+                    builtins.concatStringsSep ''\\,'' buttonsEnum;
+              };
         };
       showActionButtonCaptions = mkBoolOption "Whether to display captions ('shut down', 'log out', etc.) for the footer action buttons";
       pin = mkBoolOption "Whether the popup should remain open when another window is activated.";
-      popupHeight = mkOption {
-        type = with types; nullOr ints.positive;
+      popupHeight = lib.mkOption {
+        type = with lib.types; nullOr ints.positive;
         default = null;
         example = 500;
       };
-      popupWidth = mkOption {
-        type = with types; nullOr ints.positive;
+      popupWidth = lib.mkOption {
+        type = with lib.types; nullOr ints.positive;
         default = null;
         example = 700;
       };
-      settings = mkOption {
+      settings = lib.mkOption {
         type = configValueType;
         default = null;
         example = {
@@ -179,7 +241,7 @@ in
           popupWidth = popupWidth;
 
           General = {
-            inherit icon pin;
+            inherit icon pin showActionButtonCaptions;
 
             menuLabel = label;
             alphaSort = sortAlphabetically;
@@ -187,9 +249,7 @@ in
             paneSwap = sidebarPosition;
             favoritesDisplay = favoritesDisplayMode;
             applicationsDisplay = applicationsDisplayMode;
-            primaryActions = showButtonsFor;
-            showActionButtonCaptions = showActionButtonCaptions;
-          };
+          } // showButtonsFor;
         }) settings;
       };
   };
