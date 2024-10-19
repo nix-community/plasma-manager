@@ -329,11 +329,12 @@ in
                 Theme = cfg.workspace.splashScreen.theme;
               }
             );
-            kwinrc = (
-              lib.mkIf (cfg.workspace.windowDecorations.theme != null) {
+            kwinrc =
+              (lib.mkIf (cfg.workspace.windowDecorations.theme != null) {
                 "org.kde.kdecoration2".library = cfg.workspace.windowDecorations.library;
                 "org.kde.kdecoration2".theme = cfg.workspace.windowDecorations.theme;
-              }) // (lib.optionalAttrs (cfg.workspace.enableMiddleClickPaste != null) {
+              })
+              // (lib.optionalAttrs (cfg.workspace.enableMiddleClickPaste != null) {
                 Wayland.EnablePrimarySelection = cfg.workspace.enableMiddleClickPaste;
               });
           }
@@ -418,7 +419,11 @@ in
             # gives us the correct behavior with last_run files.
             text = "// Wallpaper to set later: ${cfg.workspace.wallpaper}";
             postCommands = ''
-              plasma-apply-wallpaperimage ${cfg.workspace.wallpaper} ${lib.optionalString (cfg.workspace.wallpaperFillMode != null) "--fill-mode ${cfg.workspace.wallpaperFillMode}"}
+              plasma-apply-wallpaperimage ${cfg.workspace.wallpaper} ${
+                lib.optionalString (
+                  cfg.workspace.wallpaperFillMode != null
+                ) "--fill-mode ${cfg.workspace.wallpaperFillMode}"
+              }
             '';
             priority = 3;
           }
@@ -437,9 +442,10 @@ in
                     if (cfg.workspace.wallpaperPictureOfTheDay.updateOverMeteredConnection) then "1" else "0"
                   }");
                   ${
-                    lib.optionalString (
-                      cfg.workspace.wallpaperFillMode != null
-                    ) ''desktop.writeConfig("FillMode", "${toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}}");''
+                    lib.optionalString (cfg.workspace.wallpaperFillMode != null)
+                      ''desktop.writeConfig("FillMode", "${
+                        toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}
+                      }");''
                   }
               }
             '';
@@ -481,9 +487,10 @@ in
                   });
                   desktop.writeConfig("SlideInterval", "${builtins.toString cfg.workspace.wallpaperSlideShow.interval}");
                   ${
-                    lib.optionalString (
-                      cfg.workspace.wallpaperFillMode != null
-                    ) ''desktop.writeConfig("FillMode", "${toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}}");''
+                    lib.optionalString (cfg.workspace.wallpaperFillMode != null)
+                      ''desktop.writeConfig("FillMode", "${
+                        toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}
+                      }");''
                   }
               }
             '';
