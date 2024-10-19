@@ -4,8 +4,10 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    home-manager.url = "github:nix-community/home-manager";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -37,7 +39,7 @@
           pkgs = nixpkgsFor.${system};
           docs = import ./docs {
             inherit pkgs;
-            lib = pkgs.lib;
+            inherit (pkgs) lib;
           };
         in
         {
@@ -85,16 +87,60 @@
           home-manager-module = inputs.home-manager.nixosModules.home-manager;
           plasma-module = self.homeManagerModules.plasma-manager;
         };
+        formatting =
+          nixpkgsFor.${system}.runCommandLocal "formatting-check"
+            {
+              src = self.sourceInfo;
+              nativeBuildInputs = with nixpkgsFor.${system}; [
+                treefmt2
+                deadnix
+                nixfmt-rfc-style
+                nodePackages.prettier
+                ruby
+                ruby.devdoc
+                rufo
+                shellcheck
+                shfmt
+                taplo
+                (pkgs.writeShellScriptBin "statix-fix" ''
+                  for file in "''$@"; do
+                    ${lib.getExe statix} fix "$file"
+                  done
+                '')
+                (python3.withPackages (pyPkgs: [
+                  pyPkgs.python-lsp-server
+                  pyPkgs.black
+                  pyPkgs.isort
+                ]))
+              ];
+            }
+            ''
+              cp -r $src/* .
+              chmod -R 777 *
+              treefmt --ci
+              touch "$out"
+            '';
       });
 
-      formatter = forAllSystems (system: nixpkgsFor.${system}.treefmt);
+      formatter = forAllSystems (system: nixpkgsFor.${system}.treefmt2);
 
       devShells = forAllSystems (system: {
         default = nixpkgsFor.${system}.mkShell {
           buildInputs = with nixpkgsFor.${system}; [
+            deadnix
             nixfmt-rfc-style
+            nodePackages.prettier
             ruby
             ruby.devdoc
+            rufo
+            shellcheck
+            shfmt
+            taplo
+            (pkgs.writeShellScriptBin "statix-fix" ''
+              for file in "''$@"; do
+                ${lib.getExe statix} fix "$file"
+              done
+            '')
             (python3.withPackages (pyPkgs: [
               pyPkgs.python-lsp-server
               pyPkgs.black

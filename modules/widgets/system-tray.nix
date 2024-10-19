@@ -16,7 +16,7 @@ in
   systemTray = {
     description = "A system tray of other widgets/plasmoids";
 
-    opts = (
+    opts =
       { options, ... }:
       {
         # See https://invent.kde.org/plasma/plasma-workspace/-/blob/master/applets/systemtray/package/contents/config/main.xml for the accepted raw options.
@@ -190,8 +190,7 @@ in
           description = "Extra configuration options for the widget.";
           apply = settings: if settings == null then { } else settings;
         };
-      }
-    );
+      };
 
     convert =
       {

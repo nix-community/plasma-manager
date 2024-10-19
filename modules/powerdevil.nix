@@ -217,14 +217,20 @@ let
       DimDisplayIdleTimeoutSec =
         if (cfg.powerdevil.${optionsName}.dimDisplay.idleTimeout != null) then
           cfg.powerdevil.${optionsName}.dimDisplay.idleTimeout
-        else if (cfg.powerdevil.${optionsName}.dimDisplay.enable == false) then
+        else if
+          (
+            if builtins.isBool cfg.powerdevil.${optionsName}.dimDisplay.enable then
+              !cfg.powerdevil.${optionsName}.dimDisplay.enable
+            else
+              false
+          )
+        then
           -1
         else
           null;
       DisplayBrightness = cfg.powerdevil.${optionsName}.displayBrightness;
-      UseProfileSpecificDisplayBrightness = (
-        if (cfg.powerdevil.${optionsName}.displayBrightness == null) then null else true
-      );
+      UseProfileSpecificDisplayBrightness =
+        if (cfg.powerdevil.${optionsName}.displayBrightness == null) then null else true;
     };
     "${cfgSectName}/Performance" = {
       PowerProfile = cfg.powerdevil.${optionsName}.powerProfile;
@@ -284,24 +290,26 @@ in
     let
       createAssertions = type: [
         {
-          assertion = (
+          assertion =
             cfg.powerdevil.${type}.autoSuspend.action != autoSuspendActions.nothing
-            || cfg.powerdevil.${type}.autoSuspend.idleTimeout == null
-          );
+            || cfg.powerdevil.${type}.autoSuspend.idleTimeout == null;
           message = "Setting programs.plasma.powerdevil.${type}.autoSuspend.idleTimeout for autosuspend-action \"nothing\" is not supported.";
         }
         {
-          assertion = (
+          assertion =
             cfg.powerdevil.${type}.turnOffDisplay.idleTimeout != -1
-            || cfg.powerdevil.${type}.turnOffDisplay.idleTimeoutWhenLocked == null
-          );
+            || cfg.powerdevil.${type}.turnOffDisplay.idleTimeoutWhenLocked == null;
           message = "Setting programs.plasma.powerdevil.${type}.turnOffDisplay.idleTimeoutWhenLocked for idleTimeout \"never\" is not supported.";
         }
         {
-          assertion = (
-            cfg.powerdevil.${type}.dimDisplay.enable != false
-            || cfg.powerdevil.${type}.dimDisplay.idleTimeout == null
-          );
+          assertion =
+            (
+              if builtins.isBool cfg.powerdevil.${type}.dimDisplay.enable then
+                cfg.powerdevil.${type}.dimDisplay.enable
+              else
+                false
+            )
+            || cfg.powerdevil.${type}.dimDisplay.idleTimeout == null;
           message = "Cannot set programs.plasma.powerdevil.${type}.dimDisplay.idleTimeout when programs.plasma.powerdevil.${type}.dimDisplay.enable is disabled.";
         }
       ];
@@ -310,9 +318,9 @@ in
 
   options = {
     programs.plasma.powerdevil = {
-      AC = (createPowerDevilOptions "AC");
-      battery = (createPowerDevilOptions "battery");
-      lowBattery = (createPowerDevilOptions "lowBattery");
+      AC = createPowerDevilOptions "AC";
+      battery = createPowerDevilOptions "battery";
+      lowBattery = createPowerDevilOptions "lowBattery";
       general = {
         pausePlayersOnSuspend = lib.mkOption {
           type = with lib.types; nullOr bool;
@@ -354,13 +362,13 @@ in
   };
 
   config.programs.plasma.configFile = lib.mkIf cfg.enable {
-    powerdevilrc = lib.filterAttrsRecursive (k: v: v != null) (
+    powerdevilrc = lib.filterAttrsRecursive (_k: v: v != null) (
       (createPowerDevilConfig "AC" "AC")
       // (createPowerDevilConfig "Battery" "battery")
       // (createPowerDevilConfig "LowBattery" "lowBattery")
       // {
         General = {
-          pausePlayersOnSuspend = cfg.powerdevil.general.pausePlayersOnSuspend;
+          inherit (cfg.powerdevil.general) pausePlayersOnSuspend;
         };
         BatteryManagement = {
           BatteryCriticalAction = cfg.powerdevil.batteryLevels.criticalAction;

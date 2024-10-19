@@ -1,4 +1,5 @@
 # Preface {#preface}
+
 Plasma-Manager is a [Home Manager](https://github.com/nix-community/home-manager)
 module which has as a goal to be able to configure as much of KDE plasma as
 possible, using nix.

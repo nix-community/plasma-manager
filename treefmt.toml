@@ -2,6 +2,15 @@
 command = "nixfmt"
 includes = ["*.nix"]
 
+[formatter.deadnix]
+command = "deadnix"
+options = ["--edit"]
+includes = ["*.nix"]
+
+[formatter.statix]
+command = "statix-fix"
+includes = ["*.nix"]
+
 [formatter.black]
 command = "black"
 includes = ["*.py", "*.pyi"]
@@ -9,3 +18,45 @@ includes = ["*.py", "*.pyi"]
 [formatter.isort]
 command = "isort"
 includes = ["*.py", "*.pyi"]
+
+[formatter.taplo]
+command = "taplo"
+options = ["format"]
+includes = ["*.toml"]
+
+[formatter.shellcheck]
+command = "shellcheck"
+includes = ["*.sh", "*.bash", "*.envrc", "*.envrc.*"]
+priority = 0
+
+[formatter.shfmt]
+command = "shfmt"
+options = [
+  "--write",
+  "--simplify",
+  "--indent=2",
+  "--binary-next-line",
+  "--case-indent",
+  "--space-redirects",
+  "--apply-ignore",
+]
+includes = ["*.sh", "*.bash", "*.envrc", "*.envrc.*"]
+priority = 1
+
+[formatter.rufo]
+command = "rufo"
+options = ["--simple-exit"]
+includes = [
+  "*.rb",
+  "*.arb",
+  "*.rbx",
+  "*.rbw",
+  "*.gemfile",
+  "*.gemspec",
+  "*.ruby",
+]
+
+[formatter.prettier]
+command = "prettier"
+options = ["--write"]
+includes = ["*.css", "*.json", "*.md", "*.yml"]

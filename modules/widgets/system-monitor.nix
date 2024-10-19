@@ -188,11 +188,11 @@ in
             };
             Sensors = {
               lowPrioritySensorIds = textOnlySensors;
-              totalSensors = totalSensors;
+              inherit totalSensors;
             };
             "org.kde.ksysguard.piechart/General" = {
               inherit showLegend;
-              rangeAuto = (range.from == null && range.to == null);
+              rangeAuto = range.from == null && range.to == null;
               rangeFrom = range.from;
               rangeTo = range.to;
             };

@@ -135,7 +135,7 @@ in
         config = lib.recursiveUpdate {
           General = lib.filterAttrs (_: v: v != null) {
             inherit icon customButtonImage;
-            useCustomButtonImage = (customButtonImage != null);
+            useCustomButtonImage = customButtonImage != null;
 
             appNameFormat = applicationNameFormat;
 

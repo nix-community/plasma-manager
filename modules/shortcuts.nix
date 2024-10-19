@@ -26,23 +26,20 @@ let
 
       # Don't allow un-escaped commas:
       escape = lib.escape [ "," ];
-      keysStr = (
+      keysStr =
         if ((builtins.length keys) == 1) then
           (escape (builtins.head keys))
         else
-          builtins.concatStringsSep "\t" (map escape keys)
-      );
+          builtins.concatStringsSep "\t" (map escape keys);
     in
-    (
-      if (isService group) then
+    if (isService group) then
+      keysStr
+    else
+      (lib.concatStringsSep "," [
         keysStr
-      else
-        (lib.concatStringsSep "," [
-          keysStr
-          "" # List of default keys, not needed.
-          "" # Display string, not needed.
-        ])
-    );
+        "" # List of default keys, not needed.
+        "" # Display string, not needed.
+      ]);
 
   shortcutsToSettings =
     groups: lib.mapAttrs (group: attrs: (lib.mapAttrs (shortcutToConfigValue group) attrs)) groups;

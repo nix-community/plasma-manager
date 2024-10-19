@@ -276,7 +276,7 @@ in
         apply =
           font:
           {
-            autoFontAndSize = (font == null);
+            autoFontAndSize = font == null;
           }
           // lib.optionalAttrs (font != null) {
             fontFamily = font.family;
@@ -322,7 +322,7 @@ in
               showDate = date.enable;
               dateDisplayFormat = date.position;
 
-              showSeconds = time.showSeconds;
+              inherit (time) showSeconds;
               use24hFormat = time.format;
 
               selectedTimeZones = timeZone.selected;
@@ -331,9 +331,9 @@ in
               displayTimezoneFormat = timeZone.format;
               showLocalTimezone = timeZone.alwaysShow;
 
-              firstDayOfWeek = calendar.firstDayOfWeek;
+              inherit (calendar) firstDayOfWeek;
               enabledCalendarPlugins = calendar.plugins;
-              showWeekNumbers = calendar.showWeekNumbers;
+              inherit (calendar) showWeekNumbers;
             }
             // date.format
             // font

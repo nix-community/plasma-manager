@@ -29,4 +29,3 @@ Add to your configuration file, for example `~/.config/home-manager/plasma.nix`:
   };
 }
 ```
-

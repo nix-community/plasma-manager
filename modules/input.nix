@@ -470,7 +470,7 @@ in
     };
   };
 
-  config.programs.plasma.configFile."kxkbrc" = lib.mkIf (cfg.enable) (
+  config.programs.plasma.configFile."kxkbrc" = lib.mkIf cfg.enable (
     lib.mkMerge [
       (lib.mkIf (cfg.input.keyboard.layouts != null) {
         Layout = {
@@ -544,18 +544,16 @@ in
     '';
   };
 
-  config.programs.plasma.configFile."kcminputrc" = lib.mkIf (cfg.enable) (
+  config.programs.plasma.configFile."kcminputrc" = lib.mkIf cfg.enable (
     lib.mkMerge [
       {
-        Keyboard = (
-          lib.filterAttrs (k: v: v != null) {
-            NumLock = (
-              lib.lists.findFirstIndex (x: x == cfg.input.keyboard.numlockOnStartup) null numlockSettings
-            );
-            RepeatDelay = cfg.input.keyboard.repeatDelay;
-            RepeatRate = cfg.input.keyboard.repeatRate;
-          }
-        );
+        Keyboard = lib.filterAttrs (_k: v: v != null) {
+          NumLock = lib.lists.findFirstIndex (
+            x: x == cfg.input.keyboard.numlockOnStartup
+          ) null numlockSettings;
+          RepeatDelay = cfg.input.keyboard.repeatDelay;
+          RepeatRate = cfg.input.keyboard.repeatRate;
+        };
       }
       (lib.mkMerge (map touchPadToConfig cfg.input.touchpads))
       (lib.mkMerge (map mouseToConfig cfg.input.mice))

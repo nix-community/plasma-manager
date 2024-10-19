@@ -18,21 +18,19 @@ let
     opt:
     opt
     // {
-      declarations = (
-        map (
-          decl:
-          if (lib.hasPrefix pmPath (toString decl)) then
-            (githubDeclaration "nix-community" "plasma-manager" "trunk" (
-              lib.removePrefix "/" (lib.removePrefix pmPath (toString decl))
-            ))
-          else
-            decl
-        ) opt.declarations
-      );
+      declarations = map (
+        decl:
+        if (lib.hasPrefix pmPath (toString decl)) then
+          (githubDeclaration "nix-community" "plasma-manager" "trunk" (
+            lib.removePrefix "/" (lib.removePrefix pmPath (toString decl))
+          ))
+        else
+          decl
+      ) opt.declarations;
     };
 
-  buildOptionsDocs = (
-    args@{ modules, ... }:
+  buildOptionsDocs =
+    { modules, ... }:
     let
       opts =
         (lib.evalModules {
@@ -45,12 +43,11 @@ let
       inherit options;
       inherit transformOptions;
       warningsAreErrors = false;
-    }
-  );
+    };
 
   pmOptionsDoc = buildOptionsDocs { inherit modules; };
   plasma-manager-options = pkgs.callPackage ./plasma-manager-options.nix {
-    nixos-render-docs = pkgs.nixos-render-docs;
+    inherit (pkgs) nixos-render-docs;
     plasma-manager-options = pmOptionsDoc.optionsJSON;
     revision = "latest";
   };

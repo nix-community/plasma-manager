@@ -92,11 +92,11 @@ in
         name = "org.kde.plasma.pager";
         config = lib.recursiveUpdate {
           General = lib.filterAttrs (_: v: v != null) {
-            showWindowOutlines = general.showWindowOutlines;
+            inherit (general) showWindowOutlines;
             showWindowIcons = general.showApplicationIconsOnWindowOutlines;
-            showOnlyCurrentScreen = general.showOnlyCurrentScreen;
+            inherit (general) showOnlyCurrentScreen;
             wrapPage = general.navigationWrapsAround;
-            displayedText = general.displayedText;
+            inherit (general) displayedText;
             currentDesktopSelected = general.selectingCurrentVirtualDesktop;
           };
         } settings;
