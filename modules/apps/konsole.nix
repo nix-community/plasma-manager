@@ -9,7 +9,7 @@ let
     ;
 
   # used as shown in the example in the library docs:
-  # https://ryantm.github.io/nixpkgs/functions/library/attrsets/#function-library-lib.attrsets.mapAttrs-prime
+  # https://noogle.dev/f/lib/attrsets/mapAttrs'
   createColorSchemes = lib.attrsets.mapAttrs' (
     name: value:
     lib.attrsets.nameValuePair "konsole/${name}.colorscheme" {
