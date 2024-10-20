@@ -20,7 +20,7 @@ let
         type = matchingPrefer;
         default = "default";
         description = ''
-          Whether the font matching process prefers exact matches, of best quality matches.
+          Whether the font matching process prefers exact matches, or best quality matches.
 
           `default` corresponds to not setting any enum flag, and `exact` and `quality`
           correspond to `PreferMatch` and `PreferQuality` enum flags respectively.
@@ -40,7 +40,7 @@ let
         type = types.bool;
         default = false;
         description = ''
-          If set to true, this font will try to avoid subpixel antialiasing.
+          If set to `true`, this font will try to avoid subpixel antialiasing.
 
           Corresponds to the `NoSubpixelAntialias` enum flag.
         '';
@@ -49,7 +49,7 @@ let
         type = types.bool;
         default = false;
         description = ''
-          If set to true, this font will not try to find a substitute font when encountering missing glyphs.
+          If set to `true`, this font will not try to find a substitute font when encountering missing glyphs.
 
           Corresponds to the `NoFontMerging` enum flag.
         '';
@@ -203,7 +203,7 @@ in
     general = mkOption {
       type = types.nullOr fontType;
       default = null;
-      description = "The main font of the system.";
+      description = "The main font for the Plasma desktop.";
       example = lib.literalExpression ''
         {
           family = "Noto Sans";
@@ -214,7 +214,7 @@ in
     fixedWidth = mkOption {
       type = types.nullOr fontType;
       default = null;
-      description = "The fixed width or monospace font of the system.";
+      description = "The fixed width or monospace font for the Plasma desktop.";
       example = lib.literalExpression ''
         {
           family = "Iosevka";
@@ -258,7 +258,7 @@ in
     windowTitle = mkOption {
       type = types.nullOr fontType;
       default = null;
-      description = "The font used for windowTitles.";
+      description = "The font used for window titles.";
       example = lib.literalExpression ''
         {
           family = "Noto Sans";

@@ -68,7 +68,7 @@ let
         default = null;
         example = true;
         description = ''
-          Enables or disables the touchpad.
+          Whether to enable the touchpad.
         '';
       };
       name = lib.mkOption {
@@ -78,8 +78,8 @@ let
         description = ''
           The name of the touchpad.
 
-          This can be found by looking at the Name attribute in the section in
-          /proc/bus/input/devices belonging to the touchpad.
+          This can be found by looking at the `Name` attribute in the section in
+          the `/proc/bus/input/devices` path belonging to the touchpad.
         '';
       };
       vendorId = lib.mkOption {
@@ -89,8 +89,8 @@ let
         description = ''
           The vendor ID of the touchpad.
 
-          This can be found by looking at the Vendor attribute in the section in
-          /proc/bus/input/devices belonging to the touchpad.
+          This can be found by looking at the `Vendor` attribute in the section in
+          the `/proc/bus/input/devices` path belonging to the touchpad.
         '';
       };
       productId = lib.mkOption {
@@ -100,8 +100,8 @@ let
         description = ''
           The product ID of the touchpad.
 
-          This can be found by looking at the Product attribute in the section
-          in /proc/bus/input/devices belonging to the touchpad.
+          This can be found by looking at the `Product` attribute in the section in
+          the `/proc/bus/input/devices` path belonging to the touchpad.
         '';
       };
       disableWhileTyping = lib.mkOption {
@@ -109,7 +109,7 @@ let
         default = null;
         example = true;
         description = ''
-          Disables the touchpad while typing.
+          Whether to disable the touchpad while typing.
         '';
       };
       leftHanded = lib.mkOption {
@@ -117,7 +117,7 @@ let
         default = null;
         example = false;
         description = ''
-          Swap the left and right buttons.
+          Whether to swap the left and right buttons.
         '';
       };
       middleButtonEmulation = lib.mkOption {
@@ -125,7 +125,7 @@ let
         default = null;
         example = false;
         description = ''
-          Middle click by pressing the left and right buttons at the same time.
+          Whether to enable middle mouse click emulation by pressing the left and right buttons at the same time.
           Activating this increases the click latency by 50ms.
         '';
       };
@@ -142,7 +142,7 @@ let
         default = null;
         example = true;
         description = ''
-          Enables natural scrolling for the touchpad.
+          Whether to enable natural scrolling for the touchpad.
         '';
       };
       tapToClick = lib.mkOption {
@@ -150,7 +150,7 @@ let
         default = null;
         example = true;
         description = ''
-          Enables tap-to-click for the touchpad.
+          Whether to enable tap-to-click for the touchpad.
         '';
       };
       tapAndDrag = lib.mkOption {
@@ -158,7 +158,7 @@ let
         default = null;
         example = true;
         description = ''
-          Enables tap-and-drag for the touchpad.
+          Whether to enable tap-and-drag for the touchpad.
         '';
       };
       tapDragLock = lib.mkOption {
@@ -166,7 +166,7 @@ let
         default = null;
         example = true;
         description = ''
-          Enables tap-and-drag lock for the touchpad.
+          Whether to enable the tap-and-drag lock for the touchpad.
         '';
       };
       scrollMethod = lib.mkOption {
@@ -174,7 +174,7 @@ let
         default = null;
         example = "touchPadEdges";
         description = ''
-          How scrolling is performed on the touchpad.
+          Configure how scrolling is performed on the touchpad.
         '';
         apply = method: if (method == null) then null else scrollMethods."${method}";
       };
@@ -183,7 +183,7 @@ let
         default = null;
         example = "twoFingers";
         description = ''
-          How right-clicking is performed on the touchpad.
+          Configure how right-clicking is performed on the touchpad.
         '';
         apply = method: if (method == null) then null else rightClickMethods."${method}";
       };
@@ -197,7 +197,7 @@ let
         default = null;
         example = "twoFingers";
         description = ''
-          How right-clicking is performed on the touchpad.
+          Configure what a two-finger tap maps to on the touchpad.
         '';
         apply = v: if (v == null) then null else (v == "middleClick");
       };
@@ -244,8 +244,8 @@ let
         description = ''
           The name of the mouse.
 
-          This can be found by looking at the Name attribute in the section in
-          /proc/bus/input/devices belonging to the mouse.
+          This can be found by looking at the `Name` attribute in the section in
+          the `/proc/bus/input/devices` path belonging to the mouse.
         '';
       };
       vendorId = lib.mkOption {
@@ -255,8 +255,8 @@ let
         description = ''
           The vendor ID of the mouse.
 
-          This can be found by looking at the Vendor attribute in the section in
-          /proc/bus/input/devices belonging to the mouse.
+          This can be found by looking at the `Vendor` attribute in the section in
+          the `/proc/bus/input/devices` path belonging to the mouse.
         '';
       };
       productId = lib.mkOption {
@@ -266,8 +266,8 @@ let
         description = ''
           The product ID of the mouse.
 
-          This can be found by looking at the Product attribute in the section in
-          /proc/bus/input/devices belonging to the mouse.
+          This can be found by looking at the `Product` attribute in the section in
+          the `/proc/bus/input/devices` path belonging to the mouse.
         '';
       };
       leftHanded = lib.mkOption {
@@ -275,7 +275,7 @@ let
         default = null;
         example = false;
         description = ''
-          Swap the left and right buttons.
+          Whether to swap the left and right buttons.
         '';
       };
       middleButtonEmulation = lib.mkOption {
@@ -283,7 +283,7 @@ let
         default = null;
         example = false;
         description = ''
-          Middle click by pressing the left and right buttons at the same time.
+          Whether to enable middle mouse click emulation by pressing the left and right buttons at the same time.
           Activating this increases the click latency by 50ms.
         '';
       };
@@ -292,7 +292,7 @@ let
         default = null;
         example = 0.5;
         description = ''
-          Mouse acceleration.
+          Set the mouse acceleration.
         '';
       };
       accelerationProfile = lib.mkOption {
@@ -304,7 +304,7 @@ let
           ]);
         default = null;
         example = "none";
-        description = "Mouse acceleration profile.";
+        description = "Set the mouse acceleration profile.";
         apply =
           profile:
           if profile == "none" then
@@ -319,7 +319,7 @@ let
         default = null;
         example = true;
         description = ''
-          Enables natural scrolling for the mouse.
+          Whether to enable natural scrolling for the mouse.
         '';
       };
       scrollSpeed = lib.mkOption {
@@ -327,7 +327,7 @@ let
         default = null;
         example = 1;
         description = ''
-          How fast the scroll wheel moves.
+          Configure how fast the scroll wheel moves.
         '';
       };
     };
@@ -444,7 +444,7 @@ in
       default = null;
       example = 200;
       description = ''
-        How many milliseconds you need to hold a key down before the input
+        Configure how many milliseconds a key must be held down for before the input
         starts repeating.
       '';
     };
@@ -453,7 +453,7 @@ in
       default = null;
       example = 50.0;
       description = ''
-        How quick the inputs should be repeated when holding down a key.
+        Configure how quickly the inputs should be repeated when holding down a key.
       '';
     };
     options = lib.mkOption {

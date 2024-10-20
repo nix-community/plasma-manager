@@ -96,7 +96,7 @@ in
       default = { };
       description = ''
         An attribute set where the keys are file names (relative to
-        HOME) and the values are attribute sets that represent
+        `$HOME`) and the values are attribute sets that represent
         configuration groups and settings inside those groups.
       '';
     };
@@ -105,7 +105,7 @@ in
       default = { };
       description = ''
         An attribute set where the keys are file names (relative to
-        XDG_CONFIG_HOME) and the values are attribute sets that
+        `$XDG_CONFIG_HOME`) and the values are attribute sets that
         represent configuration groups and settings inside those groups.
       '';
     };
@@ -114,7 +114,7 @@ in
       default = { };
       description = ''
         An attribute set where the keys are file names (relative to
-        XDG_DATA_HOME) and the values are attribute sets that
+        `$XDG_DATA_HOME`) and the values are attribute sets that
         represent configuration groups and settings inside those groups.
       '';
     };
@@ -122,10 +122,10 @@ in
       type = lib.types.bool;
       default = false;
       description = ''
-        Wether to discard changes made outside plasma-manager. If enabled all
-        settings not specified explicitly in plasma-manager will be set to the
+        Wether to discard changes made outside `plasma-manager`. If enabled, all
+        settings not specified explicitly in `plasma-manager` will be set to the
         default on next login. This will automatically delete a lot of
-        kde-plasma config-files on each generation so be careful with this
+        KDE Plasma configuration files on each generation, so do be careful with this
         option.
       '';
     };
@@ -133,14 +133,14 @@ in
       type = lib.types.listOf lib.types.str;
       default = defaultResetFiles;
       description = ''
-        Config-files which should be deleted on each generation.
+        Configuration files which should be explicitly deleted on each generation.
       '';
     };
     resetFilesExclude = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
       description = ''
-        Config-files which explicitly should not be deleted on each generation.
+        Configuration files which explicitly should not be deleted on each generation, if `overrideConfig` is enabled.
       '';
     };
     immutableByDefault = lib.mkEnableOption "Make keys written by plasma-manager immutable by default.";

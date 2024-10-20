@@ -71,7 +71,7 @@ let
         default = null;
         example = 600;
         description = ''
-          The duration (in seconds), when on ${type}, the computer must be idle
+          The duration (in seconds), when on ${type}, the computer must be idle for
           until the auto-suspend action is executed.
         '';
       };
@@ -108,8 +108,8 @@ let
         default = null;
         example = 300;
         description = ''
-          The duration (in seconds), when on ${type}, the computer must be idle
-          (when unlocked) until the display turns off.
+          The duration (in seconds), when on ${type}, the computer, when unlocked, must be idle for
+          until the display turns off.
         '';
         apply =
           timeout:
@@ -152,7 +152,7 @@ let
         type = with lib.types; nullOr bool;
         default = null;
         example = false;
-        description = "Enable or disable screen dimming.";
+        description = "Whether to enable screen dimming.";
       };
       idleTimeout = lib.mkOption {
         type = with lib.types; nullOr (ints.between 20 600000);
@@ -169,7 +169,7 @@ let
       default = null;
       example = 10;
       description = ''
-        The brightness to set the display to in this mode
+        The brightness to set the display to in this mode.
       '';
     };
     powerProfile = lib.mkOption {
@@ -183,7 +183,7 @@ let
       default = null;
       example = "powerSaving";
       description = ''
-        The Power Profile to Enter in this mode
+        The Power Profile to enter in this mode.
       '';
       apply = profile: if profile == "powerSaving" then "power-saver" else profile;
     };
@@ -329,7 +329,7 @@ in
           default = null;
           example = 10;
           description = ''
-            The battery level considered "low" for the laptop
+            The battery level considered "low" for the laptop.
           '';
         };
         criticalLevel = lib.mkOption {
@@ -337,7 +337,7 @@ in
           default = null;
           example = 2;
           description = ''
-            The battery level considered "critical" for the laptop
+            The battery level considered "critical" for the laptop.
           '';
         };
         criticalAction = lib.mkOption {
@@ -345,7 +345,7 @@ in
           default = null;
           example = "shutDown";
           description = ''
-            The action to perform when Critical Battery Level is reached
+            The action to perform when Critical Battery Level is reached.
           '';
           apply = action: if (action == null) then null else autoCriticalActions."${action}";
         };

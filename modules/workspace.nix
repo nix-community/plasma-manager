@@ -23,13 +23,13 @@ let
           type = nullOr str;
           default = null;
           example = "Breeze_Snow";
-          description = "The Plasma cursortheme. Run plasma-apply-cursortheme --list-themes for valid options.";
+          description = "The Plasma cursor theme. Run `plasma-apply-cursortheme --list-themes` for valid options.";
         };
         size = lib.mkOption {
           type = nullOr ints.positive;
           default = null;
           example = 24;
-          description = "The size of the cursor. See the settings GUI for allowed sizes for each cursortheme.";
+          description = "The size of the cursor. See the System Settings app for allowed sizes for each cursor theme.";
         };
       };
     };
@@ -73,7 +73,7 @@ in
         ]);
       default = null;
       description = ''
-        Clicking files or folders should open or select them.
+        Whether clicking files or folders should open or select them.
       '';
     };
 
@@ -82,7 +82,7 @@ in
       default = null;
       example = false;
       description = ''
-        Clicking the middle mouse button pastes clipboard content";
+        Whether clicking the middle mouse button pastes the clipboard content.";
       '';
     };
 
@@ -100,7 +100,7 @@ in
       default = null;
       example = "breeze-dark";
       description = ''
-        The Plasma theme. Run plasma-apply-desktoptheme --list-themes for valid options.
+        The Plasma style. Run `plasma-apply-desktoptheme --list-themes` for valid options.
       '';
     };
 
@@ -109,7 +109,7 @@ in
       default = null;
       example = "BreezeDark";
       description = ''
-        The Plasma colorscheme. Run plasma-apply-colorscheme --list-schemes for valid options.
+        The Plasma color scheme. Run `plasma-apply-colorscheme --list-schemes` for valid options.
       '';
     };
 
@@ -121,7 +121,7 @@ in
         size = 24;
       };
       description = ''
-        Allows to configure the cursor in plasma. Both the theme and size are configurable.
+        Submodule for configuring the cursor appearance. Both the theme and size are configurable.
       '';
     };
 
@@ -130,7 +130,7 @@ in
       default = null;
       example = "org.kde.breezedark.desktop";
       description = ''
-        The Plasma look and feel theme. Run plasma-apply-lookandfeel --list for valid options.
+        The Plasma Global Theme. Run `plasma-apply-lookandfeel --list` for valid options.
       '';
     };
 
@@ -148,7 +148,7 @@ in
       default = null;
       example = lib.literalExpression ''"''${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/Kay/contents/images/1080x1920.png"'';
       description = ''
-        The Plasma wallpaper. Can be either be the path to an image file or a kpackage.
+        The Plasma desktop wallpaper. Can be either the path to an image file or a KPackage.
       '';
     };
 
@@ -157,7 +157,7 @@ in
       default = null;
       example = lib.literalExpression ''{ path = "''${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/"; }'';
       description = ''
-        Allows you to set wallpaper slideshow. Needs a directory of your wallpapers and an interval length.
+        Submodule for configuring the wallpaper slideshow. Needs a directory with wallpapers and an interval length.
       '';
     };
 
@@ -168,7 +168,7 @@ in
         provider = "apod";
       };
       description = ''
-        Allows you to set wallpaper using the picture of the day plugin. Needs the provider.
+        Which plugin to fetch the Picture of the Day from.
       '';
     };
 
@@ -177,7 +177,7 @@ in
       default = null;
       example = "0,64,174,256";
       description = ''
-        Allows you to set wallpaper using a plain color. Color is a comma-seperated R,G,B,A string. Alpha optional (default is 256).
+        Set the wallpaper using a plain color. Color is a comma-seperated R,G,B,A string. The alpha is optional (default is 256).
       '';
     };
 
@@ -187,7 +187,7 @@ in
       example = "stretch";
       description = ''
         Defines how the wallpaper should be displayed on the screen.
-        Applies only to wallpaper, wallpaperPictureOfTheDay or wallpaperSlideShow.
+        Applies only to `wallpaper`, `wallpaperPictureOfTheDay` or `wallpaperSlideShow`.
       '';
     };
 
@@ -196,7 +196,7 @@ in
       default = null;
       example = "freedesktop";
       description = ''
-        The sound-theme to use with plasma.
+        The sound theme to use with Plasma.
       '';
     };
 
@@ -206,9 +206,9 @@ in
         default = null;
         example = "none";
         description = ''
-          The engine for the splash-screen theme. If not specified it will try
-          to set an appropriate engine for you, but if this doesn't work you
-          might want to manually specify this.
+          The engine for the splash screen theme. If not specified, Plasma will try
+          to set an appropriate engine, but this may fail, in which case this option
+          should be specified manually.
         '';
       };
       theme = lib.mkOption {
@@ -216,9 +216,9 @@ in
         default = null;
         example = "None";
         description = ''
-          The splash-screen theme shown at login. To see available values see the
-          Theme key in ~/.config/ksplashrc after applying the splash-screen via
-          the settings app. Can also be set to "None" to disable the splash-screen
+          The splash screen theme shown at login. To view all available values, see the
+          `Theme` key in `$HOME/.config/ksplashrc` after imperatively applying the splash screen via
+          the System Settings app. Can also be set to `None` to disable the splash screen
           altogether.
         '';
       };
@@ -230,10 +230,10 @@ in
         default = null;
         example = "org.kde.kwin.aurorae";
         description = ''
-          The library for the window decorations theme. To see available values
-          see the library key in the org.kde.kdecoration2 section of
-          ~/.config/kwinrc after applying the window-decoration via the
-          settings app.
+          The library for the window decorations theme. To view all available values,
+          see the `library` key in the `org.kde.kdecoration2` section of
+          `$HOME/.config/kwinrc` after imperatively applying the window decoration via the
+          System Settings app.
         '';
       };
       theme = lib.mkOption {
@@ -241,9 +241,9 @@ in
         default = null;
         example = "__aurorae__svg__CatppuccinMocha-Modern";
         description = ''
-          The window decorations theme. To see available values see the theme key
-          in the org.kde.kdecoration2 section of ~/.config/kwinrc after
-          applying the window-decoration via the settings app.
+          The window decorations theme. To view all available values, see the `theme` key
+          in the `org.kde.kdecoration2` section of `$HOME/.config/kwinrc` after
+          imperatively applying the window decoration via the System Settings app.
         '';
       };
     };
@@ -293,9 +293,10 @@ in
           [
             ''
               Setting lookAndFeel together with splashScreen or windowDecorations in
-                      plasma-manager is not recommended since lookAndFeel themes often
-                      override these settings. Consider setting each part in the lookAndFeel
-                      theme manually.''
+              plasma-manager is not recommended since lookAndFeel themes often
+              override these settings. Consider setting each part in the lookAndFeel
+              theme manually.
+            ''
           ]
         else
           [ ]

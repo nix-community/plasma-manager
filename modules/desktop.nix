@@ -277,7 +277,7 @@ in
         default = null;
         example = "topToBottom";
         description = ''
-          The direction, in which desktop icons are to be arranged.
+          The direction in which desktop icons are to be arranged.
         '';
       };
 
@@ -302,8 +302,8 @@ in
         example = true;
         description = ''
           Locks the position of all desktop icons to the order and placement
-          defined by `arrangement`, `alignment` and the `sorting` options
-          so they can’t be manually moved.
+          defined by `arrangement`, `alignment` and the `sorting` options,
+          so they cannot be manually moved.
         '';
       };
 
@@ -313,8 +313,8 @@ in
           default = null;
           example = "type";
           description = ''
-            Specifies the sort mode for the desktop icons. By default they are
-            sorted by name.
+            Specifies the sort mode for the desktop icons. By default, they are
+            sorted by `name`.
           '';
           apply = sortMode: if (sortMode == null) then null else desktopIconSortingModeId.${sortMode};
         };
@@ -334,10 +334,10 @@ in
           example = false;
           description = ''
             Folders are sorted separately from files by default. This means
-            folders appear first, sorted for example ascending by name,
+            folders appear first, sorted, for example, ascending by name,
             followed by files, also sorted ascending by name.
-            If this option is disabled, all items are sorted irrespective
-            of their type.
+            If this option is disabled, all items are sorted regardless
+            of type.
           '';
         };
       };
@@ -348,8 +348,8 @@ in
         example = 2;
         description = ''
           The desktop icon size, which is normally configured via a slider
-          with seven possible values ranging from small (0) to large (6).
-          The fourth position (3) is the default.
+          with seven possible values ranging from small (`0`) to large (`6`).
+          The fourth position (`3`) is the default.
         '';
       };
 
@@ -360,7 +360,8 @@ in
         description = ''
           Enables the arrow button when hovering over a folder on the desktop
           which shows a preview popup of the folder’s contents.
-          Is enabled by default.
+
+          Enabled by default.
         '';
       };
 
@@ -382,7 +383,7 @@ in
         type = lib.types.nullOr mouseActionNamesEnum;
         default = null;
         example = "appLauncher";
-        description = "Action for a left click on the desktop.";
+        description = "Action for a left mouse click on the desktop.";
         apply = value: if (value == null) then null else mouseActions.${value};
       };
 
@@ -390,7 +391,7 @@ in
         type = lib.types.nullOr mouseActionNamesEnum;
         default = null;
         example = "switchWindow";
-        description = "Action for a click on the desktop with the middle mouse button.";
+        description = "Action for a middle mouse click on the desktop.";
         apply = value: if (value == null) then null else mouseActions.${value};
       };
 
@@ -398,7 +399,7 @@ in
         type = lib.types.nullOr mouseActionNamesEnum;
         default = null;
         example = "contextMenu";
-        description = "Action for a right click on the desktop.";
+        description = "Action for a right mouse click on the desktop.";
         apply = value: if (value == null) then null else mouseActions.${value};
       };
 

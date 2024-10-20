@@ -22,6 +22,6 @@
   ];
 
   options.programs.plasma.enable = lib.mkEnableOption ''
-    Enable configuration management for KDE Plasma.
+    Whether to enable declarative configuration options for the KDE Plasma Desktop.
   '';
 }

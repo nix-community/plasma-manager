@@ -29,7 +29,7 @@ let
         comment = lib.mkOption {
           type = lib.types.str;
           default = name;
-          description = "Optional comment to display in the KDE settings UI.";
+          description = "Optional comment to display in the System Settings app.";
         };
 
         key = lib.mkOption {
@@ -49,26 +49,28 @@ let
           description = "The command to execute.";
         };
 
-        logs.enabled = lib.mkOption {
-          type = lib.types.bool;
-          default = true;
-          description = "Connect command's stdin and stdout to systemd journal with systemd-cat.";
-        };
+        logs = {
+          enabled = lib.mkOption {
+            type = lib.types.bool;
+            default = true;
+            description = "Connect the command's `stdin` and `stdout` to the systemd journal with `systemd-cat`.";
+          };
 
-        logs.identifier = lib.mkOption {
-          type = lib.types.str;
-          default = lib.trivial.pipe name [
-            lib.strings.toLower
-            (builtins.replaceStrings [ " " ] [ "-" ])
-            (n: "${group.name}-${n}")
-          ];
-          description = "Identifier passed down to systemd-cat.";
-        };
+          identifier = lib.mkOption {
+            type = lib.types.str;
+            default = lib.trivial.pipe name [
+              lib.strings.toLower
+              (builtins.replaceStrings [ " " ] [ "-" ])
+              (n: "${group.name}-${n}")
+            ];
+            description = "Identifier passed down to `systemd-cat`.";
+          };
 
-        logs.extraArgs = lib.mkOption {
-          type = lib.types.str;
-          default = "";
-          description = "Additional arguments provided to systemd-cat.";
+          extraArgs = lib.mkOption {
+            type = lib.types.str;
+            default = "";
+            description = "Additional arguments provided to `systemd-cat`.";
+          };
         };
       };
     };

@@ -13,7 +13,7 @@ in
       default = null;
       example = true;
       description = ''
-        Sets whether the screen will be locked after the specified time.
+        Whether the screen will be locked after the specified time.
       '';
     };
     lockOnResume = lib.mkOption {
@@ -30,7 +30,7 @@ in
       default = null;
       example = 5;
       description = ''
-        Sets the minutes after which the screen is locked.
+        Sets the timeout in minutes after which the screen will be locked.
       '';
     };
 
@@ -39,7 +39,7 @@ in
       default = null;
       example = true;
       description = ''
-        Whether the password is required to unlock the screen.
+        Whether the user password is required to unlock the screen.
       '';
     };
 
@@ -59,7 +59,7 @@ in
       description = ''
         Whether to lock the screen on startup.
 
-        NOTE: This option is not provided in the system settings.
+        **Note:** This option is not provided in the System Settings app.
       '';
     };
 
@@ -86,7 +86,7 @@ in
         default = null;
         example = lib.literalExpression ''"''${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/Kay/contents/images/1080x1920.png"'';
         description = ''
-          The wallpaper for the lockscreen. Can be either be the path to an image file or a kpackage.
+          The wallpaper for the lockscreen. Can be either the path to an image file or a KPackage.
         '';
       };
       wallpaperPictureOfTheDay = lib.mkOption {
@@ -96,7 +96,7 @@ in
           provider = "apod";
         };
         description = ''
-          Allows you to set wallpaper using the picture of the day plugin. Needs the provider.
+          Which plugin to fetch the Picture of the Day from.
         '';
       };
       wallpaperSlideShow = lib.mkOption {
@@ -104,8 +104,8 @@ in
         default = null;
         example = lib.literalExpression ''{ path = "''${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/"; }'';
         description = ''
-          Allows you to set wallpaper using the slideshow plugin. Needs the path
-          to at least one directory.
+          Allows you to set the wallpaper using the slideshow plugin. Needs the path
+          to at least one directory with wallpaper images.
         '';
       };
       wallpaperPlainColor = lib.mkOption {
@@ -113,7 +113,7 @@ in
         default = null;
         example = "0,64,174,256";
         description = ''
-          Allows you to set wallpaper using a plain color. Color is a comma-seperated R,G,B,A string. Alpha optional (default is 256).
+          Set the wallpaper using a plain color. Color is a comma-seperated R,G,B,A string. The alpha is optional (default is 256).
         '';
       };
     };

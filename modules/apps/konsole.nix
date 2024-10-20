@@ -34,7 +34,7 @@ let
         example = "Catppuccin-Mocha";
         description = ''
           Color scheme the profile will use. You can check the files you can
-          use in ~/.local/share/konsole or /run/current-system/share/konsole.
+          use in `$HOME/.local/share/konsole` or `/run/current-system/sw/share/konsole`.
           You might also add a custom color scheme using
           `programs.konsole.customColorSchemes`.
         '';
@@ -70,7 +70,7 @@ let
           example = 12;
           description = ''
             Size of the font.
-            Needs a font to be set due to konsole limitations.
+            Due to Konsole limitations, only a limited range of sizes is possible.
           '';
         };
       };
@@ -89,7 +89,7 @@ in
 {
   options.programs.konsole = {
     enable = lib.mkEnableOption ''
-      Enable configuration management for Konsole.
+      Enable configuration management for Konsole, the KDE Terminal.
     '';
 
     defaultProfile = lib.mkOption {
@@ -97,8 +97,8 @@ in
       default = null;
       example = "Catppuccin";
       description = ''
-        The name of the konsole profile file to use by default.
-        To see what options you have, just take a look at ~/.local/share/konsole/
+        The name of the Konsole profile file to use by default.
+        To see what options you have, take a look at `$HOME/.local/share/konsole`
       '';
     };
 
@@ -114,7 +114,7 @@ in
       type = with lib.types; attrsOf path;
       default = { };
       description = ''
-        Custom color schemes to be added to the installation. The key is their name.
+        Custom color schemes to be added to the installation. The attribute key maps to their name.
         Choose them in any profile with `profiles.<profile>.colorScheme = <name>`;
       '';
     };
@@ -124,8 +124,8 @@ in
       default = null;
       example = "Krita dark orange";
       description = ''
-        The colour scheme of the UI. Leave this setting at `null` in order to
-        not override the systems default scheme for for this application.
+        The color scheme of the UI. Leave this setting at `null` in order to
+        not override the system's default scheme for for this application.
       '';
     };
 
@@ -133,7 +133,7 @@ in
       type = with lib.types; nullOr (attrsOf (attrsOf basicSettingsType));
       default = null;
       description = ''
-        Extra config to add to konsolerc.
+        Extra config to add to the `konsolerc`.
       '';
     };
   };
