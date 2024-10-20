@@ -13,13 +13,13 @@ in
         ]);
       default = null;
       example = "center";
-      description = "Position of KRunner on screen.";
+      description = "Set KRunner's position on the screen.";
     };
     activateWhenTypingOnDesktop = lib.mkOption {
       type = with lib.types; nullOr bool;
       default = null;
       example = true;
-      description = "Activate KRunner when typing on the desktop.";
+      description = "Whether to activate KRunner when typing on the desktop.";
     };
     historyBehavior = lib.mkOption {
       type =
@@ -31,7 +31,7 @@ in
         ]);
       default = null;
       example = "disabled";
-      description = "Behavior of KRunner’s history.";
+      description = "Set the behavior of KRunner’s history.";
     };
   };
 

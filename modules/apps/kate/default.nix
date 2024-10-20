@@ -38,7 +38,7 @@ let
     else
       lib.lists.findFirstIndex (
         x: x == value
-      ) (throw "getIndexFromEnum (kate): Value ${value} isn't present in the enum. This is a bug") enum;
+      ) (throw "getIndexFromEnum (kate): Value ${value} isn't present in the enum. This is a bug.") enum;
 
   qfont = import ../../../lib/qfont.nix { inherit lib; };
 
@@ -59,7 +59,7 @@ let
         type = matchingPrefer;
         default = "default";
         description = ''
-          Whether the font matching process prefers exact matches, of best quality matches.
+          Whether the font matching process prefers exact matches, or best quality matches.
 
           `default` corresponds to not setting any enum flag, and `exact` and `quality`
           correspond to `PreferMatch` and `PreferQuality` enum flags respectively.
@@ -79,7 +79,7 @@ let
         type = lib.types.bool;
         default = false;
         description = ''
-          If set to true, this font will try to avoid subpixel antialiasing.
+          If set to `true`, this font will try to avoid subpixel antialiasing.
 
           Corresponds to the `NoSubpixelAntialias` enum flag.
         '';
@@ -88,7 +88,7 @@ let
         type = lib.types.bool;
         default = false;
         description = ''
-          If set to true, this font will not try to find a substitute font when encountering missing glyphs.
+          If set to `true`, this font will not try to find a substitute font when encountering missing glyphs.
 
           Corresponds to the `NoFontMerging` enum flag.
         '';
@@ -97,7 +97,7 @@ let
         type = lib.types.bool;
         default = false;
         description = ''
-          If set to true, this font will not try to apply shaping rules that may be required for some scripts
+          If set to `true`, this font will not try to apply shaping rules that may be required for some scripts
           (e.g. Indic scripts), increasing performance if these rules are not required.
 
           Corresponds to the `PreferNoShaping` enum flag.
@@ -237,7 +237,7 @@ in
 {
   options.programs.kate = {
     enable = lib.mkEnableOption ''
-      Enable configuration management for kate.
+      Enable configuration management for Kate, the KDE Advanced Text Editor.
     '';
 
     package =
@@ -250,10 +250,8 @@ in
           nullable = true;
           example = "pkgs.libsForQt5.kate";
           extraDescription = ''
-            Which kate package to install. Use `pkgs.libsForQt5.kate` in Plasma5 and
-            `pkgs.kdePackages.kate` in Plasma6. Use `null` if home-manager should not install kate
-            (use this if you want to manage the settings of this user of a system-wide kate
-            installation).
+            Which Kate package to be installed by `home-manager`. Use `pkgs.libsForQt5.kate` for Plasma 5 and
+            `pkgs.kdePackages.kate` for Plasma 6. Use `null` if `home-manager` should not install Kate.
           '';
         };
 
@@ -261,7 +259,7 @@ in
     #     INDENTATION
     editor = {
       tabWidth = lib.mkOption {
-        description = "The width of a single tab (''\t) sign (in number of spaces).";
+        description = "The width of a single tab (`\t`) sign (in number of spaces).";
         default = 4;
         type = lib.types.int;
       };
@@ -280,7 +278,7 @@ in
 
       indent.autodetect = lib.mkOption {
         description = ''
-          Whether kate should try to detect indentation for each given file and not impose default indentation settings.
+          Whether Kate should try to detect indentation for each given file and not impose default indentation settings.
         '';
         default = true;
         type = lib.types.bool;
@@ -311,7 +309,7 @@ in
       };
 
       indent.undoByShiftTab = lib.mkOption {
-        description = "Whether to unindent the current line by one level with the shortcut Shift+Tab";
+        description = "Whether to unindent the current line by one level with the shortcut Shift+Tab.";
         default = true;
         type = lib.types.bool;
       };
@@ -360,11 +358,12 @@ in
     src = lib.mkOption {
       description = ''
         The path of a theme file for the KDE editor (not the window color scheme).
-        Obtain a custom one by using the GUI settings in kate. If you want to use a system-wide
+        Obtain a custom one by using the GUI settings in Kate. If you want to use a system-wide
         editor color scheme set this path to null. If you set the metadata.name entry in the file
         to a value that matches the name of a system-wide color scheme undesired behaviour may
         occur. The activation will fail if a theme with the filename `<name of your theme>.theme`
-        already exists.'';
+        already exists.
+      '';
       type = lib.types.nullOr lib.types.path;
       default = null;
     };
@@ -419,9 +418,9 @@ in
     default = null;
     type = lib.types.nullOr lib.types.attrs;
     description = ''
-      Add more lsp server settings here. Check out the format on the
-      [KDE page](https://docs.kde.org/stable5/en/kate/kate/kate-application-plugin-lspclient.html).
-      Note that these are only the settings, the packages have to be installed separately.
+      Add more LSP server settings here. Check out the format on the
+      [Kate Documentation](https://docs.kde.org/stable5/en/kate/kate/kate-application-plugin-lspclient.html).
+      Note that these are only the settings; the appropriate packages have to be installed separately.
     '';
   };
 

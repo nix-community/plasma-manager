@@ -78,12 +78,12 @@ let
     options = {
       value = mkOption {
         type = basicValueType;
-        description = "value to set";
+        description = "Value to set.";
       };
       apply = mkOption {
         type = enum (attrNames applyRules);
         default = "initially";
-        description = "how to apply the value";
+        description = "How to apply the value.";
       };
     };
   };
@@ -92,7 +92,7 @@ let
     mkOption {
       type = nullOr (coercedTo str (value: { inherit value; }) (matchOptionType hasMatchWhole));
       default = null;
-      description = "${name} matching";
+      description = "${name} matching.";
     };
   fixMatchName = name: matchNameMap.${name} or name;
   buildMatchRule =
@@ -143,7 +143,7 @@ in
                 window-types = mkOption {
                   type = listOf (enum (attrNames windowTypes));
                   default = [ ];
-                  description = "Window types to match";
+                  description = "Window types to match.";
                   apply = values: foldl' add 0 (map (val: getAttr val windowTypes) values);
                 };
               };
@@ -152,15 +152,15 @@ in
           apply = mkOption {
             type = attrsOf (coercedTo basicValueType (value: { inherit value; }) applyOptionType);
             default = { };
-            description = "Values to apply";
+            description = "Values to apply.";
           };
           description = mkOption {
             type = str;
-            description = "value to set";
+            description = "Value to set.";
           };
         };
       });
-      description = "Kwin window rules";
+      description = "KWin window rules.";
       default = [ ];
     };
   };

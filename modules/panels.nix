@@ -133,9 +133,9 @@ let
           default = null;
           example = "autohide";
           description = ''
-            The hiding mode of the panel. Here windowscover and windowsbelow are
-            plasma 5 only, while dodgewindows, windowsgobelow and normalpanel are
-            plasma 6 only.
+            The hiding mode of the panel. Here, `windowscover` and `windowsbelow` are
+            Plasma 5-only, while `dodgewindows`, `windowsgobelow` and `normalpanel` are
+            Plasma 6-only.
           '';
         };
         floating = lib.mkEnableOption "Enable or disable floating style.";
@@ -158,10 +158,10 @@ let
           ];
           description = ''
             The widgets to use in the panel. To get the names, it may be useful
-            to look in the share/plasma/plasmoids folder of the nix-package the
-            widget/plasmoid is from. Some packages which include some
-            widgets/plasmoids are for example plasma-desktop and
-            plasma-workspace.
+            to look in the `share/plasma/plasmoids` subdirectory in the Nix Store path the
+            widget/plasmoid is sourced from. Some packages which include some
+            widgets/plasmoids are, for example, `plasma-desktop` and
+            `plasma-workspace`.
           '';
           apply = map widgets.convert;
         };
@@ -175,9 +175,9 @@ let
             ]);
           default = null;
           description = ''
-            The screen the panel should appear on. Can be an int, or a list of ints,
-            starting from 0, representing the ID of the screen the panel should
-            appear on. Alternatively it can be set to "all" if the panel should
+            The screen the panel should appear on. Can be an `int`, or a `list of ints`,
+            starting from `0`, representing the ID of the screen the panel should
+            appear on. Alternatively, it can be set to `all` if the panel should
             appear on all the screens.
           '';
         };
@@ -185,8 +185,8 @@ let
           type = with lib.types; nullOr str;
           default = null;
           description = ''
-            Extra lines to add to the layout.js. See
-            https://develop.kde.org/docs/plasma/scripting/ for inspiration.
+            Extra lines to add to the `layout.js`. See
+            the [KDE Documentation](https://develop.kde.org/docs/plasma/scripting) for information.
           '';
         };
       };

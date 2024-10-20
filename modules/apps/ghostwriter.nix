@@ -52,7 +52,7 @@ let
         type = matchingPrefer;
         default = "default";
         description = ''
-          Whether the font matching process prefers exact matches, of best quality matches.
+          Whether the font matching process prefers exact matches, or best quality matches.
 
           `default` corresponds to not setting any enum flag, and `exact` and `quality`
           correspond to `PreferMatch` and `PreferQuality` enum flags respectively.
@@ -72,7 +72,7 @@ let
         type = lib.types.bool;
         default = false;
         description = ''
-          If set to true, this font will try to avoid subpixel antialiasing.
+          If set to `true`, this font will try to avoid subpixel antialiasing.
 
           Corresponds to the `NoSubpixelAntialias` enum flag.
         '';
@@ -81,7 +81,7 @@ let
         type = lib.types.bool;
         default = false;
         description = ''
-          If set to true, this font will not try to find a substitute font when encountering missing glyphs.
+          If set to `true`, this font will not try to find a substitute font when encountering missing glyphs.
 
           Corresponds to the `NoFontMerging` enum flag.
         '';
@@ -90,7 +90,7 @@ let
         type = lib.types.bool;
         default = false;
         description = ''
-          If set to true, this font will not try to apply shaping rules that may be required for some scripts
+          If set to `true`, this font will not try to apply shaping rules that may be required for some scripts
           (e.g. Indic scripts), increasing performance if these rules are not required.
 
           Corresponds to the `PreferNoShaping` enum flag.
@@ -130,7 +130,7 @@ let
         description = ''
           The style hint of this font.
 
-          See https://doc.qt.io/qt-6/qfont.html#StyleHint-enum for more.
+          See https://doc.qt.io/qt-6/qfont.html#StyleHint-enum for more information.
         '';
       };
       weight = lib.mkOption {
@@ -139,7 +139,7 @@ let
         description = ''
           The weight of the font, either as a number between 1 to 1000 or as a pre-defined weight string.
 
-          See https://doc.qt.io/qt-6/qfont.html#Weight-enum for more.
+          See https://doc.qt.io/qt-6/qfont.html#Weight-enum for more information.
         '';
       };
       style = lib.mkOption {
@@ -265,9 +265,9 @@ in
           nullable = true;
           example = "pkgs.kdePackages.ghostwriter";
           extraDescription = ''
-            Use `pkgs.libsForQt5.ghostwriter` in Plasma5 and
-            `pkgs.kdePackages.ghostwriter` in Plasma6. Use
-            `null` if home-manager should not install GhostWriter.
+            Use `pkgs.libsForQt5.ghostwriter` for Plasma 5 and
+            `pkgs.kdePackages.ghostwriter` for Plasma 6. Use
+            `null` if `home-manager` should not install Ghostwriter.
           '';
         };
 
@@ -347,7 +347,7 @@ in
                   ]
                   (
                     lib.lists.findFirstIndex (x: x == focusMode)
-                      (throw "editor.styling.focusMode: Value ${focusMode} isn't present in the enum. This is a bug")
+                      (throw "editor.styling.focusMode: Value ${focusMode} isn't present in the enum. This is a bug.")
                       enumVals
                   );
           };
@@ -580,8 +580,8 @@ in
         type = with lib.types; attrsOf path;
         default = { };
         description = ''
-          Custom themes to be added to the installation. The key is their name.
-          Choose them in `programs.ghostwriter.theme.name`.
+          Custom themes to be added to the installation. The attribute key is mapped to their name.
+          Choose them from `programs.ghostwriter.theme.name`.
         '';
       };
     };

@@ -7,7 +7,7 @@ let
 
   textOption = lib.mkOption {
     type = lib.types.str;
-    description = "The content of the startup-script.";
+    description = "The content of the startup script.";
   };
   priorityOption = lib.mkOption {
     type = (lib.types.ints.between 0 8);
@@ -113,7 +113,7 @@ in
       default = { };
       description = ''
         Plasma desktop scripts to be run exactly once at startup. See
-        https://develop.kde.org/docs/plasma/scripting/ for details on plasma
+        the [KDE Documentation](https://develop.kde.org/docs/plasma/scripting) for details on Plasma
         desktop scripts.
       '';
     };

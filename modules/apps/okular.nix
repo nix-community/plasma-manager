@@ -42,25 +42,25 @@ with lib.types;
     #     GENERAL
     general = {
       smoothScrolling = lib.mkOption {
-        description = "Use smooth scrolling.";
+        description = "Whether to use smooth scrolling.";
         default = null;
         type = nullOr bool;
       };
 
       showScrollbars = lib.mkOption {
-        description = "Show scrollbars.";
+        description = "Whether to show scrollbars in the document viewer.";
         default = null;
         type = nullOr bool;
       };
 
       openFileInTabs = lib.mkOption {
-        description = "Open files in tabs.";
+        description = "Whether to open files in tabs.";
         default = null;
         type = nullOr bool;
       };
 
       viewContinuous = lib.mkOption {
-        description = "Open in continous mode by default.";
+        description = "Whether to open in continous mode by default.";
         default = null;
         type = nullOr bool;
       };
@@ -108,14 +108,14 @@ with lib.types;
       mouseMode = lib.mkOption {
         description = ''
           Changes what the mouse does.
-          See https://docs.kde.org/stable5/en/okular/okular/menutools.html for
-          the full description.
-          Browse - Click-and-drag with left mouse button.
-          Zoom - Zoom in with left mouse button. Reset zoom with right mouse button.
-          Rectangle Selection - Draw area selection with left mouse button. Display options with right mouse button.
-          Text Selection - Select text with left mouse button. Display options with right mouse button.
-          Table Selection - Similar to text selection but allows for transforming the document into a table.
-          Magnifier - Activates the magnifier with left mouse button.
+          See the [Okular Documentation](https://docs.kde.org/stable5/en/okular/okular/menutools.html) for the full description.
+
+          - `Browse`: Click-and-drag with left mouse button.
+          - `Zoom`: Zoom in with left mouse button. Reset zoom with right mouse button.
+          - `RectSelect`: Draw area selection with left mouse button. Display options with right mouse button.
+          - `TextSelect`: Select text with left mouse button. Display options with right mouse button.
+          - `TableSelect`: Similar to text selection but allows for transforming the document into a table.
+          - `Magnifier`: Activates the magnifier with left mouse button.
         '';
         default = null;
         type = nullOr (enum [
@@ -134,7 +134,7 @@ with lib.types;
     #     ACCESSIBILITY
     accessibility = {
       highlightLinks = lib.mkOption {
-        description = "Draw borders around links.";
+        description = "Whether to draw borders around links.";
         default = null;
         type = nullOr bool;
       };
@@ -175,13 +175,13 @@ with lib.types;
     #     PERFORMANCE
     performance = {
       enableTransparencyEffects = lib.mkOption {
-        description = "Enable transparancey effects. This may increase CPU usage.";
+        description = "Whether to enable transparancy effects. This may increase CPU usage.";
         default = null;
         type = nullOr bool;
       };
 
       memoryUsage = lib.mkOption {
-        description = "Memory usage of Okular. This impacts the speed performance of Okular as it determines how much computation results are kept in memory and not recomputed.";
+        description = "Memory usage profile for Okular. This may impact the speed performance of Okular, as it determines how many computation results are kept in memory.";
         default = null;
         type = nullOr (enum [
           "Low"

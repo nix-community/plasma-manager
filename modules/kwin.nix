@@ -73,7 +73,7 @@ let
     else
       lib.lists.findFirstIndex (
         x: x == value
-      ) (throw "getIndexFromEnum (kwin): Value ${value} isn't present in the enum. This is a bug") enum;
+      ) (throw "getIndexFromEnum (kwin): Value ${value} isn't present in the enum. This is a bug.") enum;
 
   convertPoloniumFilter = list: if list == null then null else builtins.concatStringsSep ", " list;
 
@@ -81,7 +81,7 @@ let
     options = {
       id = lib.mkOption {
         type = lib.types.str;
-        description = "The id of the layout.";
+        description = "The ID of the layout.";
         example = "cf5c25c2-4217-4193-add6-b5971cb543f2";
       };
       tiles = lib.mkOption {
@@ -161,7 +161,7 @@ in
       translucency.enable = lib.mkOption {
         type = with lib.types; nullOr bool;
         default = null;
-        description = "Make windows translucent under different conditions.";
+        description = "Make windows translucent under certain conditions.";
       };
       minimization = {
         animation = lib.mkOption {
@@ -174,7 +174,7 @@ in
             ]);
           default = null;
           example = "magiclamp";
-          description = "The effect when windows are minimized.";
+          description = "The effect to be displayed when windows are minimized.";
         };
         duration = lib.mkOption {
           type = with lib.types; nullOr ints.positive;
@@ -182,7 +182,7 @@ in
           example = 50;
           description = ''
             The duration of the minimization effect in milliseconds. Only
-            available when the minimization effect is magic lamp.
+            available when the minimization effect is `magiclamp`.
           '';
         };
       };
@@ -194,7 +194,7 @@ in
       fps.enable = lib.mkOption {
         type = with lib.types; nullOr bool;
         default = null;
-        description = "Display KWin's fps in the corner of the screen;";
+        description = "Display KWin's FPS performance graph in the corner of the screen.";
       };
       cube.enable = lib.mkOption {
         type = with lib.types; nullOr bool;
@@ -211,7 +211,7 @@ in
           ]);
         default = null;
         example = "fade";
-        description = "The animation used when switching virtual desktop.";
+        description = "The animation used when switching through virtual desktops.";
       };
       windowOpenClose = {
         animation = lib.mkOption {
@@ -231,7 +231,7 @@ in
       fallApart.enable = lib.mkOption {
         type = with lib.types; nullOr bool;
         default = null;
-        description = "Closed windows fall into pieces.";
+        description = "Whether to make closed windows break into pieces.";
       };
       blur = {
         enable = lib.mkOption {
@@ -243,13 +243,13 @@ in
           type = with lib.types; nullOr (ints.between 1 15);
           default = null;
           example = 5;
-          description = "Controls the intensity of the blur";
+          description = "Controls the intensity of the blur.";
         };
         noiseStrength = lib.mkOption {
           type = with lib.types; nullOr (ints.between 0 14);
           default = null;
           example = 8;
-          description = "Adds noise to the effect";
+          description = "Adds noise to the blur effect.";
         };
       };
       snapHelper.enable = lib.mkOption {
@@ -265,7 +265,7 @@ in
       dimAdminMode.enable = lib.mkOption {
         type = with lib.types; nullOr bool;
         default = null;
-        description = "Darken the entire when when requesting root privileges.";
+        description = "Darken the entire screen, except for the PolKit window, when requesting `root` privileges.";
       };
       slideBack.enable = lib.mkOption {
         type = with lib.types; nullOr bool;
@@ -300,9 +300,9 @@ in
         default = null;
         example = 8;
         description = ''
-          The amount of virtual desktops. If the names attribute is set as
-          well the number of desktops must be the same as the length of the
-          names list.
+          The amount of virtual desktops. If the `names` attribute is set as
+          well, then the number of desktops must be the same as the length of the
+          `names` list.
         '';
       };
     };
@@ -311,7 +311,7 @@ in
       type = with lib.types; nullOr bool;
       default = null;
       example = true;
-      description = "Maximized windows will not have a border.";
+      description = "Whether to remove the border of maximized windows.";
     };
 
     nightLight = {
@@ -331,7 +331,13 @@ in
           ]);
         default = null;
         example = "times";
-        description = "The mode of the night light effect.";
+        description = ''
+          When to enable the night light effect.
+
+          - `constant` enables it unconditonally.
+          - `location` uses coordinates to figure out the sunset/sunrise times for your location.
+          - `times` allows you to set the times for enabling and disabling night light.
+        '';
         apply = mode: if mode == null then null else capitalizeWord mode;
       };
       location = {
@@ -392,7 +398,7 @@ in
       example = 50;
       description = ''
         Additional distance the cursor needs to travel to cross screen edges. To
-        disable edge-barriers, set this to 0.
+        disable edge barriers, set this to `0`.
       '';
     };
 
@@ -439,7 +445,7 @@ in
           type = with lib.types; nullOr bool;
           default = null;
           example = true;
-          description = "Whether to enable Polonium";
+          description = "Whether to enable Polonium.";
         };
         settings = {
           borderVisibility =
@@ -455,20 +461,20 @@ in
               type = with lib.types; nullOr (enum enumVals);
               default = null;
               example = "noBorderAll";
-              description = "The border visibility setting for Polonium";
+              description = "The border visibility setting for Polonium.";
               apply = getIndexFromEnum enumVals;
             };
           callbackDelay = lib.mkOption {
             type = with lib.types; nullOr (ints.between 1 200);
             default = null;
             example = 100;
-            description = "The callback delay setting for Polonium";
+            description = "The callback delay setting for Polonium.";
           };
           enableDebug = lib.mkOption {
             type = with lib.types; nullOr bool;
             default = null;
             example = true;
-            description = "Whether to enable debug for Polonium";
+            description = "Whether to enable debug mode for Polonium.";
           };
           filter = {
             processes = lib.mkOption {
@@ -478,7 +484,7 @@ in
                 "firefox"
                 "chromium"
               ];
-              description = "The processes to filter for Polonium";
+              description = "The processes to filter for Polonium.";
               apply = convertPoloniumFilter;
             };
             windowTitles = lib.mkOption {
@@ -488,7 +494,7 @@ in
                 "Discord"
                 "Telegram"
               ];
-              description = "The window titles to filter for Polonium";
+              description = "The window titles to filter for Polonium.";
               apply = convertPoloniumFilter;
             };
           };
@@ -507,7 +513,7 @@ in
                 type = with lib.types; nullOr (enum enumVals);
                 default = null;
                 example = "binaryTree";
-                description = "The layout engine setting for Polonium";
+                description = "The layout engine setting for Polonium.";
                 apply = getIndexFromEnum enumVals;
               };
             insertionPoint =
@@ -522,39 +528,39 @@ in
                 type = with lib.types; nullOr (enum enumVals);
                 default = null;
                 example = "top";
-                description = "The insertion point setting for Polonium";
+                description = "The insertion point setting for Polonium.";
                 apply = getIndexFromEnum enumVals;
               };
             rotate = lib.mkOption {
               type = with lib.types; nullOr bool;
               default = null;
               example = true;
-              description = "Whether to rotate layout for Polonium";
+              description = "Whether to rotate the layout for Polonium.";
             };
           };
           maximizeSingleWindow = lib.mkOption {
             type = with lib.types; nullOr bool;
             default = null;
             example = true;
-            description = "Whether to maximize single window for Polonium";
+            description = "Whether to maximize a single window for Polonium.";
           };
           resizeAmount = lib.mkOption {
             type = with lib.types; nullOr (ints.between 1 450);
             default = null;
             example = 100;
-            description = "The resize amount setting for Polonium";
+            description = "The resize amount setting for Polonium.";
           };
           saveOnTileEdit = lib.mkOption {
             type = with lib.types; nullOr bool;
             default = null;
             example = true;
-            description = "Whether to save on tile edit for Polonium";
+            description = "Whether to save on tile edit for Polonium.";
           };
           tilePopups = lib.mkOption {
             type = with lib.types; nullOr bool;
             default = null;
             example = true;
-            description = "Whether to tile popups for Polonium";
+            description = "Whether to tile popups for Polonium.";
           };
         };
       };
