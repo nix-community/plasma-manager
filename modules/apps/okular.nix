@@ -145,9 +145,24 @@ with lib.types;
           description = "Mode used to change the colors.";
           default = null;
           type = nullOr (enum [
+            # Inverts colors, including hue
             "Inverted"
+            # Change background color (see option below)
             "Paper"
+            # Change light and dark colors (see options below)
             "Recolor"
+            # Change to black & white colors (see options below)
+            "BlackWhite"
+            # Invert lightness but leave hue and saturation
+            "InvertLightness" 
+            # Like InvertLightness, but slightly more contrast
+            "InvertLumaSymmetric"
+            # Like InvertLightness, but much more contrast
+            "InvertLuma"
+            # Shift hue of all colors by 120 degrees
+            "HueShiftPositive"
+            # Shift hue of all colors by 240 degrees
+            "HueShiftNegative"
           ]);
         };
         paperColor = lib.mkOption {
@@ -168,6 +183,22 @@ with lib.types;
           example = "255,255,255";
           type = nullOr str;
         };
+        blackWhiteContrast = lib.mkOption {
+          description = "New contrast strength. Used for the `BlackWhite` mode.";
+          default = null;
+          example = "4";
+          type = nullOr (enum [2 3 4 5 6]);
+        };
+        blackWhiteThreshold = lib.mkOption {
+          description = ''
+            A threshold for deciding between black and white.
+            Higher values lead to brighter grays.
+            Used for the `BlackWhite` mode.
+          '';
+          default = null;
+          example = "127";
+          type = nullOr (numbers.between 0 255);
+        };
       };
     };
 
@@ -186,7 +217,7 @@ with lib.types;
         type = nullOr (enum [
           "Low"
           "Normal"
-          "Agressive"
+          "Aggressive"
           "Greedy"
         ]);
       };
@@ -236,6 +267,8 @@ with lib.types;
         "HighlightLinks" = applyIfSet acc.highlightLinks;
         "RecolorBackground" = applyIfSet acc.changeColors.recolorBackground;
         "RecolorForeground" = applyIfSet acc.changeColors.recolorForeground;
+        "BWContrast" = applyIfSet acc.changeColors.blackWhiteContrast;
+        "BWThreshold" = applyIfSet acc.changeColors.blackWhiteThreshold;
       };
 
       "Core Performance" = {
