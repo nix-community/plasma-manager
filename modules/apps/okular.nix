@@ -187,7 +187,7 @@ with lib.types;
           description = "New contrast strength. Used for the `BlackWhite` mode.";
           default = null;
           example = "4";
-          type = nullOr (enum [2 3 4 5 6]);
+          type = nullOr (ints.between 2 6);
         };
         blackWhiteThreshold = lib.mkOption {
           description = ''
