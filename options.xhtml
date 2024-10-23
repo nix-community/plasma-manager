@@ -4166,6 +4166,62 @@ boolean</p>
 </dd>
 <dt>
  <span class="term">
+ <a id="opt-programs.okular.accessibility.changeColors.blackWhiteContrast"></a><a class="term" href="options.xhtml#opt-programs.okular.accessibility.changeColors.blackWhiteContrast"><code class="option">programs.okular.accessibility.changeColors.blackWhiteContrast</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>New contrast strength. Used for the <code class="literal">BlackWhite</code> mode.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or integer between 2 and 6 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">4</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/okular.nix" target="_top">
+&lt;plasma-manager/modules/apps/okular.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.okular.accessibility.changeColors.blackWhiteThreshold"></a><a class="term" href="options.xhtml#opt-programs.okular.accessibility.changeColors.blackWhiteThreshold"><code class="option">programs.okular.accessibility.changeColors.blackWhiteThreshold</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>A threshold for deciding between black and white.
+Higher values lead to brighter grays.
+Used for the <code class="literal">BlackWhite</code> mode.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or integer or floating point number between 2 and 253 (both inclusive)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">127</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/okular.nix" target="_top">
+&lt;plasma-manager/modules/apps/okular.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
  <a id="opt-programs.okular.accessibility.changeColors.mode"></a><a class="term" href="options.xhtml#opt-programs.okular.accessibility.changeColors.mode"><code class="option">programs.okular.accessibility.changeColors.mode</code>
   </a>
  </span>
@@ -4174,7 +4230,7 @@ boolean</p>
 <p>Mode used to change the colors.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
-null or one of “Inverted”, “Paper”, “Recolor”</p>
+null or one of “Inverted”, “Paper”, “Recolor”, “BlackWhite”, “InvertLightness”, “InvertLumaSymmetric”, “InvertLuma”, “HueShiftPositive”, “HueShiftNegative”</p>
 
 <p><span class="emphasis"><em>Default:</em></span>
 <code class="literal">null</code></p>
@@ -4530,7 +4586,7 @@ null or boolean</p>
 <p>Memory usage of Okular. This impacts the speed performance of Okular as it determines how much computation results are kept in memory and not recomputed.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
-null or one of “Low”, “Normal”, “Agressive”, “Greedy”</p>
+null or one of “Low”, “Normal”, “Aggressive”, “Greedy”</p>
 
 <p><span class="emphasis"><em>Default:</em></span>
 <code class="literal">null</code></p>
