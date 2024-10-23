@@ -197,7 +197,7 @@ with lib.types;
           '';
           default = null;
           example = 127;
-          type = nullOr (numbers.between 0 255);
+          type = nullOr (numbers.between 2 253);
         };
       };
     };
