@@ -186,7 +186,7 @@ with lib.types;
         blackWhiteContrast = lib.mkOption {
           description = "New contrast strength. Used for the `BlackWhite` mode.";
           default = null;
-          example = "4";
+          example = 4;
           type = nullOr (ints.between 2 6);
         };
         blackWhiteThreshold = lib.mkOption {
@@ -196,7 +196,7 @@ with lib.types;
             Used for the `BlackWhite` mode.
           '';
           default = null;
-          example = "127";
+          example = 127;
           type = nullOr (numbers.between 0 255);
         };
       };
