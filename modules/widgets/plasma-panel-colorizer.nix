@@ -772,8 +772,6 @@ in
     };
     convert =
       {
-        position,
-        size,
         general,
         presetAutoLoading,
         widgetBackground,
@@ -782,6 +780,7 @@ in
         blacklist,
         layout,
         settings,
+        ...
       }:
       {
         name = "luisbocanegra.panel.colorizer";

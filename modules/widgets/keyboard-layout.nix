@@ -61,12 +61,7 @@ in
     };
 
     convert =
-      {
-        position,
-        size,
-        displayStyle,
-        settings,
-      }:
+      { displayStyle, settings, ... }:
       {
         name = "org.kde.plasma.keyboardlayout";
         config = lib.recursiveUpdate {

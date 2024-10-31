@@ -195,12 +195,11 @@ in
 
     convert =
       {
-        position,
-        size,
         pin,
         icons,
         items,
         settings,
+        ...
       }:
       let
         sets = {

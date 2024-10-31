@@ -1,9 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 let
   inherit
     (import ../../lib/types.nix {
@@ -14,13 +9,13 @@ let
     ;
 
   # used as shown in the example in the library docs:
-  # https://ryantm.github.io/nixpkgs/functions/library/attrsets/#function-library-lib.attrsets.mapAttrs-prime
+  # https://noogle.dev/f/lib/attrsets/mapAttrs'
   createColorSchemes = lib.attrsets.mapAttrs' (
     name: value:
-    lib.attrsets.nameValuePair ("konsole/${name}.colorscheme") ({
+    lib.attrsets.nameValuePair "konsole/${name}.colorscheme" {
       enable = true;
       source = value;
-    })
+    }
   );
 
   cfg = config.programs.konsole;
@@ -135,7 +130,7 @@ in
     };
 
     extraConfig = lib.mkOption {
-      type = with lib.types; nullOr (attrsOf (attrsOf (basicSettingsType)));
+      type = with lib.types; nullOr (attrsOf (attrsOf basicSettingsType));
       default = null;
       description = ''
         Extra config to add to konsolerc.
@@ -165,7 +160,7 @@ in
 
     xdg.dataFile = lib.mkMerge [
       (lib.mkIf (cfg.profiles != { }) (
-        lib.mkMerge ([
+        lib.mkMerge [
           (lib.mkMerge (
             lib.mapAttrsToList (
               attrName: profile:
@@ -200,7 +195,7 @@ in
               }
             ) cfg.profiles
           ))
-        ])
+        ]
       ))
       (createColorSchemes cfg.customColorSchemes)
     ];

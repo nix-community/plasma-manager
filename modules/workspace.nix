@@ -77,6 +77,15 @@ in
       '';
     };
 
+    enableMiddleClickPaste = lib.mkOption {
+      type = with lib.types; nullOr bool;
+      default = null;
+      example = false;
+      description = ''
+        Clicking the middle mouse button pastes clipboard content";
+      '';
+    };
+
     tooltipDelay = lib.mkOption {
       type = with lib.types; nullOr ints.positive;
       default = null;
@@ -178,9 +187,8 @@ in
       example = "stretch";
       description = ''
         Defines how the wallpaper should be displayed on the screen.
-        Applies only to wallpaperPictureOfTheDay or wallpaperSlideShow.
+        Applies only to wallpaper, wallpaperPictureOfTheDay or wallpaperSlideShow.
       '';
-      apply = value: if value == null then null else (builtins.toString wallpaperFillModeTypes.${value});
     };
 
     soundTheme = lib.mkOption {
@@ -321,12 +329,14 @@ in
                 Theme = cfg.workspace.splashScreen.theme;
               }
             );
-            kwinrc = (
-              lib.mkIf (cfg.workspace.windowDecorations.theme != null) {
+            kwinrc =
+              (lib.mkIf (cfg.workspace.windowDecorations.theme != null) {
                 "org.kde.kdecoration2".library = cfg.workspace.windowDecorations.library;
                 "org.kde.kdecoration2".theme = cfg.workspace.windowDecorations.theme;
-              }
-            );
+              })
+              // (lib.optionalAttrs (cfg.workspace.enableMiddleClickPaste != null) {
+                Wayland.EnablePrimarySelection = cfg.workspace.enableMiddleClickPaste;
+              });
           }
           # We add persistence to some keys in order to not reset the themes on
           # each generation when we use overrideConfig.
@@ -409,7 +419,11 @@ in
             # gives us the correct behavior with last_run files.
             text = "// Wallpaper to set later: ${cfg.workspace.wallpaper}";
             postCommands = ''
-              plasma-apply-wallpaperimage ${cfg.workspace.wallpaper}
+              plasma-apply-wallpaperimage ${cfg.workspace.wallpaper} ${
+                lib.optionalString (
+                  cfg.workspace.wallpaperFillMode != null
+                ) "--fill-mode ${cfg.workspace.wallpaperFillMode}"
+              }
             '';
             priority = 3;
           }
@@ -428,9 +442,10 @@ in
                     if (cfg.workspace.wallpaperPictureOfTheDay.updateOverMeteredConnection) then "1" else "0"
                   }");
                   ${
-                    lib.optionalString (
-                      cfg.workspace.wallpaperFillMode != null
-                    ) ''desktop.writeConfig("FillMode", "${cfg.workspace.wallpaperFillMode}");''
+                    lib.optionalString (cfg.workspace.wallpaperFillMode != null)
+                      ''desktop.writeConfig("FillMode", "${
+                        toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}
+                      }");''
                   }
               }
             '';
@@ -472,9 +487,10 @@ in
                   });
                   desktop.writeConfig("SlideInterval", "${builtins.toString cfg.workspace.wallpaperSlideShow.interval}");
                   ${
-                    lib.optionalString (
-                      cfg.workspace.wallpaperFillMode != null
-                    ) ''desktop.writeConfig("FillMode", "${cfg.workspace.wallpaperFillMode}");''
+                    lib.optionalString (cfg.workspace.wallpaperFillMode != null)
+                      ''desktop.writeConfig("FillMode", "${
+                        toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}
+                      }");''
                   }
               }
             '';

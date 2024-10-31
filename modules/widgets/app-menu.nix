@@ -48,12 +48,7 @@ in
     };
 
     convert =
-      {
-        position,
-        size,
-        compactView,
-        settings,
-      }:
+      { compactView, settings, ... }:
       {
         name = "org.kde.plasma.appmenu";
         config = lib.recursiveUpdate {

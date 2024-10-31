@@ -49,7 +49,7 @@ let
           default = true;
           description = ''
             Whether to escape the value according to kde's escape-format. See:
-            https://github.com/KDE/kconfig/blob/44f98ff5cb9008436ba5ba385cae03bbd0ab33e6/src/core/kconfigini.cpp#L882
+            https://invent.kde.org/frameworks/kconfig/-/blob/v6.7.0/src/core/kconfigini.cpp?ref_type=tags#L880-945
             for info about this format.
           '';
         };

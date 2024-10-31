@@ -38,7 +38,7 @@ in
         example = 50;
         description = ''
           The length of the spacer.
-          If expanding is set to true, this value is ignored.  
+          If expanding is set to true, this value is ignored.
         '';
       };
       settings = lib.mkOption {
@@ -58,11 +58,10 @@ in
 
     convert =
       {
-        position,
-        size,
         expanding,
         length,
         settings,
+        ...
       }:
       {
         name = "org.kde.plasma.panelspacer";

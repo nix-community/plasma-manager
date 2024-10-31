@@ -197,20 +197,7 @@ in
           onlyInCurrentScreen = mkBoolOption "Whether to show only window tasks that are on the same screen as the widget.";
           onlyInCurrentDesktop = mkBoolOption "Whether to only show tasks that are on the current virtual desktop.";
           onlyInCurrentActivity = mkBoolOption "Whether to show only tasks that are on the current activity.";
-          onlyMinimized = mkOption {
-            type = types.nullOr types.bool;
-            default = null;
-            example = true;
-            description = "Whether to show only window tasks that are minimized.";
-            apply =
-              onlyMinimized:
-              if onlyMinimized == null then
-                null
-              else if onlyMinimized == true then
-                1
-              else
-                0;
-          };
+          onlyMinimized = mkBoolOption "Whether to show only window tasks that are minimized.";
         };
         unhideOnAttentionNeeded = mkBoolOption "Whether to unhide if a window wants attention.";
         newTasksAppearOn = mkOption {
@@ -243,17 +230,16 @@ in
     };
     convert =
       {
-        position,
-        size,
         appearance,
         behavior,
         launchers,
         settings,
+        ...
       }:
       {
         name = "org.kde.plasma.icontasks";
         config = lib.recursiveUpdate {
-          General = lib.filterAttrs (_: v: v != null) ({
+          General = lib.filterAttrs (_: v: v != null) {
             launchers = launchers;
 
             # Appearance
@@ -284,7 +270,7 @@ in
 
             unhideOnAttention = behavior.unhideOnAttentionNeeded;
             reverseMode = behavior.newTasksAppearOn;
-          });
+          };
         } settings;
       };
   };

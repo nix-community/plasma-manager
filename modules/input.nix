@@ -1,7 +1,5 @@
 { config, lib, ... }:
 
-with lib;
-
 let
   cfg = config.programs.plasma;
   numlockSettings = [
@@ -31,19 +29,19 @@ let
       firstLetter = builtins.substring 0 1 word;
       rest = builtins.substring 1 (builtins.stringLength word - 1) word;
     in
-    "${toUpper firstLetter}${rest}";
+    "${lib.toUpper firstLetter}${rest}";
 
-  layoutType = types.submodule {
+  layoutType = lib.types.submodule {
     options = {
-      layout = mkOption {
-        type = types.str;
+      layout = lib.mkOption {
+        type = lib.types.str;
         example = "us";
         description = ''
           Keyboard layout.
         '';
       };
-      variant = mkOption {
-        type = with types; nullOr str;
+      variant = lib.mkOption {
+        type = with lib.types; nullOr str;
         default = null;
         example = "eng";
         description = ''
@@ -51,8 +49,8 @@ let
         '';
         apply = builtins.toString;
       };
-      displayName = mkOption {
-        type = with types; nullOr str;
+      displayName = lib.mkOption {
+        type = with lib.types; nullOr str;
         default = null;
         example = "us";
         description = ''
@@ -63,18 +61,18 @@ let
     };
   };
 
-  touchPadType = types.submodule {
+  touchPadType = lib.types.submodule {
     options = {
-      enable = mkOption {
-        type = with types; nullOr bool;
+      enable = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         example = true;
         description = ''
           Enables or disables the touchpad.
         '';
       };
-      name = mkOption {
-        type = types.str;
+      name = lib.mkOption {
+        type = lib.types.str;
         default = null;
         example = "PNP0C50:00 0911:5288 Touchpad";
         description = ''
@@ -84,8 +82,8 @@ let
           /proc/bus/input/devices belonging to the touchpad.
         '';
       };
-      vendorId = mkOption {
-        type = types.str;
+      vendorId = lib.mkOption {
+        type = lib.types.str;
         default = null;
         example = "0911";
         description = ''
@@ -95,8 +93,8 @@ let
           /proc/bus/input/devices belonging to the touchpad.
         '';
       };
-      productId = mkOption {
-        type = types.str;
+      productId = lib.mkOption {
+        type = lib.types.str;
         default = null;
         example = "5288";
         description = ''
@@ -106,24 +104,24 @@ let
           in /proc/bus/input/devices belonging to the touchpad.
         '';
       };
-      disableWhileTyping = mkOption {
-        type = with types; nullOr bool;
+      disableWhileTyping = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         example = true;
         description = ''
           Disables the touchpad while typing.
         '';
       };
-      leftHanded = mkOption {
-        type = with types; nullOr bool;
+      leftHanded = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         example = false;
         description = ''
           Swap the left and right buttons.
         '';
       };
-      middleButtonEmulation = mkOption {
-        type = with types; nullOr bool;
+      middleButtonEmulation = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         example = false;
         description = ''
@@ -131,48 +129,48 @@ let
           Activating this increases the click latency by 50ms.
         '';
       };
-      pointerSpeed = mkOption {
-        type = with types; nullOr (numbers.between (-1) 1);
+      pointerSpeed = lib.mkOption {
+        type = with lib.types; nullOr (numbers.between (-1) 1);
         default = null;
         example = "0";
         description = ''
           How fast the pointer moves.
         '';
       };
-      naturalScroll = mkOption {
-        type = with types; nullOr bool;
+      naturalScroll = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         example = true;
         description = ''
           Enables natural scrolling for the touchpad.
         '';
       };
-      tapToClick = mkOption {
-        type = with types; nullOr bool;
+      tapToClick = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         example = true;
         description = ''
           Enables tap-to-click for the touchpad.
         '';
       };
-      tapAndDrag = mkOption {
-        type = with types; nullOr bool;
+      tapAndDrag = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         example = true;
         description = ''
           Enables tap-and-drag for the touchpad.
         '';
       };
-      tapDragLock = mkOption {
-        type = with types; nullOr bool;
+      tapDragLock = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         example = true;
         description = ''
           Enables tap-and-drag lock for the touchpad.
         '';
       };
-      scrollMethod = mkOption {
-        type = with types; nullOr (enum (builtins.attrNames scrollMethods));
+      scrollMethod = lib.mkOption {
+        type = with lib.types; nullOr (enum (builtins.attrNames scrollMethods));
         default = null;
         example = "touchPadEdges";
         description = ''
@@ -180,8 +178,8 @@ let
         '';
         apply = method: if (method == null) then null else scrollMethods."${method}";
       };
-      rightClickMethod = mkOption {
-        type = with types; nullOr (enum (builtins.attrNames rightClickMethods));
+      rightClickMethod = lib.mkOption {
+        type = with lib.types; nullOr (enum (builtins.attrNames rightClickMethods));
         default = null;
         example = "twoFingers";
         description = ''
@@ -189,9 +187,9 @@ let
         '';
         apply = method: if (method == null) then null else rightClickMethods."${method}";
       };
-      twoFingerTap = mkOption {
+      twoFingerTap = lib.mkOption {
         type =
-          with types;
+          with lib.types;
           nullOr (enum [
             "rightClick"
             "middleClick"
@@ -229,18 +227,18 @@ let
       };
     };
 
-  mouseType = types.submodule {
+  mouseType = lib.types.submodule {
     options = {
-      enable = mkOption {
-        type = with types; nullOr bool;
+      enable = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         example = true;
         description = ''
           Enables or disables the mouse.
         '';
       };
-      name = mkOption {
-        type = types.str;
+      name = lib.mkOption {
+        type = lib.types.str;
         default = null;
         example = "Logitech G403 HERO Gaming Mouse";
         description = ''
@@ -250,8 +248,8 @@ let
           /proc/bus/input/devices belonging to the mouse.
         '';
       };
-      vendorId = mkOption {
-        type = types.str;
+      vendorId = lib.mkOption {
+        type = lib.types.str;
         default = null;
         example = "046d";
         description = ''
@@ -261,8 +259,8 @@ let
           /proc/bus/input/devices belonging to the mouse.
         '';
       };
-      productId = mkOption {
-        type = types.str;
+      productId = lib.mkOption {
+        type = lib.types.str;
         default = null;
         example = "c077";
         description = ''
@@ -272,16 +270,16 @@ let
           /proc/bus/input/devices belonging to the mouse.
         '';
       };
-      leftHanded = mkOption {
-        type = with types; nullOr bool;
+      leftHanded = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         example = false;
         description = ''
           Swap the left and right buttons.
         '';
       };
-      middleButtonEmulation = mkOption {
-        type = with types; nullOr bool;
+      middleButtonEmulation = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         example = false;
         description = ''
@@ -289,17 +287,17 @@ let
           Activating this increases the click latency by 50ms.
         '';
       };
-      acceleration = mkOption {
-        type = with types; nullOr (numbers.between (-1) 1);
+      acceleration = lib.mkOption {
+        type = with lib.types; nullOr (numbers.between (-1) 1);
         default = null;
         example = 0.5;
         description = ''
           Mouse acceleration.
         '';
       };
-      accelerationProfile = mkOption {
+      accelerationProfile = lib.mkOption {
         type =
-          with types;
+          with lib.types;
           nullOr (enum [
             "none"
             "default"
@@ -316,16 +314,16 @@ let
           else
             null;
       };
-      naturalScroll = mkOption {
-        type = with types; nullOr bool;
+      naturalScroll = lib.mkOption {
+        type = with lib.types; nullOr bool;
         default = null;
         example = true;
         description = ''
           Enables natural scrolling for the mouse.
         '';
       };
-      scrollSpeed = mkOption {
-        type = with types; nullOr (numbers.between 0.1 20);
+      scrollSpeed = lib.mkOption {
+        type = with lib.types; nullOr (numbers.between 0.1 20);
         default = null;
         example = 1;
         description = ''
@@ -382,10 +380,10 @@ in
           !(lib.all (c: builtins.elem (lib.toLower c) validChars) (hexChars hex))
           && (builtins.stringLength hex) > 0;
         allHexCodes = lib.flatten (
-          (map (t: [
+          map (t: [
             t.vendorId
             t.productId
-          ]) (cfg.input.touchpads ++ cfg.input.mice))
+          ]) (cfg.input.touchpads ++ cfg.input.mice)
         );
         invalidHexCodes = builtins.filter hexCodeInvalid allHexCodes;
       in
@@ -397,16 +395,16 @@ in
   ];
   # Keyboard options
   options.programs.plasma.input.keyboard = {
-    model = mkOption {
-      type = with types; nullOr str;
+    model = lib.mkOption {
+      type = with lib.types; nullOr str;
       default = null;
       example = "pc104";
       description = ''
         Keyboard model.
       '';
     };
-    switchingPolicy = mkOption {
-      type = with types; nullOr (enum switchModes);
+    switchingPolicy = lib.mkOption {
+      type = with lib.types; nullOr (enum switchModes);
       default = null;
       example = "global";
       description = ''
@@ -414,8 +412,8 @@ in
       '';
       apply = policy: if policy == null then null else capitalizeWord policy;
     };
-    layouts = mkOption {
-      type = with types; nullOr (listOf layoutType);
+    layouts = lib.mkOption {
+      type = with lib.types; nullOr (listOf layoutType);
       default = null;
       example = [
         { layout = "us"; }
@@ -433,16 +431,16 @@ in
         Keyboard layouts to use.
       '';
     };
-    numlockOnStartup = mkOption {
-      type = with types; nullOr (enum numlockSettings);
+    numlockOnStartup = lib.mkOption {
+      type = with lib.types; nullOr (enum numlockSettings);
       default = null;
       example = "on";
       description = ''
         Numpad settings at startup.
       '';
     };
-    repeatDelay = mkOption {
-      type = with types; nullOr (ints.between 100 5000);
+    repeatDelay = lib.mkOption {
+      type = with lib.types; nullOr (ints.between 100 5000);
       default = null;
       example = 200;
       description = ''
@@ -450,16 +448,16 @@ in
         starts repeating.
       '';
     };
-    repeatRate = mkOption {
-      type = with types; nullOr (numbers.between 0.2 100.0);
+    repeatRate = lib.mkOption {
+      type = with lib.types; nullOr (numbers.between 0.2 100.0);
       default = null;
       example = 50.0;
       description = ''
         How quick the inputs should be repeated when holding down a key.
       '';
     };
-    options = mkOption {
-      type = with types; nullOr (listOf str);
+    options = lib.mkOption {
+      type = with lib.types; nullOr (listOf str);
       default = null;
       example = [
         "altwin:meta_alt"
@@ -472,38 +470,38 @@ in
     };
   };
 
-  config.programs.plasma.configFile."kxkbrc" = mkIf (cfg.enable) (mkMerge [
-    (mkIf (cfg.input.keyboard.layouts != null) {
-      Layout = {
-        Use.value = true;
-        LayoutList.value = strings.concatStringsSep "," (map (l: l.layout) cfg.input.keyboard.layouts);
-        VariantList.value = strings.concatStringsSep "," (map (l: l.variant) cfg.input.keyboard.layouts);
-        DisplayNames.value = strings.concatStringsSep "," (
-          map (l: l.displayName) cfg.input.keyboard.layouts
-        );
-      };
-    })
-    (mkIf (cfg.input.keyboard.options != null) {
-      Layout = {
-        ResetOldOptions.value = true;
-        Options.value = strings.concatStringsSep "," cfg.input.keyboard.options;
-      };
-    })
-    (mkIf (cfg.input.keyboard.model != null) {
-      Layout = {
-        Model.value = cfg.input.keyboard.model;
-      };
-    })
-    (mkIf (cfg.input.keyboard.switchingPolicy != null) {
-      Layout = {
-        SwitchMode.value = cfg.input.keyboard.switchingPolicy;
-      };
-    })
-  ]);
+  config.programs.plasma.configFile."kxkbrc" = lib.mkIf (cfg.enable) (
+    lib.mkMerge [
+      (lib.mkIf (cfg.input.keyboard.layouts != null) {
+        Layout = {
+          Use.value = true;
+          LayoutList.value = lib.concatStringsSep "," (map (l: l.layout) cfg.input.keyboard.layouts);
+          VariantList.value = lib.concatStringsSep "," (map (l: l.variant) cfg.input.keyboard.layouts);
+          DisplayNames.value = lib.concatStringsSep "," (map (l: l.displayName) cfg.input.keyboard.layouts);
+        };
+      })
+      (lib.mkIf (cfg.input.keyboard.options != null) {
+        Layout = {
+          ResetOldOptions.value = true;
+          Options.value = lib.concatStringsSep "," cfg.input.keyboard.options;
+        };
+      })
+      (lib.mkIf (cfg.input.keyboard.model != null) {
+        Layout = {
+          Model.value = cfg.input.keyboard.model;
+        };
+      })
+      (lib.mkIf (cfg.input.keyboard.switchingPolicy != null) {
+        Layout = {
+          SwitchMode.value = cfg.input.keyboard.switchingPolicy;
+        };
+      })
+    ]
+  );
 
   # Touchpads options
-  options.programs.plasma.input.touchpads = mkOption {
-    type = with types; listOf touchPadType;
+  options.programs.plasma.input.touchpads = lib.mkOption {
+    type = with lib.types; listOf touchPadType;
     default = [ ];
     example = [
       {
@@ -524,8 +522,8 @@ in
     '';
   };
 
-  options.programs.plasma.input.mice = mkOption {
-    type = with types; listOf mouseType;
+  options.programs.plasma.input.mice = lib.mkOption {
+    type = with lib.types; listOf mouseType;
     default = [ ];
     example = [
       {
@@ -546,17 +544,21 @@ in
     '';
   };
 
-  config.programs.plasma.configFile."kcminputrc" = mkIf (cfg.enable) (mkMerge [
-    {
-      Keyboard = (
-        lib.filterAttrs (k: v: v != null) {
-          NumLock = (lists.findFirstIndex (x: x == cfg.input.keyboard.numlockOnStartup) null numlockSettings);
-          RepeatDelay = cfg.input.keyboard.repeatDelay;
-          RepeatRate = cfg.input.keyboard.repeatRate;
-        }
-      );
-    }
-    (mkMerge (map touchPadToConfig cfg.input.touchpads))
-    (mkMerge (map mouseToConfig cfg.input.mice))
-  ]);
+  config.programs.plasma.configFile."kcminputrc" = lib.mkIf (cfg.enable) (
+    lib.mkMerge [
+      {
+        Keyboard = (
+          lib.filterAttrs (k: v: v != null) {
+            NumLock = (
+              lib.lists.findFirstIndex (x: x == cfg.input.keyboard.numlockOnStartup) null numlockSettings
+            );
+            RepeatDelay = cfg.input.keyboard.repeatDelay;
+            RepeatRate = cfg.input.keyboard.repeatRate;
+          }
+        );
+      }
+      (lib.mkMerge (map touchPadToConfig cfg.input.touchpads))
+      (lib.mkMerge (map mouseToConfig cfg.input.mice))
+    ]
+  );
 }

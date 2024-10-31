@@ -559,8 +559,6 @@ in
     };
     convert =
       {
-        position,
-        size,
         layout,
         windowControlButtons,
         windowTitle,
@@ -571,6 +569,7 @@ in
         mouseAreaWheel,
         titleReplacements,
         settings,
+        ...
       }:
       {
         name = "com.github.antroids.application-title-bar";

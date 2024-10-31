@@ -306,14 +306,13 @@ in
 
     convert =
       {
-        position,
-        size,
         date,
         time,
         timeZone,
         calendar,
         font,
         settings,
+        ...
       }:
       {
         name = "org.kde.plasma.digitalclock";

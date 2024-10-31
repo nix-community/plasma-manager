@@ -1,9 +1,4 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}:
+{ config, lib, ... }:
 let
   cfg = config.programs.plasma;
   inherit (import ../lib/wallpapers.nix { inherit lib; })

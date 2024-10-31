@@ -15,6 +15,7 @@ let
       ./kicker.nix
       ./kickerdash.nix
       ./kickoff.nix
+      ./pager.nix
       ./panel-spacer.nix
       ./plasma-panel-colorizer.nix
       ./plasmusic-toolbar.nix
@@ -186,7 +187,6 @@ let
           attrNames
           mapAttrs
           isAttrs
-          isString
           ;
         keys = attrNames widget;
         type = head keys;
