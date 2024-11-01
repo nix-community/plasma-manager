@@ -265,7 +265,6 @@ in
           else if source == "auto" then
             {
               choosePlayerAutomatically = true;
-              preferredPlayerIdentity = null;
             }
           else
             {
