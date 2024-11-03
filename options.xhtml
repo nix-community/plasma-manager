@@ -13627,6 +13627,90 @@ list of string</p>
 </dd>
 <dt>
  <span class="term">
+ <a id="opt-programs.plasma.session.general.askForConfirmationOnLogout"></a><a class="term" href="options.xhtml#opt-programs.plasma.session.general.askForConfirmationOnLogout"><code class="option">programs.plasma.session.general.askForConfirmationOnLogout</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to ask for confirmation when shutting down, restarting or logging out</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/session.nix" target="_top">
+&lt;plasma-manager/modules/session.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.session.sessionRestore.excludeApplications"></a><a class="term" href="options.xhtml#opt-programs.plasma.session.sessionRestore.excludeApplications"><code class="option">programs.plasma.session.sessionRestore.excludeApplications</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>List of applications to exclude from session restore</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or (list of string)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting">[
+  &quot;firefox&quot;
+  &quot;xterm&quot;
+]
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/session.nix" target="_top">
+&lt;plasma-manager/modules/session.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.session.sessionRestore.restoreOpenApplicationsOnLogin"></a><a class="term" href="options.xhtml#opt-programs.plasma.session.sessionRestore.restoreOpenApplicationsOnLogin"><code class="option">programs.plasma.session.sessionRestore.restoreOpenApplicationsOnLogin</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Controls how applications are restored on login:</p><div class="itemizedlist"><ul class="itemizedlist " style="list-style-type: disc;"><li class="listitem"><p>“onLastLogout”: Restores applications that were open during the last logout.</p></li><li class="listitem"><p>“whenSessionWasManuallySaved”: Restores applications based on a manually saved session.</p></li><li class="listitem"><p>“startWithEmptySession”: Starts with a clean, empty session each time.</p></li></ul></div>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “onLastLogout”, “startWithEmptySession”, “whenSessionWasManuallySaved”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;startWithEmptySession&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/session.nix" target="_top">
+&lt;plasma-manager/modules/session.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
  <a id="opt-programs.plasma.shortcuts"></a><a class="term" href="options.xhtml#opt-programs.plasma.shortcuts"><code class="option">programs.plasma.shortcuts</code>
   </a>
  </span>
