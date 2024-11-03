@@ -13,33 +13,26 @@ in
       };
     };
     sessionRestore = {
-      restoreOpenApplicationsOnLogin = lib.mkOption {
-        type =
-          with lib.types;
-          nullOr (enum [
-            "onLastLogout"
-            "whenSessionWasManuallySaved"
-            "startWithEmptySession"
-          ]);
-        default = null;
-        example = "startWithEmptySession";
-        description = ''
-          Controls how applications are restored on login:
-          - "onLastLogout": Restores applications that were open during the last logout.
-          - "whenSessionWasManuallySaved": Restores applications based on a manually saved session.
-          - "startWithEmptySession": Starts with a clean, empty session each time.
-        '';
-        apply =
-          option:
-          if option == null then
-            null
-          else if option == "onLastLogout" then
-            "restorePreviousLogout"
-          else if "whenSessionWasManuallySaved" then
-            "restoreSavedSession"
-          else
-            "emptySession";
-      };
+      restoreOpenApplicationsOnLogin =
+        let
+          options = {
+            onLastLogout = "restorePreviousLogout";
+            whenSessionWasManuallySaved = "restoreSavedSession";
+            startWithEmptySession = "emptySession";
+          };
+        in
+        lib.mkOption {
+          type = with lib.types; nullOr (enum (builtins.attrNames options));
+          default = null;
+          example = "startWithEmptySession";
+          description = ''
+            Controls how applications are restored on login:
+            - "onLastLogout": Restores applications that were open during the last logout.
+            - "whenSessionWasManuallySaved": Restores applications based on a manually saved session.
+            - "startWithEmptySession": Starts with a clean, empty session each time.
+          '';
+          apply = option: if option == null then null else options.${option};
+        };
       excludeApplications = lib.mkOption {
         type = with lib.types; nullOr (listOf str);
         default = null;
