@@ -411,7 +411,7 @@ in
 
     tiling = {
       padding = lib.mkOption {
-        type = with lib.types; nullOr ints.positive;
+        type = with lib.types; nullOr (ints.between 0 36);
         default = null;
         example = 10;
         description = "The padding between windows in tiling.";
