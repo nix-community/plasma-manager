@@ -28,12 +28,12 @@ stdenv.mkDerivation {
     cp ${./static/style.css} out/style.css
 
     substituteInPlace options.md \
-      --replace \
+      --replace-fail \
       '@OPTIONS_JSON@' \
       ${plasma-manager-options}/share/doc/nixos/options.json
 
     substituteInPlace manual.md \
-      --replace \
+      --replace-fail \
       '@VERSION@' \
       ${revision}
 
