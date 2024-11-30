@@ -486,7 +486,7 @@ in
                   ${
                     lib.optionalString (cfg.workspace.wallpaperBackground != null)
                       ''desktop.writeConfig("${
-                        if (cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null) then
+                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
                           "Blur"
                         else
                           "Color"
@@ -545,7 +545,7 @@ in
                   ${
                     lib.optionalString (cfg.workspace.wallpaperBackground != null)
                       ''desktop.writeConfig("${
-                        if (cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null) then
+                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
                           "Blur"
                         else
                           "Color"
