@@ -34,25 +34,22 @@ let
       };
     };
 
-  wallpaperBackgroundType = lib.types.submodule (
-    { config, ... }:
-    {
-      options = {
-        color = lib.mkOption {
-          type = with lib.types; nullOr str;
-          default = null;
-          example = "219,99,99";
-          description = "Background color to use";
-        };
-        blur = lib.mkOption {
-          type = with lib.types; nullOr bool;
-          default = null;
-          example = true;
-          description = "Whether to blur the background";
-        };
+  wallpaperBackgroundType = lib.types.submodule {
+    options = {
+      color = lib.mkOption {
+        type = with lib.types; nullOr str;
+        default = null;
+        example = "219,99,99";
+        description = "Background color to use";
       };
-    }
-  );
+      blur = lib.mkOption {
+        type = with lib.types; nullOr bool;
+        default = null;
+        example = true;
+        description = "Whether to blur the background";
+      };
+    };
+  }
 
   anyThemeSet = (
     cfg.workspace.theme != null
