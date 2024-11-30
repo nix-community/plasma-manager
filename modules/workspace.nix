@@ -484,7 +484,8 @@ in
                       }");''
                   }
                   ${
-                    lib.optionalString (cfg.workspace.wallpaperBackground != null)
+                    lib.optionalString
+                      (cfg.workspace.wallpaperBackground != null || cfg.workspace.wallpaperBackground != { })
                       ''desktop.writeConfig("${
                         if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
                           "Blur"
@@ -543,7 +544,8 @@ in
                       }");''
                   }
                   ${
-                    lib.optionalString (cfg.workspace.wallpaperBackground != null)
+                    lib.optionalString
+                      (cfg.workspace.wallpaperBackground != null || cfg.workspace.wallpaperBackground != { })
                       ''desktop.writeConfig("${
                         if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
                           "Blur"
