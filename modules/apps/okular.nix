@@ -154,7 +154,7 @@ with lib.types;
             # Change to black & white colors (see options below)
             "BlackWhite"
             # Invert lightness but leave hue and saturation
-            "InvertLightness" 
+            "InvertLightness"
             # Like InvertLightness, but slightly more contrast
             "InvertLumaSymmetric"
             # Like InvertLightness, but much more contrast

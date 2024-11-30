@@ -263,9 +263,7 @@ in
           if source == null then
             { }
           else if source == "auto" then
-            {
-              choosePlayerAutomatically = true;
-            }
+            { choosePlayerAutomatically = true; }
           else
             {
               choosePlayerAutomatically = false;
