@@ -29,6 +29,376 @@
  <dl class="variablelist">
 <dt>
  <span class="term">
+ <a id="opt-programs.elisa.enable"></a><a class="term" href="options.xhtml#opt-programs.elisa.enable"><code class="option">programs.elisa.enable</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to enable the configuration module for Elisa, KDE’s music player.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">false</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/elisa.nix" target="_top">
+&lt;plasma-manager/modules/apps/elisa.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.elisa.package"></a><a class="term" href="options.xhtml#opt-programs.elisa.package"><code class="option">programs.elisa.package</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The elisa package to use. Use <code class="literal">pkgs.libsForQt5.elisa</code> for Plasma 5 or <code class="literal">pkgs.kdePackages.elisa</code> for Plasma 6.
+You can also set this to <code class="literal">null</code> if you’re using a system-wide installation of Elisa on NixOS.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or package</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">pkgs.kdePackages.elisa</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">pkgs.libsForQt5.elisa</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/elisa.nix" target="_top">
+&lt;plasma-manager/modules/apps/elisa.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.elisa.appearance.colorScheme"></a><a class="term" href="options.xhtml#opt-programs.elisa.appearance.colorScheme"><code class="option">programs.elisa.appearance.colorScheme</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The colour scheme of the UI. Leave this setting at <code class="literal">null</code> in order to
+not override the systems default scheme for for this application.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or string</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;Krita dark orange&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/elisa.nix" target="_top">
+&lt;plasma-manager/modules/apps/elisa.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.elisa.appearance.defaultFilesViewPath"></a><a class="term" href="options.xhtml#opt-programs.elisa.appearance.defaultFilesViewPath"><code class="option">programs.elisa.appearance.defaultFilesViewPath</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The default path which will be opened in the Files view.
+Unlike the index paths, shell variables cannot be used here.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or string</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;/home/username/Music&quot;</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/elisa.nix" target="_top">
+&lt;plasma-manager/modules/apps/elisa.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.elisa.appearance.defaultView"></a><a class="term" href="options.xhtml#opt-programs.elisa.appearance.defaultView"><code class="option">programs.elisa.appearance.defaultView</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The default view which will be opened when Elisa is started.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “nowPlaying”, “recentlyPlayed”, “frequentlyPlayed”, “allAlbums”, “allArtists”, “allTracks”, “allGenres”, “files”, “radios”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/elisa.nix" target="_top">
+&lt;plasma-manager/modules/apps/elisa.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.elisa.appearance.embeddedView"></a><a class="term" href="options.xhtml#opt-programs.elisa.appearance.embeddedView"><code class="option">programs.elisa.appearance.embeddedView</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Select the sidebar-embedded view for Elisa. The selected view will
+be omitted from the sidebar, and its contents will instead be individually
+displayed after the main view buttons.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “albums”, “artists”, “genres”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/elisa.nix" target="_top">
+&lt;plasma-manager/modules/apps/elisa.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.elisa.appearance.showNowPlayingBackground"></a><a class="term" href="options.xhtml#opt-programs.elisa.appearance.showNowPlayingBackground"><code class="option">programs.elisa.appearance.showNowPlayingBackground</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Set to <code class="literal">true</code> in order to use a blurred version of the album artwork as the background for the ‘Now Playing’ section in Elisa.
+Set to <code class="literal">false</code> in order to use a solid colour inherited from the Plasma theme.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/elisa.nix" target="_top">
+&lt;plasma-manager/modules/apps/elisa.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.elisa.appearance.showProgressOnTaskBar"></a><a class="term" href="options.xhtml#opt-programs.elisa.appearance.showProgressOnTaskBar"><code class="option">programs.elisa.appearance.showProgressOnTaskBar</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to present the current track progress in the task manager widgets in panels.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/elisa.nix" target="_top">
+&lt;plasma-manager/modules/apps/elisa.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.elisa.indexer.paths"></a><a class="term" href="options.xhtml#opt-programs.elisa.indexer.paths"><code class="option">programs.elisa.indexer.paths</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Stateful, persistent paths to be indexed by the Elisa Indexer.
+The Indexer will recursively search for valid music files along the given paths.
+Shell variables, such as <code class="literal">$HOME</code>, may be used freely.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or (list of string)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting">&#x27;&#x27;
+  [
+    &quot;$HOME/Music&quot;
+    &quot;/ExternalDisk/more-music&quot;
+  ]
+&#x27;&#x27;
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/elisa.nix" target="_top">
+&lt;plasma-manager/modules/apps/elisa.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.elisa.indexer.ratingsStyle"></a><a class="term" href="options.xhtml#opt-programs.elisa.indexer.ratingsStyle"><code class="option">programs.elisa.indexer.ratingsStyle</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The Elisa music database can attach user-defined ratings to each track.
+This option defines if the rating is a <code class="literal">0-5 stars</code> rating, or a binary <code class="literal">Favourite/Not Favourite</code> rating.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “stars”, “favourites”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/elisa.nix" target="_top">
+&lt;plasma-manager/modules/apps/elisa.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.elisa.indexer.scanAtStartup"></a><a class="term" href="options.xhtml#opt-programs.elisa.indexer.scanAtStartup"><code class="option">programs.elisa.indexer.scanAtStartup</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to automatically scan the configured index paths for new tracks when Elisa is started.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/elisa.nix" target="_top">
+&lt;plasma-manager/modules/apps/elisa.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.elisa.player.minimiseToSystemTray"></a><a class="term" href="options.xhtml#opt-programs.elisa.player.minimiseToSystemTray"><code class="option">programs.elisa.player.minimiseToSystemTray</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Set to <code class="literal">true</code> in order to make Elisa continue playing in the System Tray after being closed.
+Set to <code class="literal">false</code> in order to make Elisa quit after being closed.</p><p>By default, the system tray icon is the symbolic variant of the Elisa icon.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/elisa.nix" target="_top">
+&lt;plasma-manager/modules/apps/elisa.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.elisa.player.playAtStartup"></a><a class="term" href="options.xhtml#opt-programs.elisa.player.playAtStartup"><code class="option">programs.elisa.player.playAtStartup</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to automatically play the previous track when Elisa is started.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/elisa.nix" target="_top">
+&lt;plasma-manager/modules/apps/elisa.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.elisa.player.useAbsolutePlaylistPaths"></a><a class="term" href="options.xhtml#opt-programs.elisa.player.useAbsolutePlaylistPaths"><code class="option">programs.elisa.player.useAbsolutePlaylistPaths</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Set to <code class="literal">true</code> in order to make Elisa write <code class="literal">.m3u8</code> playlist files using the absolute paths to each track.
+Setting to <code class="literal">false</code> will make Elisa intelligently pick between relative or absolute paths.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/elisa.nix" target="_top">
+&lt;plasma-manager/modules/apps/elisa.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
  <a id="opt-programs.ghostwriter.enable"></a><a class="term" href="options.xhtml#opt-programs.ghostwriter.enable"><code class="option">programs.ghostwriter.enable</code>
   </a>
  </span>
@@ -11917,7 +12287,7 @@ attribute set of anything</p>
 <p>The padding between windows in tiling.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
-null or (positive integer, meaning &gt;0)</p>
+null or integer between 0 and 36 (both inclusive)</p>
 
 <p><span class="emphasis"><em>Default:</em></span>
 <code class="literal">null</code></p>
