@@ -49,7 +49,7 @@ let
         description = "Whether to blur the background";
       };
     };
-  }
+  };
 
   anyThemeSet = (
     cfg.workspace.theme != null
