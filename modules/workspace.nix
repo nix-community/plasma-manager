@@ -453,7 +453,7 @@ in
               for (const desktop of allDesktops) {
                   desktop.wallpaperPlugin = "org.kde.image";
                   desktop.currentConfigGroup = ["Wallpaper", "org.kde.image", "General"];
-                  desktop.writeConfig("Image", "file://${cfg.workspace.wallpaper}");
+                  desktop.writeConfig("Image", "file://${toString cfg.workspace.wallpaper}");
                   ${
                     lib.optionalString (cfg.workspace.wallpaperFillMode != null)
                       ''desktop.writeConfig("FillMode", "${
