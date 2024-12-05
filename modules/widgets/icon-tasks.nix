@@ -244,7 +244,9 @@ in
         ...
       }:
       {
-        name = if iconsOnly then "org.kde.plasma.icontasks" else "org.kde.plasma.taskmanager";
+        name = if iconsOnly
+          then "org.kde.plasma.icontasks"
+          else "org.kde.plasma.taskmanager";
         config = lib.recursiveUpdate {
           General = lib.filterAttrs (_: v: v != null) {
             launchers = launchers;

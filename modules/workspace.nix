@@ -34,23 +34,6 @@ let
       };
     };
 
-  wallpaperBackgroundType = lib.types.submodule {
-    options = {
-      color = lib.mkOption {
-        type = with lib.types; nullOr str;
-        default = null;
-        example = "219,99,99";
-        description = "Background color to use";
-      };
-      blur = lib.mkOption {
-        type = with lib.types; nullOr bool;
-        default = null;
-        example = true;
-        description = "Whether to blur the background";
-      };
-    };
-  };
-
   anyThemeSet = (
     cfg.workspace.theme != null
     || cfg.workspace.colorScheme != null
@@ -208,15 +191,6 @@ in
       '';
     };
 
-    wallpaperBackground = lib.mkOption {
-      type = lib.types.nullOr wallpaperBackgroundType;
-      default = null;
-      example = {
-        blur = true;
-      };
-      description = "How to handle wallpaper background when there is empty space.";
-    };
-
     soundTheme = lib.mkOption {
       type = with lib.types; nullOr str;
       default = null;
@@ -307,15 +281,6 @@ in
             Must set both plasma.workspace.windowDecorations.library and
             plasma.workspace.windowDecorations.theme or none.
           '';
-        }
-        {
-          assertion = (
-            cfg.workspace.wallpaperBackground == null
-            || (
-              cfg.workspace.wallpaperBackground.blur == null || cfg.workspace.wallpaperBackground.color == null
-            )
-          );
-          message = "programs.plasma.wallpaperBackground can only have a color or be blurred.";
         }
       ];
       warnings = (
@@ -483,21 +448,6 @@ in
                         toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}
                       }");''
                   }
-                  ${
-                    lib.optionalString
-                      (cfg.workspace.wallpaperBackground != null || cfg.workspace.wallpaperBackground != { })
-                      ''desktop.writeConfig("${
-                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
-                          "Blur"
-                        else
-                          "Color"
-                      }", "${
-                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
-                          lib.boolToString cfg.workspace.wallpaperBackground.blur
-                        else
-                          cfg.workspace.wallpaperBackground.color
-                      }");''
-                  }
               }
             '';
             priority = 3;
@@ -541,21 +491,6 @@ in
                     lib.optionalString (cfg.workspace.wallpaperFillMode != null)
                       ''desktop.writeConfig("FillMode", "${
                         toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}
-                      }");''
-                  }
-                  ${
-                    lib.optionalString
-                      (cfg.workspace.wallpaperBackground != null || cfg.workspace.wallpaperBackground != { })
-                      ''desktop.writeConfig("${
-                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
-                          "Blur"
-                        else
-                          "Color"
-                      }", "${
-                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
-                          lib.boolToString cfg.workspace.wallpaperBackground.blur
-                        else
-                          cfg.workspace.wallpaperBackground.color
                       }");''
                   }
               }

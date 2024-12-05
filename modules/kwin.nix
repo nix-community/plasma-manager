@@ -56,13 +56,10 @@ let
     names:
     builtins.listToAttrs (lib.imap1 (i: v: (lib.nameValuePair "Name_${builtins.toString i}" v)) names);
 
+
   virtualDesktopIdAttrs =
     number:
-    builtins.listToAttrs (
-      map (i: (lib.nameValuePair "Id_${builtins.toString i}" "Desktop_${builtins.toString i}")) (
-        lib.range 1 number
-      )
-    );
+    builtins.listToAttrs (map (i: (lib.nameValuePair "Id_${builtins.toString i}" "Desktop_${builtins.toString i}")) (lib.range 1 number));
 
   capitalizeWord =
     word:
