@@ -464,9 +464,12 @@ in
                     lib.optionalString
                       (cfg.workspace.wallpaperBackground != null || cfg.workspace.wallpaperBackground != { })
                       ''desktop.writeConfig("${
-                        if cfg.workspace.wallpaperBackground.blur != null then "Blur" else "Color"
+                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
+                          "Blur"
+                        else
+                          "Color"
                       }", "${
-                        if cfg.workspace.wallpaperBackground.blur != null then
+                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
                           lib.boolToString cfg.workspace.wallpaperBackground.blur
                         else
                           cfg.workspace.wallpaperBackground.color
@@ -500,9 +503,12 @@ in
                     lib.optionalString
                       (cfg.workspace.wallpaperBackground != null || cfg.workspace.wallpaperBackground != { })
                       ''desktop.writeConfig("${
-                        if cfg.workspace.wallpaperBackground.blur != null then "Blur" else "Color"
+                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
+                          "Blur"
+                        else
+                          "Color"
                       }", "${
-                        if cfg.workspace.wallpaperBackground.blur != null then
+                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
                           lib.boolToString cfg.workspace.wallpaperBackground.blur
                         else
                           cfg.workspace.wallpaperBackground.color
@@ -557,9 +563,12 @@ in
                     lib.optionalString
                       (cfg.workspace.wallpaperBackground != null || cfg.workspace.wallpaperBackground != { })
                       ''desktop.writeConfig("${
-                        if cfg.workspace.wallpaperBackground.blur != null then "Blur" else "Color"
+                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
+                          "Blur"
+                        else
+                          "Color"
                       }", "${
-                        if cfg.workspace.wallpaperBackground.blur != null then
+                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
                           lib.boolToString cfg.workspace.wallpaperBackground.blur
                         else
                           cfg.workspace.wallpaperBackground.color
