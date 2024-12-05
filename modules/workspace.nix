@@ -463,16 +463,20 @@ in
                   ${
                     lib.optionalString (cfg.workspace.wallpaperBackground != null)
                       ''desktop.writeConfig("${
-                        if cfg.workspace.wallpaperBackground.blur != null then
+                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
                           "Blur"
-                        else if cfg.workspace.wallpaperBackground.blur != null then
+                        else if
+                          cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.blur != null
+                        then
                           "Color"
                         else
                           throw "plasma-manager: wallpaperBackground is not null and has no option set"
                       }", "${
-                        if cfg.workspace.wallpaperBackground.blur != null then
+                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
                           lib.boolToString cfg.workspace.wallpaperBackground.blur
-                        else if cfg.workspace.wallpaperBackground.color != null then
+                        else if
+                          cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.color != null
+                        then
                           cfg.workspace.wallpaperBackground.color
                         else
                           throw "plasma-manager: wallpaperBackground is not null and has no option set"
@@ -505,16 +509,20 @@ in
                   ${
                     lib.optionalString (cfg.workspace.wallpaperBackground != null)
                       ''desktop.writeConfig("${
-                        if cfg.workspace.wallpaperBackground.blur != null then
+                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
                           "Blur"
-                        else if cfg.workspace.wallpaperBackground.blur != null then
+                        else if
+                          cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.blur != null
+                        then
                           "Color"
                         else
                           throw "plasma-manager: wallpaperBackground is not null and has no option set"
                       }", "${
-                        if cfg.workspace.wallpaperBackground.blur != null then
+                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
                           lib.boolToString cfg.workspace.wallpaperBackground.blur
-                        else if cfg.workspace.wallpaperBackground.color != null then
+                        else if
+                          cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.color != null
+                        then
                           cfg.workspace.wallpaperBackground.color
                         else
                           throw "plasma-manager: wallpaperBackground is not null and has no option set"
@@ -568,16 +576,20 @@ in
                   ${
                     lib.optionalString (cfg.workspace.wallpaperBackground != null)
                       ''desktop.writeConfig("${
-                        if cfg.workspace.wallpaperBackground.blur != null then
+                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
                           "Blur"
-                        else if cfg.workspace.wallpaperBackground.blur != null then
+                        else if
+                          cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.blur != null
+                        then
                           "Color"
                         else
                           throw "plasma-manager: wallpaperBackground is not null and has no option set"
                       }", "${
-                        if cfg.workspace.wallpaperBackground.blur != null then
+                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
                           lib.boolToString cfg.workspace.wallpaperBackground.blur
-                        else if cfg.workspace.wallpaperBackground.color != null then
+                        else if
+                          cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.color != null
+                        then
                           cfg.workspace.wallpaperBackground.color
                         else
                           throw "plasma-manager: wallpaperBackground is not null and has no option set"
