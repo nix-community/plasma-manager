@@ -466,7 +466,7 @@ in
                         if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
                           "Blur"
                         else if
-                          cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.blur != null
+                          cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.color != null
                         then
                           "Color"
                         else
@@ -512,7 +512,7 @@ in
                         if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
                           "Blur"
                         else if
-                          cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.blur != null
+                          cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.color != null
                         then
                           "Color"
                         else
@@ -579,7 +579,7 @@ in
                         if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
                           "Blur"
                         else if
-                          cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.blur != null
+                          cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.color != null
                         then
                           "Color"
                         else
