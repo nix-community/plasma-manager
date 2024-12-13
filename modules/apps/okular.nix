@@ -140,7 +140,9 @@ with lib.types;
       };
 
       changeColors = {
-        enable = lib.mkEnableOption "Whether to change the colors of the documents.";
+        enable = lib.mkEnableOption "" // {
+          description = "Whether to change the colors of the documents.";
+        };
         mode = lib.mkOption {
           description = "Mode used to change the colors.";
           default = null;

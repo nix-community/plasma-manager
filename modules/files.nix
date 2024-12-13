@@ -143,7 +143,9 @@ in
         Configuration files which explicitly should not be deleted on each generation, if `overrideConfig` is enabled.
       '';
     };
-    immutableByDefault = lib.mkEnableOption "Make keys written by plasma-manager immutable by default.";
+    immutableByDefault = lib.mkEnableOption "" // {
+      description = "Whether to make keys written by plasma-manager immutable by default.";
+    };
   };
 
   imports = [
