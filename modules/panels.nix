@@ -139,7 +139,7 @@ let
             Plasma 6-only.
           '';
         };
-        floating = lib.mkEnableOption "Enable or disable floating style.";
+        floating = lib.mkEnableOption "floating style.";
         widgets = lib.mkOption {
           type = lib.types.listOf widgets.type;
           default = [

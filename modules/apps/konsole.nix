@@ -89,7 +89,7 @@ in
 {
   options.programs.konsole = {
     enable = lib.mkEnableOption ''
-      Enable configuration management for Konsole, the KDE Terminal.
+      configuration management for Konsole, the KDE Terminal.
     '';
 
     defaultProfile = lib.mkOption {

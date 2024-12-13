@@ -20,7 +20,7 @@ with lib.types;
 {
   options.programs.okular = {
     enable = lib.mkEnableOption ''
-      Enable configuration management for okular.
+      configuration management for okular.
     '';
 
     package =

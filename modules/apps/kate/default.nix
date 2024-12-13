@@ -237,7 +237,7 @@ in
 {
   options.programs.kate = {
     enable = lib.mkEnableOption ''
-      Enable configuration management for Kate, the KDE Advanced Text Editor.
+      configuration management for Kate, the KDE Advanced Text Editor.
     '';
 
     package =

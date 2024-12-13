@@ -230,7 +230,7 @@ in
 {
   options.programs.ghostwriter = {
     enable = lib.mkEnableOption ''
-      Enable configuration management for Ghostwriter.
+      configuration management for Ghostwriter.
     '';
 
     font = lib.mkOption {
