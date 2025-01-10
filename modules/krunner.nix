@@ -33,10 +33,25 @@ in
       example = "disabled";
       description = "Set the behavior of KRunner’s history.";
     };
+
+    shortcuts = {
+      launch = lib.mkOption {
+        type = with lib.types; nullOr (either str (listOf str));
+        default = null;
+        example = "Meta";
+        description = "Set the shortcut to launch KRunner.";
+      };
+      runCommandOnClipboard = lib.mkOption {
+        type = with lib.types; nullOr (either str (listOf str));
+        default = null;
+        example = "Meta+Shift";
+        description = "Set the shortcut to run the command on the clipboard contents.";
+      };
+    };
   };
 
-  config.programs.plasma.configFile."krunnerrc" = (
-    lib.mkMerge [
+  config.programs.plasma = {
+    configFile.krunnerrc = lib.mkMerge [
       (lib.mkIf (cfg.krunner.position != null) {
         General.FreeFloating = cfg.krunner.position == "center";
       })
@@ -53,6 +68,16 @@ in
             "Disabled"
         );
       })
-    ]
-  );
+    ];
+
+    shortcuts."services/org.kde.krunner.desktop" = lib.mkMerge [
+      (lib.mkIf (cfg.krunner.shortcuts.launch != null) {
+        _launch = cfg.krunner.shortcuts.launch;
+      })
+
+      (lib.mkIf (cfg.krunner.shortcuts.runCommandOnClipboard != null) {
+        RunClipboard = cfg.krunner.shortcuts.runCommandOnClipboard;
+      })
+    ];
+  };
 }
