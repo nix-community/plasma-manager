@@ -34,6 +34,7 @@ let
         ${stringIfNotNull panel.maxLength "panel.maximumLength = ${toString panel.maxLength};"}
         ${stringIfNotNull panel.minLength "panel.minimumLength = ${toString panel.minLength};"}
         ${stringIfNotNull panel.offset "panel.offset = ${toString panel.offset};"}
+        ${stringIfNotNull panel.opacity ''panel.opacity = "${panel.opacity}";''}
         ${stringIfNotNull panel.screen ''panel.writeConfig("lastScreen[$i]", ${if ((panel.screen == "all") || (builtins.isList panel.screen)) then "screenID" else toString panel.screen});''}
 
         ${addWidgetStmts "panel" "panelWidgets" panel.widgets}
