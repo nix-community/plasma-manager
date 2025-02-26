@@ -2,106 +2,88 @@
   description = "Manage KDE Plasma with Home Manager";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
 
-    home-manager.url = "github:nix-community/home-manager";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
   outputs =
-    inputs@{ self, ... }:
-    let
-      # Systems that can run tests:
-      supportedSystems = [
+    inputs:
+    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [
         "aarch64-linux"
         "i686-linux"
         "x86_64-linux"
       ];
 
-      # Function to generate a set based on supported systems:
-      forAllSystems = inputs.nixpkgs.lib.genAttrs supportedSystems;
+      imports = [ inputs.home-manager.flakeModules.home-manager ];
 
-      # Attribute set of nixpkgs for each system:
-      nixpkgsFor = forAllSystems (system: import inputs.nixpkgs { inherit system; });
-    in
-    {
-      homeManagerModules.plasma-manager =
-        { ... }:
+      flake.homeManagerModules = {
+        default = inputs.self.homeManagerModules.plasma-manager;
+        plasma-manager = ./modules;
+      };
+
+      perSystem =
         {
-          imports = [ ./modules ];
-        };
-
-      packages = forAllSystems (
-        system:
+          pkgs,
+          system,
+          ...
+        }:
         let
-          pkgs = nixpkgsFor.${system};
-          docs = import ./docs {
-            inherit pkgs;
-            lib = pkgs.lib;
-          };
+          home-manager-module = inputs.home-manager.nixosModules.home-manager;
+          plasma-module = inputs.self.homeManagerModules.plasma-manager;
         in
         {
-          default = self.packages.${system}.rc2nix;
+          checks.default = pkgs.callPackage ./test/basic.nix { inherit home-manager-module plasma-module; };
 
-          demo =
-            (inputs.nixpkgs.lib.nixosSystem {
-              inherit system;
-              modules = [
-                (import test/demo.nix {
-                  home-manager-module = inputs.home-manager.nixosModules.home-manager;
-                  plasma-module = self.homeManagerModules.plasma-manager;
-                })
-                (_: { environment.systemPackages = [ self.packages.${system}.rc2nix ]; })
-              ];
-            }).config.system.build.vm;
+          devShells.default = pkgs.mkShell {
+            nativeBuildInputs = with pkgs; [
+              cargo
+              clippy
+              nixfmt-rfc-style
+              rustc
+              rustfmt
+            ];
 
-          docs-html = docs.html;
-          docs-json = docs.json;
-
-          rc2nix = pkgs.writeShellApplication {
-            name = "rc2nix";
-            runtimeInputs = with pkgs; [ python3 ];
-            text = ''python3 ${script/rc2nix.py} "$@"'';
+            strictDeps = true;
           };
-        }
-      );
 
-      apps = forAllSystems (system: {
-        default = self.apps.${system}.rc2nix;
+          formatter = pkgs.treefmt;
 
-        demo = {
-          type = "app";
-          program = "${self.packages.${system}.demo}/bin/run-plasma-demo-vm";
+          packages =
+            let
+              docs = import ./docs {
+                inherit pkgs;
+                inherit (pkgs) lib;
+              };
+            in
+            {
+              demo =
+                (inputs.nixpkgs.lib.nixosSystem {
+                  modules = [
+                    (import test/demo.nix {
+                      inherit home-manager-module plasma-module;
+                    })
+
+                    {
+                      # TODO: Re-add this
+                      # environment.systemPackages = [ self'.packages.rc2nix ];
+                      nixpkgs.hostPlatform = system;
+                    }
+                  ];
+                }).config.system.build.vm;
+
+              docs-html = docs.html;
+              docs-json = docs.json;
+            };
         };
-
-        rc2nix = {
-          type = "app";
-          program = "${self.packages.${system}.rc2nix}/bin/rc2nix";
-        };
-      });
-
-      checks = forAllSystems (system: {
-        default = nixpkgsFor.${system}.callPackage ./test/basic.nix {
-          home-manager-module = inputs.home-manager.nixosModules.home-manager;
-          plasma-module = self.homeManagerModules.plasma-manager;
-        };
-      });
-
-      formatter = forAllSystems (system: nixpkgsFor.${system}.treefmt);
-
-      devShells = forAllSystems (system: {
-        default = nixpkgsFor.${system}.mkShell {
-          buildInputs = with nixpkgsFor.${system}; [
-            nixfmt-rfc-style
-            ruby
-            ruby.devdoc
-            (python3.withPackages (pyPkgs: [
-              pyPkgs.python-lsp-server
-              pyPkgs.black
-              pyPkgs.isort
-            ]))
-          ];
-        };
-      });
     };
 }
