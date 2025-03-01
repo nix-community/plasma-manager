@@ -161,7 +161,7 @@ in
     };
 
     wallpaper = lib.mkOption {
-      type = with lib.types; nullOr path;
+      type = with lib.types; nullOr (either path (listOf path));
       default = null;
       example = lib.literalExpression ''"''${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/Kay/contents/images/1080x1920.png"'';
       description = ''
@@ -453,7 +453,23 @@ in
               for (const desktop of allDesktops) {
                   desktop.wallpaperPlugin = "org.kde.image";
                   desktop.currentConfigGroup = ["Wallpaper", "org.kde.image", "General"];
-                  desktop.writeConfig("Image", "file://${toString cfg.workspace.wallpaper}");
+                  ${
+                    if (builtins.typeOf cfg.workspace.wallpaper) == "list" then
+                      ''
+                        let images = [
+                        ${
+                          builtins.concatStringsSep "\n," (map (
+                            wallpaper: ''"file://${toString wallpaper}"''
+                          ) cfg.workspace.wallpaper)
+                        }
+                        ];
+                        let image = images[desktop.screen];''
+                    else
+                      ''let image = "file://${toString cfg.workspace.wallpaper}""''
+                  }
+                  if (image) {
+                    desktop.writeConfig("Image", image);
+                  }
                   ${
                     lib.optionalString (cfg.workspace.wallpaperFillMode != null)
                       ''desktop.writeConfig("FillMode", "${
