@@ -83,6 +83,8 @@
 
               docs-html = docs.html;
               docs-json = docs.json;
+
+              plasma-manager = pkgs.callPackage ./plasma-manager { };
             };
         };
     };
