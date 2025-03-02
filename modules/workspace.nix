@@ -363,6 +363,32 @@ in
                 Mouse.cursorSize = cfg.workspace.cursor.size;
               }
             );
+            klaunchrc = (
+              lib.mkIf (cfg.workspace.cursor != null && cfg.workspace.cursor.cursorFeedback != null) (
+	        lib.mkMerge [
+	          (lib.mkIf (cfg.workspace.cursor.cursorFeedback == "None") {
+                    BusyCursorSettings.Blinking = "false";
+                    BusyCursorSettings.Bouncing = "false";
+	            FeedbackStyle.BusyCursor = "false";
+	          })
+	          (lib.mkIf (cfg.workspace.cursor.cursorFeedback == "Static") {
+                    BusyCursorSettings.Blinking = "false";
+                    BusyCursorSettings.Bouncing = "false";
+	            FeedbackStyle.BusyCursor = "true";
+		  })
+	          (lib.mkIf (cfg.workspace.cursor.cursorFeedback == "Blinking") {
+                    BusyCursorSettings.Blinking = "true";
+                    BusyCursorSettings.Bouncing = "false";
+	            FeedbackStyle.BusyCursor = "true";
+		  })	
+	          (lib.mkIf (cfg.workspace.cursor.cursorFeedback == "Bouncing") {
+                    BusyCursorSettings.Blinking = "false";
+                    BusyCursorSettings.Bouncing = "true";
+	            FeedbackStyle.BusyCursor = "true";
+		  })	
+		]
+              )
+            );
             ksplashrc.KSplash = (
               lib.mkIf (cfg.workspace.splashScreen.theme != null) {
                 Engine = (
