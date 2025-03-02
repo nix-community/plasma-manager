@@ -31,6 +31,14 @@ let
           example = 24;
           description = "The size of the cursor. See the System Settings app for allowed sizes for each cursor theme.";
         };
+        cursorFeedback = lib.mkOption {
+          type = nullOr str;
+          default = null;
+          example = "Bouncing";
+          description = ''
+	    The cursor feedback icon after launching an application. Valid options are Bouncing, Blinking, Static, and None.
+          '';
+        };
       };
     };
 
@@ -99,7 +107,7 @@ in
       default = null;
       example = false;
       description = ''
-        Whether clicking the middle mouse button pastes the clipboard content.";
+        Whether clicking the middle mouse button pastes the clipboard content.
       '';
     };
 
@@ -136,9 +144,10 @@ in
       example = {
         theme = "Breeze_Snow";
         size = 24;
+	cursorFeedback = "Bouncing";
       };
       description = ''
-        Submodule for configuring the cursor appearance. Both the theme and size are configurable.
+        Submodule for configuring the cursor appearance. Both the theme, size, and cursor feedback are configurable.
       '';
     };
 
