@@ -377,41 +377,41 @@ in
                 Mouse.cursorSize = cfg.workspace.cursor.size;
               }
             );
-            klaunchrc = (
-	      lib.mkMerge [
-                (lib.mkIf (cfg.workspace.cursor != null && cfg.workspace.cursor.cursorFeedback != null) (
-	          lib.mkMerge [
-	            (lib.mkIf (cfg.workspace.cursor.cursorFeedback == "None") {
-                      BusyCursorSettings.Blinking = "false";
-                      BusyCursorSettings.Bouncing = "false";
-	              FeedbackStyle.BusyCursor = "false";
-	            })
-	            (lib.mkIf (cfg.workspace.cursor.cursorFeedback == "Static") {
-                      BusyCursorSettings.Blinking = "false";
-                      BusyCursorSettings.Bouncing = "false";
-	              FeedbackStyle.BusyCursor = "true";
-		    })
-	            (lib.mkIf (cfg.workspace.cursor.cursorFeedback == "Blinking") {
-                      BusyCursorSettings.Blinking = "true";
-                      BusyCursorSettings.Bouncing = "false";
-	              FeedbackStyle.BusyCursor = "true";
-		    })	
-	            (lib.mkIf (cfg.workspace.cursor.cursorFeedback == "Bouncing") {
-                      BusyCursorSettings.Blinking = "false";
-                      BusyCursorSettings.Bouncing = "true";
-	              FeedbackStyle.BusyCursor = "true";
-		    })	
-		  ]
-                ))
-		(lib.mkIf (cfg.workspace.cursor != null && cfg.workspace.cursor.taskManagerFeedback != null) {
-		  FeedbackStyle.TaskbarButton = cfg.workspace.cursor.taskManagerFeedback;
-		})
-		(lib.mkIf (cfg.workspace.cursor != null && cfg.workspace.cursor.animationTime != null) {
-		  BusyCursorSettings.Timeout = cfg.workspace.cursor.animationTime; 
-		  TaskbarButtonSettings.Timeout = cfg.workspace.cursor.animationTime; 
-		})
-	      ]
-            );
+	    klaunchrc = lib.mkMerge [
+              (lib.mkIf (cfg.workspace.cursor != null && cfg.workspace.cursor.cursorFeedback != null) (
+                {
+                  "None" = {
+                    BusyCursorSettings.Blinking = "false";
+                    BusyCursorSettings.Bouncing = "false";
+                    FeedbackStyle.BusyCursor = "false";
+                  };
+                  "Static" = {
+                    BusyCursorSettings.Blinking = "false";
+                    BusyCursorSettings.Bouncing = "false";
+                    FeedbackStyle.BusyCursor = "true";
+                  };
+                  "Blinking" = {
+                    BusyCursorSettings.Blinking = "true";
+                    BusyCursorSettings.Bouncing = "false";
+                    FeedbackStyle.BusyCursor = "true";
+                  };
+                  "Bouncing" = {
+                    BusyCursorSettings.Blinking = "false";
+                    BusyCursorSettings.Bouncing = "true";
+                    FeedbackStyle.BusyCursor = "true";
+                  };
+                }.${cfg.workspace.cursor.cursorFeedback}
+              ))
+
+              (lib.mkIf (cfg.workspace.cursor != null && cfg.workspace.cursor.taskManagerFeedback != null) {
+                FeedbackStyle.TaskbarButton = cfg.workspace.cursor.taskManagerFeedback;
+              })
+
+              (lib.mkIf (cfg.workspace.cursor != null && cfg.workspace.cursor.animationTime != null) {
+                BusyCursorSettings.Timeout = cfg.workspace.cursor.animationTime;
+                TaskbarButtonSettings.Timeout = cfg.workspace.cursor.animationTime;
+              })
+            ];
             ksplashrc.KSplash = (
               lib.mkIf (cfg.workspace.splashScreen.theme != null) {
                 Engine = (
