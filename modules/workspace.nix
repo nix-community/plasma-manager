@@ -32,12 +32,15 @@ let
           description = "The size of the cursor. See the System Settings app for allowed sizes for each cursor theme.";
         };
         cursorFeedback = lib.mkOption {
-          type = nullOr str;
+          type = nullOr (enum [
+            "Bouncing"
+            "Blinking"
+            "Static"
+            "None"
+          ]);
           default = null;
           example = "Bouncing";
-          description = ''
-            	    The cursor feedback icon after launching an application. Valid options are Bouncing, Blinking, Static, and None.
-          '';
+          description = "The cursor feedback icon after launching an application.";
         };
         taskManagerFeedback = lib.mkOption {
           type = nullOr bool;
