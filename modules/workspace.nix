@@ -36,19 +36,19 @@ let
           default = null;
           example = "Bouncing";
           description = ''
-	    The cursor feedback icon after launching an application. Valid options are Bouncing, Blinking, Static, and None.
+            	    The cursor feedback icon after launching an application. Valid options are Bouncing, Blinking, Static, and None.
           '';
         };
         taskManagerFeedback = lib.mkOption {
           type = nullOr bool;
           default = null;
-	  example = true;
+          example = true;
           description = "The feedback wheel on an application icon after launching an application from the task manager.";
         };
         animationTime = lib.mkOption {
           type = nullOr ints.positive;
           default = null;
-	  example = 5;
+          example = 5;
           description = "The duration that the cursorFeedback and taskManagerFeedback run for.";
         };
       };
@@ -156,9 +156,9 @@ in
       example = {
         theme = "Breeze_Snow";
         size = 24;
-	cursorFeedback = "Bouncing";
-	taskManagerFeedback = true;
-	animationTime = 5;
+        cursorFeedback = "Bouncing";
+        taskManagerFeedback = true;
+        animationTime = 5;
       };
       description = ''
         Submodule for configuring the cursor appearance. The theme, size, cursor feedback, task manager feedback, and animation time are configurable.
@@ -377,7 +377,7 @@ in
                 Mouse.cursorSize = cfg.workspace.cursor.size;
               }
             );
-	    klaunchrc = lib.mkMerge [
+            klaunchrc = lib.mkMerge [
               (lib.mkIf (cfg.workspace.cursor != null && cfg.workspace.cursor.cursorFeedback != null) (
                 {
                   "None" = {
@@ -400,7 +400,8 @@ in
                     BusyCursorSettings.Bouncing = "true";
                     FeedbackStyle.BusyCursor = "true";
                   };
-                }.${cfg.workspace.cursor.cursorFeedback}
+                }
+                .${cfg.workspace.cursor.cursorFeedback}
               ))
 
               (lib.mkIf (cfg.workspace.cursor != null && cfg.workspace.cursor.taskManagerFeedback != null) {
