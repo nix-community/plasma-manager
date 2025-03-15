@@ -696,14 +696,17 @@ impl<'a> From<Entry<'a, SectionKey, Properties>> for SectionEntry<'a> {
 
 /// Helper function to format a section for display
 pub fn format_section(section: Option<&[String]>) -> String {
-    section
-        .map(|parts| {
-            parts
-                .iter()
-                .map(|part| format!("[{}]", part))
-                .collect::<String>()
-        })
-        .unwrap_or_else(|| "General".to_string())
+    if let Some(parts) = section {
+        let mut result = String::with_capacity(parts.iter().map(|s| s.len() + 2).sum::<usize>());
+        for part in parts {
+            result.push('[');
+            result.push_str(part);
+            result.push(']');
+        }
+        result
+    } else {
+        "General".to_string()
+    }
 }
 
 /// Ini struct
@@ -1030,10 +1033,15 @@ impl Ini {
 
             if let Some(ref section_parts) = *section {
                 // Write nested sections in KDE format [Section][Subsection][Example]
-                let section_str = section_parts
-                    .iter()
-                    .map(|part| format!("[{}]", escape_str(part, opt.escape_policy)))
-                    .collect::<String>();
+                let mut section_str =
+                    String::with_capacity(section_parts.iter().map(|p| p.len() + 2).sum::<usize>());
+
+                for part in section_parts {
+                    section_str.push('[');
+                    section_str.push_str(&escape_str(part, opt.escape_policy));
+                    section_str.push(']');
+                }
+
                 write!(writer, "{}{}", section_str, opt.line_separator)?;
             }
             for (k, v) in props.iter() {
