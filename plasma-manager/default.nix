@@ -9,11 +9,14 @@ rustPlatform.buildRustPackage {
       ./src
       ./Cargo.toml
       ./Cargo.lock
+      ./kconfig-rs/src
+      ./kconfig-rs/Cargo.toml
+      ./kconfig-rs/Cargo.lock
     ];
   };
 
   useFetchCargoVendor = true;
-  cargoHash = "sha256-+QAvsBBBlRa/8DGPBFx7FmCLNF+vs2zlo/LW12TeTnE=";
+  cargoHash = "sha256-cXuB/Bkl8wI8a7Y6SkLnXzbJCu/r+yKqG4H4QvAG85E=";
 
   meta = {
     description = "plasma-manager command-line interface";
