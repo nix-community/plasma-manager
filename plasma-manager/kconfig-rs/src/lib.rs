@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 
-// Copyright (c) 2025 HeitorAugustoLN
+// Copyright (c) 2025 Plasma Manager contributors
 // Copyright (c) 2014 Y. T. CHUNG
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
