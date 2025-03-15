@@ -16,7 +16,7 @@ rustPlatform.buildRustPackage {
   };
 
   useFetchCargoVendor = true;
-  cargoHash = "sha256-cXuB/Bkl8wI8a7Y6SkLnXzbJCu/r+yKqG4H4QvAG85E=";
+  cargoHash = "sha256-UkH5KH2Gvi2ruQzS1hDludB5ZRe3r/J8m2oEA5tC+O8=";
 
   meta = {
     description = "plasma-manager command-line interface";
