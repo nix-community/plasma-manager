@@ -201,6 +201,80 @@ fn format_raw_output(
     Ok(result)
 }
 
+pub fn delete_configuration(
+    file: &str,
+    group: Option<&str>,
+    key: Option<&str>,
+    xdg_dir: &str,
+) -> Result<(), Error> {
+    let base_dir = get_xdg_directory(xdg_dir)?;
+    let full_path = base_dir.join(file);
+
+    if !full_path.exists() {
+        return Err(Error::new(
+            ErrorKind::NotFound,
+            format!("Configuration file not found: {}", full_path.display()),
+        ));
+    }
+
+    if group.is_none() && key.is_none() {
+        fs::remove_file(&full_path)?;
+    } else {
+        let mut ini = Ini::load_from_file(&full_path).map_err(|e| {
+            Error::new(ErrorKind::Other, format!("Failed to parse INI file: {}", e))
+        })?;
+
+        if let Some(key_name) = key {
+            if let Some(group_name) = group {
+                let section_key = if group_name.contains('/') {
+                    group_name
+                        .split('/')
+                        .map(String::from)
+                        .collect::<Vec<String>>()
+                } else {
+                    vec![group_name.to_string()]
+                };
+
+                if ini.delete_from(Some(section_key), key_name).is_none() {
+                    return Err(Error::new(
+                        ErrorKind::NotFound,
+                        format!("Key '{}' not found in section '{}'", key_name, group_name),
+                    ));
+                }
+            } else {
+                if ini.delete_from(None::<Vec<String>>, key_name).is_none() {
+                    return Err(Error::new(
+                        ErrorKind::NotFound,
+                        format!("Key '{}' not found in general section", key_name),
+                    ));
+                }
+            }
+        } else if let Some(group_name) = group {
+            let section_key = if group_name.contains('/') {
+                group_name
+                    .split('/')
+                    .map(String::from)
+                    .collect::<Vec<String>>()
+            } else {
+                vec![group_name.to_string()]
+            };
+
+            if ini.delete(Some(section_key)).is_none() {
+                return Err(Error::new(
+                    ErrorKind::NotFound,
+                    format!("Section '{}' not found in file", group_name),
+                ));
+            }
+        }
+
+        ini.write_to_file(&full_path).map_err(|e| {
+            Error::new(ErrorKind::Other, format!("Failed to write INI file: {}", e))
+        })?;
+    }
+
+    Ok(())
+}
+
 pub fn get_xdg_directory(directory: &str) -> Result<PathBuf, Error> {
     let strategy = choose_base_strategy().map_err(|e| Error::new(ErrorKind::Other, e))?;
 

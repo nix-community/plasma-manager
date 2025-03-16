@@ -1,21 +1,24 @@
+mod delete;
 mod read;
 mod write;
 
-use crate::commands::{read::ReadCommand, write::WriteCommand};
+use crate::commands::{delete::DeleteCommand, read::ReadCommand, write::WriteCommand};
 use clap::Subcommand;
 use std::io::Error;
 
 #[derive(Subcommand)]
 pub enum Commands {
-    Write(WriteCommand),
+    Delete(DeleteCommand),
     Read(ReadCommand),
+    Write(WriteCommand),
 }
 
 impl Commands {
     pub(crate) fn execute(&self) -> Result<(), Error> {
         match self {
-            Commands::Write(cmd) => cmd.execute(),
+            Commands::Delete(cmd) => cmd.execute(),
             Commands::Read(cmd) => cmd.execute(),
+            Commands::Write(cmd) => cmd.execute(),
         }
     }
 }
