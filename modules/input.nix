@@ -138,6 +138,25 @@ let
           How fast the pointer moves.
         '';
       };
+      accelerationProfile = lib.mkOption {
+        type =
+          with lib.types;
+          nullOr (enum [
+            "none"
+            "default"
+          ]);
+        default = null;
+        example = "none";
+        description = "Set the touchpad acceleration profile.";
+        apply =
+          profile:
+          if profile == "none" then
+            1
+          else if profile == "default" then
+            2
+          else
+            null;
+      };
       naturalScroll = lib.mkOption {
         type = with lib.types; nullOr bool;
         default = null;
@@ -227,6 +246,7 @@ let
         LeftHanded = touchpad.leftHanded;
         MiddleButtonEmulation = touchpad.middleButtonEmulation;
         PointerAcceleration = touchpad.pointerSpeed;
+        PointerAccelerationProfile = touchpad.accelerationProfile;
         NaturalScroll = touchpad.naturalScroll;
         TapToClick = touchpad.tapToClick;
         TapAndDrag = touchpad.tapAndDrag;
