@@ -22,6 +22,10 @@ let
     bottomRight = 1;
     twoFingers = 2;
   };
+  accelerationProfiles = {
+    none = 1;
+    default = 2;
+  };
 
   capitalizeWord =
     word:
@@ -141,10 +145,7 @@ let
       accelerationProfile = lib.mkOption {
         type =
           with lib.types;
-          nullOr (enum [
-            "none"
-            "default"
-          ]);
+          nullOr (enum (builtins.attrNames accelerationProfiles));
         default = null;
         example = "none";
         description = "Set the touchpad acceleration profile.";
@@ -329,10 +330,7 @@ let
       accelerationProfile = lib.mkOption {
         type =
           with lib.types;
-          nullOr (enum [
-            "none"
-            "default"
-          ]);
+          nullOr (enum (builtins.attrNames accelerationProfiles));
         default = null;
         example = "none";
         description = "Set the mouse acceleration profile.";
