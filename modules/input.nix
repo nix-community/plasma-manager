@@ -143,20 +143,11 @@ let
         '';
       };
       accelerationProfile = lib.mkOption {
-        type =
-          with lib.types;
-          nullOr (enum (builtins.attrNames accelerationProfiles));
+        type = with lib.types; nullOr (enum (builtins.attrNames accelerationProfiles));
         default = null;
         example = "none";
         description = "Set the touchpad acceleration profile.";
-        apply =
-          profile:
-          if profile == "none" then
-            1
-          else if profile == "default" then
-            2
-          else
-            null;
+        apply = profile: if (profile == null) then null else accelerationProfiles."${profile}";
       };
       naturalScroll = lib.mkOption {
         type = with lib.types; nullOr bool;
@@ -328,20 +319,11 @@ let
         '';
       };
       accelerationProfile = lib.mkOption {
-        type =
-          with lib.types;
-          nullOr (enum (builtins.attrNames accelerationProfiles));
+        type = with lib.types; nullOr (enum (builtins.attrNames accelerationProfiles));
         default = null;
         example = "none";
         description = "Set the mouse acceleration profile.";
-        apply =
-          profile:
-          if profile == "none" then
-            1
-          else if profile == "default" then
-            2
-          else
-            null;
+        apply = profile: if (profile == null) then null else accelerationProfiles."${profile}";
       };
       naturalScroll = lib.mkOption {
         type = with lib.types; nullOr bool;
