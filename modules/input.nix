@@ -22,6 +22,10 @@ let
     bottomRight = 1;
     twoFingers = 2;
   };
+  accelerationProfiles = {
+    none = 1;
+    default = 2;
+  };
 
   capitalizeWord =
     word:
@@ -138,6 +142,13 @@ let
           How fast the pointer moves.
         '';
       };
+      accelerationProfile = lib.mkOption {
+        type = with lib.types; nullOr (enum (builtins.attrNames accelerationProfiles));
+        default = null;
+        example = "none";
+        description = "Set the touchpad acceleration profile.";
+        apply = profile: if (profile == null) then null else accelerationProfiles."${profile}";
+      };
       naturalScroll = lib.mkOption {
         type = with lib.types; nullOr bool;
         default = null;
@@ -227,6 +238,7 @@ let
         LeftHanded = touchpad.leftHanded;
         MiddleButtonEmulation = touchpad.middleButtonEmulation;
         PointerAcceleration = touchpad.pointerSpeed;
+        PointerAccelerationProfile = touchpad.accelerationProfile;
         NaturalScroll = touchpad.naturalScroll;
         TapToClick = touchpad.tapToClick;
         TapAndDrag = touchpad.tapAndDrag;
@@ -307,23 +319,11 @@ let
         '';
       };
       accelerationProfile = lib.mkOption {
-        type =
-          with lib.types;
-          nullOr (enum [
-            "none"
-            "default"
-          ]);
+        type = with lib.types; nullOr (enum (builtins.attrNames accelerationProfiles));
         default = null;
         example = "none";
         description = "Set the mouse acceleration profile.";
-        apply =
-          profile:
-          if profile == "none" then
-            1
-          else if profile == "default" then
-            2
-          else
-            null;
+        apply = profile: if (profile == null) then null else accelerationProfiles."${profile}";
       };
       naturalScroll = lib.mkOption {
         type = with lib.types; nullOr bool;
