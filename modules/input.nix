@@ -522,7 +522,7 @@ in
         productId = "21128";
         disableWhileTyping = true;
         leftHanded = true;
-        middleMouseEmulation = true;
+        middleButtonEmulation = true;
         pointerSpeed = 0;
         naturalScroll = true;
         tapToClick = true;
