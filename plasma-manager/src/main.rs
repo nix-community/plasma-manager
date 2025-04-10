@@ -1,5 +1,6 @@
 mod commands;
 mod config;
+mod schema;
 
 use crate::commands::Commands;
 use clap::Parser;

@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "URL to the JSON schema"
+    },
+    "operations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "description": "KDE configuration file name"
+          },
+          "group": {
+            "type": "string",
+            "description": "INI file group/section name"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "write",
+              "read",
+              "delete"
+            ],
+            "description": "Operation to perform"
+          },
+          "xdg_directory": {
+            "type": "string",
+            "enum": [
+              "config",
+              "data",
+              "cache",
+              "state"
+            ],
+            "description": "XDG directory where the file is located"
+          },
+          "entries": {
+            "oneOf": [
+              {
+                "type": "object",
+                "description": "Key-value pairs for write operations",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "array",
+                "description": "List of keys for read/delete operations",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          }
+        },
+        "required": [
+          "file",
+          "operation",
+          "entries",
+          "xdg_directory"
+        ]
+      }
+    }
+  },
+  "required": [
+    "$schema",
+    "operations"
+  ]
+}

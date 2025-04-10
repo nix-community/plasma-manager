@@ -241,13 +241,11 @@ pub fn delete_configuration(
                         format!("Key '{}' not found in section '{}'", key_name, group_name),
                     ));
                 }
-            } else {
-                if ini.delete_from(None::<Vec<String>>, key_name).is_none() {
-                    return Err(Error::new(
-                        ErrorKind::NotFound,
-                        format!("Key '{}' not found in general section", key_name),
-                    ));
-                }
+            } else if ini.delete_from(None::<Vec<String>>, key_name).is_none() {
+                return Err(Error::new(
+                    ErrorKind::NotFound,
+                    format!("Key '{}' not found in general section", key_name),
+                ));
             }
         } else if let Some(group_name) = group {
             let section_key = if group_name.contains('/') {

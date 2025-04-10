@@ -1,0 +1,43 @@
+{
+  "$schema": "https://raw.githubusercontent.com/nix-community/plasma-manager/refs/heads/trunk/plasma-manager/schema.json",
+  "operations": [
+    {
+      "file": "kdeglobals",
+      "group": "KDE",
+      "operation": "write",
+      "xdg_directory": "config",
+      "entries": {
+        "SingleClick": "false",
+        "AnimationDurationFactor": "0.5"
+      }
+    },
+    {
+      "file": "kwinrc",
+      "group": "Effect-blur",
+      "operation": "write",
+      "xdg_directory": "config",
+      "entries": {
+        "BlurStrength": "10",
+        "NoiseStrength": "5"
+      }
+    },
+    {
+      "file": "kdeglobals",
+      "group": "KDE",
+      "operation": "read",
+      "xdg_directory": "config",
+      "entries": [
+        "SingleClick"
+      ]
+    },
+    {
+      "file": "kwinrc",
+      "group": "Effect-blur",
+      "operation": "delete",
+      "xdg_directory": "config",
+      "entries": [
+        "NoiseStrength"
+      ]
+    }
+  ]
+}
