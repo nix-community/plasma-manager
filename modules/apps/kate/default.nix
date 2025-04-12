@@ -424,8 +424,26 @@ in
     '';
   };
 
-  config.xdg.configFile."kate/lspclient/settings.json" = lib.mkIf (cfg.lsp.customServers != null) {
+  config.xdg.configFile."kate/lspclient/settings.json" = {
+    enable = cfg.lsp.customServers != null;
     text = builtins.toJSON { servers = cfg.lsp.customServers; };
+  };
+
+  # ==================================
+  #     DAP Servers
+  options.programs.kate.dap.customServers = lib.mkOption {
+    default = null;
+    type = lib.types.nullOr lib.types.attrs;
+    description = ''
+      Add more DAP server settings here. Check out the format on the
+      [Kate Documentation](https://docs.kde.org/stable5/en/kate/kate/kate-application-plugin-gdb.html).
+      Note that these are only the settings; the appropriate packages have to be installed separately.
+    '';
+  };
+
+  config.xdg.configFile."kate/debugger/dap.json" = {
+    enable = cfg.lsp.customServers != null;
+    text = builtins.toJSON { dap = cfg.dap.customServers; };
   };
 
   # ==================================
