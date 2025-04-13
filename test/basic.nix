@@ -95,7 +95,12 @@ testers.nixosTest {
     # Boot:
     start_all()
     machine.wait_for_unit("multi-user.target")
-    machine.wait_for_unit("home-manager-fake.service")
+    machine.wait_for_unit("nix-daemon.socket")
+
+    machine.wait_until_succeeds(
+        "systemctl show -p ActiveState --value home-manager-fake.service | grep -q 'inactive' && " +
+        "systemctl show -p Result --value home-manager-fake.service | grep -q 'success'"
+    )
 
     # Run tests:
     machine.succeed("test -e /home/fake/.config/kdeglobals")

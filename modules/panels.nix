@@ -182,6 +182,20 @@ let
             appear on all the screens.
           '';
         };
+        opacity = lib.mkOption {
+          type =
+            with lib.types;
+            nullOr (enum [
+              "adaptive"
+              "opaque"
+              "translucent"
+            ]);
+          default = null;
+          example = "opaque";
+          description = ''
+            The opacity mode of the panel.
+          '';
+        };
         extraSettings = lib.mkOption {
           type = with lib.types; nullOr str;
           default = null;
