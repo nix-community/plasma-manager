@@ -24,7 +24,7 @@ let
         left = mkGapOption "Left screen";
         right = mkGapOption "Right screen";
         bottom = mkGapOption "Bottom screen";
-        tiles = mkGapOption "Gap between tiles";
+        between = mkGapOption "Gap between tiles";
       };
   };
 
@@ -180,13 +180,13 @@ in
     settings = {
       gaps =
         mkNullableOption krohnkiteGaps
-          "Gaps configuration for Krohnkite, e.g., top, bottom, left, right, and tiles."
+          "Gaps configuration for Krohnkite, e.g., top, bottom, left, right, and between."
           {
             top = 8;
             bottom = 8;
             left = 8;
             right = 8;
-            tiles = 8;
+            between = 8;
           };
 
       tileWidthLimit = {
@@ -286,7 +286,7 @@ in
           screenGapLeft = gaps.left;
           screenGapRight = gaps.right;
           screenGapBottom = gaps.bottom;
-          tileLayoutGap = gaps.tiles;
+          screenGapBetween = gaps.between;
 
           limitTileWidth = tileWidthLimit.enable;
           limitTileWidthRatio = tileWidthLimit.ratio;
