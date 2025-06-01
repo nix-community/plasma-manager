@@ -147,7 +147,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    programs.plasma.shortcuts."org.kde.spectacle.desktop" = lib.mkMerge [
+    programs.plasma.shortcuts."services/org.kde.spectacle.desktop" = lib.mkMerge [
       (lib.mkIf (cfg.spectacle.shortcuts.captureActiveWindow != null) {
         ActiveWindowScreenShot = cfg.spectacle.shortcuts.captureActiveWindow;
       })
