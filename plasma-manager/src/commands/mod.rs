@@ -1,10 +1,12 @@
 mod apply;
 mod delete;
+mod rc2nix;
 mod read;
 mod write;
 
 use crate::commands::{
-    apply::ApplyCommand, delete::DeleteCommand, read::ReadCommand, write::WriteCommand,
+    apply::ApplyCommand, delete::DeleteCommand, rc2nix::Rc2NixCommand, read::ReadCommand,
+    write::WriteCommand,
 };
 use clap::Subcommand;
 use std::io::Error;
@@ -13,6 +15,8 @@ use std::io::Error;
 pub enum Commands {
     Apply(ApplyCommand),
     Delete(DeleteCommand),
+    #[command(name = "rc2nix")]
+    Rc2Nix(Rc2NixCommand),
     Read(ReadCommand),
     Write(WriteCommand),
 }
@@ -22,6 +26,7 @@ impl Commands {
         match self {
             Commands::Apply(cmd) => cmd.execute(),
             Commands::Delete(cmd) => cmd.execute(),
+            Commands::Rc2Nix(cmd) => cmd.execute(),
             Commands::Read(cmd) => cmd.execute(),
             Commands::Write(cmd) => cmd.execute(),
         }

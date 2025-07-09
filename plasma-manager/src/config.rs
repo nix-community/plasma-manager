@@ -103,7 +103,7 @@ pub fn read_configuration(
     }
 
     if raw {
-        return format_raw_output(&ini, section_key.as_deref(), key);
+        return format_raw_output(&ini, section_key.as_deref());
     }
 
     if let Some(section_key) = section_key {
@@ -159,11 +159,7 @@ pub fn read_configuration(
     }
 }
 
-fn format_raw_output(
-    ini: &Ini,
-    section_key: Option<&[String]>,
-    _key: Option<&str>,
-) -> Result<String, Error> {
+fn format_raw_output(ini: &Ini, section_key: Option<&[String]>) -> Result<String, Error> {
     let mut result = String::new();
 
     if let Some(section_key) = section_key {
