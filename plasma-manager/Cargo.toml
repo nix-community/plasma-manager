@@ -6,7 +6,9 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.5.31", features = ["derive"] }
 etcetera = "0.8.0"
+indexmap = "2.10.0"
 kconfig-rs = { path = "./kconfig-rs" }
+regex = "1.10.5"
 serde = { version = "1.0.218", features = ["derive"] }
 serde_json = "1.0.139"
 tabled = "0.18.0"
