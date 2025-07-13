@@ -4,16 +4,20 @@ use std::io::Error;
 
 #[derive(Args)]
 pub struct DeleteCommand {
-    #[arg(short, long)]
+    /// Configuration file name (e.g., kdeglobals, kwinrc)
+    #[arg(short, long, value_name = "FILE")]
     file: String,
 
-    #[arg(short, long)]
+    /// Configuration group/section name within the file
+    #[arg(short, long, value_name = "GROUP")]
     group: Option<String>,
 
-    #[arg(short, long)]
+    /// Configuration key to delete. If not specified, deletes the entire group
+    #[arg(short, long, value_name = "KEY")]
     key: Option<String>,
 
-    #[arg(short, long, default_value = "config")]
+    /// XDG directory type (config or data)
+    #[arg(short, long, default_value = "config", value_name = "DIR")]
     xdg_dir: String,
 }
 

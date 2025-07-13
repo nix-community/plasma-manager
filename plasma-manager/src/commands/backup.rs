@@ -20,23 +20,23 @@ use std::{
 
 #[derive(Args)]
 pub struct BackupCommand {
-    /// Clear the default file scan list
+    /// Clear the default file scan list and only process explicitly added files
     #[arg(short = 'C', long)]
     clear: bool,
 
-    /// Add a config file to the scan list
+    /// Add a config file to the scan list (can be used multiple times)
     #[arg(short = 'c', long = "add-config", value_name = "FILE")]
     add_config_files: Vec<String>,
 
-    /// Add a data file to the scan list
+    /// Add a data file to the scan list (can be used multiple times)
     #[arg(short = 'd', long = "add-data", value_name = "FILE")]
     add_data_files: Vec<String>,
 
     /// Output file format (JSON, RON, TOML). If not specified, will auto-detect from file extension
-    #[arg(short, long)]
+    #[arg(short, long, value_name = "FORMAT")]
     format: Option<Format>,
 
-    /// Output file path
+    /// Output file path where the backup will be saved
     #[arg(value_name = "OUTPUT")]
     output: PathBuf,
 }

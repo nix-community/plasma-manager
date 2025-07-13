@@ -14,12 +14,18 @@ use std::io::Error;
 
 #[derive(Subcommand)]
 pub enum Commands {
+    /// Apply configuration operations from a file to the system
     Apply(ApplyCommand),
+    /// Create a backup of current Plasma configuration
     Backup(BackupCommand),
+    /// Delete specific configuration entries
     Delete(DeleteCommand),
+    /// Convert KDE configuration files to plasma-manager configurations
     #[command(name = "rc2nix")]
     Rc2Nix(Rc2NixCommand),
+    /// Read configuration values from files
     Read(ReadCommand),
+    /// Write configuration values to files
     Write(WriteCommand),
 }
 

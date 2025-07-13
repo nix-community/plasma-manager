@@ -13,12 +13,14 @@ use std::{
 
 #[derive(Args)]
 pub struct ApplyCommand {
-    /// Path to the configuration file
+    /// Path to the configuration file containing operations to apply
     file: PathBuf,
+
     /// Configuration file format (JSON, RON, TOML). If not specified, will auto-detect from file extension
-    #[arg(short, long)]
+    #[arg(short, long, value_name = "FORMAT")]
     format: Option<Format>,
-    /// Print verbose output about operations
+
+    /// Print verbose output about operations being performed
     #[arg(short, long)]
     verbose: bool,
 }
