@@ -1,35 +1,39 @@
-use crate::commands::Command;
-use crate::config::get_xdg_directory;
-use crate::plasma_config::{
-    should_skip_by_lambda, should_skip_file_specific, should_skip_group, should_skip_key,
-    FileSettingsMap, SettingsMap, KNOWN_CONFIG_FILES, KNOWN_DATA_FILES,
+use crate::{
+    commands::Command,
+    config::get_xdg_directory,
+    plasma_config::{
+        should_skip_by_lambda, should_skip_file_specific, should_skip_group, should_skip_key,
+        FileSettingsMap, SettingsMap, KNOWN_CONFIG_FILES, KNOWN_DATA_FILES,
+    },
+    schema::{ConfigEntry, ConfigFile, EntryContent, Operation},
 };
-use crate::schema::{ConfigEntry, ConfigFile, EntryContent, Operation};
 use clap::Args;
 use indexmap::IndexMap;
 use kconfig_rs::Ini;
-use std::collections::HashMap;
-use std::fs;
-use std::io::{Error, ErrorKind};
-use std::path::{Path, PathBuf};
+use std::{
+    collections::HashMap,
+    fs,
+    io::{Error, ErrorKind},
+    path::{Path, PathBuf},
+};
 
 #[derive(Args)]
 pub struct BackupCommand {
-    /// Output JSON file path
-    #[arg(short, long, value_name = "FILE")]
-    output: PathBuf,
-
-    /// Clear the default file list
-    #[arg(short, long)]
+    /// Clear the default file scan list
+    #[arg(short = 'C', long)]
     clear: bool,
 
-    /// Add a file to the scan list
-    #[arg(short, long = "add", value_name = "FILE")]
-    add_files: Vec<String>,
+    /// Add a config file to the scan list
+    #[arg(short = 'c', long = "add-config", value_name = "FILE")]
+    add_config_files: Vec<String>,
 
-    /// Pretty print the JSON output
-    #[arg(short, long)]
-    pretty: bool,
+    /// Add a data file to the scan list
+    #[arg(short = 'd', long = "add-data", value_name = "FILE")]
+    add_data_files: Vec<String>,
+
+    /// Output JSON file path
+    #[arg(value_name = "OUTPUT")]
+    output: PathBuf,
 }
 
 impl Command for BackupCommand {
@@ -61,7 +65,7 @@ impl BackupCommand {
             }
         }
 
-        for file in &self.add_files {
+        for file in &self.add_config_files {
             let path = if Path::new(file).is_absolute() {
                 PathBuf::from(file)
             } else {
@@ -81,6 +85,15 @@ impl BackupCommand {
             for &file in KNOWN_DATA_FILES {
                 files.push(data_dir.join(file));
             }
+        }
+
+        for file in &self.add_data_files {
+            let path = if Path::new(file).is_absolute() {
+                PathBuf::from(file)
+            } else {
+                data_dir.join(file)
+            };
+            files.push(path);
         }
 
         Ok(files)
@@ -224,11 +237,7 @@ impl BackupCommand {
             fs::create_dir_all(parent)?;
         }
 
-        let json_content = if self.pretty {
-            serde_json::to_string_pretty(config_file)?
-        } else {
-            serde_json::to_string(config_file)?
-        };
+        let json_content = serde_json::to_string_pretty(config_file)?;
 
         fs::write(&self.output, json_content)?;
         Ok(())
