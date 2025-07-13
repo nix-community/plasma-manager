@@ -1,25 +1,38 @@
-use crate::commands::Command;
-use crate::config::get_xdg_directory;
-use crate::plasma_config::{
-    should_skip_by_lambda, should_skip_file_specific, should_skip_group, should_skip_key,
-    FileSettingsMap, SettingsMap, KNOWN_CONFIG_FILES, KNOWN_DATA_FILES,
+use crate::{
+    commands::Command,
+    config::get_xdg_directory,
+    plasma_config::{
+        should_skip_by_lambda, should_skip_file_specific, should_skip_group, should_skip_key,
+        FileSettingsMap, SettingsMap, KNOWN_CONFIG_FILES, KNOWN_DATA_FILES,
+    },
 };
 use clap::Args;
 use indexmap::IndexMap;
 use kconfig_rs::Ini;
 use regex::Regex;
-use std::io::{Error, ErrorKind};
-use std::path::{Path, PathBuf};
+use std::{
+    fs::File,
+    io::{Error, ErrorKind, Write},
+    path::{Path, PathBuf},
+};
 
 #[derive(Args)]
 pub struct Rc2NixCommand {
-    /// Clear the default file list
-    #[arg(short, long)]
+    /// Clear the default file scan list
+    #[arg(short = 'C', long)]
     clear: bool,
 
-    /// Add a file to the scan list
-    #[arg(short, long = "add", value_name = "FILE")]
-    add_files: Vec<String>,
+    /// Add a config file to the scan list
+    #[arg(short = 'c', long = "add-config", value_name = "FILE")]
+    add_config_files: Vec<String>,
+
+    /// Add a data file to the scan list
+    #[arg(short = 'd', long = "add-data", value_name = "FILE")]
+    add_data_files: Vec<String>,
+
+    /// Output file path (optional, prints to stdout if not provided)
+    #[arg(value_name = "OUTPUT")]
+    output: Option<PathBuf>,
 }
 
 #[derive(Debug, Clone)]
@@ -38,7 +51,7 @@ impl Command for Rc2NixCommand {
         let config_settings = self.process_files(&config_files, "config")?;
         let data_settings = self.process_files(&data_files, "data")?;
 
-        self.print_output(&config_settings, &data_settings)?;
+        self.write_output(&config_settings, &data_settings)?;
 
         Ok(())
     }
@@ -55,7 +68,7 @@ impl Rc2NixCommand {
             }
         }
 
-        for file in &self.add_files {
+        for file in &self.add_config_files {
             let path = if Path::new(file).is_absolute() {
                 PathBuf::from(file)
             } else {
@@ -75,6 +88,15 @@ impl Rc2NixCommand {
             for &file in KNOWN_DATA_FILES {
                 files.push(data_dir.join(file));
             }
+        }
+
+        for file in &self.add_data_files {
+            let path = if Path::new(file).is_absolute() {
+                PathBuf::from(file)
+            } else {
+                data_dir.join(file)
+            };
+            files.push(path);
         }
 
         Ok(files)
@@ -162,36 +184,57 @@ impl Rc2NixCommand {
         Ok(settings)
     }
 
-    fn print_output(
+    fn write_output(
         &self,
         config_settings: &FileSettingsMap,
         data_settings: &FileSettingsMap,
     ) -> Result<(), Error> {
-        println!("{{");
-        println!("  programs.plasma = {{");
-        println!("    enable = true;");
+        if let Some(output_path) = &self.output {
+            let mut file = File::create(output_path)?;
+            self.print_output_to_writer(&mut file, config_settings, data_settings)?;
+        } else {
+            let mut stdout = std::io::stdout();
+            self.print_output_to_writer(&mut stdout, config_settings, data_settings)?;
+        }
+        Ok(())
+    }
+
+    fn print_output_to_writer<W: Write>(
+        &self,
+        writer: &mut W,
+        config_settings: &FileSettingsMap,
+        data_settings: &FileSettingsMap,
+    ) -> Result<(), Error> {
+        writeln!(writer, "{{")?;
+        writeln!(writer, "  programs.plasma = {{")?;
+        writeln!(writer, "    enable = true;")?;
 
         if let Some(shortcuts) = config_settings.get("kglobalshortcutsrc") {
-            println!("    shortcuts = {{");
-            self.print_shortcuts_nested(shortcuts, 6);
-            println!("    }};");
+            writeln!(writer, "    shortcuts = {{")?;
+            self.print_shortcuts_nested_to_writer(writer, shortcuts, 6)?;
+            writeln!(writer, "    }};")?;
         } else {
-            println!("    shortcuts = {{}};");
+            writeln!(writer, "    shortcuts = {{}};")?;
         }
 
-        println!("    configFile = {{");
-        self.print_settings_nested(config_settings, 6, true);
-        println!("    }};");
-        println!("    dataFile = {{");
-        self.print_settings_nested(data_settings, 6, false);
-        println!("    }};");
-        println!("  }};");
-        println!("}}");
+        writeln!(writer, "    configFile = {{")?;
+        self.print_settings_nested_to_writer(writer, config_settings, 6, true)?;
+        writeln!(writer, "    }};")?;
+        writeln!(writer, "    dataFile = {{")?;
+        self.print_settings_nested_to_writer(writer, data_settings, 6, false)?;
+        writeln!(writer, "    }};")?;
+        writeln!(writer, "  }};")?;
+        writeln!(writer, "}}")?;
 
         Ok(())
     }
 
-    fn print_shortcuts_nested(&self, shortcuts: &SettingsMap, indent: usize) {
+    fn print_shortcuts_nested_to_writer<W: Write>(
+        &self,
+        writer: &mut W,
+        shortcuts: &SettingsMap,
+        indent: usize,
+    ) -> Result<(), Error> {
         // Group shortcuts by their component
         let mut grouped_shortcuts: IndexMap<String, IndexMap<String, String>> = IndexMap::new();
 
@@ -222,42 +265,58 @@ impl Rc2NixCommand {
                 let (action, keys) = group_shortcuts.iter().next().unwrap();
                 let group_ident = self.format_nix_identifier(group);
                 let action_ident = self.format_nix_identifier(action);
-                println!(
+                writeln!(
+                    writer,
                     "{}{}.{} = {};",
                     " ".repeat(indent),
                     group_ident,
                     action_ident,
                     keys
-                );
+                )?;
             } else {
                 // Multiple shortcuts - use nested structure
                 let group_ident = self.format_nix_identifier(group);
-                println!("{}{} = {{", " ".repeat(indent), group_ident);
+                writeln!(writer, "{}{} = {{", " ".repeat(indent), group_ident)?;
 
                 for (action, keys) in group_shortcuts {
                     let action_ident = self.format_nix_identifier(action);
-                    println!("{}{} = {};", " ".repeat(indent + 2), action_ident, keys);
+                    writeln!(
+                        writer,
+                        "{}{} = {};",
+                        " ".repeat(indent + 2),
+                        action_ident,
+                        keys
+                    )?;
                 }
 
-                println!("{}}};", " ".repeat(indent));
+                writeln!(writer, "{}}};", " ".repeat(indent))?;
             }
         }
+
+        Ok(())
     }
 
-    fn print_settings_nested(
+    fn print_settings_nested_to_writer<W: Write>(
         &self,
+        writer: &mut W,
         settings: &FileSettingsMap,
         indent: usize,
         filter_shortcuts: bool,
-    ) {
+    ) -> Result<(), Error> {
         for (file, file_settings) in settings {
             if filter_shortcuts && file == "kglobalshortcutsrc" {
                 continue;
             }
 
             let file_structure = self.build_file_structure(file_settings, filter_shortcuts);
-            self.print_nested_structure(&self.format_nix_identifier(file), &file_structure, indent);
+            self.print_nested_structure_to_writer(
+                writer,
+                &self.format_nix_identifier(file),
+                &file_structure,
+                indent,
+            )?;
         }
+        Ok(())
     }
 
     fn build_file_structure(
@@ -291,15 +350,22 @@ impl Rc2NixCommand {
         NestedValue::Node(file_map)
     }
 
-    fn print_nested_structure(&self, name: &str, structure: &NestedValue, indent: usize) {
+    fn print_nested_structure_to_writer<W: Write>(
+        &self,
+        writer: &mut W,
+        name: &str,
+        structure: &NestedValue,
+        indent: usize,
+    ) -> Result<(), Error> {
         match structure {
             NestedValue::Leaf(value) => {
-                println!(
+                writeln!(
+                    writer,
                     "{}{} = {};",
                     " ".repeat(indent),
                     name,
                     self.nix_value(value)
-                );
+                )?;
             }
             NestedValue::Node(map) => {
                 if map.len() == 1 {
@@ -309,13 +375,14 @@ impl Rc2NixCommand {
 
                     match child_structure {
                         NestedValue::Leaf(value) => {
-                            println!(
+                            writeln!(
+                                writer,
                                 "{}{}.{} = {};",
                                 " ".repeat(indent),
                                 name,
                                 child_ident,
                                 self.nix_value(value)
-                            );
+                            )?;
                         }
                         NestedValue::Node(child_map) => {
                             if child_map.len() == 1 {
@@ -326,58 +393,74 @@ impl Rc2NixCommand {
 
                                 match grandchild_structure {
                                     NestedValue::Leaf(value) => {
-                                        println!(
+                                        writeln!(
+                                            writer,
                                             "{}{}.{}.{} = {};",
                                             " ".repeat(indent),
                                             name,
                                             child_ident,
                                             grandchild_ident,
                                             self.nix_value(value)
-                                        );
+                                        )?;
                                     }
                                     NestedValue::Node(_) => {
                                         // Too deep, switch to nested structure
-                                        println!(
+                                        writeln!(
+                                            writer,
                                             "{}{}.{} = {{",
                                             " ".repeat(indent),
                                             name,
                                             child_ident
-                                        );
-                                        self.print_nested_structure(
+                                        )?;
+                                        self.print_nested_structure_to_writer(
+                                            writer,
                                             &grandchild_ident,
                                             grandchild_structure,
                                             indent + 2,
-                                        );
-                                        println!("{}}};", " ".repeat(indent));
+                                        )?;
+                                        writeln!(writer, "{}}};", " ".repeat(indent))?;
                                     }
                                 }
                             } else {
                                 // Multiple children, use nested structure
-                                println!("{}{}.{} = {{", " ".repeat(indent), name, child_ident);
+                                writeln!(
+                                    writer,
+                                    "{}{}.{} = {{",
+                                    " ".repeat(indent),
+                                    name,
+                                    child_ident
+                                )?;
                                 for (child_child_name, child_child_structure) in child_map {
                                     let child_child_ident =
                                         self.format_nix_identifier(child_child_name);
-                                    self.print_nested_structure(
+                                    self.print_nested_structure_to_writer(
+                                        writer,
                                         &child_child_ident,
                                         child_child_structure,
                                         indent + 2,
-                                    );
+                                    )?;
                                 }
-                                println!("{}}};", " ".repeat(indent));
+                                writeln!(writer, "{}}};", " ".repeat(indent))?;
                             }
                         }
                     }
                 } else {
                     // Multiple children - use nested structure
-                    println!("{}{} = {{", " ".repeat(indent), name);
+                    writeln!(writer, "{}{} = {{", " ".repeat(indent), name)?;
                     for (child_name, child_structure) in map {
                         let child_ident = self.format_nix_identifier(child_name);
-                        self.print_nested_structure(&child_ident, child_structure, indent + 2);
+                        self.print_nested_structure_to_writer(
+                            writer,
+                            &child_ident,
+                            child_structure,
+                            indent + 2,
+                        )?;
                     }
-                    println!("{}}};", " ".repeat(indent));
+                    writeln!(writer, "{}}};", " ".repeat(indent))?;
                 }
             }
         }
+        Ok(())
     }
 
     // TODO: Find a better way to do this
