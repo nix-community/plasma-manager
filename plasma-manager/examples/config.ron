@@ -1,0 +1,43 @@
+(
+    operations: [
+        (
+            file: "kdeglobals",
+            group: Some("KDE"),
+            operation: Write,
+            xdg_directory: "config",
+            entries: WriteEntries({
+                "SingleClick": "false",
+                "AnimationDurationFactor": "0.5",
+            }),
+        ),
+        (
+            file: "kwinrc",
+            group: Some("Effect-blur"),
+            operation: Write,
+            xdg_directory: "config",
+            entries: WriteEntries({
+                "BlurStrength": "10",
+                "NoiseStrength": "0",
+            }),
+        ),
+        (
+            file: "kscreenlockerrc",
+            group: Some("Daemon"),
+            operation: Write,
+            xdg_directory: "config",
+            entries: WriteEntries({
+                "LockGrace": "5000",
+            }),
+        ),
+        (
+            file: "kcminputrc",
+            group: Some("Mouse"),
+            operation: Write,
+            xdg_directory: "config",
+            entries: WriteEntries({
+                "cursorTheme": "breeze_cursors",
+            }),
+        ),
+    ],
+)
+

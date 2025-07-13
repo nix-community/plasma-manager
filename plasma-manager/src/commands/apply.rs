@@ -1,6 +1,7 @@
 use crate::{
     commands::Command,
     config::{delete_configuration, read_configuration, write_configuration},
+    format::{detect_format, Format},
     schema::{ConfigFile, EntryContent, Operation},
 };
 use clap::Args;
@@ -12,8 +13,11 @@ use std::{
 
 #[derive(Args)]
 pub struct ApplyCommand {
-    /// Path to the JSON file containing configuration operations
+    /// Path to the configuration file
     file: PathBuf,
+    /// Configuration file format (JSON, RON, TOML). If not specified, will auto-detect from file extension
+    #[arg(short, long)]
+    format: Option<Format>,
     /// Print verbose output about operations
     #[arg(short, long)]
     verbose: bool,
@@ -23,15 +27,14 @@ impl Command for ApplyCommand {
     type Err = Error;
 
     fn execute(&self) -> Result<(), Self::Err> {
-        if self.file.extension().and_then(|s| s.to_str()) != Some("json") {
-            return Err(Error::new(
-                ErrorKind::InvalidInput,
-                "Configuration file must be a JSON file.",
-            ));
-        }
-
         let file_content = fs::read_to_string(&self.file)?;
-        let config_file: ConfigFile = serde_json::from_str(&file_content)?;
+
+        let format = match &self.format {
+            Some(format) => *format,
+            None => detect_format(&self.file, Some(&file_content))?,
+        };
+
+        let config_file: ConfigFile = format.deserialize(&file_content)?;
 
         let mut delete_count = 0;
         let mut read_count = 0;

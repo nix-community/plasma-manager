@@ -1,6 +1,7 @@
 use crate::{
     commands::Command,
     config::get_xdg_directory,
+    format::{detect_format, Format},
     plasma_config::{
         should_skip_by_lambda, should_skip_file_specific, should_skip_group, should_skip_key,
         FileSettingsMap, SettingsMap, KNOWN_CONFIG_FILES, KNOWN_DATA_FILES,
@@ -31,7 +32,11 @@ pub struct BackupCommand {
     #[arg(short = 'd', long = "add-data", value_name = "FILE")]
     add_data_files: Vec<String>,
 
-    /// Output JSON file path
+    /// Output file format (JSON, RON, TOML). If not specified, will auto-detect from file extension
+    #[arg(short, long)]
+    format: Option<Format>,
+
+    /// Output file path
     #[arg(value_name = "OUTPUT")]
     output: PathBuf,
 }
@@ -46,8 +51,13 @@ impl Command for BackupCommand {
         let config_settings = self.process_files(&config_files, "config")?;
         let data_settings = self.process_files(&data_files, "data")?;
 
-        let config_file = self.build_config_file(&config_settings, &data_settings)?;
-        self.save_config_file(&config_file)?;
+        let format = match &self.format {
+            Some(format) => *format,
+            None => detect_format(&self.output, None)?,
+        };
+
+        let config_file = self.build_config_file(&config_settings, &data_settings, format)?;
+        self.save_config_file(&config_file, format)?;
 
         println!("Backup saved to: {}", self.output.display());
         Ok(())
@@ -183,6 +193,7 @@ impl BackupCommand {
         &self,
         config_settings: &FileSettingsMap,
         data_settings: &FileSettingsMap,
+        format: Format,
     ) -> Result<ConfigFile, Error> {
         let mut operations = Vec::new();
 
@@ -195,7 +206,11 @@ impl BackupCommand {
         }
 
         Ok(ConfigFile {
-            schema: "https://raw.githubusercontent.com/nix-community/plasma-manager/trunk/plasma-manager/schema.json".to_string(),
+            schema: if format == Format::Ron {
+                None
+            } else {
+                Some("https://raw.githubusercontent.com/nix-community/plasma-manager/trunk/plasma-manager/schema.json".to_string())
+            },
             operations,
         })
     }
@@ -232,14 +247,14 @@ impl BackupCommand {
         }
     }
 
-    fn save_config_file(&self, config_file: &ConfigFile) -> Result<(), Error> {
+    fn save_config_file(&self, config_file: &ConfigFile, format: Format) -> Result<(), Error> {
         if let Some(parent) = self.output.parent() {
             fs::create_dir_all(parent)?;
         }
 
-        let json_content = serde_json::to_string_pretty(config_file)?;
+        let content = format.serialize(config_file)?;
 
-        fs::write(&self.output, json_content)?;
+        fs::write(&self.output, content)?;
         Ok(())
     }
 }

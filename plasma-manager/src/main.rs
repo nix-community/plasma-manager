@@ -1,5 +1,6 @@
 mod commands;
 mod config;
+mod format;
 mod plasma_config;
 mod schema;
 

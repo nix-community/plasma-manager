@@ -9,9 +9,11 @@ etcetera = "0.8.0"
 indexmap = "2.10.0"
 kconfig-rs = { path = "./kconfig-rs" }
 regex = "1.10.5"
+ron = "0.10.1"
 serde = { version = "1.0.218", features = ["derive"] }
 serde_json = "1.0.139"
 tabled = "0.18.0"
+toml = "0.9.2"
 
 [workspace]
 members = [
