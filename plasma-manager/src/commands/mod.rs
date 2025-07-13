@@ -1,12 +1,13 @@
 mod apply;
+mod backup;
 mod delete;
 mod rc2nix;
 mod read;
 mod write;
 
 use crate::commands::{
-    apply::ApplyCommand, delete::DeleteCommand, rc2nix::Rc2NixCommand, read::ReadCommand,
-    write::WriteCommand,
+    apply::ApplyCommand, backup::BackupCommand, delete::DeleteCommand, rc2nix::Rc2NixCommand,
+    read::ReadCommand, write::WriteCommand,
 };
 use clap::Subcommand;
 use std::io::Error;
@@ -14,6 +15,7 @@ use std::io::Error;
 #[derive(Subcommand)]
 pub enum Commands {
     Apply(ApplyCommand),
+    Backup(BackupCommand),
     Delete(DeleteCommand),
     #[command(name = "rc2nix")]
     Rc2Nix(Rc2NixCommand),
@@ -25,6 +27,7 @@ impl Commands {
     pub(crate) fn execute(&self) -> Result<(), Error> {
         match self {
             Commands::Apply(cmd) => cmd.execute(),
+            Commands::Backup(cmd) => cmd.execute(),
             Commands::Delete(cmd) => cmd.execute(),
             Commands::Rc2Nix(cmd) => cmd.execute(),
             Commands::Read(cmd) => cmd.execute(),

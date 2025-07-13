@@ -1,5 +1,9 @@
 use crate::commands::Command;
 use crate::config::get_xdg_directory;
+use crate::plasma_config::{
+    should_skip_by_lambda, should_skip_file_specific, should_skip_group, should_skip_key,
+    FileSettingsMap, SettingsMap, KNOWN_CONFIG_FILES, KNOWN_DATA_FILES,
+};
 use clap::Args;
 use indexmap::IndexMap;
 use kconfig_rs::Ini;
@@ -17,76 +21,6 @@ pub struct Rc2NixCommand {
     #[arg(short, long = "add", value_name = "FILE")]
     add_files: Vec<String>,
 }
-
-const KNOWN_CONFIG_FILES: &[&str] = &[
-    "kcminputrc",
-    "kglobalshortcutsrc",
-    "kactivitymanagerdrc",
-    "ksplashrc",
-    "kwin_rules_dialogrc",
-    "kmixrc",
-    "kwalletrc",
-    "kgammarc",
-    "krunnerrc",
-    "klaunchrc",
-    "plasmanotifyrc",
-    "systemsettingsrc",
-    "kscreenlockerrc",
-    "kwinrulesrc",
-    "khotkeysrc",
-    "ksmserverrc",
-    "kded5rc",
-    "plasmarc",
-    "kwinrc",
-    "kdeglobals",
-    "baloofilerc",
-    "dolphinrc",
-    "klipperrc",
-    "plasma-localerc",
-    "kxkbrc",
-    "ffmpegthumbsrc",
-    "kservicemenurc",
-    "kiorc",
-    "ktrashrc",
-    "kuriikwsfilterrc",
-    "plasmaparc",
-    "spectaclerc",
-    "katerc",
-];
-
-const KNOWN_DATA_FILES: &[&str] = &[
-    "kate/anonymous.katesession",
-    "dolphin/view_properties/global/.directory",
-];
-
-const GROUP_BLOCK_LIST: &[&str] = &[
-    r"^(ConfigDialog|FileDialogSize|ViewPropertiesDialog|KPropertiesDialog)$",
-    r"^\$Version$",
-    r"^ColorEffects:",
-    r"^Colors:",
-    r"^DoNotDisturb$",
-    r"^LegacySession:",
-    r"^MainWindow$",
-    r"^PlasmaViews",
-    r"^ScreenConnectors$",
-    r"^Session:",
-    r"^Recent (Files|URLs)",
-];
-
-const KEY_BLOCK_LIST: &[&str] = &[
-    r"^activate widget \d+$", // Depends on state
-    r"^ColorScheme(Hash)?$",
-    r"^History Items",
-    r"^LookAndFeelPackage$",
-    r"^Recent (Files|URLs)",
-    r"(?i)^Theme$",
-    r"^Version$",
-    r"State$",
-    r"Timestamp$",
-];
-
-type SettingsMap = IndexMap<String, IndexMap<String, String>>;
-type FileSettingsMap = IndexMap<String, SettingsMap>;
 
 #[derive(Debug, Clone)]
 enum NestedValue {
@@ -196,25 +130,24 @@ impl Rc2NixCommand {
             };
 
             // Skip blocked groups
-            if self.should_skip_group(&group_name) {
+            if should_skip_group(&group_name) {
                 continue;
             }
 
             let mut group_settings = IndexMap::new();
 
             for (key, value) in section.iter() {
-                if self.should_skip_key(key) {
+                if should_skip_key(key) {
                     continue;
                 }
 
-                if self.should_skip_by_lambda(&group_name, key) {
+                if should_skip_by_lambda(&group_name, key) {
                     continue;
                 }
 
                 // Skip special file-specific blocks
-                if file_path.file_name().and_then(|n| n.to_str()) == Some("plasmanotifyrc")
-                    && key == "Seen"
-                {
+                let file_name = file_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
+                if should_skip_file_specific(file_name, key) {
                     continue;
                 }
 
@@ -227,23 +160,6 @@ impl Rc2NixCommand {
         }
 
         Ok(settings)
-    }
-
-    fn should_skip_group(&self, group: &str) -> bool {
-        GROUP_BLOCK_LIST
-            .iter()
-            .any(|pattern| Regex::new(pattern).unwrap().is_match(group))
-    }
-
-    fn should_skip_key(&self, key: &str) -> bool {
-        KEY_BLOCK_LIST
-            .iter()
-            .any(|pattern| Regex::new(pattern).unwrap().is_match(key))
-    }
-
-    fn should_skip_by_lambda(&self, group: &str, key: &str) -> bool {
-        // Lambda-based blocking rules from the original implementations
-        group == "org.kde.kdecoration2" && key == "library"
     }
 
     fn print_output(
