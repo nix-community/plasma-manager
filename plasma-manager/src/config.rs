@@ -1,11 +1,17 @@
 use etcetera::{choose_base_strategy, BaseStrategy};
-use kconfig_rs::Ini;
+use kconfig_rs::{EscapePolicy, Ini, LineSeparator, WriteOption};
 use std::{
     fs,
     io::{Error, ErrorKind},
     path::PathBuf,
 };
 use tabled::{settings::Style, Table, Tabled};
+
+const WRITE_OPTS: WriteOption = WriteOption {
+    escape_policy: EscapePolicy::Reserved,
+    line_separator: LineSeparator::SystemDefault,
+    kv_separator: "=",
+};
 
 #[derive(Tabled)]
 struct ConfigEntry {
@@ -56,7 +62,7 @@ pub fn write_configuration(
 
     ini.with_section(section_parts).set(key, value);
 
-    ini.write_to_file(full_path)
+    ini.write_to_file_opt(full_path, WRITE_OPTS)
         .map_err(|e| Error::new(ErrorKind::Other, format!("Failed to write INI file: {}", e)))
 }
 
@@ -261,7 +267,7 @@ pub fn delete_configuration(
             }
         }
 
-        ini.write_to_file(&full_path).map_err(|e| {
+        ini.write_to_file_opt(&full_path, WRITE_OPTS).map_err(|e| {
             Error::new(ErrorKind::Other, format!("Failed to write INI file: {}", e))
         })?;
     }
