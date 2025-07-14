@@ -16,7 +16,7 @@ pub struct ReadCommand {
     #[arg(short, long, value_name = "KEY")]
     key: Option<String>,
 
-    /// XDG directory type (config or data)
+    /// XDG directory type
     #[arg(short, long, default_value = "config", value_name = "DIR")]
     xdg_dir: String,
 

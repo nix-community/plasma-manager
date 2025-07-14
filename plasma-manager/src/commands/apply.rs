@@ -57,7 +57,15 @@ impl Command for ApplyCommand {
             match (entry.operation, entry.entries) {
                 (Operation::Write, EntryContent::WriteEntries(entries)) => {
                     for (key, value) in entries {
-                        match write_configuration(&file, group_ref, &key, &value, &xdg_dir) {
+                        match write_configuration(
+                            &file,
+                            group_ref,
+                            Some(&key),
+                            Some(&value),
+                            &xdg_dir,
+                            false,
+                            false,
+                        ) {
                             Ok(()) => {
                                 if self.verbose {
                                     println!("Wrote {}{}:{} = {}", file, group_display, key, value);

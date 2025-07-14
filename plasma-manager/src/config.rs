@@ -1,5 +1,5 @@
 use etcetera::{choose_base_strategy, BaseStrategy};
-use kconfig_rs::{EscapePolicy, Ini, LineSeparator, WriteOption};
+use kconfig_rs::{EscapePolicy, Ini, KConfigOptions, LineSeparator, WriteOption};
 use std::{
     fs,
     io::{Error, ErrorKind},
@@ -34,9 +34,11 @@ struct SectionEntry {
 pub fn write_configuration(
     file: &str,
     group: Option<&str>,
-    key: &str,
-    value: &str,
+    key: Option<&str>,
+    value: Option<&str>,
     xdg_dir: &str,
+    immutable: bool,
+    expand_environment: bool,
 ) -> Result<(), Error> {
     let base_dir = get_xdg_directory(xdg_dir)?;
     let full_path = base_dir.join(file);
@@ -52,15 +54,104 @@ pub fn write_configuration(
         Ini::new()
     };
 
-    let section_parts = group.map(|g| {
-        if g.contains('/') {
-            g.split('/').map(String::from).collect::<Vec<String>>()
-        } else {
-            vec![g.to_string()]
-        }
-    });
+    let kconfig_options = KConfigOptions {
+        immutable,
+        expand_environment,
+    };
 
-    ini.with_section(section_parts).set(key, value);
+    match (group, key, value) {
+        (None, None, None) => {
+            if kconfig_options.has_options() {
+                ini.set_file_options(kconfig_options);
+            }
+        }
+        (Some(group_name), None, None) => {
+            let section_parts = if group_name.contains('/') {
+                group_name
+                    .split('/')
+                    .map(String::from)
+                    .collect::<Vec<String>>()
+            } else {
+                vec![group_name.to_string()]
+            };
+
+            if kconfig_options.has_options() {
+                if ini.section(Some(section_parts.clone())).is_none() {
+                    return Err(Error::new(
+                        ErrorKind::NotFound,
+                        format!(
+                            "Section '{}' not found. Cannot set options for non-existent section.",
+                            group_name
+                        ),
+                    ));
+                }
+
+                ini.set_section_options(Some(section_parts), kconfig_options);
+            }
+        }
+        (group_opt, Some(key_name), Some(value_str)) => {
+            let section_parts = group_opt.map(|g| {
+                if g.contains('/') {
+                    g.split('/').map(String::from).collect::<Vec<String>>()
+                } else {
+                    vec![g.to_string()]
+                }
+            });
+
+            if kconfig_options.has_options() {
+                ini.with_section(section_parts).set_with_options(
+                    key_name,
+                    value_str,
+                    kconfig_options,
+                );
+            } else {
+                ini.with_section(section_parts).set(key_name, value_str);
+            }
+        }
+        (group_opt, Some(key_name), None) => {
+            let section_parts = group_opt.map(|g| {
+                if g.contains('/') {
+                    g.split('/').map(String::from).collect::<Vec<String>>()
+                } else {
+                    vec![g.to_string()]
+                }
+            });
+
+            if kconfig_options.has_options() {
+                if ini.get_from(section_parts.as_ref(), key_name).is_none() {
+                    let section_display = match group_opt {
+                        Some(group) => format!("section '{group}'"),
+                        None => "general section".to_string(),
+                    };
+
+                    return Err(Error::new(
+                        ErrorKind::NotFound,
+                        format!(
+                            "Key '{}' not found in {}. Cannot set options for non-existent key.",
+                            key_name, section_display
+                        ),
+                    ));
+                }
+
+                let existing_value = ini
+                    .get_from(section_parts.as_ref(), key_name)
+                    .unwrap()
+                    .to_string();
+
+                ini.with_section(section_parts).set_with_options(
+                    key_name,
+                    existing_value,
+                    kconfig_options,
+                );
+            }
+        }
+        _ => {
+            return Err(Error::new(
+                ErrorKind::InvalidInput,
+                "Invalid combination of parameters",
+            ));
+        }
+    }
 
     ini.write_to_file_opt(full_path, WRITE_OPTS)
         .map_err(|e| Error::new(ErrorKind::Other, format!("Failed to write INI file: {}", e)))
