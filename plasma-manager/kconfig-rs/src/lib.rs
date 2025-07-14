@@ -63,9 +63,236 @@ use ordered_multimap::{
     list_ordered_multimap::{Entry, IntoIter, Iter, IterMut, OccupiedEntry, VacantEntry},
     ListOrderedMultimap,
 };
+use std::collections::HashMap;
 use trim_in_place::TrimInPlace;
 #[cfg(feature = "case-insensitive")]
 use unicase::UniCase;
+
+/// KConfig options that can be applied to entries, groups, or entire files
+#[derive(Debug, Clone, PartialEq)]
+pub struct KConfigOptions {
+    /// Whether this entry/group/file is immutable ($i option)
+    pub immutable: bool,
+    /// Whether environment variables should be expanded ($e option)
+    pub expand_environment: bool,
+}
+
+impl Default for KConfigOptions {
+    fn default() -> Self {
+        Self {
+            immutable: false,
+            expand_environment: false,
+        }
+    }
+}
+
+impl KConfigOptions {
+    /// Parse KConfig options from a string like "ei" or "ie"
+    pub fn from_str(s: &str) -> Self {
+        let mut options = Self::default();
+        for c in s.chars() {
+            match c {
+                'i' => options.immutable = true,
+                'e' => options.expand_environment = true,
+                _ => {} // Ignore unknown options
+            }
+        }
+        options
+    }
+
+    /// Convert KConfig options to a string representation
+    pub fn to_string(&self) -> String {
+        let mut result = String::new();
+        if self.expand_environment {
+            result.push('e');
+        }
+        if self.immutable {
+            result.push('i');
+        }
+        result
+    }
+
+    /// Check if any options are set
+    pub fn has_options(&self) -> bool {
+        self.immutable || self.expand_environment
+    }
+}
+
+/// Represents a parsed key with its KConfig options
+#[derive(Debug, Clone)]
+pub struct KConfigKey {
+    /// The actual key name
+    pub name: String,
+    /// KConfig options for this key
+    pub options: KConfigOptions,
+}
+
+impl KConfigKey {
+    /// Create a new KConfigKey with just a name
+    pub fn new(name: String) -> Self {
+        Self {
+            name,
+            options: KConfigOptions::default(),
+        }
+    }
+
+    /// Create a new KConfigKey with name and options
+    pub fn with_options(name: String, options: KConfigOptions) -> Self {
+        Self { name, options }
+    }
+
+    /// Parse a key string that might contain KConfig options
+    /// Format: "keyname[$options]" where options can be combinations of 'i' and 'e'
+    pub fn parse(key_str: &str) -> Self {
+        if let Some(bracket_start) = key_str.find("[$") {
+            if let Some(bracket_end) = key_str[bracket_start..].find(']') {
+                let name = key_str[..bracket_start].to_string();
+                let options_str = &key_str[bracket_start + 2..bracket_start + bracket_end];
+                let options = KConfigOptions::from_str(options_str);
+                return Self::with_options(name, options);
+            }
+        }
+        Self::new(key_str.to_string())
+    }
+
+    /// Convert back to string representation
+    pub fn to_string(&self) -> String {
+        if self.options.has_options() {
+            format!("{}[{}]", self.name, self.options.to_string())
+        } else {
+            self.name.clone()
+        }
+    }
+}
+
+/// Represents a section with its KConfig options
+#[derive(Debug, Clone)]
+pub struct KConfigSection {
+    /// The section path (e.g., ["Group", "Subgroup"])
+    pub path: Vec<String>,
+    /// KConfig options for this section
+    pub options: KConfigOptions,
+}
+
+impl KConfigSection {
+    /// Create a new section with just a path
+    pub fn new(path: Vec<String>) -> Self {
+        Self {
+            path,
+            options: KConfigOptions::default(),
+        }
+    }
+
+    /// Create a new section with path and options
+    pub fn with_options(path: Vec<String>, options: KConfigOptions) -> Self {
+        Self { path, options }
+    }
+
+    /// Parse a section name that might contain KConfig options
+    /// Format: "SectionName" (options are parsed separately as "[$options]")
+    pub fn parse_single(section_str: &str) -> (String, KConfigOptions) {
+        if let Some(bracket_start) = section_str.find("[$") {
+            if let Some(bracket_end) = section_str[bracket_start..].find(']') {
+                let name = section_str[..bracket_start].to_string();
+                let options_str = &section_str[bracket_start + 2..bracket_start + bracket_end];
+                let options = KConfigOptions::from_str(options_str);
+                return (name, options);
+            }
+        }
+        (section_str.to_string(), KConfigOptions::default())
+    }
+}
+
+/// Expand environment variables in a value string
+/// Supports both $VAR and ${VAR} syntax
+/// Special handling for QT_CACHE_HOME, QT_CONFIG_HOME, QT_DATA_HOME with fallbacks
+pub fn expand_environment_variables(value: &str) -> String {
+    let mut result = String::new();
+    let mut chars = value.chars().peekable();
+
+    while let Some(ch) = chars.next() {
+        if ch == '$' {
+            // Check for ${VAR} syntax
+            if chars.peek() == Some(&'{') {
+                chars.next(); // consume '{'
+                let mut var_name = String::new();
+
+                while let Some(ch) = chars.next() {
+                    if ch == '}' {
+                        break;
+                    }
+                    var_name.push(ch);
+                }
+
+                result.push_str(&get_env_var_value(&var_name));
+            } else {
+                // $VAR syntax
+                let mut var_name = String::new();
+
+                while let Some(&ch) = chars.peek() {
+                    if ch.is_alphanumeric() || ch == '_' {
+                        var_name.push(chars.next().unwrap());
+                    } else {
+                        break;
+                    }
+                }
+
+                if !var_name.is_empty() {
+                    result.push_str(&get_env_var_value(&var_name));
+                } else {
+                    result.push('$'); // Just a lone $
+                }
+            }
+        } else {
+            result.push(ch);
+        }
+    }
+
+    result
+}
+
+/// Get the value of an environment variable with special handling for Qt standard paths
+fn get_env_var_value(var_name: &str) -> String {
+    match var_name {
+        "QT_CACHE_HOME" => {
+            std::env::var(var_name).unwrap_or_else(|_| {
+                // Fallback to XDG_CACHE_HOME or ~/.cache
+                std::env::var("XDG_CACHE_HOME").unwrap_or_else(|_| {
+                    if let Some(home) = std::env::var("HOME").ok() {
+                        format!("{}/.cache", home)
+                    } else {
+                        "/tmp".to_string()
+                    }
+                })
+            })
+        }
+        "QT_CONFIG_HOME" => {
+            std::env::var(var_name).unwrap_or_else(|_| {
+                // Fallback to XDG_CONFIG_HOME or ~/.config
+                std::env::var("XDG_CONFIG_HOME").unwrap_or_else(|_| {
+                    if let Some(home) = std::env::var("HOME").ok() {
+                        format!("{}/.config", home)
+                    } else {
+                        "/tmp".to_string()
+                    }
+                })
+            })
+        }
+        "QT_DATA_HOME" => {
+            std::env::var(var_name).unwrap_or_else(|_| {
+                // Fallback to XDG_DATA_HOME or ~/.local/share
+                std::env::var("XDG_DATA_HOME").unwrap_or_else(|_| {
+                    if let Some(home) = std::env::var("HOME").ok() {
+                        format!("{}/.local/share", home)
+                    } else {
+                        "/tmp".to_string()
+                    }
+                })
+            })
+        }
+        _ => std::env::var(var_name).unwrap_or_default(),
+    }
+}
 
 /// Policies for escaping logic
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -418,18 +645,99 @@ impl<'a> SectionSetter<'a> {
             .and_then(|prop| prop.get(key))
             .map(AsRef::as_ref)
     }
+
+    /// Set key-value pair with KConfig options
+    pub fn set_with_options<'b, K, V>(
+        &'b mut self,
+        key: K,
+        value: V,
+        options: KConfigOptions,
+    ) -> &'b mut SectionSetter<'a>
+    where
+        K: Into<String>,
+        V: Into<String>,
+        'a: 'b,
+    {
+        self.ini
+            .entry(self.section_name.clone())
+            .or_insert_with(Default::default)
+            .insert_with_options(key, value, options);
+
+        self
+    }
+
+    /// Set using a parsed KConfigKey
+    pub fn set_kconfig_key<'b, V>(
+        &'b mut self,
+        key: KConfigKey,
+        value: V,
+    ) -> &'b mut SectionSetter<'a>
+    where
+        V: Into<String>,
+        'a: 'b,
+    {
+        self.ini
+            .entry(self.section_name.clone())
+            .or_insert_with(Default::default)
+            .insert_kconfig_key(key, value);
+
+        self
+    }
+
+    /// Add key-value pair with KConfig options
+    pub fn add_with_options<'b, K, V>(
+        &'b mut self,
+        key: K,
+        value: V,
+        options: KConfigOptions,
+    ) -> &'b mut SectionSetter<'a>
+    where
+        K: Into<String>,
+        V: Into<String>,
+        'a: 'b,
+    {
+        self.ini
+            .entry(self.section_name.clone())
+            .or_insert_with(Default::default)
+            .append_with_options(key, value, options);
+
+        self
+    }
+
+    /// Add using a parsed KConfigKey
+    pub fn add_kconfig_key<'b, V>(
+        &'b mut self,
+        key: KConfigKey,
+        value: V,
+    ) -> &'b mut SectionSetter<'a>
+    where
+        V: Into<String>,
+        'a: 'b,
+    {
+        self.ini
+            .entry(self.section_name.clone())
+            .or_insert_with(Default::default)
+            .append_kconfig_key(key, value);
+
+        self
+    }
 }
 
 /// Properties type (key-value pairs)
 #[derive(Clone, Default, Debug, PartialEq)]
 pub struct Properties {
     data: ListOrderedMultimap<PropertyKey, String>,
+    /// Store KConfig options for each key
+    key_options: HashMap<String, KConfigOptions>,
 }
 
 impl Properties {
     /// Create an instance
     pub fn new() -> Properties {
-        Default::default()
+        Properties {
+            data: ListOrderedMultimap::new(),
+            key_options: HashMap::new(),
+        }
     }
 
     /// Get the number of the properties
@@ -467,7 +775,34 @@ impl Properties {
         K: Into<String>,
         V: Into<String>,
     {
-        self.data.insert(property_insert_key!(k.into()), v.into());
+        let key_str = k.into();
+        self.data
+            .insert(property_insert_key!(key_str.clone()), v.into());
+    }
+
+    /// Insert (key, value) pair with KConfig options
+    pub fn insert_with_options<K, V>(&mut self, k: K, v: V, options: KConfigOptions)
+    where
+        K: Into<String>,
+        V: Into<String>,
+    {
+        let key_str = k.into();
+        let value_str = v.into();
+
+        self.data
+            .insert(property_insert_key!(key_str.clone()), value_str);
+
+        if options.has_options() {
+            self.key_options.insert(key_str, options);
+        }
+    }
+
+    /// Insert using a parsed KConfigKey
+    pub fn insert_kconfig_key<V>(&mut self, key: KConfigKey, v: V)
+    where
+        V: Into<String>,
+    {
+        self.insert_with_options(key.name, v, key.options);
     }
 
     /// Append key with (key, value) pair
@@ -476,7 +811,33 @@ impl Properties {
         K: Into<String>,
         V: Into<String>,
     {
-        self.data.append(property_insert_key!(k.into()), v.into());
+        let key_str = k.into();
+        self.data.append(property_insert_key!(key_str), v.into());
+    }
+
+    /// Append key with (key, value) pair and KConfig options
+    pub fn append_with_options<K, V>(&mut self, k: K, v: V, options: KConfigOptions)
+    where
+        K: Into<String>,
+        V: Into<String>,
+    {
+        let key_str = k.into();
+        let value_str = v.into();
+
+        self.data
+            .append(property_insert_key!(key_str.clone()), value_str);
+
+        if options.has_options() {
+            self.key_options.insert(key_str, options);
+        }
+    }
+
+    /// Append using a parsed KConfigKey
+    pub fn append_kconfig_key<V>(&mut self, key: KConfigKey, v: V)
+    where
+        V: Into<String>,
+    {
+        self.append_with_options(key.name, v, key.options);
     }
 
     /// Get the first value associate with the key
@@ -484,6 +845,43 @@ impl Properties {
         self.data
             .get(property_get_key!(s.as_ref()))
             .map(|v| v.as_str())
+    }
+
+    /// Get the first value associated with the key, with environment expansion if enabled
+    pub fn get_expanded<S: AsRef<str>>(&self, s: S) -> Option<String> {
+        let key = s.as_ref();
+        let value = self.data.get(property_get_key!(key))?;
+
+        if let Some(options) = self.key_options.get(key) {
+            if options.expand_environment {
+                Some(expand_environment_variables(value))
+            } else {
+                Some(value.clone())
+            }
+        } else {
+            Some(value.clone())
+        }
+    }
+
+    /// Get KConfig options for a key
+    pub fn get_key_options<S: AsRef<str>>(&self, s: S) -> Option<&KConfigOptions> {
+        self.key_options.get(s.as_ref())
+    }
+
+    /// Check if a key is immutable
+    pub fn is_key_immutable<S: AsRef<str>>(&self, s: S) -> bool {
+        self.key_options
+            .get(s.as_ref())
+            .map(|opts| opts.immutable)
+            .unwrap_or(false)
+    }
+
+    /// Check if a key has environment expansion enabled
+    pub fn has_environment_expansion<S: AsRef<str>>(&self, s: S) -> bool {
+        self.key_options
+            .get(s.as_ref())
+            .map(|opts| opts.expand_environment)
+            .unwrap_or(false)
     }
 
     /// Get all values associate with the key
@@ -495,7 +893,11 @@ impl Properties {
 
     /// Remove the property with the first value of the key
     pub fn remove<S: AsRef<str>>(&mut self, s: S) -> Option<String> {
-        self.data.remove(property_get_key!(s.as_ref()))
+        let key = s.as_ref();
+        let result = self.data.remove(property_get_key!(key));
+        self.key_options.remove(key);
+
+        result
     }
 
     /// Remove the property with all values with the same key
@@ -503,7 +905,11 @@ impl Properties {
         &mut self,
         s: S,
     ) -> impl DoubleEndedIterator<Item = String> + '_ {
-        self.data.remove_all(property_get_key!(s.as_ref()))
+        let key = s.as_ref();
+        let result = self.data.remove_all(property_get_key!(key));
+        self.key_options.remove(key);
+
+        result
     }
 
     fn get_mut<S: AsRef<str>>(&mut self, s: S) -> Option<&mut str> {
@@ -713,12 +1119,20 @@ pub fn format_section(section: Option<&[String]>) -> String {
 #[derive(Debug, Clone)]
 pub struct Ini {
     sections: ListOrderedMultimap<SectionKey, Properties>,
+    /// Store KConfig options for each section
+    section_options: HashMap<String, KConfigOptions>,
+    /// File-level KConfig options
+    file_options: KConfigOptions,
 }
 
 impl Ini {
     /// Create an instance
     pub fn new() -> Ini {
-        Default::default()
+        Ini {
+            sections: ListOrderedMultimap::new(),
+            section_options: HashMap::new(),
+            file_options: KConfigOptions::default(),
+        }
     }
 
     /// Set with a specified section, `None` is for the general section
@@ -734,6 +1148,71 @@ impl Ini {
     /// Set with general section, a simple wrapper of `with_section(None::<String>)`
     pub fn with_general_section(&mut self) -> SectionSetter {
         self.with_section(None::<Vec<String>>)
+    }
+
+    /// Set file-level KConfig options
+    pub fn set_file_options(&mut self, options: KConfigOptions) {
+        self.file_options = options;
+    }
+
+    /// Get file-level KConfig options
+    pub fn get_file_options(&self) -> &KConfigOptions {
+        &self.file_options
+    }
+
+    /// Check if the file is immutable
+    pub fn is_file_immutable(&self) -> bool {
+        self.file_options.immutable
+    }
+
+    /// Set KConfig options for a section
+    pub fn set_section_options<S>(&mut self, section: Option<S>, options: KConfigOptions)
+    where
+        S: IntoIterator,
+        S::Item: Into<String>,
+    {
+        let section_key = self.format_section_key(section);
+        if options.has_options() {
+            self.section_options.insert(section_key, options);
+        } else {
+            self.section_options.remove(&section_key);
+        }
+    }
+
+    /// Get KConfig options for a section
+    pub fn get_section_options<S>(&self, section: Option<S>) -> Option<&KConfigOptions>
+    where
+        S: IntoIterator,
+        S::Item: Into<String>,
+    {
+        let section_key = self.format_section_key(section);
+        self.section_options.get(&section_key)
+    }
+
+    /// Check if a section is immutable
+    pub fn is_section_immutable<S>(&self, section: Option<S>) -> bool
+    where
+        S: IntoIterator,
+        S::Item: Into<String>,
+    {
+        self.get_section_options(section)
+            .map(|opts| opts.immutable)
+            .unwrap_or(false)
+    }
+
+    /// Helper to format section key for storage
+    fn format_section_key<S>(&self, section: Option<S>) -> String
+    where
+        S: IntoIterator,
+        S::Item: Into<String>,
+    {
+        match section {
+            Some(parts) => {
+                let part_strings: Vec<String> = parts.into_iter().map(Into::into).collect();
+                format_section(Some(&part_strings))
+            }
+            None => "General".to_string(),
+        }
     }
 
     /// Get the immutable general section
@@ -909,6 +1388,8 @@ impl Default for Ini {
     fn default() -> Self {
         let mut result = Ini {
             sections: Default::default(),
+            section_options: HashMap::new(),
+            file_options: KConfigOptions::default(),
         };
 
         result.sections.insert(None, Default::default());
@@ -1021,6 +1502,16 @@ impl Ini {
     pub fn write_to_opt<W: Write>(&self, writer: &mut W, opt: WriteOption) -> io::Result<()> {
         let mut firstline = true;
 
+        if self.file_options.has_options() {
+            write!(
+                writer,
+                "[${}]{}",
+                self.file_options.to_string(),
+                opt.line_separator
+            )?;
+            firstline = false;
+        }
+
         for (section, props) in &self.sections {
             if !props.data.is_empty() {
                 if firstline {
@@ -1036,21 +1527,45 @@ impl Ini {
                 let mut section_str =
                     String::with_capacity(section_parts.iter().map(|p| p.len() + 2).sum::<usize>());
 
-                for part in section_parts {
+                let section_key = self.format_section_key(Some(section_parts.clone()));
+                let section_options = self.section_options.get(&section_key);
+
+                for part in section_parts.iter() {
                     section_str.push('[');
                     section_str.push_str(&escape_str(part, opt.escape_policy));
                     section_str.push(']');
                 }
 
+                if let Some(opts) = section_options {
+                    if opts.has_options() {
+                        section_str.push('[');
+                        section_str.push('$');
+                        section_str.push_str(&opts.to_string());
+                        section_str.push(']');
+                    }
+                }
+
                 write!(writer, "{}{}", section_str, opt.line_separator)?;
             }
+
             for (k, v) in props.iter() {
                 let k_str = escape_str(k, opt.escape_policy);
                 let v_str = escape_str(v, opt.escape_policy);
+
+                let final_key = if let Some(options) = props.get_key_options(k) {
+                    if options.has_options() {
+                        format!("{}[${}]", k_str, options.to_string())
+                    } else {
+                        k_str
+                    }
+                } else {
+                    k_str
+                };
+
                 write!(
                     writer,
                     "{}{}{}{}",
-                    k_str, opt.kv_separator, v_str, opt.line_separator
+                    final_key, opt.kv_separator, v_str, opt.line_separator
                 )?;
             }
         }
@@ -1423,11 +1938,39 @@ impl<'a> Parser<'a> {
 
     /// Parse the whole INI input
     pub fn parse(&mut self) -> Result<Ini, ParseError> {
-        let mut result = Ini::new();
+        let mut result = Ini::default();
         let mut curkey: String = "".into();
         let mut cursec: Option<Vec<String>> = None;
 
         self.parse_whitespace();
+
+        // Check for file-level KConfig options at the start of the file
+        // Look for pattern like [$i] at the beginning
+        if self.ch == Some('[') {
+            // Save current position to potentially backtrack
+            let _saved_line = self.line;
+            let _saved_col = self.col;
+            let mut test_chars = self.rdr.clone();
+
+            // Try to parse as file-level option
+            if let Some('$') = test_chars.next() {
+                // This might be a file-level option like [$i]
+                self.bump(); // consume '['
+                self.bump(); // consume '$'
+                let options_str = self.parse_str_until(&[Some(']')], false)?;
+                let file_options = KConfigOptions::from_str(&options_str);
+                result.set_file_options(file_options);
+
+                if self.ch == Some(']') {
+                    self.bump(); // consume ']'
+                }
+                self.parse_whitespace();
+            } else {
+                // Not a file option, continue normal parsing
+                // The '[' will be handled in the main loop
+            }
+        }
+
         while let Some(cur_ch) = self.ch {
             match cur_ch {
                 ';' | '#' => {
@@ -1442,12 +1985,17 @@ impl<'a> Parser<'a> {
 
                     self.parse_comment();
                 }
-                '[' => match self.parse_section() {
-                    Ok(mut sec_parts) => {
+                '[' => match self.parse_section_with_options() {
+                    Ok((mut sec_parts, sec_options)) => {
                         for part in sec_parts.iter_mut() {
                             part.trim_in_place();
                         }
-                        cursec = Some(sec_parts);
+                        cursec = Some(sec_parts.clone());
+
+                        if sec_options.has_options() {
+                            result.set_section_options(Some(sec_parts.clone()), sec_options);
+                        }
+
                         match result.entry(cursec.clone()) {
                             SectionEntry::Vacant(v) => {
                                 v.insert(Default::default());
@@ -1465,16 +2013,18 @@ impl<'a> Parser<'a> {
                     }
                     match self.parse_val() {
                         Ok(mval) => {
+                            let kconfig_key = KConfigKey::parse(&curkey);
+
                             match result.entry(cursec.clone()) {
                                 SectionEntry::Vacant(v) => {
                                     // cursec must be None (the General Section)
                                     let mut prop = Properties::new();
-                                    prop.insert(curkey, mval);
+                                    prop.insert_kconfig_key(kconfig_key, mval);
                                     v.insert(prop);
                                 }
                                 SectionEntry::Occupied(mut o) => {
                                     // Insert into the last (current) section
-                                    o.last_mut().append(curkey, mval);
+                                    o.last_mut().append_kconfig_key(kconfig_key, mval);
                                 }
                             }
                             curkey = "".into();
@@ -1607,15 +2157,31 @@ impl<'a> Parser<'a> {
         Ok(result)
     }
 
-    fn parse_section(&mut self) -> Result<Vec<String>, ParseError> {
+    fn parse_section_with_options(&mut self) -> Result<(Vec<String>, KConfigOptions), ParseError> {
         let mut sections = Vec::new();
+        let mut section_options = KConfigOptions::default();
 
         // Parse nested sections in KDE format [Section][Subsection][Example]
         while self.ch == Some('[') {
             // Skip [
             self.bump();
+
+            // Parse section name (without options)
             let section_part = self.parse_str_until(&[Some(']')], false)?;
-            sections.push(section_part);
+
+            // Check if this is a KConfig options block (starts with $)
+            if section_part.starts_with('$') && !sections.is_empty() {
+                // This is a KConfig options block for the previous section
+                section_options = KConfigOptions::from_str(&section_part[1..]);
+
+                // Skip ]
+                if self.ch == Some(']') {
+                    self.bump();
+                }
+                break; // Stop parsing sections after finding options
+            } else {
+                sections.push(section_part);
+            }
 
             // Skip ]
             if self.ch == Some(']') {
@@ -1635,7 +2201,7 @@ impl<'a> Parser<'a> {
             return self.error("empty section name");
         }
 
-        Ok(sections)
+        Ok((sections, section_options))
     }
 
     fn parse_key(&mut self) -> Result<String, ParseError> {
@@ -1929,5 +2495,131 @@ mod test {
         let err = ini.unwrap_err();
         assert_eq!(err.line, 2);
         assert_eq!(err.col, 3);
+    }
+}
+
+#[cfg(test)]
+mod kconfig_tests {
+    use super::*;
+
+    #[test]
+    fn test_kconfig_options_parsing() {
+        let options = KConfigOptions::from_str("ei");
+        assert!(options.expand_environment);
+        assert!(options.immutable);
+
+        let options2 = KConfigOptions::from_str("i");
+        assert!(!options2.expand_environment);
+        assert!(options2.immutable);
+    }
+
+    #[test]
+    fn test_kconfig_key_parsing() {
+        let key = KConfigKey::parse("someKey[$ei]");
+        assert_eq!(key.name, "someKey");
+        assert!(key.options.expand_environment);
+        assert!(key.options.immutable);
+
+        let key2 = KConfigKey::parse("normalKey");
+        assert_eq!(key2.name, "normalKey");
+        assert!(!key2.options.expand_environment);
+        assert!(!key2.options.immutable);
+    }
+
+    #[test]
+    fn test_environment_expansion() {
+        std::env::set_var("TEST_VAR", "test_value");
+
+        let expanded = expand_environment_variables("Path is $TEST_VAR/subdir");
+        assert_eq!(expanded, "Path is test_value/subdir");
+
+        let expanded2 = expand_environment_variables("Path is ${TEST_VAR}/subdir");
+        assert_eq!(expanded2, "Path is test_value/subdir");
+    }
+
+    #[test]
+    fn test_kconfig_parsing_with_immutable_entry() {
+        let config_str = r#"
+[MyGroup]
+someKey[$i]=42
+normalKey=value
+"#;
+
+        let ini = Ini::load_from_str(config_str).unwrap();
+        let section = ini.section(Some(vec!["MyGroup"])).unwrap();
+
+        assert!(section.is_key_immutable("someKey"));
+        assert!(!section.is_key_immutable("normalKey"));
+        assert_eq!(section.get("someKey").unwrap(), "42");
+        assert_eq!(section.get("normalKey").unwrap(), "value");
+    }
+
+    #[test]
+    fn test_kconfig_parsing_with_environment_expansion() {
+        std::env::set_var("USER", "testuser");
+
+        let config_str = r#"
+[General]
+Name[$e]=$USER
+StaticValue=fixed
+"#;
+
+        let ini = Ini::load_from_str(config_str).unwrap();
+        let section = ini.section(Some(vec!["General"])).unwrap();
+
+        assert!(section.has_environment_expansion("Name"));
+        assert!(!section.has_environment_expansion("StaticValue"));
+
+        // get() should return the original value
+        assert_eq!(section.get("Name").unwrap(), "$USER");
+        // get_expanded() should return the expanded value
+        assert_eq!(section.get_expanded("Name").unwrap(), "testuser");
+    }
+
+    #[test]
+    fn test_kconfig_section_with_options() {
+        let config_str = r#"
+[MyGroup][$i]
+someKey=42
+"#;
+
+        let ini = Ini::load_from_str(config_str).unwrap();
+        assert!(ini.is_section_immutable(Some(vec!["MyGroup"])));
+    }
+
+    #[test]
+    fn test_kconfig_file_level_immutable() {
+        let config_str = r#"
+[$i]
+[MyGroup]
+someKey=42
+[MyOtherGroup]
+someOtherKey=11
+"#;
+
+        let ini = Ini::load_from_str(config_str).unwrap();
+        assert!(ini.is_file_immutable());
+    }
+
+    #[test]
+    fn test_kconfig_roundtrip() {
+        let config_str = r#"[$i]
+[MyGroup][$i]
+someKey[$ei]=$USER
+normalKey=value
+"#;
+
+        let ini = Ini::load_from_str(config_str).unwrap();
+
+        let mut output = Vec::new();
+        ini.write_to(&mut output).unwrap();
+        let output_str = String::from_utf8(output).unwrap();
+
+        // Should contain file-level immutable option
+        assert!(output_str.contains("[$i]"));
+        // Should contain section-level immutable option
+        assert!(output_str.contains("[MyGroup][$i]"));
+        // Should contain key-level options
+        assert!(output_str.contains("someKey[$ei]"));
     }
 }
