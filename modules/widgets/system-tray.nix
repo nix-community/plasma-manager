@@ -201,8 +201,10 @@ in
         settings,
         ...
       }:
-      let
-        sets = {
+      lib.recursiveUpdate settings {
+        name = "org.kde.plasma.systemtray";
+
+        config = {
           General = lib.filterAttrs (_: v: v != null) {
             inherit pin;
             extraItems = items.extra;
@@ -214,17 +216,9 @@ in
             iconSpacing = icons.spacing;
           };
         };
-        mergedSettings = lib.recursiveUpdate sets settings;
-      in
-      {
-        name = "org.kde.plasma.systemtray";
         extraConfig = ''
           (widget) => {
-            const tray = desktopById(widget.readConfig("SystrayContainmentId"));
-            if (!tray) return; // if somehow the containment doesn't exist
-
-            ${widgets.lib.setWidgetSettings "tray" mergedSettings}
-            ${widgets.lib.addWidgetStmts "tray" "trayWidgets" items.configs}
+            ${widgets.lib.addWidgetStmts "widget" "trayWidgets" items.configs}
           }
         '';
       };
