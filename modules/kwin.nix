@@ -209,17 +209,24 @@ in
         default = null;
         description = "Arrange desktops in a virtual cube.";
       };
-      desktopSwitching.animation = lib.mkOption {
-        type =
-          with lib.types;
-          nullOr (enum [
-            "fade"
-            "slide"
-            "off"
-          ]);
-        default = null;
-        example = "fade";
-        description = "The animation used when switching through virtual desktops.";
+      desktopSwitching = {
+        animation = lib.mkOption {
+          type =
+            with lib.types;
+            nullOr (enum [
+              "fade"
+              "slide"
+              "off"
+            ]);
+          default = null;
+          example = "fade";
+          description = "The animation used when switching through virtual desktops.";
+        };
+        navigationWrapping = lib.mkOption {
+          type = with lib.types; nullOr bool;
+          default = null;
+          description = "Whether to wrap around when switching through virtual desktops.";
+        };
       };
       windowOpenClose = {
         animation = lib.mkOption {
@@ -700,6 +707,9 @@ in
           (lib.mkIf (cfg.kwin.effects.desktopSwitching.animation != null) {
             Plugins.slideEnabled = cfg.kwin.effects.desktopSwitching.animation == "slide";
             Plugins.fadedesktopEnabled = cfg.kwin.effects.desktopSwitching.animation == "fade";
+          })
+          (lib.mkIf (cfg.kwin.effects.desktopSwitching.navigationWrapping != null) {
+            Windows.RollOverDesktops = cfg.kwin.effects.desktopSwitching.navigationWrapping;
           })
           (lib.mkIf (cfg.kwin.effects.fallApart.enable != null) {
             Plugins.fallapartEnabled = cfg.kwin.effects.fallApart.enable;
