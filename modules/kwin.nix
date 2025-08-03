@@ -313,6 +313,14 @@ in
           `names` list.
         '';
       };
+      navigationWrapsAround = lib.mkOption {
+        type = with lib.types; nullOr bool;
+        default = null;
+        example = true;
+        description = ''
+          Whether switching virtual desktops wraps around.
+        '';
+      };
     };
 
     borderlessMaximizedWindows = lib.mkOption {
@@ -732,6 +740,11 @@ in
               (virtualDesktopIdAttrs (builtins.length cfg.kwin.virtualDesktops.names))
               (virtualDesktopNameAttrs cfg.kwin.virtualDesktops.names)
             ];
+          })
+          (lib.mkIf (cfg.kwin.virtualDesktops.navigationWrapsAround != null) {
+            Windows = {
+               RollOverDesktops = cfg.kwin.virtualDesktops.navigationWrapsAround;
+            };
           })
 
           # Borderless maximized windows
