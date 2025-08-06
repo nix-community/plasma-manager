@@ -10,36 +10,50 @@ let
     set -eu
 
     export XDG_CONFIG_HOME=''${XDG_CONFIG_HOME:-$HOME/.config}
-    export PATH=${kdePackages.kconfig}/bin:$PATH
+    export PATH="${kdePackages.kconfig}/bin:$PATH"
 
-    kread_global() {
-      kreadconfig6 --file $XDG_CONFIG_HOME/kdeglobals "$@"
-    }
-
-    assert_eq() {
-      want=$1
+    assert() {
+      if [ $# -lt 4 ]; then
+        echo "at least four arguments required"
+        exit 1
+      fi
+      file="$1"
       shift
-      actual=$(kread_global "$@")
+      want="$1"
+      shift
+      grpargs=()
+      while [ $# -gt 1 ]; do
+        grpargs+=(--group "$1")
+        shift
+      done
+      key="$1"
+      shift
+      actual="$(kreadconfig6 --file "$file" "''${grpargs[@]}" --key "$key")"
 
       if [ "$actual" != "$want" ]; then
-        echo >&2 "ERROR: $@: expected $want but got $actual"
+        echo >&2 "FAIL($file|''${grpargs[@]}|$key): Expected \"$want\" but got \"$actual\""
         exit 1
       fi
     }
 
-    assert_eq false --group KDE --key SingleClick
-    # Set with shorthand
-    assert_eq 1 --group group --key key1
-    # Set with longhand and immutable
-    assert_eq 2 --group group --key key2
-    # Nested groups, with group containing /
-    assert_eq 3 --group escaped/nested --group group --key key3
-    # Value and key have leading space
-    assert_eq " leading space" --group group --key " leading space"
-    # Set outside plasma-manager, value has leading space, group contains /
-    assert_eq " value" --group escaped/nested --group group --key untouched
-    # Escaped key with shell expansion
-    assert_eq "/home/fake" --group group --key 'escaped[$i]'
+    #       FILE                EXPECTED          GROUPS ...                    KEY                [COMMENT]
+    assert  kglobalshortcutsrc  Meta+F            services firefox.desktop      new-window         # Set with services option
+    assert  kglobalshortcutsrc  bar               services firefox.desktop      foo                # Set with configFile option
+    assert  kdeglobals          ' leading space'  group                         ' leading space'   # Set with shorthand
+    assert  kdeglobals          /home/fake        group                         'escaped[$i]'      # Set with longhand and immutable
+    assert  kdeglobals          false             KDE                           SingleClick        # Nested groups, with group containing /
+    assert  kdeglobals          ' value'          'escaped/nested' group        untouched          # Value and key have leading space
+    assert  kdeglobals          1                 group                         key1               # Set outside plasma-manager, value has leading space, group contains /
+    assert  kdeglobals          2                 group                         key2               # Escaped key with shell expansion
+    assert  kdeglobals          3                 'escaped/nested' group        key3               #
+    assert  foobarrc            somevalue         somegroup                     somekey            #
+    assert  foobarrc            ""                nothing                       nothing            #
+    assert  kwinrc              /run/current-system/sw/share/applications/com.github.maliit.keyboard.desktop \
+                                                  Wayland                       InputMethod        #
+    assert  kwinrc              true              Plugins                       somePluginEnabled  #
+    assert  kwinrc              A                 org.kde.kdecoration2          ButtonsOnRight     # Set with kwin option
+    assert  kwinrc              MMM               org.kde.kdecoration2          ButtonsOnLeft      # Set with configFile option
+    assert  kwinrc              testvalue         testgroup                     testkey            #
   '';
 in
 testers.nixosTest {
@@ -54,15 +68,28 @@ testers.nixosTest {
       isNormalUser = true;
     };
 
+    home-manager.sharedModules = [
+      plasma-module
+      {
+        programs.plasma.shortcuts."services/firefox.desktop".new-window = [ "Meta+F" ];
+      }
+    ];
+
     home-manager.users.fake =
       { lib, ... }:
       {
         home.stateVersion = "23.11";
-        imports = [ plasma-module ];
         programs.plasma = {
           enable = true;
           workspace.clickItemTo = "select";
-          # Test a variety of weird keys and groups
+          kwin.titlebarButtons.right = [ "maximize" ];
+          configFile.kwinrc = {
+            testgroup.testkey = "testvalue";
+            Plugins.somePluginEnabled = true;
+            "org.kde.kdecoration2".ButtonsOnLeft = "MMM";
+            Wayland.InputMethod = "/run/current-system/sw/share/applications/com.github.maliit.keyboard.desktop";
+          };
+          configFile.kglobalshortcutsrc."services/firefox.desktop".foo = "bar";
           configFile.kdeglobals = {
             group = {
               " leading space" = " leading space";
@@ -80,6 +107,7 @@ testers.nixosTest {
               key3 = 3;
             };
           };
+          configFile.foobarrc.somegroup.somekey = "somevalue";
         };
         home.activation.preseed = lib.hm.dag.entryBefore [ "configure-plasma" ] ''
           mkdir -p ~/.config
@@ -100,10 +128,13 @@ testers.nixosTest {
     machine.wait_until_succeeds(
         "systemctl show -p ActiveState --value home-manager-fake.service | grep -q 'inactive' && " +
         "systemctl show -p Result --value home-manager-fake.service | grep -q 'success'"
-    )
+    , 10)
 
     # Run tests:
     machine.succeed("test -e /home/fake/.config/kdeglobals")
+    machine.succeed("test -e /home/fake/.config/kwinrc")
+    machine.succeed("test -e /home/fake/.config/kglobalshortcutsrc")
+    machine.succeed("test -e /home/fake/.config/foobarrc")
     machine.succeed("su - fake -c plasma-basic-test")
   '';
 }
