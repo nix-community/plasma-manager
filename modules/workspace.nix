@@ -465,7 +465,7 @@ in
                         ];
                         let image = images[desktop.screen];''
                     else
-                      ''let image = "file://${toString cfg.workspace.wallpaper}""''
+                      ''let image = "file://${toString cfg.workspace.wallpaper}";''
                   }
                   if (image) {
                     desktop.writeConfig("Image", image);
