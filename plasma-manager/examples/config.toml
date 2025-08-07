@@ -1,0 +1,40 @@
+"$schema" = "https://raw.githubusercontent.com/nix-community/plasma-manager/refs/heads/trunk/plasma-manager/schema.json"
+
+[[operations]]
+file = "kdeglobals"
+group = "KDE"
+operation = "write"
+xdg_directory = "config"
+
+[operations.entries]
+SingleClick = "false"
+AnimationDurationFactor = "0.5"
+
+[[operations]]
+file = "kwinrc"
+group = "Effect-blur"
+operation = "write"
+xdg_directory = "config"
+
+[operations.entries]
+BlurStrength = "10"
+NoiseStrength = "0"
+
+[[operations]]
+file = "kscreenlockerrc"
+group = "Daemon"
+operation = "write"
+xdg_directory = "config"
+
+[operations.entries]
+LockGrace = "5000"
+
+[[operations]]
+file = "kcminputrc"
+group = "Mouse"
+operation = "write"
+xdg_directory = "config"
+
+[operations.entries]
+cursorTheme = "breeze_cursors"
+
