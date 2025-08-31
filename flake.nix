@@ -25,11 +25,15 @@
       nixpkgsFor = forAllSystems (system: import inputs.nixpkgs { inherit system; });
     in
     {
-      homeManagerModules.plasma-manager =
+      homeModules.plasma-manager =
         { ... }:
         {
           imports = [ ./modules ];
         };
+
+      homeManagerModules = inputs.nixpkgs.lib.warn ''
+        plasma-manager: homeManagerModules has been renamed to homeModules
+      '' self.homeModules;
 
       packages = forAllSystems (
         system:
