@@ -34,7 +34,7 @@
         pkgs = import nixpkgs { inherit system; };
 
         modules = [
-          inputs.plasma-manager.homeManagerModules.plasma-manager
+          inputs.plasma-manager.homeModules.plasma-manager
 
           # Specify the path to your home configuration here:
           ../home.nix
