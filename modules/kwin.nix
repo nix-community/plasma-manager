@@ -161,6 +161,123 @@ in
     };
 
     effects = {
+      hideCursor = {
+        enable = lib.mkOption {
+          type = with lib.types; nullOr bool;
+          default = null;
+          example = false;
+          description = "Enable the hide cursor effect.";
+        };
+        hideOnInactivity = lib.mkOption {
+          type = with lib.types; nullOr ints.unsigned;
+          default = null;
+          example = 0;
+          description = "Hide cursor after inactivity in seconds.";
+        };
+        hideOnTyping = lib.mkOption {
+          type = with lib.types; nullOr bool;
+          default = null;
+          example = true;
+          description = "Hide cursor effect while typing.";
+        };
+      };
+      invert.enable = lib.mkOption {
+          type = with lib.types; nullOr bool;
+          default = null;
+          example = false;
+          description = "Enable the invert effect toggle.";
+      };
+      zoom = {
+        enable = lib.mkOption {
+          type = with lib.types; nullOr bool;
+          default = null;
+          example = true;
+          description = "Enable the zoom effect.";
+        };
+        zoomFactor = lib.mkOption {
+          type = with lib.types; nullOr numbers.positive;
+          default = null;
+          example = 1.2;
+          description = "Set the zoom factor.";
+        };
+        pixelGridZoom = lib.mkOption {
+          type = with lib.types; nullOr numbers.positive;
+          default = null;
+          example = 15.0;
+          description = "Set the zoom level of the pixel grid.";
+        };
+        mousePointer =
+          let enumVals = [
+            "scale"
+            "keep"
+            "hide"
+          ];
+          in
+            lib.mkOption {
+              type = with lib.types; nullOr (enum enumVals);
+              default = null;
+              example = "scale";
+              description = "Set the mouse pointer style.";
+              apply = getIndexFromEnum enumVals;
+            };
+        mouseTracking =
+          let
+            enumVals = [
+            "proportional"
+            "centered"
+            "push"
+            "disabled"
+          ];
+          in
+            lib.mkOption {
+            type = with lib.types; nullOr (enum enumVals);
+            default = null;
+            example = "proportional";
+            description = "Set the mouse tracking style.";
+            apply = getIndexFromEnum enumVals;
+            };
+        focusTracking.enable = lib.mkOption {
+          type = with lib.types; nullOr bool;
+          default = null;
+          example = false;
+          description = "Enable focus tracking.";
+        };
+        textCursorTracking.enable = lib.mkOption {
+          type = with lib.types; nullOr bool;
+          default = null;
+          example = false;
+          description = "Enable text cursor tracking.";
+        };
+        scrollGestureModKeys = lib.mkOption {
+          type = with lib.types; nullOr (oneOf [
+            (listOf str)
+            str
+          ]);
+          default = null;
+          example = "Meta+Ctrl";
+          description = "Set scroll gesture modifier keys.";
+        };
+      };
+      magnifier = {
+        enable = lib.mkOption {
+          type = with lib.types; nullOr bool;
+          default = null;
+          example = false;
+          description = "Enable the magnifier effect.";
+        };
+        height = lib.mkOption {
+          type = with lib.types; nullOr ints.positive;
+          default = null;
+          example = 200;
+          description = "Height of the magnifier section in pixels.";
+        };
+        width = lib.mkOption {
+          type = with lib.types; nullOr ints.positive;
+          default = null;
+          example = 200;
+          description = "Width of the magnifier section in pixels.";
+        };
+      };
       shakeCursor.enable = lib.mkOption {
         type = with lib.types; nullOr bool;
         default = null;
@@ -604,7 +721,13 @@ in
               cfg.kwin.virtualDesktops.names != null
               && (builtins.length cfg.kwin.virtualDesktops.names) >= cfg.kwin.virtualDesktops.rows
             );
-          message = "KWin cannot have more rows virtual desktops.";
+          message = "KWin cannot have more rows than virtual desktops.";
+        }
+        {
+          assertion =
+            (cfg.kwin.effects.zoom.enable == null || cfg.kwin.effects.zoom.enable == false)
+            || (cfg.kwin.effects.magnifier.enable == null || cfg.kwin.effects.magnifier.enable == false);
+          message = "programs.plasma.kwin.effects.zoom.enable and programs.plasma.kwin.effects.magnifier.enable cannot both be true.";
         }
         {
           assertion =
@@ -665,6 +788,35 @@ in
           })
 
           # Effects
+          (lib.mkIf (cfg.kwin.effects.hideCursor.enable != null) {
+            Plugins.hidecursorEnabled = cfg.kwin.effects.hideCursor.enable;
+            Effect-hidecursor = {
+              InactivityDuration = cfg.kwin.effects.hideCursor.hideOnInactivity;
+              HideOnTyping = cfg.kwin.effects.hideCursor.hideOnTyping;
+            };
+          })
+          (lib.mkIf (cfg.kwin.effects.invert.enable != null) {
+            Plugins.invertEnabled = cfg.kwin.effects.invert.enable;
+          })
+          (lib.mkIf (cfg.kwin.effects.zoom.enable != null) {
+            Plugins.zoomEnabled = cfg.kwin.effects.zoom.enable;
+            Effect-zoom = {
+              ZoomFactor = cfg.kwin.effects.zoom.zoomFactor;
+              PixelGridZoom = cfg.kwin.effects.zoom.pixelGridZoom;
+              MousePointer = cfg.kwin.effects.zoom.mousePointer;
+              MouseTracking = cfg.kwin.effects.zoom.mouseTracking;
+              EnableFocusTracking = cfg.kwin.effects.zoom.focusTracking.enable;
+              EnableTextCaretTracking = cfg.kwin.effects.zoom.textCursorTracking.enable;
+              PointerAxisGestureModifiers = cfg.kwin.effects.zoom.scrollGestureModKeys;
+            };
+          })
+          (lib.mkIf (cfg.kwin.effects.magnifier.enable != null) {
+            Plugins.magnifierEnabled = cfg.kwin.effects.magnifier.enable;
+            Effect-magnifier = {
+              Height = cfg.kwin.effects.magnifier.height;
+              Width = cfg.kwin.effects.magnifier.width;
+            };
+          })
           (lib.mkIf (cfg.kwin.effects.shakeCursor.enable != null) {
             Plugins.shakecursorEnabled = cfg.kwin.effects.shakeCursor.enable;
           })
