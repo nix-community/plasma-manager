@@ -65,7 +65,7 @@ let
         };
         size = lib.mkOption {
           # The konsole ui gives you a limited range
-          type = (lib.types.ints.between 4 128);
+          type = (lib.types.numbers.between 4 128);
           default = 10;
           example = 12;
           description = ''
