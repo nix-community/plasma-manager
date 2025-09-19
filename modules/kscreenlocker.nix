@@ -202,9 +202,9 @@ in
       lib.mkMerge [
         (lib.mkIf (cfg.kscreenlocker.appearance.wallpaper != null) {
           Greeter.WallpaperPlugin = "org.kde.image";
-          "Greeter/Wallpaper/org.kde.image/General".Image = (
-            builtins.toString cfg.kscreenlocker.appearance.wallpaper
-          );
+          "Greeter/Wallpaper/org.kde.image/General".Image = builtins.path {
+            path = cfg.kscreenlocker.appearance.wallpaper;
+          };
         })
         (lib.mkIf (cfg.kscreenlocker.appearance.wallpaperPictureOfTheDay != null) {
           Greeter.WallpaperPlugin = "org.kde.potd";
