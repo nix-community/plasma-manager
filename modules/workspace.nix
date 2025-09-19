@@ -459,13 +459,13 @@ in
                         let images = [
                         ${
                           builtins.concatStringsSep "\n," (map (
-                            wallpaper: ''"file://${toString wallpaper}"''
+                            wallpaper: ''"file://${builtins.path { path = wallpaper; }}"''
                           ) cfg.workspace.wallpaper)
                         }
                         ];
                         let image = images[desktop.screen];''
                     else
-                      ''let image = "file://${toString cfg.workspace.wallpaper}";''
+                      ''let image = "file://${builtins.path { path = cfg.workspace.wallpaper; }}";''
                   }
                   if (image) {
                     desktop.writeConfig("Image", image);
