@@ -216,11 +216,12 @@ in
             iconSpacing = icons.spacing;
           };
         };
-        extraConfig = ''
-          (widget) => {
-            ${widgets.lib.addWidgetStmts "widget" "trayWidgets" items.configs}
-          }
-        '';
+        # Uncomment this if plasma scripting API ever adds support for nested containments.
+        # extraConfig = ''
+        #   (widget) => {
+        #     ${widgets.lib.addWidgetStmts "widget" "trayWidgets" items.configs}
+        #   }
+        # '';
       };
   };
 }
