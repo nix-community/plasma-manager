@@ -457,46 +457,55 @@ in
                     if (builtins.typeOf cfg.workspace.wallpaper) == "list" then
                       ''
                         let images = [
-                        ${
-                          builtins.concatStringsSep "\n," (map (
-                            wallpaper: ''"file://${builtins.path { path = wallpaper; }}"''
-                          ) cfg.workspace.wallpaper)
-                        }
+                        ${builtins.concatStringsSep "\n," (
+                          map (
+                            wallpaper:
+                            ''"file://${
+                              builtins.path {
+                                name = "plasma-wallpaper";
+                                path = wallpaper;
+                              }
+                            }"''
+                          ) cfg.workspace.wallpaper
+                        )}
                         ];
                         let image = images[desktop.screen];''
                     else
-                      ''let image = "file://${builtins.path { path = cfg.workspace.wallpaper; }}";''
+                      ''let image = "file://${
+                        builtins.path {
+                          name = "plasma-wallpaper";
+                          path = cfg.workspace.wallpaper;
+                        }
+                      }";''
                   }
                   if (image) {
                     desktop.writeConfig("Image", image);
                   }
-                  ${
-                    lib.optionalString (cfg.workspace.wallpaperFillMode != null)
-                      ''desktop.writeConfig("FillMode", "${
-                        toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}
-                      }");''
+                  ${lib.optionalString (cfg.workspace.wallpaperFillMode != null)
+                    ''desktop.writeConfig("FillMode", "${
+                      toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}
+                    }");''
                   }
-                  ${
-                    lib.optionalString (cfg.workspace.wallpaperBackground != null)
-                      ''desktop.writeConfig("${
-                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
-                          "Blur"
-                        else if
-                          cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.color != null
-                        then
-                          "Color"
-                        else
-                          throw "plasma-manager: wallpaperBackground is not null and has no option set"
-                      }", "${
-                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
-                          lib.boolToString cfg.workspace.wallpaperBackground.blur
-                        else if
-                          cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.color != null
-                        then
-                          cfg.workspace.wallpaperBackground.color
-                        else
-                          throw "plasma-manager: wallpaperBackground is not null and has no option set"
-                      }");''
+                  ${lib.optionalString (cfg.workspace.wallpaperBackground != null)
+                    ''desktop.writeConfig("${
+                      if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
+                        "Blur"
+                      else if
+                        cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.color != null
+                      then
+                        "Color"
+                      else
+                        throw "plasma-manager: wallpaperBackground is not null and has no option set"
+                    }", "${
+                      if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
+                        lib.boolToString cfg.workspace.wallpaperBackground.blur
+                      else if
+                        cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.color != null
+                      then
+                        cfg.workspace.wallpaperBackground.color
+                      else
+                        throw "plasma-manager: wallpaperBackground is not null and has no option set"
+                    }");''
                   }
               }
             '';
@@ -516,33 +525,31 @@ in
                   desktop.writeConfig("UpdateOverMeteredConnection", "${
                     if (cfg.workspace.wallpaperPictureOfTheDay.updateOverMeteredConnection) then "1" else "0"
                   }");
-                  ${
-                    lib.optionalString (cfg.workspace.wallpaperFillMode != null)
-                      ''desktop.writeConfig("FillMode", "${
-                        toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}
-                      }");''
+                  ${lib.optionalString (cfg.workspace.wallpaperFillMode != null)
+                    ''desktop.writeConfig("FillMode", "${
+                      toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}
+                    }");''
                   }
-                  ${
-                    lib.optionalString (cfg.workspace.wallpaperBackground != null)
-                      ''desktop.writeConfig("${
-                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
-                          "Blur"
-                        else if
-                          cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.color != null
-                        then
-                          "Color"
-                        else
-                          throw "plasma-manager: wallpaperBackground is not null and has no option set"
-                      }", "${
-                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
-                          lib.boolToString cfg.workspace.wallpaperBackground.blur
-                        else if
-                          cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.color != null
-                        then
-                          cfg.workspace.wallpaperBackground.color
-                        else
-                          throw "plasma-manager: wallpaperBackground is not null and has no option set"
-                      }");''
+                  ${lib.optionalString (cfg.workspace.wallpaperBackground != null)
+                    ''desktop.writeConfig("${
+                      if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
+                        "Blur"
+                      else if
+                        cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.color != null
+                      then
+                        "Color"
+                      else
+                        throw "plasma-manager: wallpaperBackground is not null and has no option set"
+                    }", "${
+                      if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
+                        lib.boolToString cfg.workspace.wallpaperBackground.blur
+                      else if
+                        cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.color != null
+                      then
+                        cfg.workspace.wallpaperBackground.color
+                      else
+                        throw "plasma-manager: wallpaperBackground is not null and has no option set"
+                    }");''
                   }
               }
             '';
@@ -583,33 +590,31 @@ in
                       "[" + (builtins.concatStringsSep "," (map (s: "\"" + s + "\"") path)) + "]"
                   });
                   desktop.writeConfig("SlideInterval", "${builtins.toString cfg.workspace.wallpaperSlideShow.interval}");
-                  ${
-                    lib.optionalString (cfg.workspace.wallpaperFillMode != null)
-                      ''desktop.writeConfig("FillMode", "${
-                        toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}
-                      }");''
+                  ${lib.optionalString (cfg.workspace.wallpaperFillMode != null)
+                    ''desktop.writeConfig("FillMode", "${
+                      toString wallpaperFillModeTypes.${cfg.workspace.wallpaperFillMode}
+                    }");''
                   }
-                  ${
-                    lib.optionalString (cfg.workspace.wallpaperBackground != null)
-                      ''desktop.writeConfig("${
-                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
-                          "Blur"
-                        else if
-                          cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.color != null
-                        then
-                          "Color"
-                        else
-                          throw "plasma-manager: wallpaperBackground is not null and has no option set"
-                      }", "${
-                        if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
-                          lib.boolToString cfg.workspace.wallpaperBackground.blur
-                        else if
-                          cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.color != null
-                        then
-                          cfg.workspace.wallpaperBackground.color
-                        else
-                          throw "plasma-manager: wallpaperBackground is not null and has no option set"
-                      }");''
+                  ${lib.optionalString (cfg.workspace.wallpaperBackground != null)
+                    ''desktop.writeConfig("${
+                      if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
+                        "Blur"
+                      else if
+                        cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.color != null
+                      then
+                        "Color"
+                      else
+                        throw "plasma-manager: wallpaperBackground is not null and has no option set"
+                    }", "${
+                      if cfg.workspace.wallpaperBackground ? blur && cfg.workspace.wallpaperBackground.blur != null then
+                        lib.boolToString cfg.workspace.wallpaperBackground.blur
+                      else if
+                        cfg.workspace.wallpaperBackground ? color && cfg.workspace.wallpaperBackground.color != null
+                      then
+                        cfg.workspace.wallpaperBackground.color
+                      else
+                        throw "plasma-manager: wallpaperBackground is not null and has no option set"
+                    }");''
                   }
               }
             '';

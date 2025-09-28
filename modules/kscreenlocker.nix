@@ -203,6 +203,7 @@ in
         (lib.mkIf (cfg.kscreenlocker.appearance.wallpaper != null) {
           Greeter.WallpaperPlugin = "org.kde.image";
           "Greeter/Wallpaper/org.kde.image/General".Image = builtins.path {
+            name = "kscreenlocker-wallpaper";
             path = cfg.kscreenlocker.appearance.wallpaper;
           };
         })
