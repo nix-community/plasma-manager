@@ -7,7 +7,7 @@ use crate::{
 use clap::Args;
 use std::{
     fs,
-    io::{Error, ErrorKind},
+    io::Error,
     path::PathBuf,
 };
 

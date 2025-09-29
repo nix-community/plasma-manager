@@ -6,13 +6,12 @@ use crate::{
         should_skip_by_lambda, should_skip_file_specific, should_skip_group, should_skip_key,
         FileSettingsMap, SettingsMap, KNOWN_CONFIG_FILES, KNOWN_DATA_FILES,
     },
-    schema::{ConfigEntry, ConfigFile, EntryContent, Operation},
+    schema::{ConfigEntry, ConfigFile},
 };
 use clap::Args;
 use indexmap::IndexMap;
 use kconfig_rs::Ini;
 use std::{
-    collections::HashMap,
     fs,
     io::{Error, ErrorKind},
     path::{Path, PathBuf},
@@ -209,7 +208,7 @@ impl BackupCommand {
             schema: if format == Format::Ron {
                 None
             } else {
-                Some("https://raw.githubusercontent.com/nix-community/plasma-manager/trunk/plasma-manager/schema.json".to_string())
+                Some("https://raw.githubusercontent.com/nix-community/plasma-manager/refs/heads/trunk/plasma-manager/schema.json".to_string())
             },
             operations,
         })
@@ -223,26 +222,20 @@ impl BackupCommand {
         xdg_directory: &str,
     ) {
         for (group, group_settings) in file_settings {
-            let mut entries = HashMap::new();
-
             for (key, value) in group_settings {
-                entries.insert(key.clone(), value.clone());
-            }
-
-            if !entries.is_empty() {
-                let config_entry = ConfigEntry {
+                operations.push(ConfigEntry::Write {
                     file: file.to_string(),
                     group: if group.is_empty() {
                         None
                     } else {
                         Some(group.clone())
                     },
-                    operation: Operation::Write,
-                    entries: EntryContent::WriteEntries(entries),
+                    key: Some(key.clone()),
+                    value: Some(value.clone()),
                     xdg_directory: xdg_directory.to_string(),
-                };
-
-                operations.push(config_entry);
+                    immutable: false,
+                    expand_environment: false,
+                });
             }
         }
     }
