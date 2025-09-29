@@ -21,6 +21,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 //! KDE Configuration file parser and writer based on rust-ini
+//! THIS IS NOT AN RE-IMPLEMENTATION OF KDE'S KCONFIG
 //!
 //! ```no_run
 //! use kconfig_rs::Ini;
