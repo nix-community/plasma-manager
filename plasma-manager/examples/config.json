@@ -6,38 +6,46 @@
       "group": "KDE",
       "operation": "write",
       "xdg_directory": "config",
-      "entries": {
-        "SingleClick": "false",
-        "AnimationDurationFactor": "0.5"
-      }
+      "key": "SingleClick",
+      "value": "false"
+    },
+    {
+      "file": "kdeglobals",
+      "group": "KDE",
+      "operation": "write",
+      "xdg_directory": "config",
+      "key": "AnimationDurationFactor",
+      "value": "0.5"
     },
     {
       "file": "kwinrc",
       "group": "Effect-blur",
       "operation": "write",
       "xdg_directory": "config",
-      "entries": {
-        "BlurStrength": "10",
-        "NoiseStrength": "5"
-      }
+      "key": "BlurStrength",
+      "value": "10"
+    },
+    {
+      "file": "kwinrc",
+      "group": "Effect-blur",
+      "operation": "write",
+      "xdg_directory": "config",
+      "key": "NoiseStrength",
+      "value": "5"
     },
     {
       "file": "kdeglobals",
       "group": "KDE",
       "operation": "read",
       "xdg_directory": "config",
-      "entries": [
-        "SingleClick"
-      ]
+      "key": "SingleClick"
     },
     {
       "file": "kwinrc",
       "group": "Effect-blur",
       "operation": "delete",
       "xdg_directory": "config",
-      "entries": [
-        "NoiseStrength"
-      ]
+      "key": "NoiseStrength"
     }
   ]
 }

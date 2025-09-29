@@ -2,7 +2,7 @@ use crate::{
     commands::Command,
     config::{delete_configuration, read_configuration, write_configuration},
     format::{detect_format, Format},
-    schema::{ConfigFile, EntryContent, Operation},
+    schema::{ConfigFile, ConfigEntry},
 };
 use clap::Args;
 use std::{
@@ -44,83 +44,146 @@ impl Command for ApplyCommand {
         let mut skipped = 0;
 
         for entry in config_file.operations {
-            let file = entry.file.clone();
-            let xdg_dir = entry.xdg_directory.clone();
-
-            let group_display = match &entry.group {
-                Some(g) => format!("[{}]", g),
-                None => String::new(),
-            };
-
-            let group_ref = entry.group.as_deref();
-
-            match (entry.operation, entry.entries) {
-                (Operation::Write, EntryContent::WriteEntries(entries)) => {
-                    for (key, value) in entries {
-                        match write_configuration(
-                            &file,
-                            group_ref,
-                            Some(&key),
-                            Some(&value),
-                            &xdg_dir,
-                            false,
-                            false,
-                        ) {
-                            Ok(()) => {
-                                if self.verbose {
-                                    println!("Wrote {}{}:{} = {}", file, group_display, key, value);
+            match entry {
+                ConfigEntry::Write {
+                    file,
+                    group,
+                    key,
+                    value,
+                    xdg_directory,
+                    immutable,
+                    expand_environment,
+                } => {
+                    let group_display =
+                        group.as_deref().map_or(String::new(), |g| format!("[{}]", g));
+                    match write_configuration(
+                        &file,
+                        group.as_deref(),
+                        key.as_deref(),
+                        value.as_deref(),
+                        &xdg_directory,
+                        immutable,
+                        expand_environment,
+                    ) {
+                        Ok(()) => {
+                            if self.verbose {
+                                if let Some(k) = key {
+                                    if let Some(v) = value {
+                                        println!("Wrote {}{}:{} = {}", file, group_display, k, v);
+                                    } else {
+                                        println!(
+                                            "Wrote/updated flags for {}{}:{}",
+                                            file, group_display, k
+                                        );
+                                    }
+                                } else {
+                                    println!(
+                                        "Wrote/updated flags for group in {}{}",
+                                        file, group_display
+                                    );
                                 }
-                                write_count += 1;
                             }
-                            Err(e) => {
-                                eprintln!("Error writing {}{}:{}: {}", file, group_display, key, e);
-                                skipped += 1;
+                            write_count += 1;
+                        }
+                        Err(e) => {
+                            if let Some(k) = key {
+                                eprintln!("Error writing {}{}:{}: {}", file, group_display, k, e);
+                            } else {
+                                eprintln!(
+                                    "Error writing to group in {}{}: {}",
+                                    file, group_display, e
+                                );
                             }
+                            skipped += 1;
                         }
                     }
                 }
-                (Operation::Read, EntryContent::ReadDeleteEntries(keys)) => {
-                    for key in keys {
-                        match read_configuration(&file, group_ref, Some(&key), &xdg_dir, false) {
-                            Ok(value) => {
-                                println!("{}{}:{} = {}", file, group_display, key, value);
-                                read_count += 1;
+                ConfigEntry::Read {
+                    file,
+                    group,
+                    key,
+                    xdg_directory,
+                    raw,
+                } => {
+                    let group_display =
+                        group.as_deref().map_or(String::new(), |g| format!("[{}]", g));
+                    match read_configuration(
+                        &file,
+                        group.as_deref(),
+                        key.as_deref(),
+                        &xdg_directory,
+                        raw,
+                    ) {
+                        Ok(value) => {
+                            if let Some(k) = key {
+                                println!("{}{}:{} = {}", file, group_display, k, value);
+                            } else {
+                                println!(
+                                    "Content of group in {}{}:\n{}",
+                                    file, group_display, value
+                                );
                             }
-                            Err(e) => {
-                                if self.verbose {
+                            read_count += 1;
+                        }
+                        Err(e) => {
+                            if self.verbose {
+                                if let Some(k) = key {
                                     eprintln!(
                                         "Error reading {}{}:{}: {}",
-                                        file, group_display, key, e
+                                        file, group_display, k, e
+                                    );
+                                } else {
+                                    eprintln!(
+                                        "Error reading group in {}{}: {}",
+                                        file, group_display, e
                                     );
                                 }
-                                skipped += 1;
                             }
+                            skipped += 1;
                         }
                     }
                 }
-                (Operation::Delete, EntryContent::ReadDeleteEntries(keys)) => {
-                    for key in keys {
-                        match delete_configuration(&file, group_ref, Some(&key), &xdg_dir) {
-                            Ok(()) => {
-                                if self.verbose {
-                                    println!("Deleted: {}{}:{}", file, group_display, key);
+                ConfigEntry::Delete {
+                    file,
+                    group,
+                    key,
+                    xdg_directory,
+                } => {
+                    let group_display =
+                        group.as_deref().map_or(String::new(), |g| format!("[{}]", g));
+                    match delete_configuration(
+                        &file,
+                        group.as_deref(),
+                        key.as_deref(),
+                        &xdg_directory,
+                    ) {
+                        Ok(()) => {
+                            if self.verbose {
+                                if let Some(k) = key {
+                                    println!("Deleted: {}{}:{}", file, group_display, k);
+                                } else {
+                                    println!("Deleted group in {}{}", file, group_display);
                                 }
-                                delete_count += 1;
                             }
-                            Err(e) => {
-                                if self.verbose {
+                            delete_count += 1;
+                        }
+                        Err(e) => {
+                            if self.verbose {
+                                if let Some(k) = key {
                                     eprintln!(
                                         "Failed to delete {}{}:{}: {}",
-                                        file, group_display, key, e
+                                        file, group_display, k, e
+                                    );
+                                } else {
+                                    eprintln!(
+                                        "Failed to delete group in {}{}: {}",
+                                        file, group_display, e
                                     );
                                 }
-                                skipped += 1;
                             }
+                            skipped += 1;
                         }
                     }
-                }
-                _ => {
-                    return Err(Error::new(ErrorKind::InvalidData, "Invalid operation."));
                 }
             }
         }

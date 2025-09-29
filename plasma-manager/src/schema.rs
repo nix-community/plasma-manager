@@ -1,28 +1,33 @@
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 
 #[derive(Deserialize, Serialize)]
-#[serde(rename_all = "lowercase")]
-pub enum Operation {
-    Write,
-    Read,
-    Delete,
-}
-
-#[derive(Deserialize, Serialize)]
-#[serde(untagged)]
-pub enum EntryContent {
-    WriteEntries(HashMap<String, String>),
-    ReadDeleteEntries(Vec<String>),
-}
-
-#[derive(Deserialize, Serialize)]
-pub struct ConfigEntry {
-    pub file: String,
-    pub group: Option<String>,
-    pub operation: Operation,
-    pub entries: EntryContent,
-    pub xdg_directory: String,
+#[serde(rename_all = "lowercase", tag = "operation")]
+pub enum ConfigEntry {
+    Write {
+        file: String,
+        group: Option<String>,
+        key: Option<String>,
+        value: Option<String>,
+        xdg_directory: String,
+        #[serde(default)]
+        immutable: bool,
+        #[serde(default)]
+        expand_environment: bool,
+    },
+    Read {
+        file: String,
+        group: Option<String>,
+        key: Option<String>,
+        xdg_directory: String,
+        #[serde(default)]
+        raw: bool,
+    },
+    Delete {
+        file: String,
+        group: Option<String>,
+        key: Option<String>,
+        xdg_directory: String,
+    },
 }
 
 #[derive(Deserialize, Serialize)]

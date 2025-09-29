@@ -1,40 +1,50 @@
 "$schema" = "https://raw.githubusercontent.com/nix-community/plasma-manager/refs/heads/trunk/plasma-manager/schema.json"
 
 [[operations]]
+operation = "write"
 file = "kdeglobals"
 group = "KDE"
-operation = "write"
 xdg_directory = "config"
-
-[operations.entries]
-SingleClick = "false"
-AnimationDurationFactor = "0.5"
+key = "SingleClick"
+value = "false"
 
 [[operations]]
+operation = "write"
+file = "kdeglobals"
+group = "KDE"
+xdg_directory = "config"
+key = "AnimationDurationFactor"
+value = "0.5"
+
+[[operations]]
+operation = "write"
 file = "kwinrc"
 group = "Effect-blur"
-operation = "write"
 xdg_directory = "config"
-
-[operations.entries]
-BlurStrength = "10"
-NoiseStrength = "0"
+key = "BlurStrength"
+value = "10"
 
 [[operations]]
+operation = "write"
+file = "kwinrc"
+group = "Effect-blur"
+xdg_directory = "config"
+key = "NoiseStrength"
+value = "0"
+
+[[operations]]
+operation = "write"
 file = "kscreenlockerrc"
 group = "Daemon"
-operation = "write"
 xdg_directory = "config"
-
-[operations.entries]
-LockGrace = "5000"
+key = "LockGrace"
+value = "5000"
 
 [[operations]]
+operation = "write"
 file = "kcminputrc"
 group = "Mouse"
-operation = "write"
 xdg_directory = "config"
-
-[operations.entries]
-cursorTheme = "breeze_cursors"
+key = "cursorTheme"
+value = "breeze_cursors"
 

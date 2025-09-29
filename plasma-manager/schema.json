@@ -9,59 +9,124 @@
     "operations": {
       "type": "array",
       "items": {
-        "type": "object",
-        "properties": {
-          "file": {
-            "type": "string",
-            "description": "KDE configuration file name"
-          },
-          "group": {
-            "type": "string",
-            "description": "INI file group/section name"
-          },
-          "operation": {
-            "type": "string",
-            "enum": [
-              "write",
-              "read",
-              "delete"
-            ],
-            "description": "Operation to perform"
-          },
-          "xdg_directory": {
-            "type": "string",
-            "enum": [
-              "config",
-              "data",
-              "cache",
-              "state"
-            ],
-            "description": "XDG directory where the file is located"
-          },
-          "entries": {
-            "oneOf": [
-              {
-                "type": "object",
-                "description": "Key-value pairs for write operations",
-                "additionalProperties": {
-                  "type": "string"
-                }
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "operation": {
+                "type": "string",
+                "const": "write"
               },
-              {
-                "type": "array",
-                "description": "List of keys for read/delete operations",
-                "items": {
-                  "type": "string"
-                }
+              "file": {
+                "type": "string",
+                "description": "KDE configuration file name"
+              },
+              "group": {
+                "type": "string",
+                "description": "INI file group/section name"
+              },
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              },
+              "xdg_directory": {
+                "type": "string",
+                "enum": [
+                  "config",
+                  "data",
+                  "cache",
+                  "state"
+                ],
+                "description": "XDG directory where the file is located"
+              },
+              "immutable": {
+                "type": "boolean"
+              },
+              "expand_environment": {
+                "type": "boolean"
               }
+            },
+            "required": [
+              "operation",
+              "file",
+              "xdg_directory"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "operation": {
+                "type": "string",
+                "const": "read"
+              },
+              "file": {
+                "type": "string",
+                "description": "KDE configuration file name"
+              },
+              "group": {
+                "type": "string",
+                "description": "INI file group/section name"
+              },
+              "key": {
+                "type": "string"
+              },
+              "xdg_directory": {
+                "type": "string",
+                "enum": [
+                  "config",
+                  "data",
+                  "cache",
+                  "state"
+                ],
+                "description": "XDG directory where the file is located"
+              },
+              "raw": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "operation",
+              "file",
+              "xdg_directory"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "operation": {
+                "type": "string",
+                "const": "delete"
+              },
+              "file": {
+                "type": "string",
+                "description": "KDE configuration file name"
+              },
+              "group": {
+                "type": "string",
+                "description": "INI file group/section name"
+              },
+              "key": {
+                "type": "string"
+              },
+              "xdg_directory": {
+                "type": "string",
+                "enum": [
+                  "config",
+                  "data",
+                  "cache",
+                  "state"
+                ],
+                "description": "XDG directory where the file is located"
+              }
+            },
+            "required": [
+              "operation",
+              "file",
+              "xdg_directory"
             ]
           }
-        },
-        "required": [
-          "file",
-          "operation",
-          "entries",
-          "xdg_directory"
         ]
       }
     }

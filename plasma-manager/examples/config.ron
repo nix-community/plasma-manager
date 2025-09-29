@@ -1,42 +1,52 @@
 (
     operations: [
         (
+            operation: "write",
             file: "kdeglobals",
             group: Some("KDE"),
-            operation: Write,
             xdg_directory: "config",
-            entries: WriteEntries({
-                "SingleClick": "false",
-                "AnimationDurationFactor": "0.5",
-            }),
+            key: "SingleClick",
+            value: "false",
         ),
         (
+            operation: "write",
+            file: "kdeglobals",
+            group: Some("KDE"),
+            xdg_directory: "config",
+            key: "AnimationDurationFactor",
+            value: "0.5",
+        ),
+        (
+            operation: "write",
             file: "kwinrc",
             group: Some("Effect-blur"),
-            operation: Write,
             xdg_directory: "config",
-            entries: WriteEntries({
-                "BlurStrength": "10",
-                "NoiseStrength": "0",
-            }),
+            key: "BlurStrength",
+            value: "10",
         ),
         (
+            operation: "write",
+            file: "kwinrc",
+            group: Some("Effect-blur"),
+            xdg_directory: "config",
+            key: "NoiseStrength",
+            value: "0",
+        ),
+        (
+            operation: "write",
             file: "kscreenlockerrc",
             group: Some("Daemon"),
-            operation: Write,
             xdg_directory: "config",
-            entries: WriteEntries({
-                "LockGrace": "5000",
-            }),
+            key: "LockGrace",
+            value: "5000",
         ),
         (
+            operation: "write",
             file: "kcminputrc",
             group: Some("Mouse"),
-            operation: Write,
             xdg_directory: "config",
-            entries: WriteEntries({
-                "cursorTheme": "breeze_cursors",
-            }),
+            key: "cursorTheme",
+            value: "breeze_cursors",
         ),
     ],
 )
