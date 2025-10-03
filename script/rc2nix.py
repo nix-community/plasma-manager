@@ -29,22 +29,6 @@ indent_str = '  '
 nix_key_valid_chars = re.compile(r'^[a-z_][\w_-]*?$', flags=re.IGNORECASE)
 
 
-def escape_key(key: str) -> str:
-    if nix_key_valid_chars.match(key):
-        return key
-    else:
-        return f'"{key}"'
-
-
-def to_nix_list(values: List[str], compact: bool, indent) -> str:
-    if compact and len(values) > 1:
-        join_str = f'\n{indent_str * (indent + 1)}'
-
-        return f"[{join_str}{join_str.join(values)}\n{indent_str * indent}]"
-    else:
-        return f"[{' '.join(values)}]"
-
-
 class Rc2Nix:
     # Files that we'll scan by default.
     KNOWN_CONFIG_FILES: List[str] = [
@@ -198,10 +182,10 @@ class Rc2Nix:
             self.data_settings: Dict[str, Dict[str, Dict[str, str]]] = {}
 
             parser = argparse.ArgumentParser()
-            parser.add_argument('-c', '--compact', action='store_true', help='Use nested attribute sets in Nix conversion')
+            parser.add_argument('-n', '--nested-format', action='store_true', help='Use nested attribute sets in Nix conversion')
             _args = parser.parse_args()
 
-            self.compact = _args.compact
+            self.nested = _args.nested_format
 
         def run(self):
 
@@ -246,38 +230,38 @@ class Rc2Nix:
         def pp_settings(self, settings: Dict[str, Dict[str, Dict[str, str]]], indent: int) -> str:
             result: List[str] = []
 
-            ek = escape_key
+            ek = nix_key
 
             for file in sorted(settings.keys()):
                 if file != "kglobalshortcutsrc":
                     groups = sorted(settings[file].keys())
-                    groups_compact = self.compact and len(groups) > 1
+                    groups_nested = self.nested and len(groups) > 1
 
-                    if groups_compact:
+                    if groups_nested:
                         result.append(f"{indent_str * indent}{ek(file)} = {{")
                         indent += 1
 
                     for group in groups:
                         keys = sorted([a for a in settings[file][group].keys() if a != '_k_friendly_name'])
-                        keys_compact = self.compact and len(keys) > 1
+                        keys_nested = self.nested and len(keys) > 1
 
-                        if keys_compact:
+                        if keys_nested:
                             result.append(f"{indent_str * indent}{ek(group)} = {{")
                             indent += 1
 
                         for key in keys:
-                            if keys_compact:
+                            if keys_nested:
                                 result.append(f"{indent_str * indent}{ek(key)} = {nix_val(settings[file][group][key])};")
                             else:
                                 result.append(
                                     f"{indent_str * indent}{ek(file)}.{ek(group)}.{ek(key)} = {nix_val(settings[file][group][key])};"
                                 )
 
-                        if keys_compact:
+                        if keys_nested:
                             indent -= 1
                             result.append(f'{indent_str * indent}}};')
 
-                    if groups_compact:
+                    if groups_nested:
                         indent -= 1
                         result.append(f'{indent_str * indent}}};')
 
@@ -287,14 +271,14 @@ class Rc2Nix:
             if not groups:
                 return ""
 
-            ek = escape_key
+            ek = nix_key
 
             result: List[str] = []
             for group in sorted(groups.keys()):
                 actions = sorted([a for a in groups[group].keys() if a != '_k_friendly_name'])
-                compact = self.compact and len(actions) > 1
+                nested = self.nested and len(actions) > 1
 
-                if compact:
+                if nested:
                     result.append(f"{indent_str * indent}{ek(group)} = {{")
                     indent += 1
 
@@ -310,7 +294,7 @@ class Rc2Nix:
                     if not keys or keys[0] == "none":
                         keys_str = "[ ]"
                     elif len(keys) > 1:
-                        keys_str = to_nix_list([nix_val(k.rstrip(',')) for k in keys], self.compact, indent)
+                        keys_str = nix_list([nix_val(k.rstrip(',')) for k in keys], self.nested, indent)
                     else:
                         ks = keys[0].split(",")
                         k = ks[0] if len(ks) == 3 and ks[0] == ks[1] else keys[0]
@@ -320,16 +304,32 @@ class Rc2Nix:
                             else nix_val(k.rstrip(","))
                         )
 
-                    if compact:
+                    if nested:
                         result.append(f"{indent_str * indent}{ek(action)} = {keys_str};")
                     else:
                         result.append(f"{indent_str * indent}{ek(group)}.{ek(action)} = {keys_str};")
 
-                if compact:
+                if nested:
                     indent -= 1
                     result.append(f'{indent_str * indent}}};')
 
             return "\n".join(result)
+
+
+def nix_key(key: str) -> str:
+    if nix_key_valid_chars.match(key):
+        return key
+    else:
+        return f'"{key}"'
+
+
+def nix_list(values: List[str], nested: bool, indent: int) -> str:
+    if nested and len(values) > 1:
+        join_str = f'\n{indent_str * (indent + 1)}'
+
+        return f"[{join_str}{join_str.join(values)}\n{indent_str * indent}]"
+    else:
+        return f"[{' '.join(values)}]"
 
 
 def nix_val(s: Optional[str]) -> str:
