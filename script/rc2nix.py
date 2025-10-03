@@ -26,7 +26,8 @@ XDG_CONFIG_HOME: str = os.path.expanduser(os.getenv("XDG_CONFIG_HOME", "~/.confi
 XDG_DATA_HOME: str = os.path.expanduser(os.getenv("XDG_DATA_HOME", "~/.local/share"))
 indent_str = '  '
 
-nix_key_valid_chars = re.compile(r'^[a-z_][\w_-]*?$', flags=re.IGNORECASE)
+rx_nix_key_valid_chars = re.compile(r'^[a-z_][\w_-]*?$', flags=re.IGNORECASE)
+rx_shortcut_value_split = re.compile(r"(?<!\\),")
 
 
 class Rc2Nix:
@@ -284,8 +285,7 @@ class Rc2Nix:
 
                 for action in actions:
                     keys = (
-                        groups[group][action]
-                        .split(r"(?<!\\),")[0]
+                        rx_shortcut_value_split.split(groups[group][action])[0]
                         .replace(r"\?", ",")
                         .replace(r"\t", "\t")
                         .split("\t")
@@ -317,7 +317,7 @@ class Rc2Nix:
 
 
 def nix_key(key: str) -> str:
-    if nix_key_valid_chars.match(key):
+    if rx_nix_key_valid_chars.match(key):
         return key
     else:
         return f'"{key}"'
