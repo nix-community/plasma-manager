@@ -36,6 +36,15 @@ def escape_key(key: str) -> str:
         return f'"{key}"'
 
 
+def to_nix_list(values: List[str], compact: bool, indent) -> str:
+    if compact and len(values) > 1:
+        join_str = f'\n{indent_str * (indent + 1)}'
+
+        return f"[{join_str}{join_str.join(values)}\n{indent_str * indent}]"
+    else:
+        return f"[{' '.join(values)}]"
+
+
 class Rc2Nix:
     # Files that we'll scan by default.
     KNOWN_CONFIG_FILES: List[str] = [
@@ -301,9 +310,7 @@ class Rc2Nix:
                     if not keys or keys[0] == "none":
                         keys_str = "[ ]"
                     elif len(keys) > 1:
-                        keys_str = (
-                            f"[{' '.join(nix_val(k.rstrip(',')) for k in keys)}]"
-                        )
+                        keys_str = to_nix_list([nix_val(k.rstrip(',')) for k in keys], self.compact, indent)
                     else:
                         ks = keys[0].split(",")
                         k = ks[0] if len(ks) == 3 and ks[0] == ks[1] else keys[0]
