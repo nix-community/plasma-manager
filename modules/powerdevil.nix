@@ -172,6 +172,22 @@ let
         The brightness to set the display to in this mode.
       '';
     };
+    dimKeyboard = {
+      enable = lib.mkOption {
+        type = with lib.types; nullOr bool;
+        default = null;
+        example = false;
+        description = "Whether to enable keyboard backlight dimming.";
+      };
+    };
+    keyboardBrightness = lib.mkOption {
+      type = with lib.types; nullOr (ints.between 0 100);
+      default = null;
+      example = 10;
+      description = ''
+        The brightness to set the keyboard backlight to in this mode.
+      '';
+    };
     powerProfile = lib.mkOption {
       type =
         with lib.types;
@@ -224,6 +240,12 @@ let
       DisplayBrightness = cfg.powerdevil.${optionsName}.displayBrightness;
       UseProfileSpecificDisplayBrightness = (
         if (cfg.powerdevil.${optionsName}.displayBrightness == null) then null else true
+      );
+    };
+    "${cfgSectName}/Keyboard" = {
+      KeyboardBrightness = cfg.powerdevil.${optionsName}.keyboardBrightness;
+      UseProfileSpecificKeyboardBrightness = (
+        if (cfg.powerdevil.${optionsName}.keyboardBrightness == null) then null else true
       );
     };
     "${cfgSectName}/Performance" = {
