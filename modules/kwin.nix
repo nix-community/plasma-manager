@@ -265,12 +265,12 @@ in
           default = null;
           example = 8;
           description = "Adds noise to the blur effect.";
+        };
         saturation = lib.mkOption {
           type = with lib.types; nullOr (ints.between 0 10);
           default = null;
           example = 1;
           description = "Adds saturation to the blur effect.";
-        };
         };
       };
       snapHelper.enable = lib.mkOption {
