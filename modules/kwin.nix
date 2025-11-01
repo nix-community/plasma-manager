@@ -267,7 +267,7 @@ in
           description = "Adds noise to the blur effect.";
         };
         saturation = lib.mkOption {
-          type = with lib.types; nullOr (ints.between 0 10);
+          type = with lib.types; nullOr (ints.between 0 100);
           default = null;
           example = 1;
           description = "Adds saturation to the blur effect.";
