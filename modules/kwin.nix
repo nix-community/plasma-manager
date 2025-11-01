@@ -720,6 +720,7 @@ in
             Effect-blur = {
               BlurStrength = cfg.kwin.effects.blur.strength;
               NoiseStrength = cfg.kwin.effects.blur.noiseStrength;
+              Saturation = cfg.kwin.effects.blur.saturation;
             };
           })
           (lib.mkIf (cfg.kwin.effects.dimInactive.enable != null) {
