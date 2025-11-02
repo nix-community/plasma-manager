@@ -18,11 +18,16 @@ import os
 import re
 import sys
 from pathlib import Path
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Tuple, Union, TypeAlias
+import argparse
 
 # The root directory where configuration files are stored.
 XDG_CONFIG_HOME: str = os.path.expanduser(os.getenv("XDG_CONFIG_HOME", "~/.config"))
 XDG_DATA_HOME: str = os.path.expanduser(os.getenv("XDG_DATA_HOME", "~/.local/share"))
+indent_str = '  '
+
+rx_nix_key_valid_chars = re.compile(r'^[a-z_][\w_-]*?$', flags=re.IGNORECASE)
+rx_shortcut_value_split = re.compile(r"(?<!\\),")
 
 
 class Rc2Nix:
@@ -163,11 +168,7 @@ class Rc2Nix:
                     f"{self.file_name}: setting outside of group: {key}={val}"
                 )
 
-            if (
-                should_skip_group(self.last_group)
-                or should_skip_key(key)
-                or should_skip_by_lambda(self.last_group, key)
-            ):
+            if should_skip_group(self.last_group) or should_skip_key(key) or should_skip_by_lambda(self.last_group, key):
                 return
 
             if self.last_group not in self.settings:
@@ -181,7 +182,14 @@ class Rc2Nix:
             self.config_settings: Dict[str, Dict[str, Dict[str, str]]] = {}
             self.data_settings: Dict[str, Dict[str, Dict[str, str]]] = {}
 
+            parser = argparse.ArgumentParser()
+            parser.add_argument('-n', '--nested-format', action='store_true', help='Use nested attribute sets in Nix conversion')
+            _args = parser.parse_args()
+
+            self.nested = _args.nested_format
+
         def run(self):
+
             for file in self.config_files:
                 if not os.path.exists(file):
                     continue
@@ -209,68 +217,119 @@ class Rc2Nix:
             print("  programs.plasma = {")
             print("    enable = true;")
             print("    shortcuts = {")
-            print(
-                self.pp_shortcuts(self.config_settings.get("kglobalshortcutsrc", {}), 6)
-            )
+            print(self.pp_shortcuts(self.config_settings.get("kglobalshortcutsrc", {}), 3))
             print("    };")
             print("    configFile = {")
-            print(self.pp_settings(self.config_settings, 6))
+            print(self.pp_settings(self.config_settings, 3))
             print("    };")
             print("    dataFile = {")
-            print(self.pp_settings(self.data_settings, 6))
+            print(self.pp_settings(self.data_settings, 3))
             print("    };")
             print("  };")
             print("}")
 
-        def pp_settings(
-            self, settings: Dict[str, Dict[str, Dict[str, str]]], indent: int
-        ) -> str:
+        def pp_settings(self, settings: Dict[str, Dict[str, Dict[str, str]]], indent: int) -> str:
             result: List[str] = []
+
+            ek = nix_key
+
             for file in sorted(settings.keys()):
                 if file != "kglobalshortcutsrc":
-                    for group in sorted(settings[file].keys()):
-                        for key in sorted(settings[file][group].keys()):
-                            if key != "_k_friendly_name":
+                    groups = sorted(settings[file].keys())
+                    groups_nested = self.nested and len(groups) > 1
+
+                    if groups_nested:
+                        result.append(f"{indent_str * indent}{ek(file)} = {{")
+                        indent += 1
+
+                    for group in groups:
+                        keys = sorted([a for a in settings[file][group].keys() if a != '_k_friendly_name'])
+                        keys_nested = self.nested and len(keys) > 1
+
+                        if keys_nested:
+                            result.append(f"{indent_str * indent}{ek(group)} = {{")
+                            indent += 1
+
+                        for key in keys:
+                            if keys_nested:
+                                result.append(f"{indent_str * indent}{ek(key)} = {nix_val(settings[file][group][key])};")
+                            else:
                                 result.append(
-                                    f"{' ' * indent}\"{file}\".\"{group}\".\"{key}\" = {nix_val(settings[file][group][key])};"
+                                    f"{indent_str * indent}{ek(file)}.{ek(group)}.{ek(key)} = {nix_val(settings[file][group][key])};"
                                 )
+
+                        if keys_nested:
+                            indent -= 1
+                            result.append(f'{indent_str * indent}}};')
+
+                    if groups_nested:
+                        indent -= 1
+                        result.append(f'{indent_str * indent}}};')
+
             return "\n".join(result)
 
         def pp_shortcuts(self, groups: Dict[str, Dict[str, str]], indent: int) -> str:
             if not groups:
                 return ""
 
+            ek = nix_key
+
             result: List[str] = []
             for group in sorted(groups.keys()):
-                for action in sorted(groups[group].keys()):
-                    if action != "_k_friendly_name":
-                        keys = (
-                            groups[group][action]
-                            .split(r"(?<!\\),")[0]
-                            .replace(r"\?", ",")
-                            .replace(r"\t", "\t")
-                            .split("\t")
+                actions = sorted([a for a in groups[group].keys() if a != '_k_friendly_name'])
+                nested = self.nested and len(actions) > 1
+
+                if nested:
+                    result.append(f"{indent_str * indent}{ek(group)} = {{")
+                    indent += 1
+
+                for action in actions:
+                    keys = (
+                        rx_shortcut_value_split.split(groups[group][action])[0]
+                        .replace(r"\?", ",")
+                        .replace(r"\t", "\t")
+                        .split("\t")
+                    )
+
+                    if not keys or keys[0] == "none":
+                        keys_str = "[ ]"
+                    elif len(keys) > 1:
+                        keys_str = nix_list([nix_val(k.rstrip(',')) for k in keys], self.nested, indent)
+                    else:
+                        ks = keys[0].split(",")
+                        k = ks[0] if len(ks) == 3 and ks[0] == ks[1] else keys[0]
+                        keys_str = (
+                            "[ ]"
+                            if k == "" or k == "none"
+                            else nix_val(k.rstrip(","))
                         )
 
-                        if not keys or keys[0] == "none":
-                            keys_str = "[ ]"
-                        elif len(keys) > 1:
-                            keys_str = (
-                                f"[{' '.join(nix_val(k.rstrip(',')) for k in keys)}]"
-                            )
-                        else:
-                            ks = keys[0].split(",")
-                            k = ks[0] if len(ks) == 3 and ks[0] == ks[1] else keys[0]
-                            keys_str = (
-                                "[ ]"
-                                if k == "" or k == "none"
-                                else nix_val(k.rstrip(","))
-                            )
+                    if nested:
+                        result.append(f"{indent_str * indent}{ek(action)} = {keys_str};")
+                    else:
+                        result.append(f"{indent_str * indent}{ek(group)}.{ek(action)} = {keys_str};")
 
-                        result.append(
-                            f"{' ' * indent}\"{group}\".\"{action}\" = {keys_str};"
-                        )
+                if nested:
+                    indent -= 1
+                    result.append(f'{indent_str * indent}}};')
+
             return "\n".join(result)
+
+
+def nix_key(key: str) -> str:
+    if rx_nix_key_valid_chars.match(key):
+        return key
+    else:
+        return f'"{key}"'
+
+
+def nix_list(values: List[str], nested: bool, indent: int) -> str:
+    if nested and len(values) > 1:
+        join_str = f'\n{indent_str * (indent + 1)}'
+
+        return f"[{join_str}{join_str.join(values)}\n{indent_str * indent}]"
+    else:
+        return f"[{' '.join(values)}]"
 
 
 def nix_val(s: Optional[str]) -> str:
