@@ -167,6 +167,7 @@ in
               "alphabetically"
               "byDesktop"
               "byActivity"
+              "byHorizontalPosition"
             ];
           in
           mkOption {
