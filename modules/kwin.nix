@@ -614,12 +614,6 @@ in
         }
         {
           assertion =
-            (cfg.kwin.nightLight.enable == null || cfg.kwin.nightLight.enable == false)
-            || cfg.kwin.nightLight.mode != null;
-          message = "programs.plasma.kwin.nightLight.mode must be set when programs.plasma.kwin.nightLight.enable is true.";
-        }
-        {
-          assertion =
             cfg.kwin.nightLight.mode != "Times"
             || (cfg.kwin.nightLight.time.morning != null && cfg.kwin.nightLight.time.evening != null);
           message = "programs.plasma.kwin.nightLight.time.morning and programs.plasma.kwin.nightLight.time.evening must be set when programs.plasma.kwin.nightLight.mode is set to times.";
