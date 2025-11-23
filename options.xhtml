@@ -15564,7 +15564,7 @@ null or boolean</p>
  </span>
 </dt>
 <dd>
-<p>Whether clicking the middle mouse button pastes the clipboard content.&quot;;</p>
+<p>Whether clicking the middle mouse button pastes the clipboard content.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
 null or boolean</p>
@@ -15642,7 +15642,7 @@ null or string</p>
  </span>
 </dt>
 <dd>
-<p>Submodule for configuring the cursor appearance. Both the theme and size are configurable.</p>
+<p>Submodule for configuring the cursor appearance. The theme, size, cursor feedback, task manager feedback, and animation time are configurable.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
 null or (submodule)</p>
@@ -15651,10 +15651,67 @@ null or (submodule)</p>
 <code class="literal">null</code></p>
 
 <p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting">{
+  animationTime = 5;
+  cursorFeedback = &quot;Bouncing&quot;;
   size = 24;
+  taskManagerFeedback = true;
   theme = &quot;Breeze_Snow&quot;;
 }
 </code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/workspace.nix" target="_top">
+&lt;plasma-manager/modules/workspace.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.workspace.cursor.animationTime"></a><a class="term" href="options.xhtml#opt-programs.plasma.workspace.cursor.animationTime"><code class="option">programs.plasma.workspace.cursor.animationTime</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The duration that the cursorFeedback and taskManagerFeedback run for.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or (positive integer, meaning &gt;0)</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">5</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/workspace.nix" target="_top">
+&lt;plasma-manager/modules/workspace.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.workspace.cursor.cursorFeedback"></a><a class="term" href="options.xhtml#opt-programs.plasma.workspace.cursor.cursorFeedback"><code class="option">programs.plasma.workspace.cursor.cursorFeedback</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The cursor feedback icon after launching an application.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or one of “Bouncing”, “Blinking”, “Static”, “None”</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">&quot;Bouncing&quot;</code></p>
 
 <p><span class="emphasis"><em>Declared by:</em></span></p>
 <table border="0" summary="Simple list" class="simplelist">
@@ -15682,6 +15739,33 @@ null or (positive integer, meaning &gt;0)</p>
 
 <p><span class="emphasis"><em>Example:</em></span>
 <code class="literal">24</code></p>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/workspace.nix" target="_top">
+&lt;plasma-manager/modules/workspace.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.workspace.cursor.taskManagerFeedback"></a><a class="term" href="options.xhtml#opt-programs.plasma.workspace.cursor.taskManagerFeedback"><code class="option">programs.plasma.workspace.cursor.taskManagerFeedback</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The feedback wheel on an application icon after launching an application from the task manager.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span>
+<code class="literal">null</code></p>
+
+<p><span class="emphasis"><em>Example:</em></span>
+<code class="literal">true</code></p>
 
 <p><span class="emphasis"><em>Declared by:</em></span></p>
 <table border="0" summary="Simple list" class="simplelist">
