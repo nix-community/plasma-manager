@@ -30,7 +30,7 @@ let
   valToJS =
     v:
     if (builtins.isString v) then
-      ''"${v}"''
+      ''${builtins.toJSON v}''
     else if (builtins.isBool v) then
       (lib.boolToString v)
     else
