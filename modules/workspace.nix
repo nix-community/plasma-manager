@@ -299,6 +299,15 @@ in
         '';
       };
     };
+
+    widgetStyle = lib.mkOption {
+      type = with lib.types; nullOr str;
+      default = null;
+      example = "breeze";
+      description = ''
+        The widget style to use with Plasma.
+      '';
+    };
   };
 
   config = (
@@ -369,6 +378,9 @@ in
             kdeglobals = {
               KDE.SingleClick = (
                 lib.mkIf (cfg.workspace.clickItemTo != null) (cfg.workspace.clickItemTo == "open")
+              );
+              KDE.widgetStyle = (
+                lib.mkIf (cfg.workspace.widgetStyle != null) (cfg.workspace.widgetStyle)
               );
               Sounds.Theme = (lib.mkIf (cfg.workspace.soundTheme != null) cfg.workspace.soundTheme);
             };
