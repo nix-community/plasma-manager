@@ -384,23 +384,31 @@ in
               (lib.mkIf (cfg.workspace.cursor != null && cfg.workspace.cursor.cursorFeedback != null) (
                 {
                   "None" = {
-                    BusyCursorSettings.Blinking = false;
-                    BusyCursorSettings.Bouncing = false;
+                    BusyCursorSettings = {
+                      Blinking = false;
+                      Bouncing = false;
+                    };
                     FeedbackStyle.BusyCursor = false;
                   };
                   "Static" = {
-                    BusyCursorSettings.Blinking = false;
-                    BusyCursorSettings.Bouncing = false;
+                    BusyCursorSettings = {
+                      Blinking = false;
+                      Bouncing = false;
+                    };
                     FeedbackStyle.BusyCursor = true;
                   };
                   "Blinking" = {
-                    BusyCursorSettings.Blinking = true;
-                    BusyCursorSettings.Bouncing = false;
+                    BusyCursorSettings = {
+                      Blinking = true;
+                      Bouncing = false;
+                    };
                     FeedbackStyle.BusyCursor = true;
                   };
                   "Bouncing" = {
-                    BusyCursorSettings.Blinking = false;
-                    BusyCursorSettings.Bouncing = true;
+                    BusyCursorSettings = {
+                      Blinking = false;
+                      Bouncing = true;
+                    };
                     FeedbackStyle.BusyCursor = true;
                   };
                 }
