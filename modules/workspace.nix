@@ -31,6 +31,29 @@ let
           example = 24;
           description = "The size of the cursor. See the System Settings app for allowed sizes for each cursor theme.";
         };
+        cursorFeedback = lib.mkOption {
+          type = nullOr (enum [
+            "Bouncing"
+            "Blinking"
+            "Static"
+            "None"
+          ]);
+          default = null;
+          example = "Bouncing";
+          description = "The cursor feedback icon after launching an application.";
+        };
+        taskManagerFeedback = lib.mkOption {
+          type = nullOr bool;
+          default = null;
+          example = true;
+          description = "The feedback wheel on an application icon after launching an application from the task manager.";
+        };
+        animationTime = lib.mkOption {
+          type = nullOr ints.positive;
+          default = null;
+          example = 5;
+          description = "The duration that the cursorFeedback and taskManagerFeedback run for.";
+        };
       };
     };
 
@@ -99,7 +122,7 @@ in
       default = null;
       example = false;
       description = ''
-        Whether clicking the middle mouse button pastes the clipboard content.";
+        Whether clicking the middle mouse button pastes the clipboard content.
       '';
     };
 
@@ -136,9 +159,12 @@ in
       example = {
         theme = "Breeze_Snow";
         size = 24;
+        cursorFeedback = "Bouncing";
+        taskManagerFeedback = true;
+        animationTime = 5;
       };
       description = ''
-        Submodule for configuring the cursor appearance. Both the theme and size are configurable.
+        Submodule for configuring the cursor appearance. The theme, size, cursor feedback, task manager feedback, and animation time are configurable.
       '';
     };
 
@@ -354,6 +380,50 @@ in
                 Mouse.cursorSize = cfg.workspace.cursor.size;
               }
             );
+            klaunchrc = lib.mkMerge [
+              (lib.mkIf (cfg.workspace.cursor != null && cfg.workspace.cursor.cursorFeedback != null) (
+                {
+                  "None" = {
+                    BusyCursorSettings = {
+                      Blinking = false;
+                      Bouncing = false;
+                    };
+                    FeedbackStyle.BusyCursor = false;
+                  };
+                  "Static" = {
+                    BusyCursorSettings = {
+                      Blinking = false;
+                      Bouncing = false;
+                    };
+                    FeedbackStyle.BusyCursor = true;
+                  };
+                  "Blinking" = {
+                    BusyCursorSettings = {
+                      Blinking = true;
+                      Bouncing = false;
+                    };
+                    FeedbackStyle.BusyCursor = true;
+                  };
+                  "Bouncing" = {
+                    BusyCursorSettings = {
+                      Blinking = false;
+                      Bouncing = true;
+                    };
+                    FeedbackStyle.BusyCursor = true;
+                  };
+                }
+                .${cfg.workspace.cursor.cursorFeedback}
+              ))
+
+              (lib.mkIf (cfg.workspace.cursor != null && cfg.workspace.cursor.taskManagerFeedback != null) {
+                FeedbackStyle.TaskbarButton = cfg.workspace.cursor.taskManagerFeedback;
+              })
+
+              (lib.mkIf (cfg.workspace.cursor != null && cfg.workspace.cursor.animationTime != null) {
+                BusyCursorSettings.Timeout = cfg.workspace.cursor.animationTime;
+                TaskbarButtonSettings.Timeout = cfg.workspace.cursor.animationTime;
+              })
+            ];
             ksplashrc.KSplash = (
               lib.mkIf (cfg.workspace.splashScreen.theme != null) {
                 Engine = (
