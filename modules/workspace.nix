@@ -168,6 +168,27 @@ in
       '';
     };
 
+    installedCursorThemes = lib.mkOption {
+      type = with lib.types; attrsOf package;
+      default = {};
+      example = {
+        "oreo_red_cursors" = pkgs.fetchzip {
+          name = "oreo_red_cursors";
+          url = "https://files06.pling.com/api/files/download/j/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MTY2MTA1Mzk2NiwibyI6IjEiLCJzIjoiZTQ4MzE1MmU2MzQwYTEzODA1YjY1ZjY2NjZiMjdmM2JiYTdkNzZkM2QyZDE2NTI5OWQ1MWY5YTYwYzU4YTAyNjBiZDI2ODFhMWI0MjE3N2NkZTk4ZGJlMmJhYTY1M2FkZTE0ZmU1YWYzZjY2MWUzMzZmZGQ1NTcxYzZlZWU3MmYiLCJ0IjoxNzY2MTg5Njg3LCJzdGZwIjpudWxsLCJzdGlwIjoiOTIuMjA2LjUuMjIxIn0.6r_mq5Ftfprj8xtrkJuv-6RFVCxE2eN53fdjlXb9irM/oreo-red-cursors.tar.gz";
+          hash = "sha256-Zr6Yvij/VGh0OjdrZHM4GN0G/ZjZkf4qLAyS3edSMzU=";
+        };
+      };
+      description = ''
+        Installs KDE cursor themes. You can supply them as [cursor files](https://develop.kde.org/docs/features/cursor/), or use a fetcher to download them.
+
+        Instructions on how to find the download link to content from the KDE store:
+        1) Browse api.kde-look.org/ocs/v1/content/categories in order to find the numerical ID of the `cursor` category.
+        2) Use the API search api.kde-look.org/ocs/v1/content/data?categories=<numeric id of category>&search=<searchterm> . The entries here contain real (== without timeouts or challanges) download links. Note that the supplied MD5 sums seem not to work with `fetchzip` for some reason.
+
+        I heavily recommend finding the exact name of what you search for in the regular (visual, non-API) KDE store first, as browsing is a lot easier there.
+      '';
+    };
+
     lookAndFeel = lib.mkOption {
       type = with lib.types; nullOr str;
       default = null;
@@ -353,24 +374,28 @@ in
           message = "programs.plasma.wallpaperBackground can only have a color or be blurred.";
         }
       ];
-      warnings = (
-        if
-          (
-            (cfg.workspace.lookAndFeel != null)
-            && (cfg.workspace.splashScreen.theme != null || cfg.workspace.windowDecorations.theme != null)
-          )
-        then
-          [
-            ''
-              Setting lookAndFeel together with splashScreen or windowDecorations in
-              plasma-manager is not recommended since lookAndFeel themes often
-              override these settings. Consider setting each part in the lookAndFeel
-              theme manually.
-            ''
-          ]
-        else
-          [ ]
-      );
+      warnings =
+        (lib.lists.optionals
+          ((cfg.workspace.lookAndFeel != null)
+          && (cfg.workspace.splashScreen.theme != null || cfg.workspace.windowDecorations.theme != null))
+        [
+          ''
+            Setting lookAndFeel together with splashScreen or windowDecorations in
+            plasma-manager is not recommended since lookAndFeel themes often
+            override these settings. Consider setting each part in the lookAndFeel
+            theme manually.
+          ''
+        ])
+        ++ (lib.lists.optionals ( cfg.workspace.cursor.theme != null && ! builtins.hasAttr cfg.workspace.cursor.theme cfg.workspace.installedCursorThemes)
+        [
+          ''
+            The cursor theme chosen in `config.home.plasma.workspace.cursor.theme` is not installed declaratively using `config.home.plasma.workspace.installedCursorThemes`.
+
+            If you use one of the default themes provided by KDE, you can safely ignore this warning.
+
+            If you manually installed the cursor theme in use consider declarative installation.
+          ''
+        ]);
 
       programs.plasma.configFile = (
         lib.mkMerge [
@@ -700,6 +725,8 @@ in
           }
         );
       };
+
+      xdg.dataFile = lib.attrsets.mapAttrs' (name : value: lib.attrsets.nameValuePair ( "icons/${name}") { source = value; } ) cfg.workspace.installedCursorThemes;
     }
   );
 }
