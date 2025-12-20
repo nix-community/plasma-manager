@@ -172,12 +172,15 @@ in
       type = with lib.types; attrsOf package;
       default = {};
       example = {
-        "oreo_red_cursors" = pkgs.fetchzip {
-          name = "oreo_red_cursors";
-          url = "https://files06.pling.com/api/files/download/j/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MTY2MTA1Mzk2NiwibyI6IjEiLCJzIjoiZTQ4MzE1MmU2MzQwYTEzODA1YjY1ZjY2NjZiMjdmM2JiYTdkNzZkM2QyZDE2NTI5OWQ1MWY5YTYwYzU4YTAyNjBiZDI2ODFhMWI0MjE3N2NkZTk4ZGJlMmJhYTY1M2FkZTE0ZmU1YWYzZjY2MWUzMzZmZGQ1NTcxYzZlZWU3MmYiLCJ0IjoxNzY2MTg5Njg3LCJzdGZwIjpudWxsLCJzdGlwIjoiOTIuMjA2LjUuMjIxIn0.6r_mq5Ftfprj8xtrkJuv-6RFVCxE2eN53fdjlXb9irM/oreo-red-cursors.tar.gz";
-          hash = "sha256-Zr6Yvij/VGh0OjdrZHM4GN0G/ZjZkf4qLAyS3edSMzU=";
+        "oreo_red_cursors" = lib.literalExpression
+          ''
+            pkgs.fetchzip {
+              name = "oreo_red_cursors";
+              url = "https://files06.pling.com/api/files/download/j/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MTY2MTA1Mzk2NiwibyI6IjEiLCJzIjoiZTQ4MzE1MmU2MzQwYTEzODA1YjY1ZjY2NjZiMjdmM2JiYTdkNzZkM2QyZDE2NTI5OWQ1MWY5YTYwYzU4YTAyNjBiZDI2ODFhMWI0MjE3N2NkZTk4ZGJlMmJhYTY1M2FkZTE0ZmU1YWYzZjY2MWUzMzZmZGQ1NTcxYzZlZWU3MmYiLCJ0IjoxNzY2MTg5Njg3LCJzdGZwIjpudWxsLCJzdGlwIjoiOTIuMjA2LjUuMjIxIn0.6r_mq5Ftfprj8xtrkJuv-6RFVCxE2eN53fdjlXb9irM/oreo-red-cursors.tar.gz";
+              hash = "sha256-Zr6Yvij/VGh0OjdrZHM4GN0G/ZjZkf4qLAyS3edSMzU=";
+            };
+          '';
         };
-      };
       description = ''
         Installs KDE cursor themes. You can supply them as [cursor files](https://develop.kde.org/docs/features/cursor/), or use a fetcher to download them.
 
