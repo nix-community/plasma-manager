@@ -376,26 +376,35 @@ in
       ];
       warnings =
         (lib.lists.optionals
-          ((cfg.workspace.lookAndFeel != null)
-          && (cfg.workspace.splashScreen.theme != null || cfg.workspace.windowDecorations.theme != null))
-        [
-          ''
-            Setting lookAndFeel together with splashScreen or windowDecorations in
-            plasma-manager is not recommended since lookAndFeel themes often
-            override these settings. Consider setting each part in the lookAndFeel
-            theme manually.
-          ''
-        ])
-        ++ (lib.lists.optionals ( cfg.workspace.cursor.theme != null && ! builtins.hasAttr cfg.workspace.cursor.theme cfg.workspace.installedCursorThemes)
-        [
-          ''
-            The cursor theme chosen in `config.home.plasma.workspace.cursor.theme` is not installed declaratively using `config.home.plasma.workspace.installedCursorThemes`.
+          (
+            (cfg.workspace.lookAndFeel != null)
+            && (cfg.workspace.splashScreen.theme != null || cfg.workspace.windowDecorations.theme != null)
+          )
+          [
+            ''
+              Setting lookAndFeel together with splashScreen or windowDecorations in
+              plasma-manager is not recommended since lookAndFeel themes often
+              override these settings. Consider setting each part in the lookAndFeel
+              theme manually.
+            ''
+          ]
+        )
+        ++ (lib.lists.optionals
+          (
+            (cfg.workspace.cursor != null)
+            && (cfg.workspace.cursor.theme != null)
+            && !(builtins.hasAttr cfg.workspace.cursor.theme cfg.workspace.installedCursorThemes)
+          )
+          [
+            ''
+              The cursor theme chosen in `plasma.workspace.cursor.theme` is not installed declaratively using `plasma.workspace.installedCursorThemes`.
 
-            If you use one of the default themes provided by KDE, you can safely ignore this warning.
+              If you use one of the default themes provided by KDE, you can safely ignore this warning.
 
-            If you manually installed the cursor theme in use consider declarative installation.
-          ''
-        ]);
+              If you manually installed the cursor theme in use consider declarative installation.
+            ''
+          ]
+        );
 
       programs.plasma.configFile = (
         lib.mkMerge [
