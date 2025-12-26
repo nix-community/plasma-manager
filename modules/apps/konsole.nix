@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   inherit
     (import ../../lib/types.nix {
@@ -8,15 +13,7 @@ let
     basicSettingsType
     ;
 
-  # used as shown in the example in the library docs:
-  # https://noogle.dev/f/lib/attrsets/mapAttrs'
-  createColorSchemes = lib.attrsets.mapAttrs' (
-    name: value:
-    lib.attrsets.nameValuePair "konsole/${name}.colorscheme" {
-      enable = true;
-      source = value;
-    }
-  );
+  iniFormat = pkgs.formats.ini { };
 
   cfg = config.programs.konsole;
   profilesSubmodule = {
@@ -103,7 +100,12 @@ in
     };
 
     customColorSchemes = lib.mkOption {
-      type = with lib.types; attrsOf path;
+      type =
+        with lib.types;
+        attrsOf (oneOf [
+          path
+          iniFormat.type
+        ]);
       default = { };
       description = ''
         Custom color schemes to be added to the installation. The attribute key maps to their name.
@@ -185,7 +187,13 @@ in
           ) cfg.profiles
         )
       ))
-      (createColorSchemes cfg.customColorSchemes)
+      (lib.attrsets.mapAttrs' (
+        name: value:
+        lib.attrsets.nameValuePair "konsole/${name}.colorscheme" {
+          source =
+            if builtins.isPath value then value else iniFormat.generate "konsole-${name}.colorscheme" value;
+        }
+      ) cfg.customColorSchemes)
     ];
   };
 }
