@@ -68,6 +68,7 @@ class Rc2Nix:
             "plasmaparc",
             "spectaclerc",
             "katerc",
+            "yakuakerc",
         ]
     ]
     KNOWN_DATA_FILES: List[str] = [
