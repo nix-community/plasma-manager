@@ -5688,7 +5688,7 @@ null or one of “applicationLauncher”, “contextMenu”, “paste”, “swi
 <p>A list of widgets to be added to the desktop.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
-null or (list of (attribute-tagged union or (submodule)))</p>
+null or (list of (attribute-tagged union with choices: appMenu, applicationTitleBar, battery, digitalClock, iconTasks, keyboardLayout, kicker, kickerdash, kickoff, pager, panelSpacer, plasmaPanelColorizer, plasmusicToolbar, systemMonitor, systemTray or (submodule)))</p>
 
 <p><span class="emphasis"><em>Default:</em></span>
 <code class="literal">null</code></p>
@@ -13403,7 +13403,7 @@ widgets/plasmoids are, for example, <code class="literal">plasma-desktop</code> 
 <code class="literal">plasma-workspace</code>.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
-list of (string or attribute-tagged union or (submodule))</p>
+list of (string or attribute-tagged union with choices: appMenu, applicationTitleBar, battery, digitalClock, iconTasks, keyboardLayout, kicker, kickerdash, kickoff, pager, panelSpacer, plasmaPanelColorizer, plasmusicToolbar, systemMonitor, systemTray or (submodule))</p>
 
 <p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting">[
   &quot;org.kde.plasma.kickoff&quot;
