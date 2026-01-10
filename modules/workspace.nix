@@ -169,27 +169,10 @@ in
     };
 
     installedCursorThemes = lib.mkOption {
-      type = with lib.types; attrsOf package;
+      type = with lib.types; attrsOf path;
       default = {};
-      example = {
-        "oreo_red_cursors" = lib.literalExpression
-          ''
-            pkgs.fetchzip {
-              name = "oreo_red_cursors";
-              url = "https://files06.pling.com/api/files/download/j/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MTY2MTA1Mzk2NiwibyI6IjEiLCJzIjoiZTQ4MzE1MmU2MzQwYTEzODA1YjY1ZjY2NjZiMjdmM2JiYTdkNzZkM2QyZDE2NTI5OWQ1MWY5YTYwYzU4YTAyNjBiZDI2ODFhMWI0MjE3N2NkZTk4ZGJlMmJhYTY1M2FkZTE0ZmU1YWYzZjY2MWUzMzZmZGQ1NTcxYzZlZWU3MmYiLCJ0IjoxNzY2MTg5Njg3LCJzdGZwIjpudWxsLCJzdGlwIjoiOTIuMjA2LjUuMjIxIn0.6r_mq5Ftfprj8xtrkJuv-6RFVCxE2eN53fdjlXb9irM/oreo-red-cursors.tar.gz";
-              hash = "sha256-Zr6Yvij/VGh0OjdrZHM4GN0G/ZjZkf4qLAyS3edSMzU=";
-            };
-          '';
-        };
-      description = ''
-        Installs KDE cursor themes. You can supply them as [cursor files](https://develop.kde.org/docs/features/cursor/), or use a fetcher to download them.
-
-        Instructions on how to find the download link to content from the KDE store:
-        1) Browse api.kde-look.org/ocs/v1/content/categories in order to find the numerical ID of the `cursor` category.
-        2) Use the API search api.kde-look.org/ocs/v1/content/data?categories=<numeric id of category>&search=<searchterm> . The entries here contain real (== without timeouts or challanges) download links. Note that the supplied MD5 sums seem not to work with `fetchzip` for some reason.
-
-        I heavily recommend finding the exact name of what you search for in the regular (visual, non-API) KDE store first, as browsing is a lot easier there.
-      '';
+      example = lib.literalExpression ''./cursor'';
+      description = "Download links of the KDE API do change all the time, therefore it is recommended to download your preferred theme and put it into your nix config.";
     };
 
     lookAndFeel = lib.mkOption {
