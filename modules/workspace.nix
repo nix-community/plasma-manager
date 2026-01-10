@@ -721,6 +721,7 @@ in
         );
       };
 
+      # todo load data from path
       xdg.dataFile = lib.attrsets.mapAttrs' (name : value: lib.attrsets.nameValuePair ( "icons/${name}") { source = value; } ) cfg.workspace.installedCursorThemes;
     }
   );
