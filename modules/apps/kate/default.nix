@@ -464,8 +464,8 @@ in
   options.programs.kate.editor.brackets = {
     characters = lib.mkOption {
       type = lib.types.str;
-      default = "<>(){}[]'\"\`";
-      example = "<>(){}[]'\"\`*_~";
+      default = "<>(){}[]'\"`";
+      example = "<>(){}[]'\"`*_~";
       description = "This options determines which characters kate will treat as brackets.";
     };
     automaticallyAddClosing = lib.mkEnableOption "" // {
