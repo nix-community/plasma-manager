@@ -88,7 +88,7 @@ let
         '';
       };
       vendorId = lib.mkOption {
-        type = lib.types.str;
+        type = with lib.types; nullOr str;
         default = null;
         example = "0911";
         description = ''
