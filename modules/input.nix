@@ -77,7 +77,7 @@ let
         '';
       };
       name = lib.mkOption {
-        type = lib.types.str;
+        type = with lib.types; nullOr str;
         default = null;
         example = "PNP0C50:00 0911:5288 Touchpad";
         description = ''
@@ -99,7 +99,7 @@ let
         '';
       };
       productId = lib.mkOption {
-        type = lib.types.str;
+        type = with lib.types; nullOr str;
         default = null;
         example = "5288";
         description = ''
