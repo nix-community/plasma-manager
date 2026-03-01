@@ -5,6 +5,32 @@ let
     wallpaperPictureOfTheDayType
     wallpaperSlideShowType
     ;
+
+  customWallpaperPluginType = lib.types.submodule {
+    options = {
+      plugin = lib.mkOption {
+        type = lib.types.str;
+        example = "luisbocanegra.smart.video.wallpaper.reborn";
+        description = "The wallpaper plugin identifier.";
+      };
+      config = lib.mkOption {
+        type = with lib.types; attrsOf (attrsOf anything);
+        default = { };
+        example = lib.literalExpression ''
+          {
+            General = {
+              VideoUrls = ''''[{"filename":"file:///path/to/video.mp4","enabled":true}]'''';
+            };
+          }
+        '';
+        description = ''
+          Configuration for the custom wallpaper plugin. This is a nested attribute set
+          where the structure is: configGroup -> key -> value.
+          The configGroup is typically "General" for most plugins.
+        '';
+      };
+    };
+  };
 in
 {
   options.programs.plasma.kscreenlocker = {
@@ -116,6 +142,24 @@ in
           Set the wallpaper using a plain color. Color is a comma-seperated R,G,B,A string. The alpha is optional (default is 256).
         '';
       };
+      wallpaperCustomPlugin = lib.mkOption {
+        type = lib.types.nullOr customWallpaperPluginType;
+        default = null;
+        example = lib.literalExpression ''
+          {
+            plugin = "luisbocanegra.smart.video.wallpaper.reborn";
+            config = {
+              General = {
+                VideoUrls = ''''[{"filename":"file:///path/to/video.mp4","enabled":true}]'''';
+              };
+            };
+          }
+        '';
+        description = ''
+          Use a custom wallpaper plugin with configuration. This allows you to use third-party
+          wallpaper plugins like smart video wallpaper, animated wallpapers, etc.
+        '';
+      };
     };
   };
 
@@ -192,10 +236,11 @@ in
               wallpaper
               wallpaperPictureOfTheDay
               wallpaperPlainColor
+              wallpaperCustomPlugin
             ];
           in
           lib.count (x: x != null) wallpapers <= 1;
-        message = "Can set only one of wallpaper, wallpaperSlideShow, wallpaperPictureOfTheDay, and wallpaperPlainColor for kscreenlocker.";
+        message = "Can set only one of wallpaper, wallpaperSlideShow, wallpaperPictureOfTheDay, wallpaperPlainColor, and wallpaperCustomPlugin for kscreenlocker.";
       }
     ];
     programs.plasma.configFile.kscreenlockerrc = (
@@ -233,6 +278,18 @@ in
           Greeter.WallpaperPlugin = "org.kde.color";
           "Greeter/Wallpaper/org.kde.color/General".Color = cfg.kscreenlocker.appearance.wallpaperPlainColor;
         })
+
+        (lib.mkIf (cfg.kscreenlocker.appearance.wallpaperCustomPlugin != null) (
+          lib.mkMerge (
+            [
+              { Greeter.WallpaperPlugin = cfg.kscreenlocker.appearance.wallpaperCustomPlugin.plugin; }
+            ]
+            ++ (lib.mapAttrsToList (configGroup: keys: {
+              "Greeter/Wallpaper/${cfg.kscreenlocker.appearance.wallpaperCustomPlugin.plugin}/${configGroup}" =
+                keys;
+            }) cfg.kscreenlocker.appearance.wallpaperCustomPlugin.config)
+          )
+        ))
 
         (lib.mkIf (cfg.kscreenlocker.appearance.alwaysShowClock != null) {
           "Greeter/LnF/General".alwaysShowClock = cfg.kscreenlocker.appearance.alwaysShowClock;
