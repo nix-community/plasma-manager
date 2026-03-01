@@ -12210,10 +12210,10 @@ null or string</p>
  </span>
 </dt>
 <dd>
-<p>When to enable the night light effect.</p><div class="itemizedlist"><ul class="itemizedlist " style="list-style-type: disc;"><li class="listitem"><p><code class="literal">constant</code> enables it unconditonally.</p></li><li class="listitem"><p><code class="literal">location</code> uses coordinates to figure out the sunset/sunrise times for your location.</p></li><li class="listitem"><p><code class="literal">times</code> allows you to set the times for enabling and disabling night light.</p></li></ul></div>
+<p>When to enable the night light effect.</p><div class="itemizedlist"><ul class="itemizedlist " style="list-style-type: disc;"><li class="listitem"><p><code class="literal">automatic</code> enables it from sunset to sunrise based on your system’s location queried from geoclue.</p></li><li class="listitem"><p><code class="literal">constant</code> enables it unconditonally.</p></li><li class="listitem"><p><code class="literal">location</code> uses coordinates to figure out the sunset/sunrise times for your location.</p></li><li class="listitem"><p><code class="literal">times</code> allows you to set the times for enabling and disabling night light.</p></li></ul></div>
 
 <p><span class="emphasis"><em>Type:</em></span>
-null or one of “constant”, “location”, “times”</p>
+null or one of “automatic”, “constant”, “location”, “times”</p>
 
 <p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">null
 </code></pre>
