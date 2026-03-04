@@ -197,7 +197,7 @@ in
     installedCursorThemes = lib.mkOption {
       type = with lib.types; attrsOf package;
       default = {};
-      example = lib.literalExpression ''"${./cursor}"'';
+      example = lib.literalExpression ''"''${./cursor}"'';
       description = "Download links of the KDE API do change all the time, therefore it is recommended to download your preferred theme and put it into your nix config.";
     };
 
