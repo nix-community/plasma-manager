@@ -74,6 +74,32 @@ let
     };
   };
 
+  customWallpaperPluginType = lib.types.submodule {
+    options = {
+      plugin = lib.mkOption {
+        type = lib.types.str;
+        example = "luisbocanegra.smart.video.wallpaper.reborn";
+        description = "The wallpaper plugin identifier.";
+      };
+      config = lib.mkOption {
+        type = with lib.types; attrsOf (attrsOf anything);
+        default = {};
+        example = lib.literalExpression ''
+          {
+            General = {
+              VideoUrls = ''''[{"filename":"file:///path/to/video.mp4","enabled":true}]'''';
+            };
+          }
+        '';
+        description = ''
+          Configuration for the custom wallpaper plugin. This is a nested attribute set
+          where the structure is: configGroup -> key -> value.
+          The configGroup is typically "General" for most plugins.
+        '';
+      };
+    };
+  };
+
   anyThemeSet = (
     cfg.workspace.theme != null
     || cfg.workspace.colorScheme != null
@@ -231,6 +257,25 @@ in
       '';
     };
 
+    wallpaperCustomPlugin = lib.mkOption {
+      type = lib.types.nullOr customWallpaperPluginType;
+      default = null;
+      example = lib.literalExpression ''
+        {
+          plugin = "luisbocanegra.smart.video.wallpaper.reborn";
+          config = {
+            General = {
+              VideoUrls = ''''[{"filename":"file:///path/to/video.mp4","enabled":true}]'''';
+            };
+          };
+        }
+      '';
+      description = ''
+        Use a custom wallpaper plugin with configuration. This allows you to use third-party
+        wallpaper plugins like smart video wallpaper, animated wallpapers, etc.
+      '';
+    };
+
     wallpaperFillMode = lib.mkOption {
       type = with lib.types; nullOr (enum (builtins.attrNames wallpaperFillModeTypes));
       default = null;
@@ -328,10 +373,11 @@ in
                 wallpaper
                 wallpaperPictureOfTheDay
                 wallpaperPlainColor
+                wallpaperCustomPlugin
               ];
             in
             lib.count (x: x != null) wallpapers <= 1;
-          message = "Can set only one of wallpaper, wallpaperSlideShow, wallpaperPictureOfTheDay, and wallpaperPlainColor.";
+          message = "Can set only one of wallpaper, wallpaperSlideShow, wallpaperPictureOfTheDay, wallpaperPlainColor, and wallpaperCustomPlugin.";
         }
         {
           assertion = (cfg.workspace.splashScreen.engine == null || cfg.workspace.splashScreen.theme != null);
@@ -714,6 +760,29 @@ in
                           throw "plasma-manager: wallpaperBackground is not null and has no option set"
                       }");''
                   }
+              }
+            '';
+            priority = 3;
+          }
+        );
+
+        desktopScript."wallpaper_custom_plugin" = (
+          lib.mkIf (cfg.workspace.wallpaperCustomPlugin != null) {
+            text = ''
+              // Custom wallpaper plugin
+              let allDesktops = desktops();
+              for (var desktopIndex = 0; desktopIndex < allDesktops.length; desktopIndex++) {
+                  var desktop = allDesktops[desktopIndex];
+                  desktop.wallpaperPlugin = "${cfg.workspace.wallpaperCustomPlugin.plugin}";
+
+                  ${builtins.concatStringsSep "\n" (
+                    lib.mapAttrsToList (configGroup: keys: ''
+                      desktop.currentConfigGroup = ["Wallpaper", "${cfg.workspace.wallpaperCustomPlugin.plugin}", "${configGroup}"];
+                      ${builtins.concatStringsSep "\n" (
+                        lib.mapAttrsToList (key: value: ''desktop.writeConfig("${key}", ${builtins.toJSON value});'') keys
+                      )}
+                    '') cfg.workspace.wallpaperCustomPlugin.config
+                  )}
               }
             '';
             priority = 3;

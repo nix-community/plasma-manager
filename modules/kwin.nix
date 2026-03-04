@@ -457,6 +457,7 @@ in
         type =
           with lib.types;
           nullOr (enum [
+            "automatic"
             "constant"
             "location"
             "times"
@@ -466,6 +467,7 @@ in
         description = ''
           When to enable the night light effect.
 
+          - `automatic` enables it from sunset to sunrise based on your system's location queried from geoclue.
           - `constant` enables it unconditonally.
           - `location` uses coordinates to figure out the sunset/sunrise times for your location.
           - `times` allows you to set the times for enabling and disabling night light.

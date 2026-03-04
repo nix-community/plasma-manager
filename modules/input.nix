@@ -216,7 +216,7 @@ let
             "middleClick"
           ]);
         default = null;
-        example = "twoFingers";
+        example = "rightClick";
         description = ''
           Configure what a two-finger tap maps to on the touchpad.
         '';
