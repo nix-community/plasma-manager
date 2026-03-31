@@ -67,7 +67,7 @@ limitations don't hesitate to open an issue or submit a pr.
 ## What will not be supported
 There are some things which are out of bounds for this project due to technical
 reasons. For example
-- SDDM configuration (requires root-privileges and thus not suited for a `home-manager` module)
+- Plasma Login configuration (requires root-privileges and thus not suited for a `home-manager` module)
 
 ## Getting started
 We provide some examples to help you get started. These are located in the

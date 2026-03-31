@@ -39,7 +39,7 @@
       autoLogin.user = "fake";
       autoLogin.enable = true;
       defaultSession = "plasma";
-      sddm.enable = true;
+      plasma-login-manager.enable = true;
     };
     services.desktopManager.plasma6.enable = true;
 
