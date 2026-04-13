@@ -19,6 +19,7 @@ let
       "shade"
       "keep-below-windows"
       "keep-above-windows"
+      "hide-from-screencast"
     ];
     shortNames = [
       "M"
@@ -31,6 +32,7 @@ let
       "L"
       "B"
       "F"
+      "E"
     ];
   };
 
