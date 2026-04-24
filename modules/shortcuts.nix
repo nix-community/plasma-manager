@@ -36,19 +36,42 @@ let
 in
 {
   options.programs.plasma.shortcuts = lib.mkOption {
-    type =
-      with lib.types;
-      attrsOf (
-        attrsOf (oneOf [
-          (listOf str)
-          str
-        ])
-      );
-    default = { };
     description = ''
-      An attribute set where the keys are application groups and the
-      values are shortcuts.
+      Global shortcuts; written to {file}`$XDG_CONFIG_HOME/kglobalshortcutsrc`.
+
+      The outer key denotes the shortcuts group, the inner key denotes the
+      action to perform, and the value is the list of keys that trigger the
+      action.
     '';
+    example = {
+      kmix = {
+        "decrease_volume" = [
+          "Volume Down"
+          "Meta+Down"
+        ];
+        "increase_volume" = [
+          "Volume Up"
+          "Meta+Up"
+        ];
+      };
+      kwin = {
+        "Switch One Desktop Down" = "Meta+J";
+        "Switch One Desktop Up" = "Meta+K";
+        "Switch One Desktop to the Left" = "Meta+H";
+        "Switch One Desktop to the Right" = "Meta+L";
+      };
+    };
+    default = { };
+    type =
+      let
+        attrsWith' =
+          placeholder: elemType:
+          lib.types.attrsWith {
+            inherit elemType placeholder;
+          };
+        keys = with lib.types; either str (listOf str);
+      in
+      attrsWith' "group" (attrsWith' "action" keys);
   };
 
   config = lib.mkIf cfg.enable {
