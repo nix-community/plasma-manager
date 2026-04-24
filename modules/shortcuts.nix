@@ -1,11 +1,18 @@
-# Global keyboard shortcuts:
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 
 let
+  attrsWith' =
+    placeholder: elemType:
+    lib.types.attrsWith {
+      inherit elemType placeholder;
+    };
+
+  keys = with lib.types; either str (listOf str);
+
   cfg = config.programs.plasma;
 
   # Convert one shortcut into a settings attribute set.
-  shortcutToConfigValue =
+  mkGlobalShortcutFor =
     group: _action: skey:
     let
       # Keys are expected to be a list:
@@ -32,49 +39,107 @@ let
         "" # Display string, not needed.
       ];
 
-  shortcutsToSettings = lib.mapAttrs (group: lib.mapAttrs (shortcutToConfigValue group));
-in
-{
-  options.programs.plasma.shortcuts = lib.mkOption {
-    description = ''
-      Global shortcuts; written to {file}`$XDG_CONFIG_HOME/kglobalshortcutsrc`.
+  mkGlobalShortcuts = lib.mapAttrs (group: lib.mapAttrs (mkGlobalShortcutFor group));
 
-      The outer key denotes the shortcuts group, the inner key denotes the
-      action to perform, and the value is the list of keys that trigger the
-      action.
-    '';
-    example = {
-      kmix = {
-        "decrease_volume" = [
-          "Volume Down"
-          "Meta+Down"
-        ];
-        "increase_volume" = [
-          "Volume Up"
-          "Meta+Up"
-        ];
+  xml = pkgs.formats.xml { };
+
+  mkShortcutSchemeFor =
+    let
+      mkAction = name: keys: {
+        "@name" = name;
+        "@shortcut" = lib.concatStringsSep "; " keys;
       };
-      kwin = {
-        "Switch One Desktop Down" = "Meta+J";
-        "Switch One Desktop Up" = "Meta+K";
-        "Switch One Desktop to the Left" = "Meta+H";
-        "Switch One Desktop to the Right" = "Meta+L";
+    in
+    app: scheme: {
+      gui = {
+        "@name" = app;
+        "@version" = "1";
+        ActionProperties.Action = lib.mapAttrsToList mkAction scheme;
       };
     };
-    default = { };
-    type =
-      let
-        attrsWith' =
-          placeholder: elemType:
-          lib.types.attrsWith {
-            inherit elemType placeholder;
+in
+{
+  options.programs.plasma = {
+
+    shortcuts = lib.mkOption {
+      description = ''
+        Global shortcuts; written to {file}`$XDG_CONFIG_HOME/kglobalshortcutsrc`.
+
+        The outer key denotes the shortcuts group, the inner key denotes the
+        action to perform, and the value is the list of keys that trigger the
+        action.
+      '';
+      example = {
+        kmix = {
+          "decrease_volume" = [
+            "Volume Down"
+            "Meta+Down"
+          ];
+          "increase_volume" = [
+            "Volume Up"
+            "Meta+Up"
+          ];
+        };
+        kwin = {
+          "Switch One Desktop Down" = "Meta+J";
+          "Switch One Desktop Up" = "Meta+K";
+          "Switch One Desktop to the Left" = "Meta+H";
+          "Switch One Desktop to the Right" = "Meta+L";
+        };
+      };
+      default = { };
+      type = attrsWith' "group" (attrsWith' "action" keys);
+    };
+
+    shortcutSchemes = lib.mkOption {
+      description = ''
+        Per-app shortcut schemes; written to {file}`$XDG_DATA_HOME/<app>/shortcuts/<scheme-name>`.
+
+        The outer key denotes the app, the middle key denotes the name of the
+        scheme, the inner key denotes the action to perform, and the value is
+        the list of keys that trigger the action.
+      '';
+      example = {
+        konsole.Custom = {
+          close-session = "Ctrl+Shift+W";
+          close-window = "Ctrl+Shift+Q";
+          new-window = "Ctrl+Shift+N";
+          new-tab = "Ctrl+Shift+T";
+        };
+        okular = {
+          Regular = {
+            go_goto_page = [
+              "G"
+              "Shift+G"
+              "Ctrl+G"
+            ];
+            first_page = "Home";
+            last_page = "End";
           };
-        keys = with lib.types; either str (listOf str);
-      in
-      attrsWith' "group" (attrsWith' "action" keys);
+          Vim = {
+            first_page = "G";
+            last_page = "Shift+G";
+          };
+        };
+      };
+      default = { };
+      type = attrsWith' "app" (attrsWith' "scheme-name" (attrsWith' "action" keys));
+      apply = lib.mapAttrsRecursive (_: v: if lib.isString v then [ v ] else v);
+    };
+
   };
 
   config = lib.mkIf cfg.enable {
-    programs.plasma.configFile."kglobalshortcutsrc" = shortcutsToSettings cfg.shortcuts;
+    programs.plasma.configFile."kglobalshortcutsrc" = mkGlobalShortcuts cfg.shortcuts;
+
+    xdg.dataFile = lib.concatMapAttrs (
+      app:
+      lib.mapAttrs' (
+        name: scheme: {
+          name = "${app}/shortcuts/${name}";
+          value.source = xml.generate "shortcuts-${app}-${name}" (mkShortcutSchemeFor app scheme);
+        }
+      )
+    ) cfg.shortcutSchemes;
   };
 }
