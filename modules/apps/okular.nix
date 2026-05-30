@@ -160,6 +160,11 @@ with lib.types;
         example = "255,255,255";
         type = nullOr str;
       };
+      colorScheme = lib.mkOption {
+        description = "The color scheme used for the user interface. This does not affect the colors of the documents.";
+        default = null;
+        type = nullOr str;
+      };
     };
 
     # ==================================
@@ -334,6 +339,10 @@ with lib.types;
 
       "MainWindow" = {
         "MenuBar" = applyIfSet (if gen.showMenuBar then "Enabled" else "Disabled");
+      };
+
+      "UiSettings" = {
+        "ColorScheme" = applyIfSet gen.colorScheme;
       };
     }
   );
