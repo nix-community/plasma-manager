@@ -40,7 +40,10 @@
           {
             system.stateVersion = "23.11";
             users.users."${username}".isNormalUser = true;
-            fileSystems."/".device = "/dev/sda";
+            fileSystems."/" = {
+              device = "/dev/sda";
+              fsType = "ext4";
+            };
             boot.loader.grub.devices = [ "/dev/sda" ];
           }
 
