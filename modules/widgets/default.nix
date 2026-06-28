@@ -54,6 +54,13 @@ let
     };
   };
 
+  screenType = with lib.types;
+    nullOr (oneOf [
+      ints.unsigned
+      (listOf ints.unsigned)
+      (enum [ "all" ])
+    ]);
+
   compositeWidgetType = lib.pipe sources [
     (builtins.mapAttrs (
       _: s:
@@ -129,6 +136,16 @@ let
         };
         description = "The size of the widget.";
       };
+      screen = lib.mkOption {
+        type = screenType;
+        default = null;
+        description = ''
+          The screen the widget should appear on. (Only for desktop widget)
+          Can be an `int`, or a `list of ints`, starting from `0`, representing
+          the ID of the screen the widget should appear on. Alternatively, it
+          can be set to `all` if the widget should appear on all the screens.
+        '';
+      };
       config = lib.mkOption {
         type = (import ./lib.nix (args // { widgets = self; })).configValueType;
         default = null;
@@ -164,7 +181,7 @@ let
   isKnownWidget = lib.flip builtins.hasAttr sources;
 
   self = {
-    inherit isKnownWidget positionType sizeType;
+    inherit isKnownWidget positionType sizeType screenType;
 
     type = lib.types.oneOf [
       lib.types.str
@@ -214,6 +231,7 @@ let
               widget.${type}.size
             else
               (throw "Desktop widget requires a size");
+          screen = widget.${type}.screen;
         }
       else
         widget; # not a known composite type

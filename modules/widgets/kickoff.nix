@@ -1,7 +1,7 @@
 { lib, ... }:
 let
   inherit (import ./lib.nix { inherit lib; }) configValueType;
-  inherit (import ./default.nix { inherit lib; }) positionType sizeType;
+  inherit (import ./default.nix { inherit lib; }) positionType sizeType screenType;
 
   mkBoolOption =
     description:
@@ -54,6 +54,16 @@ in
           height = 500;
         };
         description = "The size of the widget. (Only for desktop widget)";
+      };
+      screen = lib.mkOption {
+        type = screenType;
+        default = null;
+        description = ''
+          The screen the widget should appear on. (Only for desktop widget)
+          Can be an `int`, or a `list of ints`, starting from `0`, representing
+          the ID of the screen the widget should appear on. Alternatively, it
+          can be set to `all` if the widget should appear on all the screens.
+        '';
       };
       icon = lib.mkOption {
         type = with lib.types; nullOr str;
