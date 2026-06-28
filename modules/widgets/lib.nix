@@ -94,7 +94,7 @@ let
     '';
 
   addDesktopWidgetStmts =
-    containment: var: ws:
+    var: ws:
     let
       widgetConfigsToStmts =
         { name, config, ... }:
@@ -103,20 +103,35 @@ let
           ${setWidgetSettings "w" config}
         '';
 
+      screenFilterFor =
+        screen:
+        if builtins.isList screen then
+          ''d => [${concatMapStringsSep ", " (map valToJS screen)}].indexOf(d.screen) !== -1''
+        else if builtins.isInt screen then
+          ''d => d.screen === ${toString screen}''
+        else
+          "d => true";
+
       addStmt =
         {
           name,
           position,
           size,
+          screen,
           config,
           extraConfig,
         }@widget:
+        let
+          screenFilter = screenFilterFor screen;
+        in
         ''
-          ${var}["${name}"] = ${containment}.addWidget("${name}", ${toString position.horizontal}, ${toString position.vertical}, ${toString size.width}, ${toString size.height});
-          ${stringIfNotNull config (widgetConfigsToStmts widget)}
-          ${lib.optionalString (extraConfig != "") ''
-            (${extraConfig})(${var}["${name}"]);
-          ''}
+          for (const desktop of allDesktops.filter(${screenFilter})) {
+            ${var}["${name}"] = desktop.addWidget("${name}", ${toString position.horizontal}, ${toString position.vertical}, ${toString size.width}, ${toString size.height});
+            ${stringIfNotNull config (widgetConfigsToStmts widget)}
+            ${lib.optionalString (extraConfig != "") ''
+              (${extraConfig})(${var}["${name}"]);
+            ''}
+          }
         '';
     in
     ''

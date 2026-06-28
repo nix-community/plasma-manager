@@ -525,10 +525,7 @@ in
                 });
               });
 
-              for (let i = 0; i < allDesktops.length; i++) {
-                const desktop = allDesktops[i];
-                ${widgets.lib.addDesktopWidgetStmts "desktop" "desktopWidgets" cfg.desktop.widgets}
-              }
+              ${widgets.lib.addDesktopWidgetStmts "desktopWidgets" cfg.desktop.widgets}
             '';
             priority = 2;
           }
