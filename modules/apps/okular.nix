@@ -128,6 +128,43 @@ with lib.types;
           "TrimSelect"
         ]);
       };
+
+      showMenuBar = lib.mkOption {
+        description = "Whether to show the menu bar.";
+        default = null;
+        type = nullOr bool;
+      };
+      showSidebar = lib.mkOption {
+        description = "Whether to show the sidebar.";
+        default = null;
+        type = nullOr bool;
+      };
+      lockSidebar = lib.mkOption {
+        description = "Whether to lock the sidebar from being toggled.";
+        default = null;
+        type = nullOr bool;
+      };
+      fullScreen = lib.mkOption {
+        description = "Whether to open in fullscreen by default.";
+        default = null;
+        type = nullOr bool;
+      };
+      useCustomBackgroundColor = lib.mkOption {
+        description = "Whether to set a custom background color (the color around the displayed page). By default, the Qt™ toolkit color is used when this option is unchecked. ";
+        default = null;
+        type = nullOr bool;
+      };
+      backgroundColor = lib.mkOption {
+        description = "The RGB color that will fill the part of the screen not covered by the page when on presentation mode.";
+        default = null;
+        example = "255,255,255";
+        type = nullOr str;
+      };
+      colorScheme = lib.mkOption {
+        description = "The color scheme used for the user interface. This does not affect the colors of the documents.";
+        default = null;
+        type = nullOr str;
+      };
     };
 
     # ==================================
@@ -246,6 +283,8 @@ with lib.types;
         "ViewContinuous" = applyIfSet gen.viewContinuous;
         "ViewMode" = applyIfSet gen.viewMode;
         "MouseMode" = applyIfSet gen.mouseMode;
+        "UseCustomBackgroundColor" = applyIfSet gen.useCustomBackgroundColor;
+        "BackgroundColor" = applyIfSet gen.backgroundColor;
       };
 
       "Zoom" = {
@@ -279,6 +318,31 @@ with lib.types;
 
       "Dlg Performance" = {
         "EnableCompositing" = applyIfSet perf.enableTransparencyEffects;
+      };
+    }
+  );
+
+  config.programs.plasma.configFile."okularrc" = lib.mkIf cfg.enable (
+    let
+      gen = cfg.general;
+      applyIfSet = opt: lib.mkIf (opt != null) opt;
+    in
+    {
+      "Desktop Entry" = {
+        "FullScreen" = applyIfSet gen.fullScreen;
+      };
+
+      "General" = {
+        "LockSidebar" = applyIfSet gen.lockSidebar;
+        "ShowSidebar" = applyIfSet gen.showSidebar;
+      };
+
+      "MainWindow" = {
+        "MenuBar" = applyIfSet (if gen.showMenuBar then "Enabled" else "Disabled");
+      };
+
+      "UiSettings" = {
+        "ColorScheme" = applyIfSet gen.colorScheme;
       };
     }
   );
