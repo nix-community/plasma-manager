@@ -88,6 +88,7 @@ in
     xdg.desktopEntries."${group.name}" = {
       name = group.description;
       noDisplay = true;
+      startupNotify = false;
       type = "Application";
       actions = lib.mapAttrs (_: command: {
         name = command.name;
