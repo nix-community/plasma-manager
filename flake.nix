@@ -51,7 +51,7 @@
             (inputs.nixpkgs.lib.nixosSystem {
               inherit system;
               modules = [
-                (import test/demo.nix {
+                (import ./test/demo.nix {
                   home-manager-module = inputs.home-manager.nixosModules.home-manager;
                   plasma-module = self.homeManagerModules.plasma-manager;
                 })
@@ -65,7 +65,7 @@
           rc2nix = pkgs.writeShellApplication {
             name = "rc2nix";
             runtimeInputs = with pkgs; [ python3 ];
-            text = ''python3 ${script/rc2nix.py} "$@"'';
+            text = ''python3 ${./script/rc2nix.py} "$@"'';
           };
         }
       );
