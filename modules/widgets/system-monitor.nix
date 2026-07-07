@@ -9,16 +9,12 @@ let
   # highPrioritySensorIds=["cpu/all/usage", "cpu/all/averageTemperature"]
   # ```
   #
-  # Which is **different** to what would happen if you pass a list of strings to the JS script:
-  # ```ini
-  # highPrioritySensorIds=cpu/all/usage,cpu/all/averageTemperature
-  # ```
-  #
-  # So, to satisfy the expected format we must quote the ENTIRE string as a valid JS string,
-  # which means constructing a string that looks like this in the source code:
-  # "[\"cpu/all/usage\", \"cpu/all/averageTemperature\"]"
+  # We build that bracketed list as a plain string; setWidgetSettings runs it
+  # through valToJS (builtins.toJSON) which quotes/escapes it once. Escaping the
+  # inner quotes here as well would double-escape and produce an unparseable
+  # value in the config (see issue #556).
   toEscapedList =
-    ids: if ids != null then "[${lib.concatMapStringsSep ", " (x: ''\"${x}\"'') ids}]" else null;
+    ids: if ids != null then "[${lib.concatMapStringsSep ", " (x: ''"${x}"'') ids}]" else null;
 
   mkListOption = mkOption {
     type = with types; nullOr (listOf str);
