@@ -50,14 +50,6 @@ let
       font = {
         name = lib.mkOption {
           type = lib.types.str;
-          /*
-            TODO: Set default to null after adding an assertion
-            Konsole needs to have a font set to be able to change font size
-            Since I couldn't get that to work I'll just set a default font
-            Not ideal since IMO we should only write things that are set explicitly
-            by the user but ehh it is what it is
-          */
-          default = "Hack";
           example = "Hack";
           description = ''
             Name of the font the profile should use.
