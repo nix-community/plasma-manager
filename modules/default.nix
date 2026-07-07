@@ -13,6 +13,7 @@
     ./kwin.nix
     ./panels.nix
     ./powerdevil.nix
+    ./search-plugins
     ./session.nix
     ./shortcuts.nix
     ./spectacle.nix
