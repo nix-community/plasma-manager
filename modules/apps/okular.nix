@@ -5,16 +5,6 @@
   ...
 }:
 
-let
-  getIndexFromEnum =
-    enum: value:
-    if value == null then
-      null
-    else
-      lib.lists.findFirstIndex (x: x == value)
-        (throw "getIndexFromEnum (okular): Value ${value} isn't present in the enum. This is a bug.")
-        enum;
-in
 {
   options.programs.okular = {
     enable = lib.mkEnableOption ''
@@ -78,12 +68,17 @@ in
 
       zoomMode =
         let
-          enumVals = [
+          values = [
             "100%"
             "fitWidth"
             "fitPage"
             "autoFit"
           ];
+          getIndexInEnum =
+            enum: value:
+            lib.lists.findFirstIndex (x: x == value)
+              (throw "getIndexInEnum: ${value} is not present in the enum '${toString enum}'. This is a bug.")
+              enum;
         in
         lib.mkOption {
           description = ''
@@ -91,8 +86,8 @@ in
             For those files which were opened before the previous zoom mode is applied.
           '';
           default = null;
-          type = with lib.types; nullOr (enum enumVals);
-          apply = getIndexFromEnum enumVals;
+          type = with lib.types; nullOr (enum values);
+          apply = x: if x == null then null else getIndexInEnum values x;
         };
 
       obeyDrm = lib.mkOption {
