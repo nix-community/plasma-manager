@@ -96,7 +96,7 @@
       devShells = forAllSystems (system: {
         default = nixpkgsFor.${system}.mkShell {
           buildInputs = with nixpkgsFor.${system}; [
-            nixfmt-rfc-style
+            nixfmt
             ruby
             ruby.devdoc
             (python3.withPackages (pyPkgs: [
