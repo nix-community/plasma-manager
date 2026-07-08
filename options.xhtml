@@ -4,14 +4,26 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
  <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
  <title>Appendix A. Plasma-Manager Options</title>
 <link rel="stylesheet" type="text/css" href="style.css" />
 <script src="highlightjs/highlight.pack.js" type="text/javascript"></script><script src="highlightjs/loader.js" type="text/javascript"></script>
+<script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const nav = document.getElementById("manual-toc");
+                nav?.addEventListener("click", (e) => {
+                    if (e.target.closest("a[href]") && nav.matches(":popover-open")) {
+                        nav.hidePopover();
+                    }
+                });
+            });
+        </script>
  <meta name="generator" content="nixos-render-docs" />
  <link rel="home" href="index.xhtml" title="Plasma-Manager manual" />
  <link rel="up" href="index.xhtml" title="Plasma-Manager manual" /><link rel="prev" href="introduction.xhtml" title="Introduction" />
  </head>
  <body>
+  <button type="button" class="toc-toggle" popovertarget="manual-toc" popovertargetaction="toggle" aria-label="Toggle table of contents">☰</button>
   <div class="navheader">
    <table width="100%" summary="Navigation header">
     <tr>
@@ -24,7 +36,9 @@
     </tr>
    </table>
    <hr />
-  </div><div class="appendix"> <div class="titlepage">  <div>   <div>    <h1 id="ch-options" class="title" >Appendix A. Plasma-Manager Options   </h1>  </div> </div></div><div class="variablelist">
+  </div>
+  <nav id="manual-toc" class="toc-sidebar" popover="auto"><ol class="toc"><li class="preface"><a href="preface.xhtml">Preface</a></li><li class="part"><a href="introduction.xhtml">Introduction</a></li><li class="appendix"><a href="options.xhtml">A. Plasma-Manager Options</a></li></ol></nav>
+  <main class="content"><div class="appendix"> <div class="titlepage">  <div>   <div>    <h2 id="ch-options" class="title" >Appendix A. Plasma-Manager Options   </h2>  </div> </div></div><div class="variablelist">
 <a id="plasma-manager-options"></a>
  <dl class="variablelist">
 <dt>
@@ -4376,9 +4390,6 @@ attribute set of attribute set of (null or boolean or floating point number or s
 <p><span class="emphasis"><em>Type:</em></span>
 string</p>
 
-<p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">&quot;Hack&quot;
-</code></pre>
-
 <p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting nix">&quot;Hack&quot;
 </code></pre>
 
@@ -4741,6 +4752,105 @@ null or boolean</p>
 </dd>
 <dt>
  <span class="term">
+ <a id="opt-programs.okular.general.backgroundColor"></a><a class="term" href="options.xhtml#opt-programs.okular.general.backgroundColor"><code class="option">programs.okular.general.backgroundColor</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The RGB color that will fill the part of the screen not covered by the page when on presentation mode.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or string</p>
+
+<p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">null
+</code></pre>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting nix">&quot;255,255,255&quot;
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/okular.nix" target="_top">
+&lt;plasma-manager/modules/apps/okular.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.okular.general.colorScheme"></a><a class="term" href="options.xhtml#opt-programs.okular.general.colorScheme"><code class="option">programs.okular.general.colorScheme</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The color scheme used for the user interface. This does not affect the colors of the documents.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or string</p>
+
+<p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">null
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/okular.nix" target="_top">
+&lt;plasma-manager/modules/apps/okular.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.okular.general.fullScreen"></a><a class="term" href="options.xhtml#opt-programs.okular.general.fullScreen"><code class="option">programs.okular.general.fullScreen</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to open in fullscreen by default.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">null
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/okular.nix" target="_top">
+&lt;plasma-manager/modules/apps/okular.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.okular.general.lockSidebar"></a><a class="term" href="options.xhtml#opt-programs.okular.general.lockSidebar"><code class="option">programs.okular.general.lockSidebar</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to lock the sidebar from being toggled.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">null
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/okular.nix" target="_top">
+&lt;plasma-manager/modules/apps/okular.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
  <a id="opt-programs.okular.general.mouseMode"></a><a class="term" href="options.xhtml#opt-programs.okular.general.mouseMode"><code class="option">programs.okular.general.mouseMode</code>
   </a>
  </span>
@@ -4816,6 +4926,30 @@ null or boolean</p>
 </dd>
 <dt>
  <span class="term">
+ <a id="opt-programs.okular.general.showMenuBar"></a><a class="term" href="options.xhtml#opt-programs.okular.general.showMenuBar"><code class="option">programs.okular.general.showMenuBar</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to show the menu bar.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">null
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/okular.nix" target="_top">
+&lt;plasma-manager/modules/apps/okular.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
  <a id="opt-programs.okular.general.showScrollbars"></a><a class="term" href="options.xhtml#opt-programs.okular.general.showScrollbars"><code class="option">programs.okular.general.showScrollbars</code>
   </a>
  </span>
@@ -4840,12 +4974,60 @@ null or boolean</p>
 </dd>
 <dt>
  <span class="term">
+ <a id="opt-programs.okular.general.showSidebar"></a><a class="term" href="options.xhtml#opt-programs.okular.general.showSidebar"><code class="option">programs.okular.general.showSidebar</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to show the sidebar.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">null
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/okular.nix" target="_top">
+&lt;plasma-manager/modules/apps/okular.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
  <a id="opt-programs.okular.general.smoothScrolling"></a><a class="term" href="options.xhtml#opt-programs.okular.general.smoothScrolling"><code class="option">programs.okular.general.smoothScrolling</code>
   </a>
  </span>
 </dt>
 <dd>
 <p>Whether to use smooth scrolling.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">null
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/apps/okular.nix" target="_top">
+&lt;plasma-manager/modules/apps/okular.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.okular.general.useCustomBackgroundColor"></a><a class="term" href="options.xhtml#opt-programs.okular.general.useCustomBackgroundColor"><code class="option">programs.okular.general.useCustomBackgroundColor</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to set a custom background color (the color around the displayed page). By default, the Qt™ toolkit color is used when this option is unchecked.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
 null or boolean</p>
@@ -12975,7 +13157,7 @@ null or integer between 0 and 36 (both inclusive)</p>
 <p>Title bar buttons to be placed on the left.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
-null or (list of (one of “more-window-actions”, “application-menu”, “on-all-desktops”, “minimize”, “maximize”, “close”, “help”, “shade”, “keep-below-windows”, “keep-above-windows”))</p>
+null or (list of (one of “more-window-actions”, “application-menu”, “on-all-desktops”, “minimize”, “maximize”, “close”, “help”, “shade”, “keep-below-windows”, “keep-above-windows”, “hide-from-screencast”))</p>
 
 <p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">null
 </code></pre>
@@ -13005,7 +13187,7 @@ null or (list of (one of “more-window-actions”, “application-menu”, “o
 <p>Title bar buttons to be placed on the right.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
-null or (list of (one of “more-window-actions”, “application-menu”, “on-all-desktops”, “minimize”, “maximize”, “close”, “help”, “shade”, “keep-below-windows”, “keep-above-windows”))</p>
+null or (list of (one of “more-window-actions”, “application-menu”, “on-all-desktops”, “minimize”, “maximize”, “close”, “help”, “shade”, “keep-below-windows”, “keep-above-windows”, “hide-from-screencast”))</p>
 
 <p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">null
 </code></pre>
@@ -14837,6 +15019,251 @@ list of string</p>
 </dd>
 <dt>
  <span class="term">
+ <a id="opt-programs.plasma.searchPlugins.webSearchKeywords.enable"></a><a class="term" href="options.xhtml#opt-programs.plasma.searchPlugins.webSearchKeywords.enable"><code class="option">programs.plasma.searchPlugins.webSearchKeywords.enable</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to enable the web search keywords plugin…</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">true
+</code></pre>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting nix">true
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/search-plugins/web-search-keywords.nix" target="_top">
+&lt;plasma-manager/modules/search-plugins/web-search-keywords.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.searchPlugins.webSearchKeywords.default"></a><a class="term" href="options.xhtml#opt-programs.plasma.searchPlugins.webSearchKeywords.default"><code class="option">programs.plasma.searchPlugins.webSearchKeywords.default</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The default web search keyword that is used if no keyword was specified.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+null or string</p>
+
+<p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">null
+</code></pre>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting nix">&quot;duckduckgo&quot;
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/search-plugins/web-search-keywords.nix" target="_top">
+&lt;plasma-manager/modules/search-plugins/web-search-keywords.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.searchPlugins.webSearchKeywords.delimiter"></a><a class="term" href="options.xhtml#opt-programs.plasma.searchPlugins.webSearchKeywords.delimiter"><code class="option">programs.plasma.searchPlugins.webSearchKeywords.delimiter</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The delimiter that separates the keyword from the search terms.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+string</p>
+
+<p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">&quot;:&quot;
+</code></pre>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting nix">&quot;&gt;&quot;
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/search-plugins/web-search-keywords.nix" target="_top">
+&lt;plasma-manager/modules/search-plugins/web-search-keywords.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.searchPlugins.webSearchKeywords.extra"></a><a class="term" href="options.xhtml#opt-programs.plasma.searchPlugins.webSearchKeywords.extra"><code class="option">programs.plasma.searchPlugins.webSearchKeywords.extra</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Extra keywords to be added.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+attribute set of (submodule)</p>
+
+<p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">{ }
+</code></pre>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting nix">{
+  nixpkgs = {
+    keys = [
+      &quot;np&quot;
+      &quot;nixpkgs&quot;
+    ];
+    query = &quot;https://search.nixos.org/packages?channel=unstable&amp;query=\\{@}&quot;;
+  };
+}
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/search-plugins/web-search-keywords.nix" target="_top">
+&lt;plasma-manager/modules/search-plugins/web-search-keywords.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.searchPlugins.webSearchKeywords.extra._name_.keys"></a><a class="term" href="options.xhtml#opt-programs.plasma.searchPlugins.webSearchKeywords.extra._name_.keys"><code class="option">programs.plasma.searchPlugins.webSearchKeywords.extra.&lt;name&gt;.keys</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The keys that trigger this web search engine.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+list of string</p>
+
+<p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">null
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/search-plugins/web-search-keywords.nix" target="_top">
+&lt;plasma-manager/modules/search-plugins/web-search-keywords.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.searchPlugins.webSearchKeywords.extra._name_.name"></a><a class="term" href="options.xhtml#opt-programs.plasma.searchPlugins.webSearchKeywords.extra._name_.name"><code class="option">programs.plasma.searchPlugins.webSearchKeywords.extra.&lt;name&gt;.name</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The name of this web search keyword.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+string</p>
+
+<p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">&quot;&lt;name&gt;&quot;
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/search-plugins/web-search-keywords.nix" target="_top">
+&lt;plasma-manager/modules/search-plugins/web-search-keywords.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.searchPlugins.webSearchKeywords.extra._name_.query"></a><a class="term" href="options.xhtml#opt-programs.plasma.searchPlugins.webSearchKeywords.extra._name_.query"><code class="option">programs.plasma.searchPlugins.webSearchKeywords.extra.&lt;name&gt;.query</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>The URI that is used to perform the search on the search engine here.</p><p>The whole text to be searched for can be specified as <code class="literal">\{@}</code> or <code class="literal">\{0}</code>. Recommended is <code class="literal">\{@}</code>, since it removes all query variables (<code class="literal">key=value</code> pairs) from the resulting string, whereas <code class="literal">\{0}</code> will be substituted with the unmodified query string.</p><p>You can use <code class="literal">\{1}...\{n}</code> to specify certain words from the query and <code class="literal">\{key}</code> to specify a value given by <code class="literal">key=value</code> in the user query.</p><p>In addition it is possible to specify multiple references (keys, numbers and strings) at once, i.e. <code class="literal">\{1,key,...,&quot;default&quot;}</code>. The first matching value (from the left) will be used as the substitution value for the resulting URI. A quoted string can be used as the default value if nothing matches from the left of the reference list.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+string matching the pattern .*\\\{[@0]}.*</p>
+
+<p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">null
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/search-plugins/web-search-keywords.nix" target="_top">
+&lt;plasma-manager/modules/search-plugins/web-search-keywords.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.searchPlugins.webSearchKeywords.preferred"></a><a class="term" href="options.xhtml#opt-programs.plasma.searchPlugins.webSearchKeywords.preferred"><code class="option">programs.plasma.searchPlugins.webSearchKeywords.preferred</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>These web search keywords that are prioritised if there are too many results.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+list of string</p>
+
+<p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">[ ]
+</code></pre>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting nix">[
+  &quot;duckduckgo&quot;
+  &quot;wikipedia&quot;
+]
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/search-plugins/web-search-keywords.nix" target="_top">
+&lt;plasma-manager/modules/search-plugins/web-search-keywords.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
+ <a id="opt-programs.plasma.searchPlugins.webSearchKeywords.usePreferredOnly"></a><a class="term" href="options.xhtml#opt-programs.plasma.searchPlugins.webSearchKeywords.usePreferredOnly"><code class="option">programs.plasma.searchPlugins.webSearchKeywords.usePreferredOnly</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Whether to use only the preferred keywords.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+boolean</p>
+
+<p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">false
+</code></pre>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting nix">true
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/search-plugins/web-search-keywords.nix" target="_top">
+&lt;plasma-manager/modules/search-plugins/web-search-keywords.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
  <a id="opt-programs.plasma.session.general.askForConfirmationOnLogout"></a><a class="term" href="options.xhtml#opt-programs.plasma.session.general.askForConfirmationOnLogout"><code class="option">programs.plasma.session.general.askForConfirmationOnLogout</code>
   </a>
  </span>
@@ -14921,18 +15348,92 @@ null or one of “onLastLogout”, “startWithEmptySession”, “whenSessionWa
 </dd>
 <dt>
  <span class="term">
+ <a id="opt-programs.plasma.shortcutSchemes"></a><a class="term" href="options.xhtml#opt-programs.plasma.shortcutSchemes"><code class="option">programs.plasma.shortcutSchemes</code>
+  </a>
+ </span>
+</dt>
+<dd>
+<p>Per-app shortcut schemes; written to <code class="filename">$XDG_DATA_HOME/&lt;app&gt;/shortcuts/&lt;scheme-name&gt;</code>.</p><p>The outer key denotes the app, the middle key denotes the name of the
+scheme, the inner key denotes the action to perform, and the value is
+the list of keys that trigger the action.</p>
+
+<p><span class="emphasis"><em>Type:</em></span>
+attribute set of attribute set of attribute set of (string or list of string)</p>
+
+<p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">{ }
+</code></pre>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting nix">{
+  konsole = {
+    Custom = {
+      close-session = &quot;Ctrl+Shift+W&quot;;
+      close-window = &quot;Ctrl+Shift+Q&quot;;
+      new-tab = &quot;Ctrl+Shift+T&quot;;
+      new-window = &quot;Ctrl+Shift+N&quot;;
+    };
+  };
+  okular = {
+    Regular = {
+      first_page = &quot;Home&quot;;
+      go_goto_page = [
+        &quot;G&quot;
+        &quot;Shift+G&quot;
+        &quot;Ctrl+G&quot;
+      ];
+      last_page = &quot;End&quot;;
+    };
+    Vim = {
+      first_page = &quot;G&quot;;
+      last_page = &quot;Shift+G&quot;;
+    };
+  };
+}
+</code></pre>
+
+<p><span class="emphasis"><em>Declared by:</em></span></p>
+<table border="0" summary="Simple list" class="simplelist">
+<tr><td>
+<code class="filename"><a class="filename"  href="https://github.com/nix-community/plasma-manager/blob/trunk/modules/shortcuts.nix" target="_top">
+&lt;plasma-manager/modules/shortcuts.nix&gt;
+</a></code>
+</td></tr>
+</table>
+</dd>
+<dt>
+ <span class="term">
  <a id="opt-programs.plasma.shortcuts"></a><a class="term" href="options.xhtml#opt-programs.plasma.shortcuts"><code class="option">programs.plasma.shortcuts</code>
   </a>
  </span>
 </dt>
 <dd>
-<p>An attribute set where the keys are application groups and the
-values are shortcuts.</p>
+<p>Global shortcuts; written to <code class="filename">$XDG_CONFIG_HOME/kglobalshortcutsrc</code>.</p><p>The outer key denotes the shortcuts group, the inner key denotes the
+action to perform, and the value is the list of keys that trigger the
+action.</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
-attribute set of attribute set of ((list of string) or string)</p>
+attribute set of attribute set of (string or list of string)</p>
 
 <p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">{ }
+</code></pre>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting nix">{
+  kmix = {
+    decrease_volume = [
+      &quot;Volume Down&quot;
+      &quot;Meta+Down&quot;
+    ];
+    increase_volume = [
+      &quot;Volume Up&quot;
+      &quot;Meta+Up&quot;
+    ];
+  };
+  kwin = {
+    &quot;Switch One Desktop Down&quot; = &quot;Meta+J&quot;;
+    &quot;Switch One Desktop Up&quot; = &quot;Meta+K&quot;;
+    &quot;Switch One Desktop to the Left&quot; = &quot;Meta+H&quot;;
+    &quot;Switch One Desktop to the Right&quot; = &quot;Meta+L&quot;;
+  };
+}
 </code></pre>
 
 <p><span class="emphasis"><em>Declared by:</em></span></p>
@@ -15703,9 +16204,6 @@ string</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
 submodule</p>
-
-<p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">{ }
-</code></pre>
 
 <p><span class="emphasis"><em>Declared by:</em></span></p>
 <table border="0" summary="Simple list" class="simplelist">
@@ -17016,5 +17514,6 @@ null or string</p>
     </tr>
    </table>
   </div>
+  </main>
  </body>
 </html>

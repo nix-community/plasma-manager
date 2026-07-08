@@ -4,14 +4,26 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
  <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
  <title>Plasma-Manager manual</title>
 <link rel="stylesheet" type="text/css" href="style.css" />
 <script src="highlightjs/highlight.pack.js" type="text/javascript"></script><script src="highlightjs/loader.js" type="text/javascript"></script>
+<script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const nav = document.getElementById("manual-toc");
+                nav?.addEventListener("click", (e) => {
+                    if (e.target.closest("a[href]") && nav.matches(":popover-open")) {
+                        nav.hidePopover();
+                    }
+                });
+            });
+        </script>
  <meta name="generator" content="nixos-render-docs" />
  <link rel="home" href="index.xhtml" title="Plasma-Manager manual" />
  <link rel="next" href="preface.xhtml" title="Preface" />
  </head>
  <body>
+  <button type="button" class="toc-toggle" popovertarget="manual-toc" popovertargetaction="toggle" aria-label="Toggle table of contents">☰</button>
   <div class="navheader">
    <table width="100%" summary="Navigation header">
     <tr>
@@ -25,6 +37,8 @@
    </table>
    <hr />
   </div>
+  <nav id="manual-toc" class="toc-sidebar" popover="auto"><ol class="toc"><li class="preface"><a href="preface.xhtml">Preface</a></li><li class="part"><a href="introduction.xhtml">Introduction</a></li><li class="appendix"><a href="options.xhtml">A. Plasma-Manager Options</a></li></ol></nav>
+  <main class="content">
  <div class="book">
   <div class="titlepage">
    <div>
@@ -33,7 +47,6 @@
    </div>
    <hr />
   </div>
-<div class="toc"> <p><strong>Table of Contents</strong></p> <dl class="toc">  <dt> <span class="preface">  <a href="preface.xhtml">Preface</a> </span></dt><dt> <span class="part">  <a href="introduction.xhtml">Introduction</a> </span></dt><dt> <span class="appendix">  <a href="options.xhtml">A. Plasma-Manager Options</a> </span></dt> </dl></div>
 
  </div>
   <div class="navfooter">
@@ -51,5 +64,6 @@
     </tr>
    </table>
   </div>
+  </main>
  </body>
 </html>
