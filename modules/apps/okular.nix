@@ -325,7 +325,14 @@
           "ShowSidebar" = applyIfSet gen.showSidebar;
         };
         "MainWindow" = {
-          "MenuBar" = applyIfSet (if gen.showMenuBar then "Enabled" else "Disabled");
+          "MenuBar" = applyIfSet (
+            if gen.showMenuBar == null then
+              null
+            else if gen.showMenuBar then
+              "Enabled"
+            else
+              "Disabled"
+          );
         };
         "UiSettings" = {
           "ColorScheme" = applyIfSet gen.colorScheme;
