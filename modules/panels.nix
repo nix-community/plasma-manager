@@ -239,19 +239,14 @@ in
       programs.plasma.startup.desktopScript."panels" = (
         lib.mkIf anyPanelSet (
           let
-            anyNonDefaultScreens = ((builtins.any (panel: panel.screen != null)) cfg.panels);
+            anyNonDefaultScreens = builtins.any (panel: panel.screen != null) cfg.panels;
             panelPreCMD = ''
               # We delete plasma-org.kde.plasma.desktop-appletsrc to hinder it
               # growing indefinitely. See:
               # https://github.com/nix-community/plasma-manager/issues/76
               [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ] && rm ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
             '';
-            panelLayoutStr = (
-              import ../lib/panel.nix {
-                inherit lib;
-                inherit config;
-              }
-            );
+            panelLayoutStr = import ../lib/panel.nix { inherit config lib; };
             panelPostCMD = (
               if anyNonDefaultScreens then
                 ''

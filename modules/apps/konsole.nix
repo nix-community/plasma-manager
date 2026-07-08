@@ -5,13 +5,7 @@
   ...
 }:
 let
-  inherit
-    (import ../../lib/types.nix {
-      inherit lib;
-      inherit config;
-    })
-    basicSettingsType
-    ;
+  inherit (import ../../lib/types.nix { inherit config lib; }) basicSettingsType;
 
   iniFormat = pkgs.formats.ini { };
 

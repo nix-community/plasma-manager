@@ -8,13 +8,7 @@
 
 let
   inherit (import ../lib/writeconfig.nix { inherit lib pkgs config; }) writeConfig;
-  inherit
-    (import ../lib/types.nix {
-      inherit lib;
-      inherit config;
-    })
-    coercedSettingsType
-    ;
+  inherit (import ../lib/types.nix { inherit config lib; }) coercedSettingsType;
 
   # Helper function to prepend the appropriate path prefix (e.g. XDG_CONFIG_HOME) to file
   prependPath =
