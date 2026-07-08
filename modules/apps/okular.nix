@@ -6,7 +6,6 @@
 }:
 
 let
-  cfg = config.programs.okular;
   getIndexFromEnum =
     enum: value:
     if value == null then
@@ -263,87 +262,73 @@ with lib.types;
     };
   };
 
-  config = {
-    home.packages = lib.mkIf (cfg.enable && cfg.package != null) [ cfg.package ];
-  };
-
-  # ==================================
-  #     WRITING THE OKULARPARTRC
-  config.programs.plasma.configFile."okularpartrc" = lib.mkIf cfg.enable (
+  config =
     let
+      cfg = config.programs.okular;
       gen = cfg.general;
       acc = cfg.accessibility;
       perf = cfg.performance;
+
       applyIfSet = opt: lib.mkIf (opt != null) opt;
     in
-    {
-      "PageView" = {
-        "SmoothScrolling" = applyIfSet gen.smoothScrolling;
-        "ShowScrollBars" = applyIfSet gen.showScrollbars;
-        "ViewContinuous" = applyIfSet gen.viewContinuous;
-        "ViewMode" = applyIfSet gen.viewMode;
-        "MouseMode" = applyIfSet gen.mouseMode;
-        "UseCustomBackgroundColor" = applyIfSet gen.useCustomBackgroundColor;
-        "BackgroundColor" = applyIfSet gen.backgroundColor;
+    lib.mkIf cfg.enable {
+
+      home.packages = lib.mkIf (cfg.package != null) [ cfg.package ];
+
+      programs.plasma.configFile."okularpartrc" = {
+        "PageView" = {
+          "SmoothScrolling" = applyIfSet gen.smoothScrolling;
+          "ShowScrollBars" = applyIfSet gen.showScrollbars;
+          "ViewContinuous" = applyIfSet gen.viewContinuous;
+          "ViewMode" = applyIfSet gen.viewMode;
+          "MouseMode" = applyIfSet gen.mouseMode;
+          "UseCustomBackgroundColor" = applyIfSet gen.useCustomBackgroundColor;
+          "BackgroundColor" = applyIfSet gen.backgroundColor;
+        };
+        "Zoom" = {
+          "ZoomMode" = applyIfSet gen.zoomMode;
+        };
+        "Core General" = {
+          "ObeyDRM" = applyIfSet gen.obeyDrm;
+        };
+        "General" = {
+          "ShellOpenFileInTabs" = applyIfSet gen.openFileInTabs;
+        };
+        "Document" = {
+          "ChangeColors" = applyIfSet acc.changeColors.enable;
+          "RenderMode" = applyIfSet acc.changeColors.mode;
+          "PaperColor" = applyIfSet acc.changeColors.paperColor;
+        };
+        "Dlg Accessibility" = {
+          "HighlightLinks" = applyIfSet acc.highlightLinks;
+          "RecolorBackground" = applyIfSet acc.changeColors.recolorBackground;
+          "RecolorForeground" = applyIfSet acc.changeColors.recolorForeground;
+          "BWContrast" = applyIfSet acc.changeColors.blackWhiteContrast;
+          "BWThreshold" = applyIfSet acc.changeColors.blackWhiteThreshold;
+        };
+        "Core Performance" = {
+          "MemoryLevel" = applyIfSet perf.memoryUsage;
+        };
+        "Dlg Performance" = {
+          "EnableCompositing" = applyIfSet perf.enableTransparencyEffects;
+        };
       };
 
-      "Zoom" = {
-        "ZoomMode" = applyIfSet gen.zoomMode;
-      };
-      "Core General" = {
-        "ObeyDRM" = applyIfSet gen.obeyDrm;
-      };
-
-      "General" = {
-        "ShellOpenFileInTabs" = applyIfSet gen.openFileInTabs;
-      };
-
-      "Document" = {
-        "ChangeColors" = applyIfSet acc.changeColors.enable;
-        "RenderMode" = applyIfSet acc.changeColors.mode;
-        "PaperColor" = applyIfSet acc.changeColors.paperColor;
-      };
-
-      "Dlg Accessibility" = {
-        "HighlightLinks" = applyIfSet acc.highlightLinks;
-        "RecolorBackground" = applyIfSet acc.changeColors.recolorBackground;
-        "RecolorForeground" = applyIfSet acc.changeColors.recolorForeground;
-        "BWContrast" = applyIfSet acc.changeColors.blackWhiteContrast;
-        "BWThreshold" = applyIfSet acc.changeColors.blackWhiteThreshold;
+      programs.plasma.configFile."okularrc" = {
+        "Desktop Entry" = {
+          "FullScreen" = applyIfSet gen.fullScreen;
+        };
+        "General" = {
+          "LockSidebar" = applyIfSet gen.lockSidebar;
+          "ShowSidebar" = applyIfSet gen.showSidebar;
+        };
+        "MainWindow" = {
+          "MenuBar" = applyIfSet (if gen.showMenuBar then "Enabled" else "Disabled");
+        };
+        "UiSettings" = {
+          "ColorScheme" = applyIfSet gen.colorScheme;
+        };
       };
 
-      "Core Performance" = {
-        "MemoryLevel" = applyIfSet perf.memoryUsage;
-      };
-
-      "Dlg Performance" = {
-        "EnableCompositing" = applyIfSet perf.enableTransparencyEffects;
-      };
-    }
-  );
-
-  config.programs.plasma.configFile."okularrc" = lib.mkIf cfg.enable (
-    let
-      gen = cfg.general;
-      applyIfSet = opt: lib.mkIf (opt != null) opt;
-    in
-    {
-      "Desktop Entry" = {
-        "FullScreen" = applyIfSet gen.fullScreen;
-      };
-
-      "General" = {
-        "LockSidebar" = applyIfSet gen.lockSidebar;
-        "ShowSidebar" = applyIfSet gen.showSidebar;
-      };
-
-      "MainWindow" = {
-        "MenuBar" = applyIfSet (if gen.showMenuBar then "Enabled" else "Disabled");
-      };
-
-      "UiSettings" = {
-        "ColorScheme" = applyIfSet gen.colorScheme;
-      };
-    }
-  );
+    };
 }
