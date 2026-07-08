@@ -5,7 +5,10 @@
   ...
 }:
 let
-  inherit (import ../../lib/types.nix { inherit config lib; }) basicSettingsType;
+  inherit (import ../../lib/types.nix { inherit config lib; })
+    attrsWith'
+    basicSettingsType
+    ;
 
   iniFormat = pkgs.formats.ini { };
 
@@ -58,7 +61,7 @@ let
         };
       };
       extraConfig = lib.mkOption {
-        type = with lib.types; attrsOf (attrsOf basicSettingsType);
+        type = attrsWith' "section" (attrsWith' "setting" basicSettingsType);
         default = { };
         example = { };
         description = ''
@@ -166,7 +169,7 @@ in
     };
 
     extraConfig = lib.mkOption {
-      type = with lib.types; attrsOf (attrsOf basicSettingsType);
+      type = attrsWith' "section" (attrsWith' "setting" basicSettingsType);
       default = { };
       description = ''
         Extra config to add to the `konsolerc`.

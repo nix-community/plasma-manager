@@ -66,4 +66,10 @@ in
     advancedSettingsType
     coercedSettingsType
     ;
+
+  attrsWith' =
+    placeholder: elemType:
+    lib.types.attrsWith {
+      inherit elemType placeholder;
+    };
 }
