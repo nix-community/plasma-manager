@@ -43,8 +43,7 @@ stdenv.mkDerivation {
       --style style.css \
       --script highlightjs/highlight.pack.js \
       --script highlightjs/loader.js \
-      --toc-depth 1 \
-      --section-toc-depth 1 \
+      --sidebar-depth 1 \
       manual.md \
       out/index.xhtml
   '';
