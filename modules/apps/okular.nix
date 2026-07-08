@@ -15,7 +15,6 @@ let
         (throw "getIndexFromEnum (okular): Value ${value} isn't present in the enum. This is a bug.")
         enum;
 in
-with lib.types;
 {
   options.programs.okular = {
     enable = lib.mkEnableOption ''
@@ -43,36 +42,38 @@ with lib.types;
       smoothScrolling = lib.mkOption {
         description = "Whether to use smooth scrolling.";
         default = null;
-        type = nullOr bool;
+        type = with lib.types; nullOr bool;
       };
 
       showScrollbars = lib.mkOption {
         description = "Whether to show scrollbars in the document viewer.";
         default = null;
-        type = nullOr bool;
+        type = with lib.types; nullOr bool;
       };
 
       openFileInTabs = lib.mkOption {
         description = "Whether to open files in tabs.";
         default = null;
-        type = nullOr bool;
+        type = with lib.types; nullOr bool;
       };
 
       viewContinuous = lib.mkOption {
         description = "Whether to open in continous mode by default.";
         default = null;
-        type = nullOr bool;
+        type = with lib.types; nullOr bool;
       };
 
       viewMode = lib.mkOption {
         description = "The view mode for the pages.";
         default = null;
-        type = nullOr (enum [
-          "Single"
-          "Facing"
-          "FacingFirstCentered"
-          "Summary"
-        ]);
+        type =
+          with lib.types;
+          nullOr (enum [
+            "Single"
+            "Facing"
+            "FacingFirstCentered"
+            "Summary"
+          ]);
       };
 
       zoomMode =
@@ -90,7 +91,7 @@ with lib.types;
             For those files which were opened before the previous zoom mode is applied.
           '';
           default = null;
-          type = nullOr (enum enumVals);
+          type = with lib.types; nullOr (enum enumVals);
           apply = getIndexFromEnum enumVals;
         };
 
@@ -101,7 +102,7 @@ with lib.types;
           Note that in some configurations of Okular, this option is not available.
         '';
         default = null;
-        type = nullOr bool;
+        type = with lib.types; nullOr bool;
       };
 
       mouseMode = lib.mkOption {
@@ -117,52 +118,54 @@ with lib.types;
           - `Magnifier`: Activates the magnifier with left mouse button.
         '';
         default = null;
-        type = nullOr (enum [
-          "Browse"
-          "Zoom"
-          "RectSelect"
-          "TextSelect"
-          "TableSelect"
-          "Magnifier"
-          "TrimSelect"
-        ]);
+        type =
+          with lib.types;
+          nullOr (enum [
+            "Browse"
+            "Zoom"
+            "RectSelect"
+            "TextSelect"
+            "TableSelect"
+            "Magnifier"
+            "TrimSelect"
+          ]);
       };
 
       showMenuBar = lib.mkOption {
         description = "Whether to show the menu bar.";
         default = null;
-        type = nullOr bool;
+        type = with lib.types; nullOr bool;
       };
       showSidebar = lib.mkOption {
         description = "Whether to show the sidebar.";
         default = null;
-        type = nullOr bool;
+        type = with lib.types; nullOr bool;
       };
       lockSidebar = lib.mkOption {
         description = "Whether to lock the sidebar from being toggled.";
         default = null;
-        type = nullOr bool;
+        type = with lib.types; nullOr bool;
       };
       fullScreen = lib.mkOption {
         description = "Whether to open in fullscreen by default.";
         default = null;
-        type = nullOr bool;
+        type = with lib.types; nullOr bool;
       };
       useCustomBackgroundColor = lib.mkOption {
         description = "Whether to set a custom background color (the color around the displayed page). By default, the Qt™ toolkit color is used when this option is unchecked. ";
         default = null;
-        type = nullOr bool;
+        type = with lib.types; nullOr bool;
       };
       backgroundColor = lib.mkOption {
         description = "The RGB color that will fill the part of the screen not covered by the page when on presentation mode.";
         default = null;
         example = "255,255,255";
-        type = nullOr str;
+        type = with lib.types; nullOr str;
       };
       colorScheme = lib.mkOption {
         description = "The color scheme used for the user interface. This does not affect the colors of the documents.";
         default = null;
-        type = nullOr str;
+        type = with lib.types; nullOr str;
       };
     };
 
@@ -172,7 +175,7 @@ with lib.types;
       highlightLinks = lib.mkOption {
         description = "Whether to draw borders around links.";
         default = null;
-        type = nullOr bool;
+        type = with lib.types; nullOr bool;
       };
 
       changeColors = {
@@ -182,50 +185,52 @@ with lib.types;
         mode = lib.mkOption {
           description = "Mode used to change the colors.";
           default = null;
-          type = nullOr (enum [
-            # Inverts colors, including hue
-            "Inverted"
-            # Change background color (see option below)
-            "Paper"
-            # Change light and dark colors (see options below)
-            "Recolor"
-            # Change to black & white colors (see options below)
-            "BlackWhite"
-            # Invert lightness but leave hue and saturation
-            "InvertLightness"
-            # Like InvertLightness, but slightly more contrast
-            "InvertLumaSymmetric"
-            # Like InvertLightness, but much more contrast
-            "InvertLuma"
-            # Shift hue of all colors by 120 degrees
-            "HueShiftPositive"
-            # Shift hue of all colors by 240 degrees
-            "HueShiftNegative"
-          ]);
+          type =
+            with lib.types;
+            nullOr (enum [
+              # Inverts colors, including hue
+              "Inverted"
+              # Change background color (see option below)
+              "Paper"
+              # Change light and dark colors (see options below)
+              "Recolor"
+              # Change to black & white colors (see options below)
+              "BlackWhite"
+              # Invert lightness but leave hue and saturation
+              "InvertLightness"
+              # Like InvertLightness, but slightly more contrast
+              "InvertLumaSymmetric"
+              # Like InvertLightness, but much more contrast
+              "InvertLuma"
+              # Shift hue of all colors by 120 degrees
+              "HueShiftPositive"
+              # Shift hue of all colors by 240 degrees
+              "HueShiftNegative"
+            ]);
         };
         paperColor = lib.mkOption {
           description = "Paper color in RGB. Used for the `Paper` mode.";
           default = null;
           example = "255,255,255";
-          type = nullOr str;
+          type = with lib.types; nullOr str;
         };
         recolorBackground = lib.mkOption {
           description = "New background color in RGB. Used for the `Recolor` mode.";
           default = null;
           example = "0,0,0";
-          type = nullOr str;
+          type = with lib.types; nullOr str;
         };
         recolorForeground = lib.mkOption {
           description = "New foreground color in RGB. Used for the `Recolor` mode.";
           default = null;
           example = "255,255,255";
-          type = nullOr str;
+          type = with lib.types; nullOr str;
         };
         blackWhiteContrast = lib.mkOption {
           description = "New contrast strength. Used for the `BlackWhite` mode.";
           default = null;
           example = 4;
-          type = nullOr (ints.between 2 6);
+          type = with lib.types; nullOr (ints.between 2 6);
         };
         blackWhiteThreshold = lib.mkOption {
           description = ''
@@ -235,7 +240,7 @@ with lib.types;
           '';
           default = null;
           example = 127;
-          type = nullOr (numbers.between 2 253);
+          type = with lib.types; nullOr (numbers.between 2 253);
         };
       };
     };
@@ -246,18 +251,20 @@ with lib.types;
       enableTransparencyEffects = lib.mkOption {
         description = "Whether to enable transparancy effects. This may increase CPU usage.";
         default = null;
-        type = nullOr bool;
+        type = with lib.types; nullOr bool;
       };
 
       memoryUsage = lib.mkOption {
         description = "Memory usage profile for Okular. This may impact the speed performance of Okular, as it determines how many computation results are kept in memory.";
         default = null;
-        type = nullOr (enum [
-          "Low"
-          "Normal"
-          "Aggressive"
-          "Greedy"
-        ]);
+        type =
+          with lib.types;
+          nullOr (enum [
+            "Low"
+            "Normal"
+            "Aggressive"
+            "Greedy"
+          ]);
       };
     };
   };
