@@ -2,6 +2,9 @@
 let
   dontCheckModules = {
     _module.check = false;
+    _module.args = {
+      inherit pkgs lib;
+    };
   };
   modules = [
     ../modules
