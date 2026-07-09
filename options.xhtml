@@ -4204,9 +4204,58 @@ boolean</p>
 Choose them in any profile with <code class="literal">profiles.&lt;profile&gt;.colorScheme = &lt;name&gt;</code>;</p>
 
 <p><span class="emphasis"><em>Type:</em></span>
-attribute set of absolute path</p>
+attribute set of (absolute path or attribute set of section of an INI file (attrs of INI atom (null, bool, int, float or string)))</p>
 
 <p><span class="emphasis"><em>Default:</em></span></p><pre><code class="programlisting nix">{ }
+</code></pre>
+
+<p><span class="emphasis"><em>Example:</em></span></p><pre><code class="programlisting nix">{
+  CustomTheme = ./CustomTheme.colorscheme;
+  Breeze = {
+    General = {
+      Anchor = &quot;0.5,0.5&quot;;
+      Blur = true;
+      ColorRandomization = false;
+      Description = &quot;Breeze&quot;;
+      FillStyle = &quot;Tile&quot;;
+      Opacity = 0.96;
+      Wallpaper = ./cool-wallpaper.png;
+      WallpaperFlipType = &quot;NoFlip&quot;;
+      WallpaperOpacity = 1;
+    };
+    Foreground.Color = &quot;252,252,252&quot;;
+    ForegroundFaint.Color = &quot;239,240,241&quot;;
+    ForegroundIntense.Color = &quot;61,174,233&quot;;
+    Background.Color = &quot;35,38,39&quot;;
+    BackgroundFaint.Color = &quot;49,54,59&quot;;
+    BackgroundIntense.Color = &quot;0,0,0&quot;;
+    Color0.Color = &quot;35,38,39&quot;;
+    Color0Faint.Color = &quot;49,54,59&quot;;
+    Color0Intense.Color = &quot;127,140,141&quot;;
+    Color1.Color = &quot;127,140,141&quot;;
+    Color1Faint.Color = &quot;120,50,40&quot;;
+    Color1Intense.Color = &quot;192,57,43&quot;;
+    Color2.Color = &quot;17,209,22&quot;;
+    Color2Faint.Color = &quot;23,162,98&quot;;
+    Color2Intense.Color = &quot;28,220,154&quot;;
+    Color3.Color = &quot;246,116,0&quot;;
+    Color3Faint.Color = &quot;182,86,25&quot;;
+    Color3Intense.Color = &quot;253,188,75&quot;;
+    Color4.Color = &quot;29,153,243&quot;;
+    Color4Faint.Color = &quot;27,102,143&quot;;
+    Color4Intense.Color = &quot;61,174,233&quot;;
+    Color5.Color = &quot;155,89,182&quot;;
+    Color5Faint.Color = &quot;97,74,115&quot;;
+    Color5Intense.Color = &quot;142,68,173&quot;;
+    Color6.Color = &quot;26,188,156&quot;;
+    Color6Faint.Color = &quot;24,108,96&quot;;
+    Color6Intense.Color = &quot;22,160,133&quot;;
+    Color7.Color = &quot;252,252,252&quot;;
+    Color7Faint.Color = &quot;99,104,109&quot;;
+    Color7Intense.Color = &quot;255,255,255&quot;;
+  }
+}
+
 </code></pre>
 
 <p><span class="emphasis"><em>Declared by:</em></span></p>
