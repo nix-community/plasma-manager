@@ -20,6 +20,7 @@ let
       "keep-below-windows"
       "keep-above-windows"
       "hide-from-screencast"
+      "spacer"
     ];
     shortNames = [
       "M"
@@ -33,6 +34,7 @@ let
       "B"
       "F"
       "E"
+      "_"
     ];
   };
 
