@@ -9,6 +9,7 @@
 <link rel="stylesheet" type="text/css" href="style.css" />
 <script src="highlightjs/highlight.pack.js" type="text/javascript"></script><script src="highlightjs/loader.js" type="text/javascript"></script>
 <script>
+            //<![CDATA[
             document.addEventListener("DOMContentLoaded", () => {
                 const nav = document.getElementById("manual-toc");
                 nav?.addEventListener("click", (e) => {
@@ -17,6 +18,64 @@
                     }
                 });
             });
+            //]]>
+        </script>
+<script>
+function createObserver() {
+  const content = document.querySelector(".content");
+  const headings = content.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+  const links = new Map();
+  document.querySelectorAll("ol li a").forEach((a) => {
+    links.set(a.hash.slice(1), a);
+  });
+  const visible = new Set();
+
+  function setActive(link) {
+    document
+      .querySelectorAll("ol.toc a.active, ol.toc a.active-trail")
+      .forEach((a) => a.classList.remove("active", "active-trail"));
+
+    link.classList.add("active");
+
+    let li = link.closest("li")?.parentElement.closest("li");
+    for (; li; li = li.parentElement.closest("li")) {
+      li.querySelector(":scope > details > summary > a")?.classList.add(
+        "active-trail",
+      );
+    }
+  }
+
+  const handleIntersect = (entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) visible.add(entry.target);
+      else visible.delete(entry.target);
+    }
+
+    const current = [...visible]
+      .filter((h) => links.has(h.id))
+      .sort(
+        (a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top,
+      )[0];
+
+    if (!current) return;
+
+    const link = links.get(current.id);
+    if (link) setActive(link);
+  };
+
+  const observer = new IntersectionObserver(handleIntersect, {
+    root: content,
+    rootMargin: "0px 0px -70% 0px",
+    threshold: 0,
+  });
+
+  [...headings]
+    .filter((h) => h.id && links.has(h.id))
+    .forEach((h) => observer.observe(h));
+}
+
+document.addEventListener("DOMContentLoaded", createObserver);
         </script>
  <meta name="generator" content="nixos-render-docs" />
  <link rel="home" href="index.xhtml" title="Plasma-Manager manual" />
@@ -24,6 +83,7 @@
  </head>
  <body>
   <button type="button" class="toc-toggle" popovertarget="manual-toc" popovertargetaction="toggle" aria-label="Toggle table of contents">☰</button>
+
   <div class="navheader">
    <table width="100%" summary="Navigation header">
     <tr>
