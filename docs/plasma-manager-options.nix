@@ -45,7 +45,7 @@ stdenv.mkDerivation {
       --script highlightjs/loader.js \
       --sidebar-depth 1 \
       manual.md \
-      out/index.xhtml
+      out/index.html
   '';
 
   installPhase = ''

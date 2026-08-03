@@ -81,7 +81,7 @@ With more to come! These should give you some idea how to get started with
 `plasma-manager`.
 
 Additionally,
-[the manual section containing all the supported plasma-manager options](https://nix-community.github.io/plasma-manager/options.xhtml)
+[the manual section containing all the supported plasma-manager options](https://nix-community.github.io/plasma-manager/options.html)
 may come in handy.
 
 ## Make your configuration more declarative with overrideConfig
