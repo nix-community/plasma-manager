@@ -54,6 +54,10 @@ let
     assert  kwinrc              A                 org.kde.kdecoration2          ButtonsOnRight     # Set with kwin option
     assert  kwinrc              MMM               org.kde.kdecoration2          ButtonsOnLeft      # Set with configFile option
     assert  kwinrc              testvalue         testgroup                     testkey            #
+    assert  kwinrc              Two               Desktops                      Name_2             # Virtual desktop names written declaratively
+    assert  kwinrc              '{"layoutDirection":"horizontal","tiles":[{"width":1.0}]}' \
+                                                  Tiling Desktop_2 11111111-2222-3333-4444-555555555555 tiles # Auto-detected display UUID uses correct desktop id
+    assert  kwinrc              3                 Tiling Desktop_2 11111111-2222-3333-4444-555555555555 padding # Padding written for auto-detected display UUID
   '';
 in
 testers.nixosTest {
@@ -83,6 +87,22 @@ testers.nixosTest {
           enable = true;
           workspace.clickItemTo = "select";
           kwin.titlebarButtons.right = [ "maximize" ];
+          kwin.virtualDesktops = {
+            desktops = [
+              { name = "One"; }
+              {
+                name = "Two";
+                tiling = {
+                  padding = 3;
+                  tiles = {
+                    layoutDirection = "horizontal";
+                    tiles = [ { width = 1.0; } ];
+                  };
+                };
+              }
+            ];
+            rows = 1;
+          };
           configFile.kwinrc = {
             testgroup.testkey = "testvalue";
             Plugins.somePluginEnabled = true;
@@ -114,6 +134,15 @@ testers.nixosTest {
           cat <<EOF >> ~/.config/kdeglobals
           [escaped/nested][group]
           untouched = \svalue
+          EOF
+          cat <<EOF > ~/.config/kwinoutputconfig.json
+          {
+            "outputs": [
+              {
+                "uuid": "11111111-2222-3333-4444-555555555555"
+              }
+            ]
+          }
           EOF
         '';
       };
