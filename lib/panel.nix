@@ -13,6 +13,12 @@ let
           ${cmd}
         }
       '';
+
+      plasmaPanelAlignment = {
+        left = "1";    # Qt::AlignLeft
+        center = "132";  # Qt::AlignCenter
+        right = "2";   # Qt::AlignRight
+      };
     in
     ''
       ${
@@ -27,7 +33,16 @@ let
         const panel = new Panel();
         panel.height = ${toString panel.height};
         panel.floating = ${boolToString panel.floating};
-        ${stringIfNotNull panel.alignment ''panel.alignment = "${panel.alignment}";''}
+
+        // Set the panel alignment directly using the config file
+        // Otherwise, it will be set specifically for the primary screen
+        if (panel.alignment) {
+          const shellConfig = ConfigFile("plasmashellrc");
+          shellConfig.group = "PlasmaViews";
+          const panelConfig = ConfigFile(shellConfig, "Panel " + panel.id);
+          panelConfig.writeEntry("alignment", ${plasmaPanelAlignment.${panel.alignment}});
+        }
+
         ${stringIfNotNull panel.hiding ''panel.hiding = "${panel.hiding}";''}
         ${stringIfNotNull panel.location ''panel.location = "${panel.location}";''}
         ${stringIfNotNull panel.lengthMode (plasma6OnlyCmd ''panel.lengthMode = "${panel.lengthMode}";'')}
