@@ -45,8 +45,7 @@ let
       options = builtins.removeAttrs opts [ "_module" ];
     in
     pkgs.buildPackages.nixosOptionsDoc {
-      inherit options;
-      inherit transformOptions;
+      inherit options transformOptions;
       warningsAreErrors = false;
     }
   );

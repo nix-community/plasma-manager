@@ -103,7 +103,7 @@ in
         };
       };
       default = { };
-      type = with lib.types; attrsOf webSearchKeyword;
+      type = lib.types.attrsOf webSearchKeyword;
     };
 
   };

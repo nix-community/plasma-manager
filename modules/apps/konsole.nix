@@ -5,74 +5,105 @@
   ...
 }:
 let
-  inherit
-    (import ../../lib/types.nix {
-      inherit lib;
-      inherit config;
-    })
+  inherit (import ../../lib/types.nix { inherit config lib; })
+    attrsWith'
     basicSettingsType
     ;
 
   iniFormat = pkgs.formats.ini { };
 
   cfg = config.programs.konsole;
-  profilesSubmodule = {
-    options = {
-      name = lib.mkOption {
-        type = with lib.types; nullOr str;
-        default = null;
-        description = ''
-          Name of the profile. Defaults to the attribute name.
-        '';
-      };
-      colorScheme = lib.mkOption {
-        type = with lib.types; nullOr str;
-        default = null;
-        example = "Catppuccin-Mocha";
-        description = ''
-          Color scheme the profile will use. You can check the files you can
-          use in `$HOME/.local/share/konsole` or `/run/current-system/sw/share/konsole`.
-          You might also add a custom color scheme using
-          `programs.konsole.customColorSchemes`.
-        '';
-      };
-      command = lib.mkOption {
-        type = with lib.types; nullOr str;
-        default = null;
-        example = lib.literalExpression ''"''${pkgs.zsh}/bin/zsh"'';
-        description = ''
-          The command to run on new sessions.
-        '';
-      };
-      font = {
+
+  mkColorScheme =
+    name: value:
+    lib.attrsets.nameValuePair "konsole/${name}.colorscheme" {
+      source =
+        if builtins.isPath value then value else iniFormat.generate "konsole-${name}.colorscheme" value;
+    };
+
+  profileType =
+    { config, name, ... }:
+    {
+      imports = [
+        (lib.mkRenamedOptionModule [ "extraConfig" ] [ "settings" ])
+      ];
+
+      options = {
         name = lib.mkOption {
           type = lib.types.str;
-          example = "Hack";
+          default = name;
+          defaultText = "<name>";
           description = ''
-            Name of the font the profile should use.
+            Name of the profile. Defaults to the attribute name.
           '';
         };
-        size = lib.mkOption {
-          # The konsole ui gives you a limited range
-          type = (lib.types.numbers.between 4 128);
-          default = 10;
-          example = 12;
+        colorScheme = lib.mkOption {
+          type = with lib.types; nullOr str;
+          default = null;
+          example = "Catppuccin-Mocha";
           description = ''
-            Size of the font.
-            Due to Konsole limitations, only a limited range of sizes is possible.
+            Color scheme the profile will use. You can check the files you can
+            use in `$HOME/.local/share/konsole` or `/run/current-system/sw/share/konsole`.
+            You might also add a custom color scheme using
+            `programs.konsole.customColorSchemes`.
+          '';
+        };
+        command = lib.mkOption {
+          type = with lib.types; nullOr str;
+          default = null;
+          example = lib.literalExpression ''"''${pkgs.zsh}/bin/zsh"'';
+          description = ''
+            The command to run on new sessions.
+          '';
+        };
+        font = {
+          name = lib.mkOption {
+            type = lib.types.str;
+            example = "Hack";
+            description = ''
+              Name of the font the profile should use.
+            '';
+          };
+          size = lib.mkOption {
+            # The konsole ui gives you a limited range
+            type = (lib.types.numbers.between 4 128);
+            default = 10;
+            example = 12;
+            description = ''
+              Size of the font.
+              Due to Konsole limitations, only a limited range of sizes is possible.
+            '';
+          };
+        };
+        settings = lib.mkOption {
+          type = attrsWith' "section" (attrsWith' "setting" basicSettingsType);
+          default = { };
+          example.Scrolling.ScrollBarPosition = 2;
+          description = ''
+            Settings that will be written to
+            `''${config.xdg.dataHome}/konsole/''${profile.name}.profile`.
           '';
         };
       };
-      extraConfig = lib.mkOption {
-        type = with lib.types; attrsOf (attrsOf basicSettingsType);
-        default = { };
-        example = { };
-        description = ''
-          Extra keys to manually add to the profile.
-        '';
+
+      config.settings = {
+        General = {
+          Name = config.name;
+          Parent = "FALLBACK/"; # Konsole generated profiles seem to always have this
+        }
+        // lib.optionalAttrs (config.command != null) { Command = config.command; };
+        Appearance = {
+          Font = "${config.font.name},${toString config.font.size}";
+        }
+        // lib.optionalAttrs (config.colorScheme != null) { ColorScheme = config.colorScheme; };
       };
     };
-  };
+
+  mkProfile =
+    _: profile:
+    lib.nameValuePair "konsole/${profile.name}.profile" {
+      text = lib.generators.toINI { } profile.settings;
+    };
 in
 
 {
@@ -92,7 +123,7 @@ in
     };
 
     profiles = lib.mkOption {
-      type = with lib.types; nullOr (attrsOf (submodule profilesSubmodule));
+      type = with lib.types; nullOr (attrsOf (submodule profileType));
       default = { };
       description = ''
         Plasma profiles to generate.
@@ -100,12 +131,7 @@ in
     };
 
     customColorSchemes = lib.mkOption {
-      type =
-        with lib.types;
-        attrsOf (oneOf [
-          path
-          iniFormat.type
-        ]);
+      type = with lib.types; attrsOf (either path iniFormat.type);
       default = { };
       example = lib.literalExpression ''
         {
@@ -172,7 +198,7 @@ in
     };
 
     extraConfig = lib.mkOption {
-      type = with lib.types; attrsOf (attrsOf basicSettingsType);
+      type = attrsWith' "section" (attrsWith' "setting" basicSettingsType);
       default = { };
       description = ''
         Extra config to add to the `konsolerc`.
@@ -199,49 +225,8 @@ in
     ];
 
     xdg.dataFile = lib.mkMerge [
-      (lib.mkIf (cfg.profiles != { }) (
-        lib.mkMerge (
-          lib.mapAttrsToList (
-            attrName: profile:
-            let
-              # Use the name from the name option if it's set
-              profileName = if builtins.isString profile.name then profile.name else attrName;
-              fontString = lib.mkIf (
-                profile.font.name != null
-              ) "${profile.font.name},${builtins.toString profile.font.size}";
-            in
-            {
-              "konsole/${profileName}.profile".text = lib.generators.toINI { } (
-                lib.recursiveUpdate {
-                  "General" = (
-                    {
-                      "Name" = profileName;
-                      # Konsole generated profiles seem to always have this
-                      "Parent" = "FALLBACK/";
-                    }
-                    // (lib.optionalAttrs (profile.command != null) { "Command" = profile.command; })
-                  );
-                  "Appearance" = (
-                    {
-                      # If the font size is not set we leave a comma at the end after the name
-                      # We should fix this probs but konsole doesn't seem to care ¯\_(ツ)_/¯
-                      "Font" = fontString.content;
-                    }
-                    // (lib.optionalAttrs (profile.colorScheme != null) { "ColorScheme" = profile.colorScheme; })
-                  );
-                } profile.extraConfig
-              );
-            }
-          ) cfg.profiles
-        )
-      ))
-      (lib.attrsets.mapAttrs' (
-        name: value:
-        lib.attrsets.nameValuePair "konsole/${name}.colorscheme" {
-          source =
-            if builtins.isPath value then value else iniFormat.generate "konsole-${name}.colorscheme" value;
-        }
-      ) cfg.customColorSchemes)
+      (lib.mapAttrs' mkColorScheme cfg.customColorSchemes)
+      (lib.mapAttrs' mkProfile cfg.profiles)
     ];
   };
 }

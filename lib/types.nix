@@ -61,7 +61,15 @@ let
     coercedTo basicSettingsType (value: { inherit value; }) advancedSettingsType;
 in
 {
-  inherit basicSettingsType;
-  inherit advancedSettingsType;
-  inherit coercedSettingsType;
+  inherit
+    basicSettingsType
+    advancedSettingsType
+    coercedSettingsType
+    ;
+
+  attrsWith' =
+    placeholder: elemType:
+    lib.types.attrsWith {
+      inherit elemType placeholder;
+    };
 }

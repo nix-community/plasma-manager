@@ -8,11 +8,7 @@
 {
   options.programs.plasma =
     let
-      attrsWith' =
-        placeholder: elemType:
-        lib.types.attrsWith {
-          inherit elemType placeholder;
-        };
+      inherit (import ../lib/types.nix { inherit config lib; }) attrsWith';
       keys = with lib.types; either str (listOf str);
     in
     {

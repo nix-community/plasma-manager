@@ -8,13 +8,7 @@
 
 let
   inherit (import ../lib/writeconfig.nix { inherit lib pkgs config; }) writeConfig;
-  inherit
-    (import ../lib/types.nix {
-      inherit lib;
-      inherit config;
-    })
-    coercedSettingsType
-    ;
+  inherit (import ../lib/types.nix { inherit config lib; }) coercedSettingsType attrsWith';
 
   # Helper function to prepend the appropriate path prefix (e.g. XDG_CONFIG_HOME) to file
   prependPath =
@@ -29,7 +23,12 @@ let
     // (prependPath config.xdg.configHome plasmaCfg.configFile)
     // (prependPath config.xdg.dataHome plasmaCfg.dataFile);
 
-  fileSettingsType = with lib.types; attrsOf (attrsOf (attrsOf coercedSettingsType));
+  fileSettingsType = lib.pipe coercedSettingsType [
+    (attrsWith' "section")
+    (attrsWith' "path")
+    (attrsWith' "setting")
+  ]
+  ;
 
   ##############################################################################
   # Generate a script that will use write_config.py to update all

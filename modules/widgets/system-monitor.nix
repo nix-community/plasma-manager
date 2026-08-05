@@ -188,8 +188,7 @@ in
         config = lib.filterAttrsRecursive (_: v: v != null) (
           lib.recursiveUpdate {
             Appearance = {
-              inherit title;
-              inherit showTitle;
+              inherit showTitle title;
               chartFace = displayStyle;
             };
             Sensors = {
