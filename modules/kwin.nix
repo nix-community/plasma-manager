@@ -4,7 +4,6 @@
   pkgs,
   ...
 }:
-
 let
   cfg = config.programs.plasma;
   validTitlebarButtons = {
@@ -136,6 +135,7 @@ in
         "animation"
       ]
     )
+    ./scripts/tiling/krohnkite.nix
   ];
 
   options.programs.plasma.kwin = {
