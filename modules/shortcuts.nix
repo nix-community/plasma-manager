@@ -93,7 +93,6 @@
       mkGlobalShortcutFor =
         group: _action: skey:
         let
-          # Keys are expected to be a list:
           keys =
             if !builtins.isList skey then
               [ skey ]
@@ -101,18 +100,15 @@
               [ "none" ]
             else
               skey;
-
-          # Don't allow un-escaped commas:
-          escape = lib.escape [ "," ];
-          keysStr = builtins.concatStringsSep "\t" (map escape keys);
+          mkKeysString = lib.concatStringsSep "\t";
         in
 
-        # If the shortcut is not in the "services" group, we have to sanitize it.
+        # If the shortcut is not in the "services" group, we have to sanitise it.
         if lib.hasPrefix "services/" group then
-          keysStr
+          mkKeysString keys
         else
           lib.concatStringsSep "," [
-            keysStr
+            (mkKeysString (map (lib.escape [ "," ]) keys))
             "" # List of default keys, not needed.
             "" # Display string, not needed.
           ];
