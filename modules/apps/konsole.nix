@@ -239,7 +239,10 @@ in
         name: value:
         lib.attrsets.nameValuePair "konsole/${name}.colorscheme" {
           source =
-            if builtins.isPath value then value else iniFormat.generate "konsole-${name}.colorscheme" value;
+            if lib.types.path.check value then
+              value
+            else
+              iniFormat.generate "konsole-${name}.colorscheme" value;
         }
       ) cfg.customColorSchemes)
     ];
