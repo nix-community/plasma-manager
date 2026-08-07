@@ -577,6 +577,67 @@ in
       };
     };
 
+    tabBox = {
+      showTabBox = lib.mkOption {
+        type = with lib.types; nullOr bool;
+        default = null;
+        example = true;
+        description = "Whether to show the Task Switcher.";
+      };
+      layoutName =
+        let
+          enumVals = [
+            "sidebar"
+            "compact"
+            "coverswitch"
+            "flipswitch"
+            "big_icons"
+            "thumbnail_grid"
+          ];
+        in
+        lib.mkOption {
+          type = with lib.types; nullOr (enum enumVals);
+          default = null;
+          example = "sidebar";
+          description = "The visualisation type of Task Switcher.";
+        };
+      sortOrder =
+        let
+          switchingModeId = {
+            recent = 0;
+            stacking = 1;
+          };
+        in
+        lib.mkOption {
+          type = with lib.types; nullOr (enum (builtins.attrNames switchingModeId));
+          default = null;
+          example = "recent";
+          description = "The sorting order of Task Switcher.";
+          apply = sortOrder: if (sortOrder == null) then null else switchingModeId.${sortOrder};
+        };
+      includeShowDesktop = lib.mkOption {
+        type = with lib.types; nullOr bool;
+        default = null;
+        example = true;
+        description = "Include 'Show Desktop' entry in Task Switcher.";
+        apply = showDesktopMode: if showDesktopMode == true then 1 else null;
+      };
+      oneWindowPerApp = lib.mkOption {
+        type = with lib.types; nullOr bool;
+        default = null;
+        example = true;
+        description = "Show only one window per application in Task Switcher.";
+        apply = applicationMode: if applicationMode == true then 1 else null;
+      };
+      minimisedFirst = lib.mkOption {
+        type = with lib.types; nullOr bool;
+        default = null;
+        example = true;
+        description = "Order minimised windows after non-minimised ones in Task Switcher.";
+        apply = minimisedMode: if minimisedMode == true then 1 else null;
+      };
+    };
+
     scripts = {
       polonium = {
         enable = lib.mkOption {
@@ -937,6 +998,18 @@ in
               TilePopups = cfg.kwin.scripts.polonium.settings.tilePopups;
               TimerDelay = cfg.kwin.scripts.polonium.settings.callbackDelay;
             };
+          })
+          (lib.mkIf (cfg.kwin.tabBox.showTabBox != null) { TabBox.ShowTabBox = cfg.kwin.tabBox.showTabBox; })
+          (lib.mkIf (cfg.kwin.tabBox.layoutName != null) { TabBox.LayoutName = cfg.kwin.tabBox.layoutName; })
+          (lib.mkIf (cfg.kwin.tabBox.sortOrder != null) { TabBox.SwitchingMode = cfg.kwin.tabBox.sortOrder; })
+          (lib.mkIf (cfg.kwin.tabBox.includeShowDesktop != null) {
+            TabBox.ShowDesktopMode = cfg.kwin.tabBox.includeShowDesktop;
+          })
+          (lib.mkIf (cfg.kwin.tabBox.oneWindowPerApp != null) {
+            TabBox.ApplicationsMode = cfg.kwin.tabBox.oneWindowPerApp;
+          })
+          (lib.mkIf (cfg.kwin.tabBox.minimisedFirst != null) {
+            TabBox.OrderMinimizedMode = cfg.kwin.tabBox.minimisedFirst;
           })
 
           (lib.mkIf (cfg.kwin.tiling.padding != null) {
