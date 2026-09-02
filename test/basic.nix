@@ -52,6 +52,7 @@ let
                                                   Wayland                       InputMethod        #
     assert  kwinrc              true              Plugins                       somePluginEnabled  #
     assert  kwinrc              A                 org.kde.kdecoration2          ButtonsOnRight     # Set with kwin option
+    assert  kwinrc              true              Windows                       PerOutputVirtualDesktops # Set with kwin option
     assert  kwinrc              MMM               org.kde.kdecoration2          ButtonsOnLeft      # Set with configFile option
     assert  kwinrc              testvalue         testgroup                     testkey            #
   '';
@@ -83,6 +84,7 @@ testers.nixosTest {
           enable = true;
           workspace.clickItemTo = "select";
           kwin.titlebarButtons.right = [ "maximize" ];
+          kwin.virtualDesktops.switchIndependentlyPerScreen = true;
           configFile.kwinrc = {
             testgroup.testkey = "testvalue";
             Plugins.somePluginEnabled = true;
