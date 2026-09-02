@@ -411,6 +411,15 @@ in
     };
 
     virtualDesktops = {
+      switchIndependentlyPerScreen = lib.mkOption {
+        type = with lib.types; nullOr bool;
+        default = null;
+        description = ''
+          Whether to switch virtual desktops independently for each screen.
+
+          Available in Plasma 6.7 and later.
+        '';
+      };
       rows = lib.mkOption {
         type = with lib.types; nullOr ints.positive;
         default = null;
@@ -879,6 +888,9 @@ in
           })
 
           # Virtual Desktops
+          (lib.mkIf (cfg.kwin.virtualDesktops.switchIndependentlyPerScreen != null) {
+            Windows.PerOutputVirtualDesktops = cfg.kwin.virtualDesktops.switchIndependentlyPerScreen;
+          })
           (lib.mkIf (cfg.kwin.virtualDesktops.number != null) {
             Desktops = lib.mkMerge [
               { Number = cfg.kwin.virtualDesktops.number; }
