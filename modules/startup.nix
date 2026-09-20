@@ -1,6 +1,6 @@
 # Allows to run commands/scripts at startup (this is used by some of the other
 # modules, which may need to do this, but can also be used on its own)
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 let
   cfg = config.programs.plasma;
   topScriptName = "run_all.sh";
@@ -207,13 +207,17 @@ in
           }
         ];
 
-        configFile."autostart/plasma-manager-autostart.desktop".text = ''
-          [Desktop Entry]
-          Type=Application
-          Name=Plasma Manager theme application
-          Exec=${config.xdg.dataHome}/plasma-manager/${topScriptName}
-          X-KDE-autostart-condition=ksmserver
-        '';
+        autostart = {
+           enable = lib.mkDefault true;
+           entries = [ (pkgs.writeText "plasma-manager-autostart.desktop" ''
+              [Desktop Entry]
+              Type=Application
+              Name=Plasma Manager theme application
+              Exec=${config.xdg.dataHome}/plasma-manager/${topScriptName}
+              X-KDE-autostart-condition=ksmserver
+            '')
+          ];
+        };
       };
 
   # Due to the fact that running certain desktop-scripts can reset what has
