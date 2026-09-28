@@ -68,8 +68,6 @@ let
 
   mkTilingLayoutId = seed: hashToUuid (builtins.hashString "sha256" seed);
 
-  resolveTilingLayoutId = seed: mkTilingLayoutId seed;
-
   getIndexFromEnum =
     enum: value:
     if value == null then
@@ -1095,7 +1093,7 @@ in
           })
 
           (lib.mkIf (cfg.kwin.tiling.layout != null) {
-            "Tiling/${resolveTilingLayoutId "kwin-tiling-global-layout-v1"}" = lib.mkMerge [
+            "Tiling/${mkTilingLayoutId "kwin-tiling-global-layout-v1"}" = lib.mkMerge [
               {
                 tiles = {
                   escapeValue = false;
