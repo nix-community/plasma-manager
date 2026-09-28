@@ -70,14 +70,6 @@ let
 
   resolveTilingLayoutId = seed: mkTilingLayoutId seed;
 
-  desktopSwitchingAnimation =
-    if cfg.kwin.effects.desktopSwitching.animation != null then
-      cfg.kwin.effects.desktopSwitching.animation
-    else if cfg.kwin.virtualDesktops != null then
-      cfg.kwin.virtualDesktops.animation
-    else
-      null;
-
   getIndexFromEnum =
     enum: value:
     if value == null then
@@ -169,24 +161,20 @@ let
           releases may still read the legacy output ID.
         '';
       };
-      animation = lib.mkOption {
-        type =
-          with lib.types;
-          nullOr (enum [
-            "fade"
-            "slide"
-            "off"
-          ]);
-        default = null;
-        description = ''
-          Deprecated compatibility option for desktop switching animation.
-          Prefer `programs.plasma.kwin.effects.desktopSwitching.animation`.
-        '';
-      };
     };
   };
 in
 {
+  imports = [
+    (lib.mkRemovedOptionModule [
+      "programs"
+      "plasma"
+      "kwin"
+      "tiling"
+      "padding"
+    ] "Set programs.plasma.kwin.tiling.layout.padding instead.")
+  ];
+
   options.programs.plasma.kwin = {
     titlebarButtons.right = lib.mkOption {
       type = with lib.types; nullOr (listOf (enum validTitlebarButtons.longNames));
@@ -485,6 +473,10 @@ in
       description = ''
         Virtual desktops to create. The `desktops` list defines each desktop
         with an optional tiling layout. The `rows` option arranges them in a grid.
+
+        This replaces the old `names`/`number` options: the desktop count is
+        now the length of `desktops`, and each desktop's name is set with its
+        `name` field.
       '';
     };
 
@@ -612,6 +604,11 @@ in
             ];
           };
         };
+        description = ''
+          A single global tiling layout. Its KWin config group ID is now
+          generated automatically; the `id` field this used to require has
+          been removed.
+        '';
       };
     };
 
@@ -752,14 +749,6 @@ in
             || cfg.kwin.virtualDesktops.rows == null
             || (builtins.length cfg.kwin.virtualDesktops.desktops) >= cfg.kwin.virtualDesktops.rows;
           message = "KWin cannot have more rows than virtual desktops.";
-        }
-        {
-          assertion =
-            cfg.kwin.virtualDesktops == null
-            || cfg.kwin.virtualDesktops.animation == null
-            || cfg.kwin.effects.desktopSwitching.animation == null
-            || cfg.kwin.virtualDesktops.animation == cfg.kwin.effects.desktopSwitching.animation;
-          message = "Use either programs.plasma.kwin.virtualDesktops.animation or programs.plasma.kwin.effects.desktopSwitching.animation, or set both to the same value.";
         }
         {
           assertion =
@@ -945,9 +934,9 @@ in
           (lib.mkIf (cfg.kwin.effects.cube.enable != null) {
             Plugins.cubeEnabled = cfg.kwin.effects.cube.enable;
           })
-          (lib.mkIf (desktopSwitchingAnimation != null) {
-            Plugins.slideEnabled = desktopSwitchingAnimation == "slide";
-            Plugins.fadedesktopEnabled = desktopSwitchingAnimation == "fade";
+          (lib.mkIf (cfg.kwin.effects.desktopSwitching.animation != null) {
+            Plugins.slideEnabled = cfg.kwin.effects.desktopSwitching.animation == "slide";
+            Plugins.fadedesktopEnabled = cfg.kwin.effects.desktopSwitching.animation == "fade";
           })
           (lib.mkIf (cfg.kwin.effects.desktopSwitching.navigationWrapping != null) {
             Windows.RollOverDesktops = cfg.kwin.effects.desktopSwitching.navigationWrapping;
