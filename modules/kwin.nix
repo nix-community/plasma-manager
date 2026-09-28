@@ -794,11 +794,21 @@ in
         with pkgs;
         [ ] ++ lib.optionals (cfg.kwin.scripts.polonium.enable == true) [ polonium ];
 
+      # Output UUIDs are only known at activation time (KWin assigns them per
+      # monitor), so they can't be baked into `configFile."kwinrc"` at eval
+      # time the way every other kwin setting is. This activation step fills
+      # that one gap: it detects the current output UUIDs and writes/clears
+      # each desktop's `Tiling/<desktop>/<uuid>` group to match the current
+      # `virtualDesktops.desktops` config.
+      #
+      # Known limitation: this only reaches output UUIDs it can currently see
+      # (from kwinoutputconfig.json or an existing kwinrc Tiling group). A
+      # UUID for a monitor that's since been disconnected, on a desktop that
+      # still has tiling configured, won't be pruned.
       home.activation.plasmaKwinAutoApplyDesktopTiling =
         let
           desktops = if cfg.kwin.virtualDesktops == null then [ ] else cfg.kwin.virtualDesktops.desktops;
-          desktopsWithTiling = lib.filter (d: d.tiling != null) desktops;
-          autoDetectOutputIds = cfg.kwin.virtualDesktops != null && desktopsWithTiling != [ ] && cfg.kwin.virtualDesktops.outputIds == [ ];
+          autoDetectOutputIds = cfg.kwin.virtualDesktops != null && cfg.kwin.virtualDesktops.outputIds == [ ];
           desktopApplyCommands = lib.concatStringsSep "\n" (
             lib.imap1 (i: d:
               lib.optionalString (d.tiling != null)
@@ -811,6 +821,17 @@ in
                 '')
             ) desktops
           );
+          desktopCleanupCommands = lib.concatStringsSep "\n" (
+            lib.imap1 (i: d:
+              lib.optionalString (d.tiling == null)
+                (let
+                  desktopId = "Desktop_${builtins.toString i}";
+                in
+                ''
+                  cleanup_tiling "${desktopId}" "$output_id"
+                '')
+            ) desktops
+          );
         in
         lib.mkIf autoDetectOutputIds (lib.hm.dag.entryAfter [ "configure-plasma" ] ''
           set -eu
@@ -819,6 +840,7 @@ in
           kwinrc="$config_dir/kwinrc"
           kwinoutputconfig="$config_dir/kwinoutputconfig.json"
           kwriteconfig="${pkgs.kdePackages.kconfig}/bin/kwriteconfig6"
+          jq_bin="${pkgs.jq}/bin/jq"
           grep_bin="${pkgs.gnugrep}/bin/grep"
           sed_bin="${pkgs.gnused}/bin/sed"
           sort_bin="${pkgs.coreutils}/bin/sort"
@@ -845,8 +867,18 @@ in
             fi
           }
 
+          # kwriteconfig6 has no "delete group" flag; deleting every key it
+          # knows about is enough, since KConfig prunes a group once it's empty.
+          cleanup_tiling() {
+            desktop_id="$1"
+            output_id="$2"
+
+            "$kwriteconfig" --file "$kwinrc" --group Tiling --group "$desktop_id" --group "$output_id" --key tiles --delete ""
+            "$kwriteconfig" --file "$kwinrc" --group Tiling --group "$desktop_id" --group "$output_id" --key padding --delete ""
+          }
+
           if [ -f "$kwinoutputconfig" ]; then
-            "$grep_bin" -oE '"uuid"[[:space:]]*:[[:space:]]*"[0-9a-fA-F-]{36}"' "$kwinoutputconfig" | "$sed_bin" -E 's/.*"([0-9a-fA-F-]{36})"/\1/' >> "$output_ids_tmp" || true
+            "$jq_bin" -r '.outputs[]?.uuid // empty' "$kwinoutputconfig" >> "$output_ids_tmp" || true
           fi
 
           "$grep_bin" -oE '^\[Tiling\]\[[^]]+\]\[[0-9a-fA-F-]{36}\]$' "$kwinrc" | "$sed_bin" -E 's/^\[Tiling\]\[[^]]+\]\[([0-9a-fA-F-]{36})\]$/\1/' >> "$output_ids_tmp" || true
@@ -855,6 +887,7 @@ in
 
           while IFS= read -r output_id; do
             [ -n "$output_id" ] || continue
+            ${desktopCleanupCommands}
             ${desktopApplyCommands}
           done < "$output_ids_unique_tmp"
         '');
