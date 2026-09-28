@@ -56,18 +56,6 @@ let
   getShortNameFromIndex =
     position: builtins.elemAt validTitlebarButtons.shortNames (lib.toInt position);
 
-  virtualDesktopNameAttrs =
-    names:
-    builtins.listToAttrs (lib.imap1 (i: v: (lib.nameValuePair "Name_${builtins.toString i}" v)) names);
-
-  virtualDesktopIdAttrs =
-    number:
-    builtins.listToAttrs (
-      map (i: (lib.nameValuePair "Id_${builtins.toString i}" "Desktop_${builtins.toString i}")) (
-        lib.range 1 number
-      )
-    );
-
   capitalizeWord =
     word:
     let
@@ -77,6 +65,12 @@ let
     "${lib.toUpper firstLetter}${rest}";
 
   removeColon = string: builtins.replaceStrings [ ":" ] [ "" ] string;
+
+  hashToUuid =
+    hash:
+    "${builtins.substring 0 8 hash}-${builtins.substring 8 4 hash}-${builtins.substring 12 4 hash}-${builtins.substring 16 4 hash}-${builtins.substring 20 12 hash}";
+
+  mkTilingLayoutId = seed: hashToUuid (builtins.hashString "sha256" seed);
 
   getIndexFromEnum =
     enum: value:
@@ -91,11 +85,6 @@ let
 
   tilingLayoutType = lib.types.submodule {
     options = {
-      id = lib.mkOption {
-        type = lib.types.str;
-        description = "The ID of the layout.";
-        example = "cf5c25c2-4217-4193-add6-b5971cb543f2";
-      };
       tiles = lib.mkOption {
         type = with lib.types; attrsOf anything;
         example = {
@@ -114,28 +103,78 @@ let
         };
         apply = builtins.toJSON;
       };
+      padding = lib.mkOption {
+        type = with lib.types; nullOr ints.unsigned;
+        default = null;
+        example = 0;
+        description = "Spacing around tiles in pixels for this layout.";
+      };
+    };
+  };
+
+  virtualDesktopType = lib.types.submodule {
+    options = {
+      name = lib.mkOption {
+        type = lib.types.str;
+        description = "The name of the virtual desktop.";
+        example = "Work";
+      };
+      tiling = lib.mkOption {
+        type = with lib.types; nullOr tilingLayoutType;
+        default = null;
+        description = "Optional default tiling layout for this desktop.";
+      };
+    };
+  };
+
+  virtualDesktopsConfigType = lib.types.submodule {
+    options = {
+      desktops = lib.mkOption {
+        type = with lib.types; listOf virtualDesktopType;
+        description = "List of virtual desktops to create.";
+        example = [
+          { name = "Work"; }
+          { name = "Play"; }
+        ];
+      };
+      rows = lib.mkOption {
+        type = with lib.types; nullOr ints.positive;
+        default = null;
+        example = 1;
+        description = "The number of rows for arranging the virtual desktops grid.";
+      };
+      outputIds = lib.mkOption {
+        type = with lib.types; listOf str;
+        default = [ ];
+        example = [
+          "65b5772f-051d-432a-ba6a-dce5cdbc32dc"
+          "301b0961-14e3-42bf-9114-a20c47b005f4"
+        ];
+        description = ''
+          KWin display (monitor/screen) output UUIDs to write
+          per-virtual-desktop tiling layouts for.
+          KWin stores desktop tiling in `Tiling/<desktop-id>/<display-uuid>`.
+
+          If empty, output UUIDs are auto-detected during Home Manager
+          activation from `kwinoutputconfig.json` and existing `kwinrc`
+          `Tiling` groups.
+
+          The current output UUID is used by KWin 6.6+, while older Plasma
+          releases may still read the legacy output ID.
+        '';
+      };
     };
   };
 in
 {
   imports = [
-    (lib.mkRenamedOptionModule
-      [
-        "programs"
-        "plasma"
-        "kwin"
-        "virtualDesktops"
-        "animation"
-      ]
-      [
-        "programs"
-        "plasma"
-        "kwin"
-        "effects"
-        "desktopSwitching"
-        "animation"
-      ]
-    )
+    (lib.mkRemovedOptionModule [
+      "programs"
+      "plasma"
+      "kwin"
+      "tiling"
+      "padding"
+    ] "Set programs.plasma.kwin.tiling.layout.padding instead.")
   ];
 
   options.programs.plasma.kwin = {
@@ -410,37 +449,37 @@ in
       };
     };
 
-    virtualDesktops = {
-      rows = lib.mkOption {
-        type = with lib.types; nullOr ints.positive;
-        default = null;
-        example = 2;
-        description = "The amount of rows for the virtual desktops.";
-      };
-      names = lib.mkOption {
-        type = with lib.types; nullOr (listOf str);
-        default = null;
-        example = [
-          "Desktop 1"
-          "Desktop 2"
-          "Desktop 3"
-          "Desktop 4"
+    virtualDesktops = lib.mkOption {
+      type = with lib.types; nullOr virtualDesktopsConfigType;
+      default = null;
+      example = {
+        desktops = [
+          {
+            name = "Work";
+            tiling = {
+              tiles = {
+                layoutDirection = "horizontal";
+                tiles = [
+                  { width = 0.5; }
+                  { width = 0.5; }
+                ];
+              };
+            };
+          }
+          {
+            name = "Play";
+          }
         ];
-        description = ''
-          The names of your virtual desktops. When set, the number of virtual
-          desktops is automatically detected and doesn't need to be specified.
-        '';
+        rows = 1;
       };
-      number = lib.mkOption {
-        type = with lib.types; nullOr ints.positive;
-        default = null;
-        example = 8;
-        description = ''
-          The amount of virtual desktops. If the `names` attribute is set as
-          well, then the number of desktops must be the same as the length of the
-          `names` list.
-        '';
-      };
+      description = ''
+        Virtual desktops to create. The `desktops` list defines each desktop
+        with an optional tiling layout. The `rows` option arranges them in a grid.
+
+        This replaces the old `names`/`number` options: the desktop count is
+        now the length of `desktops`, and each desktop's name is set with its
+        `name` field.
+      '';
     };
 
     borderlessMaximizedWindows = lib.mkOption {
@@ -548,17 +587,10 @@ in
     };
 
     tiling = {
-      padding = lib.mkOption {
-        type = with lib.types; nullOr (ints.between 0 36);
-        default = null;
-        example = 10;
-        description = "The padding between windows in tiling.";
-      };
       layout = lib.mkOption {
         type = with lib.types; nullOr tilingLayoutType;
         default = null;
         example = {
-          id = "cf5c25c2-4217-4193-add6-b5971cb543f2";
           tiles = {
             layoutDirection = "horizontal";
             tiles = [
@@ -574,6 +606,11 @@ in
             ];
           };
         };
+        description = ''
+          A single global tiling layout. Its KWin config group ID is now
+          generated automatically; the `id` field this used to require has
+          been removed.
+        '';
       };
     };
 
@@ -710,23 +747,9 @@ in
       assertions = [
         {
           assertion =
-            cfg.kwin.virtualDesktops.number == null
-            || cfg.kwin.virtualDesktops.names == null
-            || cfg.kwin.virtualDesktops.number == (builtins.length cfg.kwin.virtualDesktops.names);
-          message = "programs.plasma.virtualDesktops.number doesn't match the length of programs.plasma.virtualDesktops.names.";
-        }
-        {
-          assertion =
-            cfg.kwin.virtualDesktops.rows == null
-            || (cfg.kwin.virtualDesktops.names == null && cfg.kwin.virtualDesktops.number == null)
-            || (
-              cfg.kwin.virtualDesktops.number != null
-              && cfg.kwin.virtualDesktops.number >= cfg.kwin.virtualDesktops.rows
-            )
-            || (
-              cfg.kwin.virtualDesktops.names != null
-              && (builtins.length cfg.kwin.virtualDesktops.names) >= cfg.kwin.virtualDesktops.rows
-            );
+            cfg.kwin.virtualDesktops == null
+            || cfg.kwin.virtualDesktops.rows == null
+            || (builtins.length cfg.kwin.virtualDesktops.desktops) >= cfg.kwin.virtualDesktops.rows;
           message = "KWin cannot have more rows than virtual desktops.";
         }
         {
@@ -772,6 +795,104 @@ in
       home.packages =
         with pkgs;
         [ ] ++ lib.optionals (cfg.kwin.scripts.polonium.enable == true) [ polonium ];
+
+      # Output UUIDs are only known at activation time (KWin assigns them per
+      # monitor), so they can't be baked into `configFile."kwinrc"` at eval
+      # time the way every other kwin setting is. This activation step fills
+      # that one gap: it detects the current output UUIDs and writes/clears
+      # each desktop's `Tiling/<desktop>/<uuid>` group to match the current
+      # `virtualDesktops.desktops` config.
+      #
+      # Known limitation: this only reaches output UUIDs it can currently see
+      # (from kwinoutputconfig.json or an existing kwinrc Tiling group). A
+      # UUID for a monitor that's since been disconnected, on a desktop that
+      # still has tiling configured, won't be pruned.
+      home.activation.plasmaKwinAutoApplyDesktopTiling =
+        let
+          desktops = if cfg.kwin.virtualDesktops == null then [ ] else cfg.kwin.virtualDesktops.desktops;
+          autoDetectOutputIds = cfg.kwin.virtualDesktops != null && cfg.kwin.virtualDesktops.outputIds == [ ];
+          desktopApplyCommands = lib.concatStringsSep "\n" (
+            lib.imap1 (i: d:
+              lib.optionalString (d.tiling != null)
+                (let
+                  desktopId = "Desktop_${builtins.toString i}";
+                  paddingValue = if d.tiling.padding == null then "__NULL__" else builtins.toString d.tiling.padding;
+                in
+                ''
+                  apply_tiling "${desktopId}" "$output_id" ${lib.escapeShellArg d.tiling.tiles} ${lib.escapeShellArg paddingValue}
+                '')
+            ) desktops
+          );
+          desktopCleanupCommands = lib.concatStringsSep "\n" (
+            lib.imap1 (i: d:
+              lib.optionalString (d.tiling == null)
+                (let
+                  desktopId = "Desktop_${builtins.toString i}";
+                in
+                ''
+                  cleanup_tiling "${desktopId}" "$output_id"
+                '')
+            ) desktops
+          );
+        in
+        lib.mkIf autoDetectOutputIds (lib.hm.dag.entryAfter [ "configure-plasma" ] ''
+          set -eu
+
+          config_dir="''${XDG_CONFIG_HOME:-$HOME/.config}"
+          kwinrc="$config_dir/kwinrc"
+          kwinoutputconfig="$config_dir/kwinoutputconfig.json"
+          kwriteconfig="${pkgs.kdePackages.kconfig}/bin/kwriteconfig6"
+          jq_bin="${pkgs.jq}/bin/jq"
+          grep_bin="${pkgs.gnugrep}/bin/grep"
+          sed_bin="${pkgs.gnused}/bin/sed"
+          sort_bin="${pkgs.coreutils}/bin/sort"
+          mktemp_bin="${pkgs.coreutils}/bin/mktemp"
+          rm_bin="${pkgs.coreutils}/bin/rm"
+
+          if [ ! -f "$kwinrc" ] || [ ! -x "$kwriteconfig" ]; then
+            exit 0
+          fi
+
+          output_ids_tmp="$($mktemp_bin)"
+          output_ids_unique_tmp="$($mktemp_bin)"
+          trap '"$rm_bin" -f "$output_ids_tmp" "$output_ids_unique_tmp"' EXIT
+
+          apply_tiling() {
+            desktop_id="$1"
+            output_id="$2"
+            tiles_json="$3"
+            padding_value="$4"
+
+            "$kwriteconfig" --file "$kwinrc" --group Tiling --group "$desktop_id" --group "$output_id" --key tiles "$tiles_json"
+            if [ "$padding_value" != "__NULL__" ]; then
+              "$kwriteconfig" --file "$kwinrc" --group Tiling --group "$desktop_id" --group "$output_id" --key padding "$padding_value"
+            fi
+          }
+
+          # kwriteconfig6 has no "delete group" flag; deleting every key it
+          # knows about is enough, since KConfig prunes a group once it's empty.
+          cleanup_tiling() {
+            desktop_id="$1"
+            output_id="$2"
+
+            "$kwriteconfig" --file "$kwinrc" --group Tiling --group "$desktop_id" --group "$output_id" --key tiles --delete ""
+            "$kwriteconfig" --file "$kwinrc" --group Tiling --group "$desktop_id" --group "$output_id" --key padding --delete ""
+          }
+
+          if [ -f "$kwinoutputconfig" ]; then
+            "$jq_bin" -r '.outputs[]?.uuid // empty' "$kwinoutputconfig" >> "$output_ids_tmp" || true
+          fi
+
+          "$grep_bin" -oE '^\[Tiling\]\[[^]]+\]\[[0-9a-fA-F-]{36}\]$' "$kwinrc" | "$sed_bin" -E 's/^\[Tiling\]\[[^]]+\]\[([0-9a-fA-F-]{36})\]$/\1/' >> "$output_ids_tmp" || true
+
+          "$sort_bin" -u "$output_ids_tmp" > "$output_ids_unique_tmp"
+
+          while IFS= read -r output_id; do
+            [ -n "$output_id" ] || continue
+            ${desktopCleanupCommands}
+            ${desktopApplyCommands}
+          done < "$output_ids_unique_tmp"
+        '');
 
       programs.plasma.configFile."kwinrc" = (
         lib.mkMerge [
@@ -879,22 +1000,58 @@ in
           })
 
           # Virtual Desktops
-          (lib.mkIf (cfg.kwin.virtualDesktops.number != null) {
-            Desktops = lib.mkMerge [
-              { Number = cfg.kwin.virtualDesktops.number; }
-              (virtualDesktopIdAttrs cfg.kwin.virtualDesktops.number)
-            ];
-          })
-          (lib.mkIf (cfg.kwin.virtualDesktops.rows != null) {
-            Desktops.Rows = cfg.kwin.virtualDesktops.rows;
-          })
-          (lib.mkIf (cfg.kwin.virtualDesktops.names != null) {
-            Desktops = lib.mkMerge [
-              { Number = builtins.length cfg.kwin.virtualDesktops.names; }
-              (virtualDesktopIdAttrs (builtins.length cfg.kwin.virtualDesktops.names))
-              (virtualDesktopNameAttrs cfg.kwin.virtualDesktops.names)
-            ];
-          })
+          (lib.mkIf (cfg.kwin.virtualDesktops != null) (
+            let
+              desktops = cfg.kwin.virtualDesktops.desktops;
+              desktopConfig = lib.mkMerge [
+                {
+                  Desktops = lib.mkMerge [
+                    { Number = builtins.length desktops; }
+                    (builtins.listToAttrs (lib.imap1 (i: _: lib.nameValuePair "Id_${builtins.toString i}" "Desktop_${builtins.toString i}") desktops))
+                    (builtins.listToAttrs (lib.imap1 (i: d: lib.nameValuePair "Name_${builtins.toString i}" d.name) desktops))
+                  ];
+                }
+                (lib.mkIf (cfg.kwin.virtualDesktops.rows != null) {
+                  Desktops.Rows = cfg.kwin.virtualDesktops.rows;
+                })
+              ];
+              tilingConfig =
+                builtins.listToAttrs (
+                  (lib.concatLists (
+                    lib.imap1 (i: d:
+                      let
+                        kwinDesktopId = "Desktop_${builtins.toString i}";
+                      in
+                      lib.optionals (d.tiling != null) (
+                        lib.forEach cfg.kwin.virtualDesktops.outputIds (
+                          outputId:
+                          let
+                            sectionKey = "Tiling/${kwinDesktopId}/${outputId}";
+                          in
+                          lib.nameValuePair sectionKey (
+                            lib.mkMerge [
+                              {
+                                tiles = {
+                                  escapeValue = false;
+                                  value = d.tiling.tiles;
+                                };
+                              }
+                              (lib.mkIf (d.tiling.padding != null) {
+                                padding = d.tiling.padding;
+                              })
+                            ]
+                          )
+                        )
+                      )
+                    ) desktops
+                  ))
+                );
+            in
+            lib.mkMerge [
+              desktopConfig
+              (lib.mkIf ((builtins.length (lib.filter (d: d.tiling != null) desktops) > 0) && (cfg.kwin.virtualDesktops.outputIds != [ ])) tilingConfig)
+            ]
+          ))
 
           # Borderless maximized windows
           (lib.mkIf (cfg.kwin.borderlessMaximizedWindows != null) {
@@ -939,19 +1096,18 @@ in
             };
           })
 
-          (lib.mkIf (cfg.kwin.tiling.padding != null) {
-            Tiling = {
-              padding = cfg.kwin.tiling.padding;
-            };
-          })
-
           (lib.mkIf (cfg.kwin.tiling.layout != null) {
-            "Tiling/${cfg.kwin.tiling.layout.id}" = {
-              tiles = {
-                escapeValue = false;
-                value = cfg.kwin.tiling.layout.tiles;
-              };
-            };
+            "Tiling/${mkTilingLayoutId "kwin-tiling-global-layout-v1"}" = lib.mkMerge [
+              {
+                tiles = {
+                  escapeValue = false;
+                  value = cfg.kwin.tiling.layout.tiles;
+                };
+              }
+              (lib.mkIf (cfg.kwin.tiling.layout.padding != null) {
+                padding = cfg.kwin.tiling.layout.padding;
+              })
+            ];
           })
         ]
       );
