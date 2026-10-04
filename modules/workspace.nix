@@ -548,7 +548,8 @@ in
               ${if cfg.workspace.theme != null then "plasma-apply-desktoptheme ${cfg.workspace.theme}" else ""}
               ${
                 if (cfg.workspace.cursor != null && cfg.workspace.cursor.theme != null) then
-                  "plasma-apply-cursortheme ${cfg.workspace.cursor.theme}"
+                  "plasma-apply-cursortheme "
+                  + lib.escapeShellArg cfg.workspace.cursor.theme
                   + (
                     if cfg.workspace.cursor.size != null then
                       " --size ${builtins.toString cfg.workspace.cursor.size}"
