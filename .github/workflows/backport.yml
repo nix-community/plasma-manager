@@ -25,7 +25,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Create backport pull request
-        uses: korthout/backport-action@v3.1.0
+        uses: korthout/backport-action@v4.7.0
         with:
           pull_description: |-
             This is an automated backport of #${pull_number} to `${target_branch}`.
