@@ -232,7 +232,7 @@ let
       touchProduct = builtins.toString (lib.fromHexString touchpad.productId);
     in
     {
-      "Libinput/${touchVendor}/${touchProduct}/${lib.escape [ "/" ] touchName}" = {
+      "Libinput/${touchVendor}/${touchProduct}/${touchName}" = {
         Enabled = touchpad.enable;
         DisableWhileTyping = touchpad.disableWhileTyping;
         LeftHanded = touchpad.leftHanded;
