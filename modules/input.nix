@@ -341,6 +341,18 @@ let
           Configure how fast the scroll wheel moves.
         '';
       };
+      middleMouseScrolling = lib.mkOption {
+        type = lib.types.enum [
+          "whilePressed"
+          "toggle"
+        ];
+        default = null;
+        description = ''
+          Whether pressing the middle mouse button enables scrolling.
+          "whilePressed" scrolls only while the button is held;
+          "toggle" toggles scrolling on each press.
+        '';
+      };
     };
   };
 
@@ -360,6 +372,8 @@ let
         PointerAcceleration = mouse.acceleration;
         PointerAccelerationProfile = mouse.accelerationProfile;
         ScrollFactor = mouse.scrollSpeed;
+        ScrollMethod = lib.mkIf (mouse.middleMouseScrolling != null ) 4;
+        ScrollButtonLock = lib.mkIf (mouse.middleMouseScrolling == "toggle") true;
       };
     };
 in
