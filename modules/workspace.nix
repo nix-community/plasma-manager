@@ -108,6 +108,9 @@ let
     || cfg.workspace.iconTheme != null
   );
 
+  # A global theme is applied, by plasma-manager or by Plasma's automatic switch
+  anyLookAndFeel = cfg.workspace.lookAndFeel != null || cfg.workspace.automaticLookAndFeel.enable;
+
   splashScreenEngineDetect = theme: (if (theme == "None") then "none" else "KSplashQML");
 in
 {
@@ -201,6 +204,43 @@ in
       description = ''
         The Plasma Global Theme. Run `plasma-apply-lookandfeel --list` for valid options.
       '';
+    };
+
+    automaticLookAndFeel = {
+      enable = lib.mkEnableOption ''
+        switching between a light and a dark Plasma Global Theme following the
+        day/night cycle. Plasma applies the appearance settings of the themes
+        itself, so this cannot be combined with
+        {option}`programs.plasma.workspace.lookAndFeel`. Changes take effect on
+        the next login
+      '';
+      light = lib.mkOption {
+        type = with lib.types; nullOr str;
+        default = null;
+        example = "org.kde.breeze.desktop";
+        description = ''
+          The Plasma Global Theme used during the day. Run `plasma-apply-lookandfeel --list`
+          for valid options.
+        '';
+      };
+      dark = lib.mkOption {
+        type = with lib.types; nullOr str;
+        default = null;
+        example = "org.kde.breezedark.desktop";
+        description = ''
+          The Plasma Global Theme used during the night. Run `plasma-apply-lookandfeel --list`
+          for valid options.
+        '';
+      };
+      onIdle = lib.mkOption {
+        type = with lib.types; nullOr bool;
+        default = null;
+        example = false;
+        description = ''
+          Whether to wait until the computer is idle before switching, which
+          Plasma does by default.
+        '';
+      };
     };
 
     iconTheme = lib.mkOption {
@@ -398,6 +438,14 @@ in
           );
           message = "programs.plasma.wallpaperBackground can only have a color or be blurred.";
         }
+        {
+          assertion = !(cfg.workspace.lookAndFeel != null && cfg.workspace.automaticLookAndFeel.enable);
+          message = ''
+            Cannot set both plasma.workspace.lookAndFeel and
+            plasma.workspace.automaticLookAndFeel.enable, as the former is
+            applied regardless of the time of day.
+          '';
+        }
       ];
       warnings = (
         if
@@ -416,6 +464,32 @@ in
           ]
         else
           [ ]
+      )
+      ++ (
+        if
+          (
+            cfg.workspace.automaticLookAndFeel.enable
+            && (
+              cfg.workspace.theme != null
+              || cfg.workspace.colorScheme != null
+              || cfg.workspace.iconTheme != null
+              || cfg.workspace.widgetStyle != null
+              || cfg.workspace.splashScreen.theme != null
+              || cfg.workspace.windowDecorations.theme != null
+              || (cfg.workspace.cursor != null && cfg.workspace.cursor.theme != null)
+            )
+          )
+        then
+          [
+            ''
+              Setting automaticLookAndFeel together with theme, colorScheme, iconTheme,
+              widgetStyle, splashScreen, windowDecorations or cursor.theme in
+              plasma-manager is not recommended since Plasma replaces whichever of
+              these settings the global themes provide at the next switch.
+            ''
+          ]
+        else
+          [ ]
       );
 
       programs.plasma.configFile = (
@@ -427,6 +501,16 @@ in
               );
               KDE.widgetStyle = (
                 lib.mkIf (cfg.workspace.widgetStyle != null) (cfg.workspace.widgetStyle)
+              );
+              KDE.AutomaticLookAndFeel = (lib.mkIf cfg.workspace.automaticLookAndFeel.enable true);
+              KDE.DefaultLightLookAndFeel = (
+                lib.mkIf (cfg.workspace.automaticLookAndFeel.light != null) cfg.workspace.automaticLookAndFeel.light
+              );
+              KDE.DefaultDarkLookAndFeel = (
+                lib.mkIf (cfg.workspace.automaticLookAndFeel.dark != null) cfg.workspace.automaticLookAndFeel.dark
+              );
+              KDE.AutomaticLookAndFeelOnIdle = (
+                lib.mkIf (cfg.workspace.automaticLookAndFeel.onIdle != null) cfg.workspace.automaticLookAndFeel.onIdle
               );
               Sounds.Theme = (lib.mkIf (cfg.workspace.soundTheme != null) cfg.workspace.soundTheme);
             };
@@ -505,10 +589,10 @@ in
           }
           # We add persistence to some keys in order to not reset the themes on
           # each generation when we use overrideConfig.
-          (lib.mkIf (cfg.overrideConfig && anyThemeSet) (
+          (lib.mkIf (cfg.overrideConfig && (anyThemeSet || anyLookAndFeel)) (
             let
               colorSchemeIgnore =
-                if (cfg.workspace.colorScheme != null || cfg.workspace.lookAndFeel != null) then
+                if (cfg.workspace.colorScheme != null || anyLookAndFeel) then
                   (import ../lib/colorscheme.nix { inherit lib; })
                 else
                   { };
@@ -522,7 +606,7 @@ in
                   cfg.workspace.colorScheme != null || cfg.workspace.lookAndFeel != null
                 );
                 kdeglobals.Icons.Theme.persistent = lib.mkDefault (cfg.workspace.iconTheme != null);
-                kdeglobals.KDE.LookAndFeelPackage.persistent = lib.mkDefault (cfg.workspace.lookAndFeel != null);
+                kdeglobals.KDE.LookAndFeelPackage.persistent = lib.mkDefault anyLookAndFeel;
                 plasmarc.Theme.name.persistent = lib.mkDefault (cfg.workspace.theme != null);
               }
               colorSchemeIgnore
