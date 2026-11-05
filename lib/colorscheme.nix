@@ -22,17 +22,32 @@ let
     "ForegroundNegative"
     "ForegroundNeutral"
     "ForegroundNormal"
+    "ForegroundPositive"
     "ForegroundVisited"
-    "regroundPositive"
   ];
   ignoreKeys = {
     "ColorEffects:Disabled" = colorEffectsKeys;
     "ColorEffects:Inactive" = colorEffectsKeys;
     "Colors:Button" = colorUIKeys;
+    "Colors:Complementary" = colorUIKeys;
+    "Colors:Header" = colorUIKeys;
+    "Colors:Header/Inactive" = colorUIKeys;
     "Colors:Selection" = colorUIKeys;
     "Colors:Tooltip" = colorUIKeys;
     "Colors:View" = colorUIKeys;
     "Colors:Window" = colorUIKeys;
+    KDE = [
+      "contrast"
+      "frameContrast"
+    ];
+    WM = [
+      "activeBackground"
+      "activeBlend"
+      "activeForeground"
+      "inactiveBackground"
+      "inactiveBlend"
+      "inactiveForeground"
+    ];
   };
 in
 (lib.mkMerge (
