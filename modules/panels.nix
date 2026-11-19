@@ -244,7 +244,13 @@ in
               # We delete plasma-org.kde.plasma.desktop-appletsrc to hinder it
               # growing indefinitely. See:
               # https://github.com/nix-community/plasma-manager/issues/76
-              [ -f ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc ] && rm ${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc
+              # link-aware, if the file is a symlink then delete the source instead of the link
+              appletsrc="${config.xdg.configHome}/plasma-org.kde.plasma.desktop-appletsrc"
+              if [ -L "$appletsrc" ]; then
+                rm -f "$(readlink -f "$appletsrc")"
+              elif [ -f "$appletsrc" ]; then
+                rm -f "$appletsrc"
+              fi
             '';
             panelLayoutStr = (
               import ../lib/panel.nix {
