@@ -8,6 +8,7 @@
     ./fonts.nix
     ./hotkeys.nix
     ./input.nix
+    ./kickoff.nix
     ./krunner.nix
     ./kscreenlocker.nix
     ./kwin.nix

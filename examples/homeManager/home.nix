@@ -23,6 +23,15 @@
       command = "konsole";
     };
 
+    #
+    # Pinned favorites in the application launcher:
+    #
+    kickoff.favorites = [
+      "applications:org.kde.konsole.desktop"
+      "applications:org.kde.dolphin.desktop"
+      "preferred://browser"
+    ];
+
     panels = [
       # Windows-like panel at the bottom
       {
